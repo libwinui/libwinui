@@ -369,8 +369,12 @@ Size TileLayoutEngine::measure(VirtualizingLayoutContext& context, Size availabl
     {
         return measure_grouped(context, available);
     }
+    // Cells of another size put the realized items in other columns; the algorithm only knows
+    // where they were
+    const Size cell = item_size_;
     ensure_item_size(available, context);
     detail::FlowLayoutAlgorithm::MeasureParams params;
+    params.items_resized      = item_size_.width != cell.width || item_size_.height != cell.height;
     params.wrapping           = true;
     params.min_item_spacing   = item_spacing();
     params.line_spacing       = line_spacing();

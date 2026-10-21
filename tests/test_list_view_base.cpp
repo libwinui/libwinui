@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <any>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <string>
@@ -551,6 +552,94 @@ TEST_CASE("A TileView lays its items out in cells the first item's size", "[list
         }
     }
     CHECK(frame);
+}
+
+namespace
+{
+
+// A square tile as large as a shared edge, as an app's zoom sizes its tiles. zoom() tells the
+// tiles alive that the edge changed.
+class ZoomTile final : public Element
+{
+public:
+    explicit ZoomTile(const float& edge) : edge_(edge)
+    {
+        alive().push_back(this);
+    }
+    ~ZoomTile() override
+    {
+        std::erase(alive(), this);
+    }
+    ZoomTile(const ZoomTile&)            = delete;
+    ZoomTile& operator=(const ZoomTile&) = delete;
+
+    static void zoom()
+    {
+        for (ZoomTile* tile : alive())
+        {
+            tile->invalidate_measure();
+        }
+    }
+
+protected:
+    [[nodiscard]] Size measure_override(Size, const MeasureContext&) const override
+    {
+        return Size{edge_, edge_};
+    }
+    void render_override(Renderer&, const RenderContext&) const override
+    {
+    }
+
+private:
+    static std::vector<ZoomTile*>& alive()
+    {
+        static std::vector<ZoomTile*> tiles;
+        return tiles;
+    }
+
+    const float& edge_;
+};
+
+} // namespace
+
+TEST_CASE("A TileView puts every tile in its column again when the tiles change size", "[list-view-base][grid-view]")
+{
+    float           edge = 96.0f;
+    TileViewControl grid;
+    grid.set_item_template([&edge](std::size_t) { return std::make_unique<ZoomTile>(edge); });
+    grid.set_item_count(200);
+    layout(grid, {420.0f, 400.0f}); // cells of 100 (the tile's 0,0,4,4 margin), four across
+    grid.scroll_view()->scroll_to(grid.scroll_view()->horizontal_offset(),
+                                  1000.0f,
+                                  {.animation_mode = ui::ScrollAnimationMode::Disabled});
+    layout(grid, {420.0f, 400.0f});
+
+    // Larger tiles, three across: the line starting at a realized item moves to a column of its own
+    edge = 126.0f;
+    ZoomTile::zoom();
+    layout(grid, {420.0f, 400.0f});
+
+    // Every tile in view; the one realized past each end of the window can sit on a line of its own
+    const Rect               view = grid.scroll_view()->bounds();
+    std::vector<std::size_t> shown;
+    for (std::size_t i : grid.repeater()->realized_indices())
+    {
+        if (item_rect(grid, i).intersects(view))
+        {
+            shown.push_back(i);
+        }
+    }
+    REQUIRE(shown.size() > 6);
+    float left = std::numeric_limits<float>::max();
+    for (std::size_t i : shown)
+    {
+        left = std::min(left, item_rect(grid, i).x);
+    }
+    for (std::size_t i : shown)
+    {
+        INFO("item " << i);
+        CHECK_THAT(item_rect(grid, i).x - left, WithinAbs(static_cast<double>(i % 3) * 130.0, 1e-3));
+    }
 }
 
 TEST_CASE("A TileView sizes a cell holding a Grid to the Grid's content", "[list-view-base][grid-view]")

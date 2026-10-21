@@ -111,9 +111,9 @@ std::optional<std::size_t> FlowLayoutAlgorithm::anchor_index(Size available, con
     }
     else
     {
-        const bool reeval = params.wrapping &&
-                            (om_.minor(available) != last_available_minor_ ||
-                             params.min_item_spacing != last_item_spacing_ || collection_change_pending_);
+        const bool reeval = params.wrapping && (om_.minor(available) != last_available_minor_ ||
+                                                params.min_item_spacing != last_item_spacing_ ||
+                                                collection_change_pending_ || params.items_resized);
         const std::optional<std::size_t> suggested = context_->recommended_anchor_index();
         if (suggested && *suggested < count)
         {

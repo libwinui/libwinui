@@ -157,6 +157,9 @@ public:
         std::size_t max_items_per_line = Unlimited;
         bool        vertical_scroll    = true;
         bool        virtualize         = true;
+        // The items take another size than at the last measure, so a wrapping layout finds the
+        // anchor's column again, as for a new available width
+        bool items_resized = false;
     };
 
     [[nodiscard]] Size measure(Size                       available,
