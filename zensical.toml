@@ -590,6 +590,16 @@ icon = "fontawesome/brands/github"
 link = "https://github.com/libwinui/libwinui"
 name = "libwinui on GitHub"
 
+[[project.extra.social]]
+icon = "fontawesome/brands/bluesky"
+link = "https://bsky.app/profile/libwinui.bsky.social"
+name = "libwinui on Bluesky"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/twitter"
+link = "https://twitter.com/libwinui"
+name = "libwinui on Twitter"
+
 [project.markdown_extensions]
 admonition = {}
 attr_list = {}
