@@ -5,7 +5,7 @@
 
 [project]
 site_name = "libwinui"
-site_description = "Fluent 2 controls for Windows, in plain C++."
+site_description = "A native-like Windows UI library built with C++23 that you link statically and ship as one small .exe."
 site_url = "https://libwinui.com/"
 repo_url = "https://github.com/libwinui/libwinui"
 repo_name = "libwinui/libwinui"
@@ -579,6 +579,11 @@ toggle.name = "Switch to system preference"
 
 [project.extra]
 generator = false               # no "Made with Zensical" in the footer
+
+# Social cards: one preview image per page, for links shared on social media and in chats.
+[project.plugins.social]
+# The layout takes its colors from a palette primary, which this site does not set.
+cards_layout_options = { background_color = "#202020", color = "#FFFFFF" }
 
 [[project.extra.social]]
 icon = "fontawesome/brands/github"
