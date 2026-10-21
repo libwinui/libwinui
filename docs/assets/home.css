@@ -1,0 +1,4 @@
+/* Landing page only (docs/index.md hides the sidebars via front matter). */
+.md-typeset h1 {
+  font-weight: 600;
+}

@@ -1,0 +1,47 @@
+---
+# The checks that find bugs or real waste, not a style. cmake_template enables "*" and then
+# subtracts; that is several thousand findings here, most of them about naming and magic numbers.
+# Add a group once the tree is clean for it.
+#
+# Off on purpose: Win32 handles are integers cast to pointers and const-qualified handle typedefs
+# (no-int-to-ptr, misplaced-const); the UTF-16 conversions pass string_view data with its size
+# (suspicious-stringview-data-usage); the renderer steps in float DIPs (float loop counters); and a
+# spec filled with designated initializers leaves fields out by design (missing-field-initializers).
+Checks: >
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-narrowing-conversions,
+  -bugprone-implicit-widening-of-multiplication-result,
+  -bugprone-branch-clone,
+  -bugprone-exception-escape,
+  -bugprone-unchecked-optional-access,
+  -bugprone-throwing-static-initialization,
+  -bugprone-float-loop-counter,
+  -clang-diagnostic-missing-field-initializers,
+  -clang-diagnostic-missing-designated-field-initializers,
+  -bugprone-suspicious-stringview-data-usage,
+  clang-analyzer-*,
+  -clang-analyzer-optin.*,
+  -clang-analyzer-cplusplus.NewDeleteLeaks,
+  -clang-analyzer-security.FloatLoopCounter,
+  cppcoreguidelines-virtual-class-destructor,
+  cppcoreguidelines-slicing,
+  misc-redundant-expression,
+  misc-unconventional-assign-operator,
+  misc-uniqueptr-reset-release,
+  modernize-use-override,
+  modernize-use-nullptr,
+  performance-*,
+  -performance-enum-size,
+  -performance-avoid-endl,
+  -performance-no-int-to-ptr,
+  readability-container-size-empty,
+  readability-redundant-smartptr-get,
+  readability-misleading-indentation
+
+WarningsAsErrors: ''
+# Our headers only: not the Windows SDK, not Catch2 or the generated C++/WinRT projection.
+HeaderFilterRegex: '.*[/\\](include[/\\]winui|src|tests|examples)[/\\].*'
+# Catch2's own src/ under build/_deps matches the filter above.
+ExcludeHeaderFilterRegex: '.*[/\\]_deps[/\\].*'
+FormatStyle: none

@@ -1,0 +1,24 @@
+SetRasterization geometry=antialiased text=grayscale snap=false
+FillRoundedRect rect=(83.00,44.00,20.00,20.00) radius=4.00 color=#00000006
+StrokeRoundedRect rect=(83.50,44.50,19.00,19.00) radius=3.50 color=#00000072 width=1.00
+DrawTextRun rect=(111.00,38.00,126.00,32.00) color=#000000E4 size=14.00 weight=regular halign=leading valign=center text="Unchecked"
+FillRoundedRect rect=(83.00,88.00,20.00,20.00) radius=4.00 color=#005A9EFF
+StrokeRoundedRect rect=(83.50,88.50,19.00,19.00) radius=3.50 color=#005A9EFF width=1.00
+DrawTextRun rect=(83.00,88.00,20.00,20.00) color=#FFFFFFFF size=14.00 weight=regular halign=center valign=center text="\uE73E"
+DrawTextRun rect=(111.00,82.00,126.00,32.00) color=#000000E4 size=14.00 weight=regular halign=leading valign=center text="Checked"
+FillRoundedRect rect=(83.00,126.00,20.00,20.00) radius=10.00 color=#005A9EFF
+StrokeRoundedRect rect=(83.50,126.50,19.00,19.00) radius=9.50 color=#005A9EFF width=1.00
+FillRoundedRect rect=(87.00,130.00,12.00,12.00) radius=6.00 color=#FFFFFFFF
+StrokeRoundedRectGradient rect=(87.50,130.50,11.00,11.00) radius=5.50 extent=11.00 width=1.00 stops=[0.50:#0000000F 0.70:#00000029]
+DrawTextRun rect=(111.00,126.00,126.00,20.00) color=#000000E4 size=14.00 weight=regular halign=leading valign=center text="Radio A"
+FillRoundedRect rect=(83.00,158.00,20.00,20.00) radius=10.00 color=#00000006
+StrokeRoundedRect rect=(83.50,158.50,19.00,19.00) radius=9.50 color=#00000072 width=1.00
+DrawTextRun rect=(111.00,158.00,126.00,20.00) color=#000000E4 size=14.00 weight=regular halign=leading valign=center text="Radio B"
+FillRoundedRect rect=(83.00,190.00,40.00,20.00) radius=10.00 color=#00000006
+StrokeRoundedRect rect=(83.50,190.50,39.00,19.00) radius=9.50 color=#00000072 width=1.00
+FillRoundedRect rect=(87.00,194.00,12.00,12.00) radius=6.00 color=#0000009E
+DrawTextRun rect=(131.00,190.00,106.00,20.00) color=#000000E4 size=14.00 weight=regular halign=leading valign=center text="Off"
+FillRoundedRect rect=(83.00,222.00,40.00,20.00) radius=10.00 color=#005A9EFF
+StrokeRoundedRect rect=(83.50,222.50,39.00,19.00) radius=9.50 color=#005A9EFF width=1.00
+FillRoundedRect rect=(107.00,226.00,12.00,12.00) radius=6.00 color=#FFFFFFFF
+DrawTextRun rect=(131.00,222.00,106.00,20.00) color=#000000E4 size=14.00 weight=regular halign=leading valign=center text="On"

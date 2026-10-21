@@ -1,0 +1,1078 @@
+# Which reference page each spec and control lands on (docs/tools/gen_reference.py).
+#
+# [[page]] entries produce docs/reference/<section>/<slug>.md showing the listed specs
+# (fields in declaration order) and the control class (public API) on one page. Every
+# other class, struct and concept gets a page of its own, named after it, under the section
+# its header's directory maps to ([sections] below), and the namespace-scope functions, enums,
+# aliases and constants of those headers one page per namespace. Headers named here are
+# claimed and not repeated. A [[page]] with `related` but no `headers` bundles small types
+# that would make poor pages on their own.
+#
+# Fields: section, slug, title,
+# group (required in a [section_groups] section), specs (ui::* aggregates), control (the ui::*
+# class), related (extra classes/structs shown on the same page), headers (claimed),
+# tests (paths shown as "Tests"), example ("path:region" for a --8<-- snippet).
+
+# Headers that belong to the themes section regardless of directory.
+theme_headers = [
+    "ui/themes/Theme.hpp", "ui/themes/ThemeSource.hpp", "ui/themes/Palette.hpp", "ui/themes/MetroPalette.hpp",
+    "ui/themes/Mdl2Palette.hpp", "ui/themes/ClassicPalette.hpp", "ui/themes/EarlyPalette.hpp",
+]
+
+# Namespaces never documented.
+hidden_namespaces = ["ui::detail"]
+
+[sections]
+# header directory -> reference section (for headers no [[page]] claims)
+"core" = "core"
+"render" = "rendering"
+"ui" = "tree"
+"testing" = "testing"
+
+[section_groups]
+# Sections whose nav and index are split into these groups, in this order; each of their
+# [[page]] entries names one in `group`. Other sections list their [[page]] entries first and
+# group the generated pages by kind: Classes, Structs, Concepts, Namespaces.
+controls = ["Basic Input", "Text", "Collections", "Date and Time", "Navigation", "Menus and Toolbars", "Dialogs and Flyouts",
+            "Status and Info", "Media and Icons", "Windowing and Hosting"]
+layout = ["Panels", "Containers", "Scrolling and Gestures", "Panes and Splitters"]
+
+[section_intros]
+# A paragraph under a section index's title.
+controls = "The Collections group holds the controls that take data. A view (`ListView`, `TileView`, `TreeView`, `TableView`) is given `.items` and an `.item` template and adds selection and scrolling, `ForEach` turns a collection into plain children, and the [item layouts](item-layouts.md) arrange them. Controls that arrange children you write yourself are under [Layout](../layout/index.md)."
+layout = "Layout holds the controls that arrange children you write yourself: panels for several children, containers for one, scrolling, and panes. A control that builds its children from data is under [Collections](../controls/index.md#collections)."
+
+[section_titles]
+controls = "Controls"
+layout = "Layout"
+tree = "Tree and Window"
+core = "Core"
+rendering = "Rendering"
+testing = "Testing"
+themes = "Themes"
+
+# ----------------------------------------------------------------------- controls
+[[page]]
+section = "controls"
+slug = "button"
+title = "Button"
+group = "Basic Input"
+specs = ["ui::Button"]
+control = "ui::ButtonControl"
+headers = ["ui/input/Button.hpp"]
+tests = ["tests/test_button.cpp"]
+example = "examples/tutorials/01_first_window/main.cpp:tree"
+
+[[page]]
+section = "controls"
+slug = "check-box"
+title = "CheckBox"
+group = "Basic Input"
+specs = ["ui::CheckBox"]
+control = "ui::CheckBoxControl"
+headers = ["ui/input/CheckBox.hpp"]
+tests = ["tests/test_check_box.cpp"]
+
+[[page]]
+section = "controls"
+slug = "radio-button"
+title = "RadioButton"
+group = "Basic Input"
+specs = ["ui::RadioButton"]
+control = "ui::RadioButtonControl"
+related = ["ui::RadioGroup"]
+headers = ["ui/input/RadioButton.hpp", "ui/input/RadioGroup.hpp"]
+tests = ["tests/test_radio_button.cpp"]
+
+[[page]]
+section = "controls"
+slug = "toggle-switch"
+title = "ToggleSwitch"
+group = "Basic Input"
+specs = ["ui::ToggleSwitch"]
+control = "ui::ToggleSwitchControl"
+headers = ["ui/input/ToggleSwitch.hpp"]
+tests = ["tests/test_toggle_switch.cpp"]
+
+[[page]]
+section = "controls"
+slug = "slider"
+title = "Slider"
+group = "Basic Input"
+specs = ["ui::Slider"]
+control = "ui::SliderControl"
+headers = ["ui/input/Slider.hpp"]
+tests = ["tests/test_slider.cpp"]
+
+[[page]]
+section = "controls"
+slug = "progress-bar"
+title = "ProgressBar"
+group = "Status and Info"
+specs = ["ui::ProgressBar"]
+control = "ui::ProgressBarControl"
+headers = ["ui/status/ProgressBar.hpp"]
+tests = ["tests/test_progress_bar.cpp"]
+
+[[page]]
+section = "controls"
+slug = "progress-ring"
+title = "ProgressRing"
+group = "Status and Info"
+specs = ["ui::ProgressRing"]
+control = "ui::ProgressRingControl"
+headers = ["ui/status/ProgressRing.hpp"]
+tests = ["tests/test_progress_ring.cpp"]
+
+[[page]]
+section = "controls"
+slug = "info-bar"
+title = "InfoBar"
+group = "Status and Info"
+specs = ["ui::InfoBar"]
+control = "ui::InfoBarControl"
+headers = ["ui/status/InfoBar.hpp"]
+tests = ["tests/test_info_bar.cpp"]
+
+[[page]]
+section = "controls"
+slug = "info-badge"
+title = "InfoBadge"
+group = "Status and Info"
+specs = ["ui::InfoBadge"]
+control = "ui::InfoBadgeControl"
+headers = ["ui/status/InfoBadge.hpp"]
+tests = ["tests/test_info_badge.cpp"]
+
+[[page]]
+section = "controls"
+slug = "rating"
+title = "Rating"
+group = "Basic Input"
+specs = ["ui::Rating"]
+control = "ui::RatingControl"
+headers = ["ui/input/Rating.hpp"]
+tests = ["tests/test_rating.cpp"]
+
+[[page]]
+section = "controls"
+slug = "calendar-view"
+title = "CalendarView"
+group = "Date and Time"
+specs = ["ui::CalendarView"]
+control = "ui::CalendarViewControl"
+headers = ["ui/datetime/CalendarView.hpp"]
+tests = ["tests/test_calendar_view.cpp"]
+
+[[page]]
+section = "controls"
+slug = "calendar-date-picker"
+title = "CalendarDatePicker"
+group = "Date and Time"
+specs = ["ui::CalendarDatePicker"]
+control = "ui::CalendarDatePickerControl"
+headers = ["ui/datetime/CalendarDatePicker.hpp"]
+tests = ["tests/test_calendar_date_picker.cpp"]
+
+[[page]]
+section = "controls"
+slug = "date-picker"
+title = "DatePicker"
+group = "Date and Time"
+specs = ["ui::DatePicker"]
+control = "ui::DatePickerControl"
+headers = ["ui/datetime/DatePicker.hpp"]
+tests = ["tests/test_date_picker.cpp"]
+
+[[page]]
+section = "controls"
+slug = "time-picker"
+title = "TimePicker"
+group = "Date and Time"
+specs = ["ui::TimePicker"]
+control = "ui::TimePickerControl"
+headers = ["ui/datetime/TimePicker.hpp"]
+tests = ["tests/test_time_picker.cpp"]
+
+[[page]]
+section = "controls"
+slug = "pips-pager"
+title = "PipsPager"
+group = "Navigation"
+specs = ["ui::PipsPager"]
+control = "ui::PipsPagerControl"
+headers = ["ui/navigation/PipsPager.hpp"]
+tests = ["tests/test_pips_pager.cpp"]
+
+[[page]]
+section = "controls"
+slug = "combo-box"
+title = "ComboBox"
+group = "Basic Input"
+specs = ["ui::ComboBox"]
+control = "ui::ComboBoxControl"
+headers = ["ui/input/ComboBox.hpp"]
+tests = ["tests/test_combo_box.cpp", "tests/test_combo_box_read_only.cpp"]
+
+[[page]]
+section = "controls"
+slug = "auto-suggest-box"
+title = "AutoSuggestBox"
+group = "Text"
+specs = ["ui::AutoSuggestBox"]
+control = "ui::AutoSuggestBoxControl"
+headers = ["ui/text/AutoSuggestBox.hpp"]
+tests = ["tests/test_auto_suggest_box.cpp"]
+
+[[page]]
+section = "controls"
+slug = "selector-bar"
+title = "SelectorBar"
+group = "Navigation"
+specs = ["ui::SelectorBar"]
+control = "ui::SelectorBarControl"
+headers = ["ui/navigation/SelectorBar.hpp"]
+tests = ["tests/test_selector_bar.cpp"]
+
+[[page]]
+section = "controls"
+slug = "breadcrumb"
+title = "Breadcrumb"
+group = "Navigation"
+specs = ["ui::Breadcrumb"]
+control = "ui::BreadcrumbControl"
+headers = ["ui/navigation/Breadcrumb.hpp"]
+tests = ["tests/test_breadcrumb.cpp"]
+
+[[page]]
+section = "controls"
+slug = "list-view"
+title = "ListView"
+group = "Collections"
+specs = ["ui::ListView"]
+control = "ui::ListViewControl"
+headers = ["ui/collections/ListView.hpp"]
+tests = ["tests/test_list_view.cpp"]
+
+[[page]]
+section = "controls"
+slug = "table-view"
+title = "TableView"
+group = "Collections"
+specs = ["ui::TableView"]
+control = "ui::TableViewControl"
+headers = ["ui/collections/TableView.hpp"]
+tests = ["tests/test_table_view.cpp"]
+
+[[page]]
+section = "controls"
+slug = "tree-view"
+title = "TreeView"
+group = "Collections"
+specs = ["ui::TreeView"]
+control = "ui::TreeViewControl"
+headers = ["ui/collections/TreeView.hpp"]
+tests = ["tests/test_tree_view.cpp"]
+
+[[page]]
+section = "controls"
+slug = "virtual-list"
+title = "VirtualList"
+group = "Collections"
+control = "ui::VirtualListControl"
+headers = ["ui/collections/VirtualListControl.hpp"]
+tests = ["tests/test_layout.cpp"]
+
+[[page]]
+section = "controls"
+slug = "text"
+title = "Text"
+group = "Text"
+specs = ["ui::Text"]
+control = "ui::TextControl"
+headers = ["ui/text/Text.hpp"]
+tests = ["tests/test_stack.cpp"]
+
+[[page]]
+section = "controls"
+slug = "icon"
+title = "Icon"
+group = "Media and Icons"
+specs = ["ui::Icon"]
+control = "ui::IconControl"
+headers = ["ui/media/Icon.hpp"]
+tests = ["tests/test_styles.cpp"]
+
+[[page]]
+section = "controls"
+slug = "rich-text"
+title = "RichText"
+group = "Text"
+specs = ["ui::RichText", "ui::RichTextOverflow"]
+control = "ui::RichTextControl"
+related = ["ui::RichTextOverflowControl"]
+headers = ["ui/text/RichText.hpp"]
+tests = ["tests/test_rich_text.cpp"]
+
+[[page]]
+section = "controls"
+slug = "text-box"
+title = "TextBox"
+group = "Text"
+specs = ["ui::TextBox"]
+control = "ui::TextBoxControl"
+headers = ["ui/text/TextBox.hpp"]
+tests = ["tests/test_text_box.cpp"]
+
+[[page]]
+section = "controls"
+slug = "number-box"
+title = "NumberBox"
+group = "Text"
+specs = ["ui::NumberBox"]
+control = "ui::NumberBoxControl"
+headers = ["ui/text/NumberBox.hpp"]
+tests = ["tests/test_number_box.cpp"]
+
+[[page]]
+section = "controls"
+slug = "color-picker"
+title = "ColorPicker"
+group = "Basic Input"
+specs = ["ui::ColorPicker"]
+control = "ui::ColorPickerControl"
+headers = ["ui/input/ColorPicker.hpp"]
+tests = ["tests/test_color_picker.cpp"]
+
+[[page]]
+section = "controls"
+slug = "person-picture"
+title = "PersonPicture"
+group = "Media and Icons"
+specs = ["ui::PersonPicture"]
+control = "ui::PersonPictureControl"
+headers = ["ui/media/PersonPicture.hpp"]
+tests = ["tests/test_person_picture.cpp"]
+
+[[page]]
+section = "controls"
+slug = "title-bar"
+title = "TitleBar"
+group = "Windowing and Hosting"
+specs = ["ui::TitleBar"]
+control = "ui::TitleBarControl"
+headers = ["ui/hosting/TitleBar.hpp"]
+tests = ["tests/test_title_bar.cpp"]
+
+[[page]]
+section = "controls"
+slug = "animated-visual-player"
+title = "AnimatedVisualPlayer"
+group = "Media and Icons"
+specs = ["ui::AnimatedVisualPlayer"]
+control = "ui::AnimatedVisualPlayerControl"
+headers = ["ui/media/AnimatedVisualPlayer.hpp"]
+tests = ["tests/test_animated_visual_player.cpp"]
+
+[[page]]
+section = "controls"
+slug = "animated-icon"
+title = "AnimatedIcon"
+group = "Media and Icons"
+specs = ["ui::AnimatedIcon"]
+control = "ui::AnimatedIconControl"
+headers = ["ui/media/AnimatedIcon.hpp"]
+tests = ["tests/test_animated_icon.cpp"]
+
+[[page]]
+section = "controls"
+slug = "menu-bar"
+title = "MenuBar"
+group = "Menus and Toolbars"
+specs = ["ui::MenuBar"]
+control = "ui::MenuBarControl"
+related = ["ui::MenuBarItem"]
+headers = ["ui/menus/MenuBar.hpp"]
+tests = ["tests/test_menu_bar.cpp"]
+
+[[page]]
+section = "controls"
+slug = "flyout"
+title = "Flyout"
+group = "Dialogs and Flyouts"
+specs = ["ui::Flyout"]
+control = "ui::FlyoutControl"
+headers = ["ui/dialogs/Flyout.hpp"]
+tests = ["tests/test_flyout.cpp"]
+
+[[page]]
+section = "controls"
+slug = "tool-tip"
+title = "ToolTip"
+group = "Dialogs and Flyouts"
+specs = ["ui::ToolTip"]
+control = "ui::ToolTipControl"
+headers = ["ui/dialogs/ToolTip.hpp"]
+tests = ["tests/test_tool_tip.cpp"]
+
+[[page]]
+section = "controls"
+slug = "dialog"
+title = "Dialog"
+group = "Dialogs and Flyouts"
+specs = ["ui::Dialog", "ui::DialogButton"]
+control = "ui::DialogControl"
+headers = ["ui/dialogs/Dialog.hpp"]
+tests = ["tests/test_dialog.cpp"]
+
+[[page]]
+section = "controls"
+slug = "tabs"
+title = "Tabs"
+group = "Navigation"
+specs = ["ui::Tabs", "ui::Tab", "ui::TabList"]
+control = "ui::TabsControl"
+headers = ["ui/navigation/Tabs.hpp"]
+tests = ["tests/test_tabs.cpp"]
+
+[[page]]
+section = "controls"
+slug = "navigation-shell"
+title = "NavigationShell"
+group = "Navigation"
+specs = ["ui::NavigationShell", "ui::NavItem", "ui::NavList"]
+control = "ui::NavigationShellControl"
+headers = ["ui/navigation/NavigationShell.hpp"]
+tests = ["tests/test_navigation_shell.cpp"]
+
+[[page]]
+section = "controls"
+slug = "native-control"
+title = "NativeControl"
+group = "Windowing and Hosting"
+specs = ["ui::Native"]
+control = "ui::NativeControl"
+headers = ["ui/hosting/NativeControl.hpp"]
+tests = ["tests/test_native_control.cpp"]
+
+[[page]]
+section = "controls"
+slug = "content-host"
+title = "Match"
+group = "Windowing and Hosting"
+specs = ["ui::Match", "ui::Lazy", "ui::State"]
+control = "ui::ContentHost"
+headers = ["ui/hosting/ContentHost.hpp"]
+tests = ["tests/test_spec.cpp", "tests/test_dynamic.cpp"]
+
+# ------------------------------------------------------------------- more controls
+[[page]]
+section = "controls"
+slug = "toggle-button"
+title = "ToggleButton"
+group = "Basic Input"
+specs = ["ui::ToggleButton"]
+control = "ui::ToggleButtonControl"
+headers = ["ui/input/ToggleButton.hpp"]
+tests = ["tests/test_toggle_button.cpp"]
+
+[[page]]
+section = "controls"
+slug = "dropdown-button"
+title = "DropdownButton"
+group = "Basic Input"
+specs = ["ui::DropdownButton"]
+control = "ui::DropdownButtonControl"
+headers = ["ui/input/DropdownButton.hpp"]
+tests = ["tests/test_split_button.cpp"]
+
+[[page]]
+section = "controls"
+slug = "split-button"
+title = "SplitButton"
+group = "Basic Input"
+specs = ["ui::SplitButton", "ui::ToggleSplitButton"]
+control = "ui::SplitButtonControl"
+related = ["ui::ToggleSplitButtonControl"]
+headers = ["ui/input/SplitButton.hpp"]
+tests = ["tests/test_split_button.cpp"]
+
+[[page]]
+section = "controls"
+slug = "radio-buttons"
+title = "RadioButtons"
+group = "Basic Input"
+specs = ["ui::RadioButtons"]
+control = "ui::RadioButtonsControl"
+headers = ["ui/input/RadioButtons.hpp"]
+tests = ["tests/test_radio_buttons.cpp"]
+
+[[page]]
+section = "controls"
+slug = "pager"
+title = "Pager"
+group = "Navigation"
+specs = ["ui::Pager"]
+control = "ui::PagerControl"
+headers = ["ui/navigation/Pager.hpp"]
+tests = ["tests/test_pager.cpp"]
+
+[[page]]
+section = "controls"
+slug = "list-view-base"
+title = "ListViewBase"
+group = "Collections"
+control = "ui::ListViewBase"
+headers = ["ui/collections/ListViewBase.hpp"]
+tests = ["tests/test_list_view_base.cpp"]
+
+[[page]]
+section = "controls"
+slug = "tile-view"
+title = "TileView"
+group = "Collections"
+specs = ["ui::TileView"]
+control = "ui::TileViewControl"
+headers = ["ui/collections/TileView.hpp"]
+tests = ["tests/test_list_view_base.cpp"]
+
+[[page]]
+section = "controls"
+slug = "for-each"
+title = "ForEach"
+group = "Collections"
+specs = ["ui::ForEach"]
+control = "ui::ForEachControl"
+headers = ["ui/collections/ForEach.hpp"]
+tests = ["tests/test_for_each.cpp", "tests/test_dynamic.cpp"]
+
+[[page]]
+section = "controls"
+slug = "carousel"
+title = "Carousel"
+group = "Navigation"
+specs = ["ui::Carousel"]
+control = "ui::CarouselControl"
+headers = ["ui/navigation/Carousel.hpp"]
+tests = ["tests/test_carousel.cpp"]
+
+[[page]]
+section = "controls"
+slug = "image"
+title = "Image"
+group = "Media and Icons"
+specs = ["ui::Image"]
+control = "ui::ImageControl"
+headers = ["ui/media/Image.hpp"]
+tests = ["tests/test_image.cpp"]
+
+[[page]]
+section = "controls"
+slug = "ink-canvas"
+title = "InkCanvas"
+group = "Media and Icons"
+specs = ["ui::InkCanvas"]
+control = "ui::InkCanvasControl"
+related = ["ui::InkStrokeContainer", "ui::InkStroke", "ui::InkPoint", "ui::InkDrawingAttributes"]
+headers = ["ui/media/InkCanvas.hpp"]
+tests = ["tests/test_ink_canvas.cpp"]
+
+[[page]]
+section = "controls"
+slug = "ink-toolbar"
+title = "InkToolbar"
+group = "Media and Icons"
+specs = ["ui::InkToolbar"]
+control = "ui::InkToolbarControl"
+related = ["ui::InkToolbarToolButtonControl"]
+headers = ["ui/media/InkToolbar.hpp"]
+tests = ["tests/test_ink_toolbar.cpp"]
+
+[[page]]
+section = "controls"
+slug = "shapes"
+title = "Shapes"
+group = "Media and Icons"
+specs = ["ui::Rectangle", "ui::Ellipse", "ui::Line", "ui::Polyline", "ui::Polygon", "ui::Path"]
+control = "ui::Shape"
+related = ["ui::RectangleControl", "ui::EllipseControl", "ui::LineControl", "ui::PolylineControl", "ui::PolygonControl", "ui::PathControl"]
+headers = ["ui/media/Shape.hpp"]
+tests = ["tests/test_shapes.cpp"]
+
+[[page]]
+section = "controls"
+slug = "drag-area"
+title = "DragArea"
+group = "Windowing and Hosting"
+specs = ["ui::DragArea"]
+control = "ui::DragAreaControl"
+headers = ["ui/hosting/DragArea.hpp"]
+tests = ["tests/test_window_state.cpp"]
+
+[[page]]
+section = "controls"
+slug = "menu-flyout"
+title = "MenuFlyout"
+group = "Menus and Toolbars"
+specs = ["ui::MenuFlyout"]
+control = "ui::MenuFlyoutControl"
+related = ["ui::MenuItem"]
+headers = ["ui/menus/MenuFlyout.hpp", "ui/menus/MenuItem.hpp"]
+tests = ["tests/test_menu_flyout.cpp"]
+
+[[page]]
+section = "controls"
+slug = "context-menu"
+title = "ContextMenu"
+group = "Menus and Toolbars"
+specs = ["ui::ContextMenu"]
+control = "ui::ContextMenuControl"
+headers = ["ui/menus/ContextMenu.hpp"]
+tests = ["tests/test_context_menu.cpp"]
+
+[[page]]
+section = "controls"
+slug = "app-bar-button"
+title = "AppBarButton"
+group = "Menus and Toolbars"
+specs = ["ui::AppBarButton", "ui::AppBarToggleButton", "ui::AppBarSeparator"]
+control = "ui::AppBarButtonControl"
+related = ["ui::AppBarToggleButtonControl", "ui::AppBarSeparatorControl", "ui::CommandBarElement"]
+headers = ["ui/menus/AppBarButton.hpp"]
+tests = ["tests/test_command_bar.cpp"]
+
+[[page]]
+section = "controls"
+slug = "command-bar"
+title = "CommandBar"
+group = "Menus and Toolbars"
+specs = ["ui::CommandBar"]
+control = "ui::CommandBarControl"
+headers = ["ui/menus/CommandBar.hpp"]
+tests = ["tests/test_command_bar.cpp"]
+
+[[page]]
+section = "controls"
+slug = "command-bar-flyout"
+title = "CommandBarFlyout"
+group = "Menus and Toolbars"
+specs = ["ui::CommandBarFlyout"]
+control = "ui::CommandBarFlyoutControl"
+headers = ["ui/menus/CommandBarFlyout.hpp"]
+tests = ["tests/test_command_bar.cpp"]
+
+[[page]]
+section = "controls"
+slug = "popup"
+title = "Popup"
+group = "Dialogs and Flyouts"
+specs = ["ui::Popup"]
+control = "ui::PopupControl"
+headers = ["ui/dialogs/Popup.hpp"]
+tests = ["tests/test_popup.cpp"]
+
+[[page]]
+section = "controls"
+slug = "teaching-tip"
+title = "TeachingTip"
+group = "Dialogs and Flyouts"
+specs = ["ui::TeachingTip"]
+control = "ui::TeachingTipControl"
+headers = ["ui/dialogs/TeachingTip.hpp"]
+tests = ["tests/test_teaching_tip.cpp"]
+
+[[page]]
+section = "controls"
+slug = "sections"
+title = "Sections"
+group = "Navigation"
+specs = ["ui::Sections", "ui::Section", "ui::SectionList"]
+control = "ui::SectionsControl"
+related = ["ui::Section"]
+headers = ["ui/navigation/Sections.hpp"]
+tests = ["tests/test_sections.cpp"]
+
+[[page]]
+section = "controls"
+slug = "navigation-frame"
+title = "NavigationFrame"
+group = "Navigation"
+specs = ["ui::NavigationFrame"]
+control = "ui::NavigationFrameControl"
+related = ["ui::NavigationEventArgs"]
+headers = ["ui/navigation/NavigationFrame.hpp"]
+tests = ["tests/test_navigation_frame.cpp"]
+
+[[page]]
+section = "controls"
+slug = "password-box"
+title = "PasswordBox"
+group = "Text"
+specs = ["ui::PasswordBox"]
+control = "ui::PasswordBoxControl"
+headers = ["ui/text/PasswordBox.hpp"]
+tests = ["tests/test_password_box.cpp"]
+
+[[page]]
+section = "controls"
+slug = "rich-edit-box"
+title = "RichEditBox"
+group = "Text"
+specs = ["ui::RichEditBox"]
+control = "ui::RichEditBoxControl"
+related = ["ui::RichTextFormat", "ui::RichTextSpan"]
+headers = ["ui/text/RichEditBox.hpp"]
+tests = ["tests/test_rich_edit_box.cpp"]
+
+# ------------------------------------------------------------------------- layout
+[[page]]
+section = "layout"
+slug = "stack"
+title = "Stack"
+group = "Panels"
+specs = ["ui::VerticalStack", "ui::HorizontalStack"]
+control = "ui::StackControl"
+headers = ["ui/panels/Stack.hpp"]
+tests = ["tests/test_stack.cpp"]
+
+[[page]]
+section = "layout"
+slug = "grid"
+title = "Grid"
+group = "Panels"
+specs = ["ui::Grid", "ui::Cell", "ui::CellList"]
+control = "ui::GridControl"
+headers = ["ui/panels/Grid.hpp"]
+tests = ["tests/test_grid.cpp"]
+
+[[page]]
+section = "layout"
+slug = "splitter"
+title = "Splitter"
+group = "Panes and Splitters"
+specs = ["ui::Splitter"]
+control = "ui::SplitterControl"
+headers = ["ui/panes/Splitter.hpp"]
+tests = ["tests/test_splitter.cpp"]
+
+[[page]]
+section = "layout"
+slug = "resize-gripper"
+title = "ResizeGripper"
+group = "Panes and Splitters"
+specs = ["ui::ResizeGripper"]
+control = "ui::ResizeGripperControl"
+headers = ["ui/panes/ResizeGripper.hpp"]
+tests = ["tests/test_resize_gripper.cpp"]
+
+[[page]]
+section = "layout"
+slug = "scroll"
+title = "Scroll"
+group = "Scrolling and Gestures"
+specs = ["ui::Scroll"]
+control = "ui::ScrollControl"
+related = ["ui::ScrollBarOverlay"]
+headers = ["ui/scrolling/Scroll.hpp", "ui/scrolling/ScrollBarOverlay.hpp"]
+tests = ["tests/test_scroll.cpp"]
+
+[[page]]
+section = "layout"
+slug = "parallax"
+title = "Parallax"
+group = "Scrolling and Gestures"
+specs = ["ui::Parallax"]
+control = "ui::ParallaxControl"
+headers = ["ui/scrolling/Parallax.hpp"]
+tests = ["tests/test_parallax.cpp"]
+
+[[page]]
+section = "layout"
+slug = "annotated-scroll-bar"
+title = "AnnotatedScrollBar"
+group = "Scrolling and Gestures"
+specs = ["ui::AnnotatedScrollBar"]
+control = "ui::AnnotatedScrollBarControl"
+related = ["ui::AnnotatedScrollBarAnnotation"]
+headers = ["ui/scrolling/AnnotatedScrollBar.hpp"]
+tests = ["tests/test_annotated_scroll_bar.cpp"]
+
+[[page]]
+section = "layout"
+slug = "expander"
+title = "Expander"
+group = "Containers"
+specs = ["ui::Expander"]
+control = "ui::ExpanderControl"
+headers = ["ui/containers/Expander.hpp"]
+tests = ["tests/test_expander.cpp"]
+
+[[page]]
+section = "layout"
+slug = "shortcuts"
+title = "Shortcuts"
+group = "Containers"
+specs = ["ui::Shortcuts"]
+related = ["ui::Shortcut", "ui::ShortcutList"]
+headers = ["ui/containers/Shortcuts.hpp"]
+tests = ["tests/test_shortcuts.cpp"]
+
+[[page]]
+section = "layout"
+slug = "group-box"
+title = "GroupBox"
+group = "Containers"
+specs = ["ui::GroupBox"]
+control = "ui::GroupBoxControl"
+headers = ["ui/containers/GroupBox.hpp"]
+tests = ["tests/test_group_box.cpp"]
+
+[[page]]
+section = "layout"
+slug = "two-pane"
+title = "TwoPane"
+group = "Panes and Splitters"
+specs = ["ui::TwoPane"]
+control = "ui::TwoPaneControl"
+headers = ["ui/panes/TwoPane.hpp"]
+tests = ["tests/test_two_pane.cpp"]
+
+[[page]]
+section = "layout"
+slug = "swipe"
+title = "Swipe"
+group = "Scrolling and Gestures"
+specs = ["ui::Swipe"]
+control = "ui::SwipeControl"
+related = ["ui::SwipeItem"]
+headers = ["ui/scrolling/Swipe.hpp"]
+tests = ["tests/test_swipe.cpp"]
+
+[[page]]
+section = "layout"
+slug = "pull-to-refresh"
+title = "PullToRefresh"
+group = "Scrolling and Gestures"
+specs = ["ui::PullToRefresh"]
+control = "ui::PullToRefreshControl"
+headers = ["ui/scrolling/PullToRefresh.hpp"]
+tests = ["tests/test_pull_to_refresh.cpp"]
+
+[[page]]
+section = "layout"
+slug = "toolbar"
+title = "Toolbar"
+group = "Containers"
+specs = ["ui::Toolbar", "ui::Separator"]
+control = "ui::ToolbarControl"
+related = ["ui::SeparatorControl"]
+headers = ["ui/containers/Toolbar.hpp"]
+tests = ["tests/test_toolbar.cpp"]
+
+[[page]]
+section = "layout"
+slug = "border"
+title = "Border"
+group = "Containers"
+specs = ["ui::Border"]
+control = "ui::BorderControl"
+headers = ["ui/containers/Border.hpp"]
+tests = ["tests/test_layout_panels.cpp"]
+
+[[page]]
+section = "layout"
+slug = "canvas"
+title = "Canvas"
+group = "Panels"
+specs = ["ui::Canvas", "ui::CanvasItem"]
+control = "ui::CanvasControl"
+related = ["ui::CanvasItemList"]
+headers = ["ui/panels/Canvas.hpp"]
+tests = ["tests/test_layout_panels.cpp"]
+
+[[page]]
+section = "layout"
+slug = "scale-to-fit"
+title = "ScaleToFit"
+group = "Containers"
+specs = ["ui::ScaleToFit"]
+control = "ui::ScaleToFitControl"
+headers = ["ui/containers/ScaleToFit.hpp"]
+tests = ["tests/test_layout_panels.cpp"]
+
+[[page]]
+section = "layout"
+slug = "wrap-panel"
+title = "WrapPanel"
+group = "Panels"
+specs = ["ui::WrapPanel"]
+control = "ui::WrapPanelControl"
+headers = ["ui/panels/WrapPanel.hpp"]
+tests = ["tests/test_layout_panels.cpp"]
+
+[[page]]
+section = "layout"
+slug = "tile-panel"
+title = "TilePanel"
+group = "Panels"
+specs = ["ui::TilePanel", "ui::TilePanelItem"]
+control = "ui::TilePanelControl"
+related = ["ui::TilePanelItemList"]
+headers = ["ui/panels/TilePanel.hpp"]
+tests = ["tests/test_layout_panels.cpp"]
+
+[[page]]
+section = "layout"
+slug = "relative-panel"
+title = "RelativePanel"
+group = "Panels"
+specs = ["ui::RelativePanel", "ui::RelativeItem"]
+control = "ui::RelativePanelControl"
+related = ["ui::RelativePanelConstraints", "ui::RelativeItemList"]
+headers = ["ui/panels/RelativePanel.hpp"]
+tests = ["tests/test_layout_panels.cpp"]
+
+[[page]]
+section = "layout"
+slug = "layout-panel"
+title = "LayoutPanel"
+group = "Panels"
+specs = ["ui::LayoutPanel"]
+control = "ui::LayoutPanelControl"
+headers = ["ui/panels/LayoutPanel.hpp"]
+tests = ["tests/test_layout_panels.cpp"]
+
+# The layout values a `.layout` field takes, and the Layout objects they build.
+[[page]]
+section = "controls"
+slug = "item-layouts"
+title = "Item Layouts"
+group = "Collections"
+control = "ui::Layout"
+specs = ["ui::StackLayout", "ui::WrapLayout", "ui::TileLayout", "ui::LinedFlowLayout"]
+related = ["ui::NonVirtualizingLayout", "ui::VirtualizingLayout", "ui::StackLayoutEngine",
+           "ui::TileLayoutEngine", "ui::WrapLayoutEngine", "ui::LinedFlowLayoutEngine"]
+headers = ["ui/layouts/Layout.hpp", "ui/layouts/StackLayout.hpp", "ui/layouts/TileLayout.hpp", "ui/layouts/WrapLayout.hpp",
+           "ui/layouts/LinedFlowLayout.hpp"]
+tests = ["tests/test_layout_panels.cpp", "tests/test_for_each.cpp"]
+
+[[page]]
+section = "layout"
+slug = "panel"
+title = "Panel"
+group = "Panels"
+control = "ui::Panel"
+headers = ["ui/panels/Panel.hpp"]
+tests = ["tests/test_layout_panels.cpp"]
+
+[[page]]
+section = "layout"
+slug = "side-pane"
+title = "SidePane"
+group = "Panes and Splitters"
+specs = ["ui::SidePane"]
+control = "ui::SidePaneControl"
+headers = ["ui/panes/SidePane.hpp"]
+tests = ["tests/test_side_pane.cpp"]
+
+[[page]]
+section = "layout"
+slug = "density-scope"
+title = "DensityScope"
+group = "Containers"
+specs = ["ui::DensityScope"]
+control = "ui::DensityScopeControl"
+headers = ["ui/containers/DensityScope.hpp"]
+tests = ["tests/test_styles.cpp"]
+
+[[page]]
+section = "layout"
+slug = "spacer"
+title = "Spacer"
+group = "Panels"
+specs = ["ui::Spacer"]
+control = "ui::SpacerControl"
+headers = ["ui/panels/Spacer.hpp"]
+tests = ["tests/test_stack.cpp"]
+
+[[page]]
+section = "layout"
+slug = "fill"
+title = "Fill"
+group = "Panels"
+specs = ["ui::Fill"]
+control = "ui::FillControl"
+headers = ["ui/panels/Fill.hpp"]
+tests = ["tests/test_stack.cpp"]
+
+# ---------------------------------------------------------------- spec vocabulary
+# The shared spec types get one page in the tree section rather than per-control pages.
+[[page]]
+section = "tree"
+slug = "spec-vocabulary"
+title = "Spec Vocabulary"
+specs = ["ui::Style"]
+related = ["ui::Spec", "ui::SpecList", "ui::Control", "ui::ControlOut", "ui::LayoutSpec"]
+headers = ["ui/spec/Common.hpp", "ui/spec/Spec.hpp", "ui/spec/Control.hpp", "ui/spec/LayoutSpec.hpp",
+           "ui/spec/ItemsModel.hpp", "ui/spec/Dynamic.hpp"]
+tests = ["tests/test_spec.cpp"]
+
+# ------------------------------------------------------------------ topic bundles
+# Types too small to be worth a page each; the rest of their header still gets one per type.
+[[page]]
+section = "rendering"
+slug = "render-commands"
+title = "Render Commands"
+related = ["ui::FillRoundedRect", "ui::FillRoundedRectGradient", "ui::FillEllipse", "ui::FillPolygon",
+           "ui::FillRectPattern", "ui::StrokeRoundedRect", "ui::StrokeRoundedRectGradient",
+           "ui::StrokeEllipse", "ui::StrokeLine", "ui::StrokeWavyLine", "ui::StrokePolyline", "ui::DrawTextRun",
+           "ui::DrawGeometry", "ui::DrawImage", "ui::DrawImageRect", "ui::DrawImageNineSlice",
+           "ui::DrawSvg", "ui::PushClip", "ui::PushClipEllipse", "ui::PopClip", "ui::PushTransform",
+           "ui::PopTransform", "ui::PushOpacityLayer", "ui::PopOpacityLayer", "ui::SetRasterization"]
+tests = ["tests/test_render.cpp"]
+
+[[page]]
+section = "tree"
+slug = "easing-functions"
+title = "Easing Functions"
+related = ["ui::BackEase", "ui::BounceEase", "ui::CircleEase", "ui::CubicEase", "ui::ElasticEase",
+           "ui::ExponentialEase", "ui::PowerEase", "ui::QuadraticEase", "ui::QuarticEase",
+           "ui::QuinticEase", "ui::SineEase"]
+tests = ["tests/test_animation.cpp"]
+
+[[page]]
+section = "tree"
+slug = "element-transitions"
+title = "Element Transitions"
+related = ["ui::AddRemoveTransition", "ui::ContentTransition", "ui::EntranceTransition",
+           "ui::NavigationTransition", "ui::PopupTransition", "ui::RepositionTransition"]
+tests = ["tests/test_animation.cpp"]
+
+[[page]]
+section = "tree"
+slug = "navigation-transitions"
+title = "Navigation Transitions"
+related = ["ui::FadeThroughPageTransition", "ui::ZoomPageTransition",
+           "ui::RisePageTransition", "ui::SlidePageTransition",
+           "ui::NoPageTransition"]
+tests = ["tests/test_animation.cpp"]
+
+[[page]]
+section = "tree"
+slug = "animated-visual-sources"
+title = "Animated Visual Sources"
+related = ["ui::AnimatedBackVisualSource", "ui::AnimatedChevronDownSmallVisualSource",
+           "ui::AnimatedChevronRightDownSmallVisualSource", "ui::AnimatedChevronUpDownSmallVisualSource",
+           "ui::AnimatedFindVisualSource", "ui::AnimatedGlobalNavigationButtonVisualSource",
+           "ui::AnimatedSettingsVisualSource"]
+tests = ["tests/test_animated_icon.cpp"]
+
+[[page]]
+section = "tree"
+slug = "connected-animation"
+title = "ConnectedAnimation"
+group = "Classes"
+control = "ui::ConnectedAnimation"
+related = ["ui::ConnectedAnimationService", "ui::StraightFlightPath",
+           "ui::ShortFlightPath", "ui::ArcFlightPath"]
+headers = ["ui/ConnectedAnimation.hpp"]

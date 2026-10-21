@@ -1,0 +1,490 @@
+active:
+SetRasterization geometry=antialiased text=subpixel snap=false
+FillRoundedRect rect=(4.00,0.00,232.00,1.00) radius=0.00 color=#74B8FC40
+FillRoundedRect rect=(2.00,1.00,236.00,1.00) radius=0.00 color=#74B8FC40
+FillRoundedRect rect=(1.00,2.00,238.00,1.00) radius=0.00 color=#74B8FC40
+FillRoundedRect rect=(1.00,3.00,238.00,1.00) radius=0.00 color=#74B8FC40
+FillRoundedRect rect=(0.00,4.00,240.00,116.00) radius=0.00 color=#74B8FC40
+PushClip rect=(4.00,0.00,232.00,1.00)
+FillPolygon points=[(28.80,0.00) (74.80,0.00) (8.80,120.00) (-37.20,120.00)] fill=#FFFFFF1C
+FillPolygon points=[(57.60,0.00) (75.60,0.00) (9.60,120.00) (-8.40,120.00)] fill=#FFFFFF14
+FillPolygon points=[(148.80,0.00) (218.80,0.00) (152.80,120.00) (82.80,120.00)] fill=#FFFFFF0E
+PopClip
+PushClip rect=(2.00,1.00,236.00,1.00)
+FillPolygon points=[(28.80,0.00) (74.80,0.00) (8.80,120.00) (-37.20,120.00)] fill=#FFFFFF1C
+FillPolygon points=[(57.60,0.00) (75.60,0.00) (9.60,120.00) (-8.40,120.00)] fill=#FFFFFF14
+FillPolygon points=[(148.80,0.00) (218.80,0.00) (152.80,120.00) (82.80,120.00)] fill=#FFFFFF0E
+PopClip
+PushClip rect=(1.00,2.00,238.00,1.00)
+FillPolygon points=[(28.80,0.00) (74.80,0.00) (8.80,120.00) (-37.20,120.00)] fill=#FFFFFF1C
+FillPolygon points=[(57.60,0.00) (75.60,0.00) (9.60,120.00) (-8.40,120.00)] fill=#FFFFFF14
+FillPolygon points=[(148.80,0.00) (218.80,0.00) (152.80,120.00) (82.80,120.00)] fill=#FFFFFF0E
+PopClip
+PushClip rect=(1.00,3.00,238.00,1.00)
+FillPolygon points=[(28.80,0.00) (74.80,0.00) (8.80,120.00) (-37.20,120.00)] fill=#FFFFFF1C
+FillPolygon points=[(57.60,0.00) (75.60,0.00) (9.60,120.00) (-8.40,120.00)] fill=#FFFFFF14
+FillPolygon points=[(148.80,0.00) (218.80,0.00) (152.80,120.00) (82.80,120.00)] fill=#FFFFFF0E
+PopClip
+PushClip rect=(0.00,4.00,240.00,116.00)
+FillPolygon points=[(28.80,0.00) (74.80,0.00) (8.80,120.00) (-37.20,120.00)] fill=#FFFFFF1C
+FillPolygon points=[(57.60,0.00) (75.60,0.00) (9.60,120.00) (-8.40,120.00)] fill=#FFFFFF14
+FillPolygon points=[(148.80,0.00) (218.80,0.00) (152.80,120.00) (82.80,120.00)] fill=#FFFFFF0E
+PopClip
+FillRoundedRect rect=(8.00,30.00,224.00,82.00) radius=0.00 color=#F0F0F0FF
+FillRoundedRect rect=(4.00,0.00,232.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(2.00,1.00,2.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(236.00,1.00,2.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(1.00,2.00,1.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(238.00,2.00,1.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(1.00,3.00,1.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(238.00,3.00,1.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(0.00,4.00,1.00,115.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(239.00,4.00,1.00,115.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(0.00,119.00,240.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(4.00,1.00,232.00,1.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(2.00,2.00,2.00,1.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(236.00,2.00,2.00,1.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(2.00,3.00,1.00,1.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(237.00,3.00,1.00,1.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(1.00,4.00,1.00,114.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(238.00,4.00,1.00,114.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(1.00,118.00,238.00,1.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(7.00,29.00,226.00,1.00) radius=0.00 color=#00000080
+FillRoundedRect rect=(7.00,112.00,226.00,1.00) radius=0.00 color=#00000080
+FillRoundedRect rect=(7.00,30.00,1.00,82.00) radius=0.00 color=#00000080
+FillRoundedRect rect=(232.00,30.00,1.00,82.00) radius=0.00 color=#00000080
+SetRasterization geometry=antialiased text=grayscale snap=false
+PushClip rect=(0.00,0.00,240.00,30.00)
+DrawTextRun rect=(6.00,8.00,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.71,8.71,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,9.00,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(4.29,8.71,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(4.00,8.00,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(4.29,7.29,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,7.00,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.71,7.29,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(7.00,8.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.73,9.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.00,9.73,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,10.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(4.00,9.73,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.27,9.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.00,8.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.27,7.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(4.00,6.27,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,6.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.00,6.27,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.73,7.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(8.50,8.00,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(8.23,9.34,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(7.47,10.47,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.34,11.23,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,11.50,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.66,11.23,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(2.53,10.47,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(1.77,9.34,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(1.50,8.00,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(1.77,6.66,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(2.53,5.53,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.66,4.77,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,4.50,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.34,4.77,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(7.47,5.53,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(8.23,6.66,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(10.00,8.00,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(9.76,9.55,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(9.05,10.94,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(7.94,12.05,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.55,12.76,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,13.00,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.45,12.76,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(2.06,12.05,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(0.95,10.94,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(0.24,9.55,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(0.00,8.00,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(0.24,6.45,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(0.95,5.06,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(2.06,3.95,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.45,3.24,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,3.00,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.55,3.24,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(7.94,3.95,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(9.05,5.06,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(9.76,6.45,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+PopClip
+PushClip rect=(5.00,8.00,125.00,22.00)
+DrawTextRun rect=(5.00,8.00,125.00,22.00) color=#000000FF size=12.00 weight=regular halign=leading valign=center text="Notepad"
+PopClip
+SetRasterization geometry=antialiased text=subpixel snap=false
+FillRoundedRectGradient rect=(132.00,0.00,27.00,20.00) radius=0.00 axis=vertical stops=[0.03:#5D6F88FF 0.08:#DFE8F2FF 0.12:#C3D4E7FF 0.17:#C1D3E7FF 0.22:#C1D3E6FF 0.28:#BFD3E7FF 0.32:#BED3E7FF 0.38:#BFD3E8FF 0.43:#BFD3E8FF 0.47:#98B1CCFF 0.52:#98B1CCFF 0.57:#9AB3CDFF 0.62:#9AB3CDFF 0.68:#9DB5CFFF 0.73:#A4BED8FF 0.77:#ACC5DFFF 0.82:#B2CBE5FF 0.88:#B7D0E9FF 0.93:#D9E7F4FF 0.98:#697A92FF]
+FillRoundedRect rect=(132.00,0.00,1.00,20.00) radius=0.00 color=#63748DFF
+FillRoundedRect rect=(158.00,0.00,1.00,20.00) radius=0.00 color=#63748DFF
+FillRoundedRect rect=(133.00,1.00,1.00,18.00) radius=0.00 color=#C8D5E4FF
+FillRoundedRect rect=(157.00,1.00,1.00,18.00) radius=0.00 color=#C8D5E4FF
+FillRoundedRect rect=(140.00,10.00,11.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(139.00,11.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(140.00,11.00,11.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(151.00,11.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(139.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(140.00,12.00,11.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(151.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(139.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(140.00,13.00,11.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(151.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(139.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(140.00,14.00,11.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(151.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(140.00,15.00,11.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRectGradient rect=(159.00,0.00,27.00,20.00) radius=0.00 axis=vertical stops=[0.03:#5D6F88FF 0.08:#DFE8F2FF 0.12:#C3D4E7FF 0.17:#C1D3E7FF 0.22:#C1D3E6FF 0.28:#BFD3E7FF 0.32:#BED3E7FF 0.38:#BFD3E8FF 0.43:#BFD3E8FF 0.47:#98B1CCFF 0.52:#98B1CCFF 0.57:#9AB3CDFF 0.62:#9AB3CDFF 0.68:#9DB5CFFF 0.73:#A4BED8FF 0.77:#ACC5DFFF 0.82:#B2CBE5FF 0.88:#B7D0E9FF 0.93:#D9E7F4FF 0.98:#697A92FF]
+FillRoundedRect rect=(159.00,0.00,1.00,20.00) radius=0.00 color=#63748DFF
+FillRoundedRect rect=(185.00,0.00,1.00,20.00) radius=0.00 color=#63748DFF
+FillRoundedRect rect=(160.00,1.00,1.00,18.00) radius=0.00 color=#C8D5E4FF
+FillRoundedRect rect=(184.00,1.00,1.00,18.00) radius=0.00 color=#C8D5E4FF
+FillRoundedRect rect=(167.00,4.00,11.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,5.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,5.00,11.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(178.00,5.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,6.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,6.00,11.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(178.00,6.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,7.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,7.00,11.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(178.00,7.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,8.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,8.00,3.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(170.00,8.00,5.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(175.00,8.00,3.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(178.00,8.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,9.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,9.00,3.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(170.00,9.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(174.00,9.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(175.00,9.00,3.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(178.00,9.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,10.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,10.00,3.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(170.00,10.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(174.00,10.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(175.00,10.00,3.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(178.00,10.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,11.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,11.00,3.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(170.00,11.00,5.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(175.00,11.00,3.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(178.00,11.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,12.00,11.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(178.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,13.00,11.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(178.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,14.00,11.00,1.00) radius=0.00 color=#FCFCFCFF
+FillRoundedRect rect=(178.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,15.00,11.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRectGradient rect=(186.00,0.00,48.00,20.00) radius=0.00 axis=vertical stops=[0.03:#431422FF 0.08:#F4D3CCFF 0.12:#E9A99CFF 0.17:#E7A699FF 0.22:#E6A295FF 0.28:#E49E90FF 0.32:#E2988BFF 0.38:#DF9587FF 0.43:#DF9587FF 0.47:#B8432CFF 0.52:#B8432CFF 0.57:#BB4933FF 0.62:#BB4933FF 0.68:#BF533EFF 0.73:#C45E4AFF 0.77:#C96A57FF 0.82:#CE7564FF 0.88:#D27F6FFF 0.93:#ECC6C0FF 0.98:#431422FF]
+FillRoundedRect rect=(186.00,0.00,1.00,20.00) radius=0.00 color=#431422FF
+FillRoundedRect rect=(233.00,0.00,1.00,20.00) radius=0.00 color=#431422FF
+FillRoundedRect rect=(187.00,1.00,1.00,18.00) radius=0.00 color=#D99A8EFF
+FillRoundedRect rect=(232.00,1.00,1.00,18.00) radius=0.00 color=#D99A8EFF
+FillRoundedRect rect=(203.00,4.00,3.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(211.00,4.00,3.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(202.00,5.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,5.00,3.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(206.00,5.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(210.00,5.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(211.00,5.00,3.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(214.00,5.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(202.00,6.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,6.00,4.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(207.00,6.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(209.00,6.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(210.00,6.00,4.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(214.00,6.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,7.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(204.00,7.00,4.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(208.00,7.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(209.00,7.00,4.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(213.00,7.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(204.00,8.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(205.00,8.00,7.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(212.00,8.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(205.00,9.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(206.00,9.00,5.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(211.00,9.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(205.00,10.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(206.00,10.00,5.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(211.00,10.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(204.00,11.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(205.00,11.00,7.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(212.00,11.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(204.00,12.00,4.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(208.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(209.00,12.00,4.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(213.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(202.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,13.00,4.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(207.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(209.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(210.00,13.00,4.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(214.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(202.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,14.00,3.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(206.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(210.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(211.00,14.00,3.00,1.00) radius=0.00 color=#FDFDFDFF
+FillRoundedRect rect=(214.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,15.00,3.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(211.00,15.00,3.00,1.00) radius=0.00 color=#535666FF
+PushClip rect=(8.00,30.00,224.00,82.00)
+FillRoundedRectGradient rect=(8.00,30.00,224.00,26.20) radius=2.75 axis=vertical stops=[0.00:#F3F3F3FF 0.50:#EBEBEBFF 0.50:#DDDDDDFF 1.00:#CDCDCDFF]
+StrokeRoundedRect rect=(8.50,30.50,223.00,25.20) radius=2.25 color=#707070FF width=1.00
+StrokeRoundedRectGradient rect=(9.50,31.50,221.00,23.20) radius=1.25 extent=23.20 width=1.00 stops=[0.00:#FFFFFFFA 1.00:#FFFFFF85]
+DrawTextRun rect=(8.00,30.00,224.00,26.20) color=#000000FF size=12.00 weight=regular halign=center valign=center text="OK"
+PopClip
+inactive:
+SetRasterization geometry=antialiased text=subpixel snap=false
+FillRoundedRect rect=(4.00,0.00,232.00,1.00) radius=0.00 color=#B4CCE626
+FillRoundedRect rect=(2.00,1.00,236.00,1.00) radius=0.00 color=#B4CCE626
+FillRoundedRect rect=(1.00,2.00,238.00,1.00) radius=0.00 color=#B4CCE626
+FillRoundedRect rect=(1.00,3.00,238.00,1.00) radius=0.00 color=#B4CCE626
+FillRoundedRect rect=(0.00,4.00,240.00,116.00) radius=0.00 color=#B4CCE626
+PushClip rect=(4.00,0.00,232.00,1.00)
+FillPolygon points=[(28.80,0.00) (74.80,0.00) (8.80,120.00) (-37.20,120.00)] fill=#FFFFFF11
+FillPolygon points=[(57.60,0.00) (75.60,0.00) (9.60,120.00) (-8.40,120.00)] fill=#FFFFFF0C
+FillPolygon points=[(148.80,0.00) (218.80,0.00) (152.80,120.00) (82.80,120.00)] fill=#FFFFFF08
+PopClip
+PushClip rect=(2.00,1.00,236.00,1.00)
+FillPolygon points=[(28.80,0.00) (74.80,0.00) (8.80,120.00) (-37.20,120.00)] fill=#FFFFFF11
+FillPolygon points=[(57.60,0.00) (75.60,0.00) (9.60,120.00) (-8.40,120.00)] fill=#FFFFFF0C
+FillPolygon points=[(148.80,0.00) (218.80,0.00) (152.80,120.00) (82.80,120.00)] fill=#FFFFFF08
+PopClip
+PushClip rect=(1.00,2.00,238.00,1.00)
+FillPolygon points=[(28.80,0.00) (74.80,0.00) (8.80,120.00) (-37.20,120.00)] fill=#FFFFFF11
+FillPolygon points=[(57.60,0.00) (75.60,0.00) (9.60,120.00) (-8.40,120.00)] fill=#FFFFFF0C
+FillPolygon points=[(148.80,0.00) (218.80,0.00) (152.80,120.00) (82.80,120.00)] fill=#FFFFFF08
+PopClip
+PushClip rect=(1.00,3.00,238.00,1.00)
+FillPolygon points=[(28.80,0.00) (74.80,0.00) (8.80,120.00) (-37.20,120.00)] fill=#FFFFFF11
+FillPolygon points=[(57.60,0.00) (75.60,0.00) (9.60,120.00) (-8.40,120.00)] fill=#FFFFFF0C
+FillPolygon points=[(148.80,0.00) (218.80,0.00) (152.80,120.00) (82.80,120.00)] fill=#FFFFFF08
+PopClip
+PushClip rect=(0.00,4.00,240.00,116.00)
+FillPolygon points=[(28.80,0.00) (74.80,0.00) (8.80,120.00) (-37.20,120.00)] fill=#FFFFFF11
+FillPolygon points=[(57.60,0.00) (75.60,0.00) (9.60,120.00) (-8.40,120.00)] fill=#FFFFFF0C
+FillPolygon points=[(148.80,0.00) (218.80,0.00) (152.80,120.00) (82.80,120.00)] fill=#FFFFFF08
+PopClip
+FillRoundedRect rect=(8.00,30.00,224.00,82.00) radius=0.00 color=#F0F0F0FF
+FillRoundedRect rect=(4.00,0.00,232.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(2.00,1.00,2.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(236.00,1.00,2.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(1.00,2.00,1.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(238.00,2.00,1.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(1.00,3.00,1.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(238.00,3.00,1.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(0.00,4.00,1.00,115.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(239.00,4.00,1.00,115.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(0.00,119.00,240.00,1.00) radius=0.00 color=#000000C0
+FillRoundedRect rect=(4.00,1.00,232.00,1.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(2.00,2.00,2.00,1.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(236.00,2.00,2.00,1.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(2.00,3.00,1.00,1.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(237.00,3.00,1.00,1.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(1.00,4.00,1.00,114.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(238.00,4.00,1.00,114.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(1.00,118.00,238.00,1.00) radius=0.00 color=#FFFFFF80
+FillRoundedRect rect=(7.00,29.00,226.00,1.00) radius=0.00 color=#00000080
+FillRoundedRect rect=(7.00,112.00,226.00,1.00) radius=0.00 color=#00000080
+FillRoundedRect rect=(7.00,30.00,1.00,82.00) radius=0.00 color=#00000080
+FillRoundedRect rect=(232.00,30.00,1.00,82.00) radius=0.00 color=#00000080
+SetRasterization geometry=antialiased text=grayscale snap=false
+PushClip rect=(0.00,0.00,240.00,30.00)
+DrawTextRun rect=(6.00,8.00,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.71,8.71,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,9.00,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(4.29,8.71,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(4.00,8.00,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(4.29,7.29,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,7.00,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.71,7.29,125.00,22.00) color=#FFFFFF1C size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(7.00,8.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.73,9.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.00,9.73,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,10.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(4.00,9.73,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.27,9.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.00,8.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.27,7.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(4.00,6.27,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,6.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.00,6.27,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.73,7.00,125.00,22.00) color=#FFFFFF14 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(8.50,8.00,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(8.23,9.34,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(7.47,10.47,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.34,11.23,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,11.50,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.66,11.23,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(2.53,10.47,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(1.77,9.34,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(1.50,8.00,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(1.77,6.66,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(2.53,5.53,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.66,4.77,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,4.50,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.34,4.77,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(7.47,5.53,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(8.23,6.66,125.00,22.00) color=#FFFFFF08 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(10.00,8.00,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(9.76,9.55,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(9.05,10.94,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(7.94,12.05,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.55,12.76,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,13.00,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.45,12.76,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(2.06,12.05,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(0.95,10.94,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(0.24,9.55,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(0.00,8.00,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(0.24,6.45,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(0.95,5.06,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(2.06,3.95,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(3.45,3.24,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(5.00,3.00,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(6.55,3.24,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(7.94,3.95,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(9.05,5.06,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+DrawTextRun rect=(9.76,6.45,125.00,22.00) color=#FFFFFF02 size=12.00 weight=regular halign=leading valign=center text="Notepad"
+PopClip
+PushClip rect=(5.00,8.00,125.00,22.00)
+DrawTextRun rect=(5.00,8.00,125.00,22.00) color=#000000FF size=12.00 weight=regular halign=leading valign=center text="Notepad"
+PopClip
+SetRasterization geometry=antialiased text=subpixel snap=false
+FillRoundedRectGradient rect=(132.00,0.00,27.00,20.00) radius=0.00 axis=vertical stops=[0.03:#7F96B0FF 0.08:#C2D3E6FF 0.12:#B5CAE1FF 0.17:#B4CAE2FF 0.22:#B5CBE2FF 0.28:#B5CCE3FF 0.32:#B5CDE4FF 0.38:#B5CCE5FF 0.43:#B5CCE5FF 0.47:#A3BCD7FF 0.52:#A3BCD7FF 0.57:#A4BDD8FF 0.62:#A4BDD8FF 0.68:#A6BFDAFF 0.73:#AAC4DEFF 0.77:#AFC8E2FF 0.82:#B4CDE7FF 0.88:#B7D0E9FF 0.93:#C9DDF0FF 0.98:#91A6BFFF]
+FillRoundedRect rect=(132.00,0.00,1.00,20.00) radius=0.00 color=#889DB7FF
+FillRoundedRect rect=(158.00,0.00,1.00,20.00) radius=0.00 color=#889DB7FF
+FillRoundedRect rect=(133.00,1.00,1.00,18.00) radius=0.00 color=#BBCEE3FF
+FillRoundedRect rect=(157.00,1.00,1.00,18.00) radius=0.00 color=#BBCEE3FF
+FillRoundedRect rect=(140.00,10.00,11.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(139.00,11.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(140.00,11.00,11.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(151.00,11.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(139.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(140.00,12.00,11.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(151.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(139.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(140.00,13.00,11.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(151.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(139.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(140.00,14.00,11.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(151.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(140.00,15.00,11.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRectGradient rect=(159.00,0.00,27.00,20.00) radius=0.00 axis=vertical stops=[0.03:#7F96B0FF 0.08:#C2D3E6FF 0.12:#B5CAE1FF 0.17:#B4CAE2FF 0.22:#B5CBE2FF 0.28:#B5CCE3FF 0.32:#B5CDE4FF 0.38:#B5CCE5FF 0.43:#B5CCE5FF 0.47:#A3BCD7FF 0.52:#A3BCD7FF 0.57:#A4BDD8FF 0.62:#A4BDD8FF 0.68:#A6BFDAFF 0.73:#AAC4DEFF 0.77:#AFC8E2FF 0.82:#B4CDE7FF 0.88:#B7D0E9FF 0.93:#C9DDF0FF 0.98:#91A6BFFF]
+FillRoundedRect rect=(159.00,0.00,1.00,20.00) radius=0.00 color=#889DB7FF
+FillRoundedRect rect=(185.00,0.00,1.00,20.00) radius=0.00 color=#889DB7FF
+FillRoundedRect rect=(160.00,1.00,1.00,18.00) radius=0.00 color=#BBCEE3FF
+FillRoundedRect rect=(184.00,1.00,1.00,18.00) radius=0.00 color=#BBCEE3FF
+FillRoundedRect rect=(167.00,4.00,11.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,5.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,5.00,11.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(178.00,5.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,6.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,6.00,11.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(178.00,6.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,7.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,7.00,11.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(178.00,7.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,8.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,8.00,3.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(170.00,8.00,5.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(175.00,8.00,3.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(178.00,8.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,9.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,9.00,3.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(170.00,9.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(174.00,9.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(175.00,9.00,3.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(178.00,9.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,10.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,10.00,3.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(170.00,10.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(174.00,10.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(175.00,10.00,3.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(178.00,10.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,11.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,11.00,3.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(170.00,11.00,5.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(175.00,11.00,3.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(178.00,11.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,12.00,11.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(178.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,13.00,11.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(178.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(166.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,14.00,11.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(178.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(167.00,15.00,11.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRectGradient rect=(186.00,0.00,48.00,20.00) radius=0.00 axis=vertical stops=[0.03:#94A8C1FF 0.08:#D3E3F4FF 0.12:#C9DDF2FF 0.17:#C8DCF2FF 0.22:#C7DCF1FF 0.28:#C6DBF1FF 0.32:#C5DBF1FF 0.38:#C5DBF1FF 0.43:#C5DBF1FF 0.47:#B1C9E2FF 0.52:#B1C9E2FF 0.57:#B2CAE4FF 0.62:#B2CAE4FF 0.68:#B4CCE5FF 0.73:#B6CEE7FF 0.77:#B8D0E9FF 0.82:#BAD2EBFF 0.88:#BCD4EDFF 0.93:#CDE0F3FF 0.98:#94A8C1FF]
+FillRoundedRect rect=(186.00,0.00,1.00,20.00) radius=0.00 color=#94A8C1FF
+FillRoundedRect rect=(233.00,0.00,1.00,20.00) radius=0.00 color=#94A8C1FF
+FillRoundedRect rect=(187.00,1.00,1.00,18.00) radius=0.00 color=#C6D9EBFF
+FillRoundedRect rect=(232.00,1.00,1.00,18.00) radius=0.00 color=#C6D9EBFF
+FillRoundedRect rect=(203.00,4.00,3.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(211.00,4.00,3.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(202.00,5.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,5.00,3.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(206.00,5.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(210.00,5.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(211.00,5.00,3.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(214.00,5.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(202.00,6.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,6.00,4.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(207.00,6.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(209.00,6.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(210.00,6.00,4.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(214.00,6.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,7.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(204.00,7.00,4.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(208.00,7.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(209.00,7.00,4.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(213.00,7.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(204.00,8.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(205.00,8.00,7.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(212.00,8.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(205.00,9.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(206.00,9.00,5.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(211.00,9.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(205.00,10.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(206.00,10.00,5.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(211.00,10.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(204.00,11.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(205.00,11.00,7.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(212.00,11.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(204.00,12.00,4.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(208.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(209.00,12.00,4.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(213.00,12.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(202.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,13.00,4.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(207.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(209.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(210.00,13.00,4.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(214.00,13.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(202.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,14.00,3.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(206.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(210.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(211.00,14.00,3.00,1.00) radius=0.00 color=#D7D7D7FF
+FillRoundedRect rect=(214.00,14.00,1.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(203.00,15.00,3.00,1.00) radius=0.00 color=#535666FF
+FillRoundedRect rect=(211.00,15.00,3.00,1.00) radius=0.00 color=#535666FF
+PushClip rect=(8.00,30.00,224.00,82.00)
+FillRoundedRectGradient rect=(8.00,30.00,224.00,26.20) radius=2.75 axis=vertical stops=[0.00:#F3F3F3FF 0.50:#EBEBEBFF 0.50:#DDDDDDFF 1.00:#CDCDCDFF]
+StrokeRoundedRect rect=(8.50,30.50,223.00,25.20) radius=2.25 color=#707070FF width=1.00
+StrokeRoundedRectGradient rect=(9.50,31.50,221.00,23.20) radius=1.25 extent=23.20 width=1.00 stops=[0.00:#FFFFFFFA 1.00:#FFFFFF85]
+DrawTextRun rect=(8.00,30.00,224.00,26.20) color=#000000FF size=12.00 weight=regular halign=center valign=center text="OK"
+PopClip

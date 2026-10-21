@@ -1,0 +1,142 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/out/build/${presetName}"
+        },
+        {
+            "name": "windows",
+            "hidden": true,
+            "inherits": "base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "msvc",
+            "displayName": "MSVC",
+            "description": "cl, warnings as errors; run from a Developer Command Prompt",
+            "inherits": "windows",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "cl"
+            }
+        },
+        {
+            "name": "clang-cl",
+            "displayName": "clang-cl",
+            "description": "LLVM's clang-cl against the MSVC libraries; run from a Developer Command Prompt",
+            "inherits": "windows",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "clang-cl"
+            }
+        },
+        {
+            "name": "msvc-asan",
+            "displayName": "MSVC with AddressSanitizer",
+            "description": "The library and its tests under ASan; no examples",
+            "inherits": "msvc",
+            "cacheVariables": {
+                "LIBWINUI_ENABLE_ASAN": "ON",
+                "LIBWINUI_BUILD_EXAMPLES": "OFF"
+            }
+        },
+        {
+            "name": "msvc-release",
+            "displayName": "MSVC release",
+            "description": "Link-time optimization and the exploit mitigations on",
+            "inherits": "msvc",
+            "cacheVariables": {
+                "LIBWINUI_ENABLE_IPO": "ON",
+                "LIBWINUI_ENABLE_HARDENING": "ON"
+            }
+        },
+        {
+            "name": "unix",
+            "displayName": "GCC or Clang",
+            "description": "The platform-independent core and its tests, with the default compiler",
+            "inherits": "base",
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "msvc-debug",
+            "configurePreset": "msvc",
+            "configuration": "Debug",
+            "jobs": 10
+        },
+        {
+            "name": "msvc-release",
+            "configurePreset": "msvc-release",
+            "configuration": "Release",
+            "jobs": 10
+        },
+        {
+            "name": "msvc-asan",
+            "configurePreset": "msvc-asan",
+            "configuration": "Debug",
+            "jobs": 10
+        },
+        {
+            "name": "clang-cl-debug",
+            "configurePreset": "clang-cl",
+            "configuration": "Debug",
+            "jobs": 10
+        },
+        {
+            "name": "unix-debug",
+            "configurePreset": "unix",
+            "configuration": "Debug",
+            "jobs": 10
+        },
+        {
+            "name": "tidy",
+            "configurePreset": "msvc",
+            "targets": ["tidy"]
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "noTestsAction": "error"
+            }
+        },
+        {
+            "name": "msvc-debug",
+            "inherits": "base",
+            "configurePreset": "msvc",
+            "configuration": "Debug"
+        },
+        {
+            "name": "msvc-asan",
+            "inherits": "base",
+            "configurePreset": "msvc-asan",
+            "configuration": "Debug"
+        },
+        {
+            "name": "unix-debug",
+            "inherits": "base",
+            "configurePreset": "unix",
+            "configuration": "Debug"
+        }
+    ]
+}

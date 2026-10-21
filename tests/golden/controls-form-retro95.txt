@@ -1,0 +1,150 @@
+SetRasterization geometry=aliased text=aliased snap=true
+FillRoundedRect rect=(83.00,54.50,13.00,13.00) radius=0.00 color=#FFFFFFFF
+StrokeLine from=(83.00,55.00) to=(96.00,55.00) color=#808080FF width=1.00
+StrokeLine from=(84.00,56.00) to=(95.00,56.00) color=#000000FF width=1.00
+StrokeLine from=(83.50,54.50) to=(83.50,67.50) color=#808080FF width=1.00
+StrokeLine from=(84.50,55.50) to=(84.50,66.50) color=#000000FF width=1.00
+StrokeLine from=(83.00,67.00) to=(96.00,67.00) color=#FFFFFFFF width=1.00
+StrokeLine from=(84.00,66.00) to=(95.00,66.00) color=#DFDFDFFF width=1.00
+StrokeLine from=(95.50,54.50) to=(95.50,67.50) color=#FFFFFFFF width=1.00
+StrokeLine from=(94.50,55.50) to=(94.50,66.50) color=#DFDFDFFF width=1.00
+DrawTextRun rect=(100.00,45.00,137.00,32.00) color=#000000FF size=10.67 weight=regular halign=leading valign=center lineheight=13.00 text="Unchecked"
+FillRoundedRect rect=(83.00,98.50,13.00,13.00) radius=0.00 color=#FFFFFFFF
+StrokeLine from=(83.00,99.00) to=(96.00,99.00) color=#808080FF width=1.00
+StrokeLine from=(84.00,100.00) to=(95.00,100.00) color=#000000FF width=1.00
+StrokeLine from=(83.50,98.50) to=(83.50,111.50) color=#808080FF width=1.00
+StrokeLine from=(84.50,99.50) to=(84.50,110.50) color=#000000FF width=1.00
+StrokeLine from=(83.00,111.00) to=(96.00,111.00) color=#FFFFFFFF width=1.00
+StrokeLine from=(84.00,110.00) to=(95.00,110.00) color=#DFDFDFFF width=1.00
+StrokeLine from=(95.50,98.50) to=(95.50,111.50) color=#FFFFFFFF width=1.00
+StrokeLine from=(94.50,99.50) to=(94.50,110.50) color=#DFDFDFFF width=1.00
+DrawTextRun rect=(83.00,98.50,13.00,13.00) color=#000000FF size=9.10 weight=regular halign=center valign=center text="\uE73E"
+DrawTextRun rect=(100.00,89.00,137.00,32.00) color=#000000FF size=10.67 weight=regular halign=leading valign=center lineheight=13.00 text="Checked"
+FillRoundedRect rect=(88.00,133.00,4.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(86.00,134.00,2.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(88.00,134.00,4.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(92.00,134.00,2.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(85.00,135.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(86.00,135.00,2.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(88.00,135.00,4.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(92.00,135.00,2.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(94.00,135.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(85.00,136.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(86.00,136.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(87.00,136.00,6.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(93.00,136.00,1.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(94.00,136.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(84.00,137.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(85.00,137.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(86.00,137.00,3.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(89.00,137.00,2.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(91.00,137.00,3.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(94.00,137.00,1.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(95.00,137.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(84.00,138.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(85.00,138.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(86.00,138.00,2.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(88.00,138.00,4.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(92.00,138.00,2.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(94.00,138.00,1.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(95.00,138.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(84.00,139.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(85.00,139.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(86.00,139.00,2.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(88.00,139.00,4.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(92.00,139.00,2.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(94.00,139.00,1.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(95.00,139.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(84.00,140.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(85.00,140.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(86.00,140.00,3.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(89.00,140.00,2.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(91.00,140.00,3.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(94.00,140.00,1.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(95.00,140.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(85.00,141.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(86.00,141.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(87.00,141.00,6.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(93.00,141.00,1.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(94.00,141.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(85.00,142.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(86.00,142.00,2.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(88.00,142.00,4.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(92.00,142.00,2.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(94.00,142.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(86.00,143.00,2.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(88.00,143.00,4.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(92.00,143.00,2.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(88.00,144.00,4.00,1.00) radius=0.00 color=#FFFFFFFF
+DrawTextRun rect=(100.00,133.00,137.00,13.00) color=#000000FF size=10.67 weight=regular halign=leading valign=center lineheight=13.00 text="Radio A"
+FillRoundedRect rect=(88.00,158.00,4.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(86.00,159.00,2.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(88.00,159.00,4.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(92.00,159.00,2.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(85.00,160.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(86.00,160.00,2.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(88.00,160.00,4.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(92.00,160.00,2.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(94.00,160.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(85.00,161.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(86.00,161.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(87.00,161.00,6.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(93.00,161.00,1.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(94.00,161.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(84.00,162.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(85.00,162.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(86.00,162.00,8.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(94.00,162.00,1.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(95.00,162.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(84.00,163.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(85.00,163.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(86.00,163.00,8.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(94.00,163.00,1.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(95.00,163.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(84.00,164.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(85.00,164.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(86.00,164.00,8.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(94.00,164.00,1.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(95.00,164.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(84.00,165.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(85.00,165.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(86.00,165.00,8.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(94.00,165.00,1.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(95.00,165.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(85.00,166.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(86.00,166.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(87.00,166.00,6.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(93.00,166.00,1.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(94.00,166.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(85.00,167.00,1.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(86.00,167.00,2.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(88.00,167.00,4.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(92.00,167.00,2.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(94.00,167.00,1.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(86.00,168.00,2.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(88.00,168.00,4.00,1.00) radius=0.00 color=#DFDFDFFF
+FillRoundedRect rect=(92.00,168.00,2.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(88.00,169.00,4.00,1.00) radius=0.00 color=#FFFFFFFF
+DrawTextRun rect=(100.00,158.00,137.00,13.00) color=#000000FF size=10.67 weight=regular halign=leading valign=center lineheight=13.00 text="Radio B"
+FillRoundedRect rect=(83.00,183.00,40.00,20.00) radius=0.00 color=#FFFFFFFF
+StrokeLine from=(83.00,183.50) to=(123.00,183.50) color=#DFDFDFFF width=1.00
+StrokeLine from=(84.00,184.50) to=(122.00,184.50) color=#FFFFFFFF width=1.00
+StrokeLine from=(83.50,183.00) to=(83.50,203.00) color=#DFDFDFFF width=1.00
+StrokeLine from=(84.50,184.00) to=(84.50,202.00) color=#FFFFFFFF width=1.00
+StrokeLine from=(83.00,202.50) to=(123.00,202.50) color=#000000FF width=1.00
+StrokeLine from=(84.00,201.50) to=(122.00,201.50) color=#808080FF width=1.00
+StrokeLine from=(122.50,183.00) to=(122.50,203.00) color=#000000FF width=1.00
+StrokeLine from=(121.50,184.00) to=(121.50,202.00) color=#808080FF width=1.00
+FillRoundedRect rect=(87.00,187.00,12.00,12.00) radius=0.00 color=#000000FF
+DrawTextRun rect=(127.00,183.00,110.00,20.00) color=#000000FF size=10.67 weight=regular halign=leading valign=center lineheight=13.00 text="Off"
+FillRoundedRect rect=(83.00,215.00,40.00,20.00) radius=0.00 color=#FFFFFFFF
+StrokeLine from=(83.00,215.50) to=(123.00,215.50) color=#808080FF width=1.00
+StrokeLine from=(84.00,216.50) to=(122.00,216.50) color=#000000FF width=1.00
+StrokeLine from=(83.50,215.00) to=(83.50,235.00) color=#808080FF width=1.00
+StrokeLine from=(84.50,216.00) to=(84.50,234.00) color=#000000FF width=1.00
+StrokeLine from=(83.00,234.50) to=(123.00,234.50) color=#FFFFFFFF width=1.00
+StrokeLine from=(84.00,233.50) to=(122.00,233.50) color=#DFDFDFFF width=1.00
+StrokeLine from=(122.50,215.00) to=(122.50,235.00) color=#FFFFFFFF width=1.00
+StrokeLine from=(121.50,216.00) to=(121.50,234.00) color=#DFDFDFFF width=1.00
+FillRoundedRect rect=(107.00,219.00,12.00,12.00) radius=0.00 color=#000000FF
+DrawTextRun rect=(127.00,215.00,110.00,20.00) color=#000000FF size=10.67 weight=regular halign=leading valign=center lineheight=13.00 text="On"

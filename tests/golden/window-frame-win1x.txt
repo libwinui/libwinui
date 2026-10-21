@@ -1,0 +1,42 @@
+active:
+SetRasterization geometry=aliased text=aliased snap=true
+FillRoundedRect rect=(0.00,0.00,240.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(0.00,119.00,240.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(0.00,1.00,1.00,118.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(239.00,1.00,1.00,118.00) radius=0.00 color=#000000FF
+FillRoundedRectGradient rect=(1.00,1.00,238.00,19.00) radius=0.00 axis=horizontal stops=[0.00:#0000FFFF 1.00:#0000FFFF]
+FillRoundedRect rect=(1.00,20.00,238.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(1.00,1.00,13.00,19.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(14.00,1.00,1.00,19.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(3.00,5.00,9.00,2.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(3.00,9.00,9.00,2.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(3.00,13.00,9.00,2.00) radius=0.00 color=#000000FF
+PushClip rect=(15.00,1.00,222.00,19.00)
+DrawTextRun rect=(15.00,1.00,222.00,19.00) color=#FFFFFFFF size=14.00 weight=regular halign=center valign=center text="Notepad"
+PopClip
+PushClip rect=(1.00,21.00,238.00,98.00)
+FillRoundedRect rect=(1.00,21.00,238.00,21.00) radius=1.00 color=#FFFFFFFF
+StrokeRoundedRect rect=(1.50,21.50,237.00,20.00) radius=0.50 color=#000000FF width=1.00
+DrawTextRun rect=(1.00,21.00,238.00,21.00) color=#000000FF size=14.00 weight=regular halign=center valign=center lineheight=14.00 text="OK"
+PopClip
+inactive:
+SetRasterization geometry=aliased text=aliased snap=true
+FillRoundedRect rect=(0.00,0.00,240.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(0.00,119.00,240.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(0.00,1.00,1.00,118.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(239.00,1.00,1.00,118.00) radius=0.00 color=#000000FF
+FillRoundedRectGradient rect=(1.00,1.00,238.00,19.00) radius=0.00 axis=horizontal stops=[0.00:#4040C8FF 1.00:#4040C8FF]
+FillRoundedRect rect=(1.00,20.00,238.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(1.00,1.00,13.00,19.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(14.00,1.00,1.00,19.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(3.00,5.00,9.00,2.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(3.00,9.00,9.00,2.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(3.00,13.00,9.00,2.00) radius=0.00 color=#000000FF
+PushClip rect=(15.00,1.00,222.00,19.00)
+DrawTextRun rect=(15.00,1.00,222.00,19.00) color=#FFFFFFFF size=14.00 weight=regular halign=center valign=center text="Notepad"
+PopClip
+PushClip rect=(1.00,21.00,238.00,98.00)
+FillRoundedRect rect=(1.00,21.00,238.00,21.00) radius=1.00 color=#FFFFFFFF
+StrokeRoundedRect rect=(1.50,21.50,237.00,20.00) radius=0.50 color=#000000FF width=1.00
+DrawTextRun rect=(1.00,21.00,238.00,21.00) color=#000000FF size=14.00 weight=regular halign=center valign=center lineheight=14.00 text="OK"
+PopClip

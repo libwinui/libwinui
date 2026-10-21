@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: MIT
+# find_package(winui CONFIG REQUIRED) gives winui::winui and winui::main (winui::winui_shared and
+# winui::main_shared too when the shared library was installed). COMPONENTS testing adds
+# winui::testing (and winui::testing_shared), the opt-in testing tier.
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_dependency(Threads)
+
+include(${CMAKE_CURRENT_LIST_DIR}/winuiTargets.cmake)
+
+set(winui_testing_FOUND FALSE)
+foreach(winui_component IN LISTS ${CMAKE_FIND_PACKAGE_NAME}_FIND_COMPONENTS)
+    if(winui_component STREQUAL "testing")
+        include(${CMAKE_CURRENT_LIST_DIR}/winuiTestingTargets.cmake)
+        set(winui_testing_FOUND TRUE)
+    else()
+        set(winui_${winui_component}_FOUND FALSE)
+    endif()
+endforeach()
+unset(winui_component)
+
+check_required_components(winui)

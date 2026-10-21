@@ -1,0 +1,46 @@
+# Doxygen configuration for the reference generator (docs/tools/gen_reference.py).
+# Only XML is produced; the generator turns it into Markdown under docs/reference/.
+# Paths are relative to the repository root: run doxygen from there, or let the
+# generator run it. The XML lands in build/doxygen/xml (build/ is gitignored).
+
+PROJECT_NAME           = libwinui
+OUTPUT_DIRECTORY       = build/doxygen
+INPUT                  = include/winui
+FILE_PATTERNS          = *.hpp
+RECURSIVE              = YES
+STRIP_FROM_PATH        = include
+STRIP_FROM_INC_PATH    = include
+
+GENERATE_HTML          = NO
+GENERATE_LATEX         = NO
+GENERATE_XML           = YES
+XML_PROGRAMLISTING     = NO
+XML_NS_MEMB_FILE_SCOPE = YES
+
+# The headers document every public declaration with `///` blocks written as prose.
+# No autobrief: it splits at "e.g."; the generator takes the first sentence itself.
+JAVADOC_AUTOBRIEF      = NO
+MARKDOWN_SUPPORT       = YES
+AUTOLINK_SUPPORT       = YES
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+HIDE_UNDOC_MEMBERS     = NO
+INLINE_INHERITED_MEMB  = NO
+CASE_SENSE_NAMES       = YES
+SORT_MEMBER_DOCS       = NO
+SORT_BRIEF_DOCS        = NO
+
+# The Windows-only headers are guarded by _WIN32; document them regardless of host. The
+# deprecation macros (core/Version.hpp) expand to nothing, so a deprecated name still parses as
+# a declaration; its comment says it is deprecated.
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = _WIN32 "LIBWINUI_DEPRECATED(msg)=" "LIBWINUI_DEPRECATED_MEMBER(msg)=" LIBWINUI_ALLOW_DEPRECATED_BEGIN= LIBWINUI_ALLOW_DEPRECATED_END=
+
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = NO

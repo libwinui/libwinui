@@ -1,0 +1,13 @@
+# LF everywhere, regardless of core.autocrlf. The semantic goldens depend on it: they are compared
+# byte-for-byte against the describe() output, which always uses LF.
+* text=auto eol=lf
+
+*.png binary
+*.ico binary
+*.jpg binary
+*.gif binary
+*.bmp binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary

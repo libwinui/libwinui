@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Front-facing, light from above, soft gradients and shadows, no text. Three layers of UI:
+       light and accent blue panels behind, and in front a white panel of controls (a toggle, a check box
+       and a slider), drawn by the library itself. -->
+  <defs>
+    <linearGradient id="light" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#A6D8FF"/>
+      <stop offset="1" stop-color="#4CA6EE"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#2B95E9"/>
+      <stop offset="1" stop-color="#0078D4"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#EEF1F4"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1A86DC"/>
+      <stop offset="1" stop-color="#005FB8"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.22"/>
+    </filter>
+    <filter id="shadowSoft" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <!-- The layers behind, offset up and to the right -->
+  <rect x="88" y="18" width="150" height="148" rx="26" fill="url(#light)" filter="url(#shadowSoft)"/>
+  <rect x="88" y="18" width="150" height="148" rx="26" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="2"/>
+  <rect x="54" y="50" width="150" height="148" rx="26" fill="url(#blue)" filter="url(#shadowSoft)"/>
+  <rect x="54" y="50" width="150" height="148" rx="26" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2"/>
+
+  <!-- The front panel -->
+  <rect x="18" y="84" width="160" height="154" rx="24" fill="url(#panel)" filter="url(#shadow)"/>
+  <rect x="18" y="84" width="160" height="154" rx="24" fill="none" stroke="#000000" stroke-opacity="0.08" stroke-width="2"/>
+
+  <!-- A heading and a line of text -->
+  <rect x="38" y="104" width="70" height="12" rx="6" fill="#B9C1CB"/>
+  <rect x="38" y="126" width="104" height="10" rx="5" fill="#D9DEE4"/>
+
+  <!-- A toggle switch, on -->
+  <rect x="38" y="152" width="64" height="34" rx="17" fill="url(#accent)"/>
+  <circle cx="85" cy="169" r="11" fill="#FFFFFF"/>
+
+  <!-- A check box, checked -->
+  <rect x="120" y="152" width="34" height="34" rx="9" fill="url(#accent)"/>
+  <path d="M128 169.5 L135 176.5 L147 162.5" fill="none" stroke="#FFFFFF" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- A slider -->
+  <rect x="38" y="210" width="120" height="7" rx="3.5" fill="#D9DEE4"/>
+  <rect x="38" y="210" width="62" height="7" rx="3.5" fill="url(#accent)"/>
+  <circle cx="100" cy="213.5" r="10" fill="#FFFFFF" stroke="#D3D9E0" stroke-width="1.5"/>
+  <circle cx="100" cy="213.5" r="5.5" fill="url(#accent)"/>
+</svg>

@@ -1,0 +1,6 @@
+SetRasterization geometry=antialiased text=grayscale snap=false
+FillRoundedRect rect=(94.00,30.00,52.80,29.90) radius=4.00 color=#FFFFFFB3
+StrokeRoundedRectGradient rect=(94.50,30.50,51.80,28.90) radius=3.50 extent=-3.00 width=1.00 stops=[0.33:#00000029 1.00:#0000000F]
+DrawTextRun rect=(94.00,30.00,52.80,29.90) color=#000000E4 size=14.00 weight=regular halign=center valign=center text="Save"
+StrokeRoundedRect rect=(92.00,28.00,56.80,33.90) radius=6.00 color=#000000E4 width=2.00
+StrokeRoundedRect rect=(93.50,29.50,53.80,30.90) radius=4.50 color=#FFFFFFB3 width=1.00

@@ -1,0 +1,15 @@
+/build/
+/build-*/
+/out/
+/.cache/
+*.user
+CMakeUserPresets.json
+
+# documentation site (zensical.toml): local venv and build output
+/.venv/
+/site/
+__pycache__/
+
+# Claude Code worktrees
+/.claude/
+tests/golden/*.actual.png

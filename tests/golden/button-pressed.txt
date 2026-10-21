@@ -1,0 +1,3 @@
+SetRasterization geometry=antialiased text=grayscale snap=false
+FillRoundedRect rect=(94.00,30.00,52.80,29.90) radius=4.00 color=#F9F9F94D
+DrawTextRun rect=(94.00,30.00,52.80,29.90) color=#0000009E size=14.00 weight=regular halign=center valign=center text="Save"

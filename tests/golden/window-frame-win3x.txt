@@ -1,0 +1,132 @@
+active:
+SetRasterization geometry=aliased text=aliased snap=true
+FillRoundedRect rect=(0.00,0.00,240.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(0.00,119.00,240.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(0.00,1.00,1.00,118.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(239.00,1.00,1.00,118.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(1.00,1.00,238.00,3.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(1.00,116.00,238.00,3.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(1.00,4.00,3.00,112.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(236.00,4.00,3.00,112.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(4.00,4.00,232.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(4.00,115.00,232.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(4.00,5.00,1.00,110.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(235.00,5.00,1.00,110.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(23.00,0.00,1.00,5.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(216.00,0.00,1.00,5.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(23.00,115.00,1.00,5.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(216.00,115.00,1.00,5.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(0.00,23.00,5.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(0.00,96.00,5.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(235.00,23.00,5.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(235.00,96.00,5.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRectGradient rect=(5.00,5.00,230.00,18.00) radius=0.00 axis=horizontal stops=[0.00:#000080FF 1.00:#000080FF]
+FillRoundedRect rect=(5.00,23.00,230.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(5.00,5.00,18.00,18.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(23.00,5.00,1.00,18.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(7.00,12.00,13.00,3.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(8.00,13.00,11.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(20.00,13.00,1.00,3.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(8.00,15.00,12.00,1.00) radius=0.00 color=#808080FF
+PushClip rect=(24.00,5.00,173.00,18.00)
+DrawTextRun rect=(24.00,5.00,173.00,18.00) color=#FFFFFFFF size=12.00 weight=bold halign=center valign=center text="Notepad"
+PopClip
+FillRoundedRect rect=(197.00,5.00,1.00,18.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(198.00,5.00,18.00,18.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(198.00,5.00,17.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(198.00,6.00,1.00,16.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(215.00,5.00,1.00,18.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(214.00,6.00,1.00,17.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(199.00,21.00,17.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(198.00,22.00,18.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(203.00,12.00,7.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(204.00,13.00,5.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(205.00,14.00,3.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(206.00,15.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(216.00,5.00,1.00,18.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(217.00,5.00,18.00,18.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(217.00,5.00,17.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(217.00,6.00,1.00,16.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(234.00,5.00,1.00,18.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(233.00,6.00,1.00,17.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(218.00,21.00,17.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(217.00,22.00,18.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(225.00,11.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(224.00,12.00,3.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(223.00,13.00,5.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(222.00,14.00,7.00,1.00) radius=0.00 color=#000000FF
+PushClip rect=(5.00,24.00,230.00,91.00)
+FillRoundedRect rect=(5.00,24.00,230.00,19.00) radius=1.00 color=#C0C0C0FF
+StrokeRoundedRect rect=(5.50,24.50,229.00,18.00) radius=0.50 color=#000000FF width=1.00
+StrokeLine from=(233.00,25.00) to=(233.00,42.00) color=#808080FF width=2.00
+StrokeLine from=(6.00,41.00) to=(234.00,41.00) color=#808080FF width=2.00
+StrokeLine from=(6.00,25.50) to=(233.00,25.50) color=#FFFFFFFF width=1.00
+StrokeLine from=(6.50,25.00) to=(6.50,41.00) color=#FFFFFFFF width=1.00
+DrawTextRun rect=(5.00,24.00,230.00,19.00) color=#000000FF size=10.67 weight=regular halign=center valign=center lineheight=13.00 text="OK"
+PopClip
+inactive:
+SetRasterization geometry=aliased text=aliased snap=true
+FillRoundedRect rect=(0.00,0.00,240.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(0.00,119.00,240.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(0.00,1.00,1.00,118.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(239.00,1.00,1.00,118.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(1.00,1.00,238.00,3.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(1.00,116.00,238.00,3.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(1.00,4.00,3.00,112.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(236.00,4.00,3.00,112.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(4.00,4.00,232.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(4.00,115.00,232.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(4.00,5.00,1.00,110.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(235.00,5.00,1.00,110.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(23.00,0.00,1.00,5.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(216.00,0.00,1.00,5.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(23.00,115.00,1.00,5.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(216.00,115.00,1.00,5.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(0.00,23.00,5.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(0.00,96.00,5.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(235.00,23.00,5.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(235.00,96.00,5.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRectGradient rect=(5.00,5.00,230.00,18.00) radius=0.00 axis=horizontal stops=[0.00:#C0C0C0FF 1.00:#C0C0C0FF]
+FillRoundedRect rect=(5.00,23.00,230.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(5.00,5.00,18.00,18.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(23.00,5.00,1.00,18.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(7.00,12.00,13.00,3.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(8.00,13.00,11.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(20.00,13.00,1.00,3.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(8.00,15.00,12.00,1.00) radius=0.00 color=#808080FF
+PushClip rect=(24.00,5.00,173.00,18.00)
+DrawTextRun rect=(24.00,5.00,173.00,18.00) color=#000000FF size=12.00 weight=bold halign=center valign=center text="Notepad"
+PopClip
+FillRoundedRect rect=(197.00,5.00,1.00,18.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(198.00,5.00,18.00,18.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(198.00,5.00,17.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(198.00,6.00,1.00,16.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(215.00,5.00,1.00,18.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(214.00,6.00,1.00,17.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(199.00,21.00,17.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(198.00,22.00,18.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(203.00,12.00,7.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(204.00,13.00,5.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(205.00,14.00,3.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(206.00,15.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(216.00,5.00,1.00,18.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(217.00,5.00,18.00,18.00) radius=0.00 color=#C0C0C0FF
+FillRoundedRect rect=(217.00,5.00,17.00,1.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(217.00,6.00,1.00,16.00) radius=0.00 color=#FFFFFFFF
+FillRoundedRect rect=(234.00,5.00,1.00,18.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(233.00,6.00,1.00,17.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(218.00,21.00,17.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(217.00,22.00,18.00,1.00) radius=0.00 color=#808080FF
+FillRoundedRect rect=(225.00,11.00,1.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(224.00,12.00,3.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(223.00,13.00,5.00,1.00) radius=0.00 color=#000000FF
+FillRoundedRect rect=(222.00,14.00,7.00,1.00) radius=0.00 color=#000000FF
+PushClip rect=(5.00,24.00,230.00,91.00)
+FillRoundedRect rect=(5.00,24.00,230.00,19.00) radius=1.00 color=#C0C0C0FF
+StrokeRoundedRect rect=(5.50,24.50,229.00,18.00) radius=0.50 color=#000000FF width=1.00
+StrokeLine from=(233.00,25.00) to=(233.00,42.00) color=#808080FF width=2.00
+StrokeLine from=(6.00,41.00) to=(234.00,41.00) color=#808080FF width=2.00
+StrokeLine from=(6.00,25.50) to=(233.00,25.50) color=#FFFFFFFF width=1.00
+StrokeLine from=(6.50,25.00) to=(6.50,41.00) color=#FFFFFFFF width=1.00
+DrawTextRun rect=(5.00,24.00,230.00,19.00) color=#000000FF size=10.67 weight=regular halign=center valign=center lineheight=13.00 text="OK"
+PopClip

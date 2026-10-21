@@ -1,0 +1,21 @@
+SetRasterization geometry=antialiased text=grayscale snap=false
+FillRoundedRect rect=(83.00,40.50,21.00,21.00) radius=0.00 color=#FFFFFFCC
+StrokeRoundedRect rect=(83.00,40.50,21.00,21.00) radius=0.00 color=#FFFFFFCC width=0.00
+DrawTextRun rect=(110.00,35.00,127.00,32.00) color=#FFFFFFDE size=14.67 weight=semilight halign=leading valign=center lineheight=20.00 text="Unchecked"
+FillRoundedRect rect=(83.00,84.50,21.00,21.00) radius=0.00 color=#FFFFFFCC
+StrokeRoundedRect rect=(83.00,84.50,21.00,21.00) radius=0.00 color=#FFFFFFCC width=0.00
+DrawTextRun rect=(83.00,84.50,21.00,21.00) color=#000000FF size=14.70 weight=regular halign=center valign=center text="\uE73E"
+DrawTextRun rect=(110.00,79.00,127.00,32.00) color=#FFFFFFDE size=14.67 weight=semilight halign=leading valign=center lineheight=20.00 text="Checked"
+FillRoundedRect rect=(83.00,123.00,23.00,23.00) radius=11.50 color=#FFFFFFCC
+FillRoundedRect rect=(88.00,128.00,13.00,13.00) radius=6.50 color=#000000FF
+DrawTextRun rect=(112.00,123.00,125.00,23.00) color=#FFFFFFDE size=14.67 weight=semilight halign=leading valign=center lineheight=20.00 text="Radio A"
+FillRoundedRect rect=(83.00,158.00,23.00,23.00) radius=11.50 color=#FFFFFFCC
+DrawTextRun rect=(112.00,158.00,125.00,23.00) color=#FFFFFFDE size=14.67 weight=semilight halign=leading valign=center lineheight=20.00 text="Radio B"
+FillRoundedRect rect=(83.00,193.50,50.00,19.00) radius=0.00 color=#FFFFFFCC
+StrokeRoundedRect rect=(83.00,193.50,50.00,19.00) radius=0.00 color=#FFFFFFCC width=0.00
+FillRoundedRect rect=(86.50,197.00,12.00,12.00) radius=0.00 color=#FFFFFFCC
+DrawTextRun rect=(139.00,193.00,98.00,20.00) color=#FFFFFFDE size=14.67 weight=semilight halign=leading valign=center lineheight=20.00 text="Off"
+FillRoundedRect rect=(83.00,225.50,50.00,19.00) radius=0.00 color=#4617B4FF
+StrokeRoundedRect rect=(83.00,225.50,50.00,19.00) radius=0.00 color=#4617B4FF width=0.00
+FillRoundedRect rect=(124.50,229.00,12.00,12.00) radius=0.00 color=#FFFFFFFF
+DrawTextRun rect=(139.00,225.00,98.00,20.00) color=#FFFFFFDE size=14.67 weight=semilight halign=leading valign=center lineheight=20.00 text="On"

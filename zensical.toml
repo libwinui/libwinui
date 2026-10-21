@@ -1,0 +1,611 @@
+# libwinui documentation site: https://zensical.org
+# Build:   .venv/Scripts/zensical build      (or `cmake --build build --target docs`)
+# Preview: .venv/Scripts/zensical serve     (http://localhost:8765, see dev_addr)
+# The API reference under docs/reference/ is generated: python docs/tools/gen_reference.py
+
+[project]
+site_name = "libwinui"
+site_description = "Fluent 2 controls for Windows, in plain C++."
+site_url = "https://libwinui.com/"
+repo_url = "https://github.com/libwinui/libwinui"
+repo_name = "libwinui/libwinui"
+copyright = "Copyright &copy; 2026 libwinui contributors"
+docs_dir = "docs"
+site_dir = "site"
+# The preview address. Not the default 8000, which other local tools tend to hold.
+dev_addr = "localhost:8765"
+extra_css = ["assets/home.css", "assets/screenshots.css"]
+nav = [
+  { "Home" = "index.md" },
+  { "Tutorials" = [
+    "tutorials/index.md",
+    { "Basics" = [
+      "tutorials/basics/index.md",
+      { "Your First Window" = "tutorials/basics/01-first-window.md" },
+      { "Layout" = "tutorials/basics/02-layout.md" },
+      { "State and Bindings" = "tutorials/basics/03-state-and-bindings.md" },
+      { "Events and Commands" = "tutorials/basics/04-events-and-commands.md" },
+      { "A Form" = "tutorials/basics/05-a-form.md" },
+      { "Components" = "tutorials/basics/06-components.md" },
+      { "Background Work and the UI Thread" = "tutorials/basics/07-background-work.md" },
+    ] },
+    { "Collections" = [
+      "tutorials/collections/index.md",
+      { "Lists" = "tutorials/collections/01-lists.md" },
+      { "Long Lists" = "tutorials/collections/02-virtual-list.md" },
+      { "A Todo List" = "tutorials/collections/03-a-todo-list.md" },
+      { "A Form Built From Data" = "tutorials/collections/04-a-form-built-from-data.md" },
+    ] },
+    { "Navigation" = [
+      "tutorials/navigation/index.md",
+      { "An App Skeleton" = "tutorials/navigation/01-app-skeleton.md" },
+      { "Dialogs, Flyouts and Menus" = "tutorials/navigation/02-dialogs-flyouts-menus.md" },
+    ] },
+    { "Extending the Tree" = [
+      "tutorials/extending-the-tree/index.md",
+      { "Your Own Element" = "tutorials/extending-the-tree/01-your-own-element.md" },
+      { "Hosting Native Controls" = "tutorials/extending-the-tree/02-hosting-native-controls.md" },
+      { "Mixing Imperative and Declarative" = "tutorials/extending-the-tree/03-mixing-imperative-and-declarative.md" },
+    ] },
+    { "Guides" = [
+      { "Themes" = "tutorials/guides/themes.md" },
+      { "Testing Your UI" = "tutorials/guides/testing.md" },
+      { "Accessibility and UI Automation" = "tutorials/guides/accessibility.md" },
+      { "Built-in Text" = "tutorials/guides/built-in-text.md" },
+    ] },
+  ] },
+  { "Reference" = [
+    "reference/index.md",
+    { "Conventions" = "reference/conventions.md" },
+    # BEGIN generated reference nav (docs/tools/gen_reference.py rewrites this block)
+    { "Controls" = [
+      "reference/controls/index.md",
+      { "Basic Input" = [
+        { "Button" = "reference/controls/button.md" },
+        { "CheckBox" = "reference/controls/check-box.md" },
+        { "ColorPicker" = "reference/controls/color-picker.md" },
+        { "ComboBox" = "reference/controls/combo-box.md" },
+        { "DropdownButton" = "reference/controls/dropdown-button.md" },
+        { "RadioButton" = "reference/controls/radio-button.md" },
+        { "RadioButtons" = "reference/controls/radio-buttons.md" },
+        { "Rating" = "reference/controls/rating.md" },
+        { "Slider" = "reference/controls/slider.md" },
+        { "SplitButton" = "reference/controls/split-button.md" },
+        { "ToggleButton" = "reference/controls/toggle-button.md" },
+        { "ToggleSwitch" = "reference/controls/toggle-switch.md" },
+      ] },
+      { "Text" = [
+        { "AutoSuggestBox" = "reference/controls/auto-suggest-box.md" },
+        { "NumberBox" = "reference/controls/number-box.md" },
+        { "PasswordBox" = "reference/controls/password-box.md" },
+        { "RichEditBox" = "reference/controls/rich-edit-box.md" },
+        { "RichText" = "reference/controls/rich-text.md" },
+        { "Text" = "reference/controls/text.md" },
+        { "TextBox" = "reference/controls/text-box.md" },
+      ] },
+      { "Collections" = [
+        { "ForEach" = "reference/controls/for-each.md" },
+        { "Item Layouts" = "reference/controls/item-layouts.md" },
+        { "ListView" = "reference/controls/list-view.md" },
+        { "ListViewBase" = "reference/controls/list-view-base.md" },
+        { "TableView" = "reference/controls/table-view.md" },
+        { "TileView" = "reference/controls/tile-view.md" },
+        { "TreeView" = "reference/controls/tree-view.md" },
+        { "VirtualList" = "reference/controls/virtual-list.md" },
+      ] },
+      { "Date and Time" = [
+        { "CalendarDatePicker" = "reference/controls/calendar-date-picker.md" },
+        { "CalendarView" = "reference/controls/calendar-view.md" },
+        { "DatePicker" = "reference/controls/date-picker.md" },
+        { "TimePicker" = "reference/controls/time-picker.md" },
+      ] },
+      { "Navigation" = [
+        { "Breadcrumb" = "reference/controls/breadcrumb.md" },
+        { "Carousel" = "reference/controls/carousel.md" },
+        { "NavigationFrame" = "reference/controls/navigation-frame.md" },
+        { "NavigationShell" = "reference/controls/navigation-shell.md" },
+        { "Pager" = "reference/controls/pager.md" },
+        { "PipsPager" = "reference/controls/pips-pager.md" },
+        { "Sections" = "reference/controls/sections.md" },
+        { "SelectorBar" = "reference/controls/selector-bar.md" },
+        { "Tabs" = "reference/controls/tabs.md" },
+      ] },
+      { "Menus and Toolbars" = [
+        { "AppBarButton" = "reference/controls/app-bar-button.md" },
+        { "CommandBar" = "reference/controls/command-bar.md" },
+        { "CommandBarFlyout" = "reference/controls/command-bar-flyout.md" },
+        { "ContextMenu" = "reference/controls/context-menu.md" },
+        { "MenuBar" = "reference/controls/menu-bar.md" },
+        { "MenuFlyout" = "reference/controls/menu-flyout.md" },
+      ] },
+      { "Dialogs and Flyouts" = [
+        { "Dialog" = "reference/controls/dialog.md" },
+        { "Flyout" = "reference/controls/flyout.md" },
+        { "Popup" = "reference/controls/popup.md" },
+        { "TeachingTip" = "reference/controls/teaching-tip.md" },
+        { "ToolTip" = "reference/controls/tool-tip.md" },
+      ] },
+      { "Status and Info" = [
+        { "InfoBadge" = "reference/controls/info-badge.md" },
+        { "InfoBar" = "reference/controls/info-bar.md" },
+        { "ProgressBar" = "reference/controls/progress-bar.md" },
+        { "ProgressRing" = "reference/controls/progress-ring.md" },
+      ] },
+      { "Media and Icons" = [
+        { "AnimatedIcon" = "reference/controls/animated-icon.md" },
+        { "AnimatedVisualPlayer" = "reference/controls/animated-visual-player.md" },
+        { "Icon" = "reference/controls/icon.md" },
+        { "Image" = "reference/controls/image.md" },
+        { "InkCanvas" = "reference/controls/ink-canvas.md" },
+        { "InkToolbar" = "reference/controls/ink-toolbar.md" },
+        { "PersonPicture" = "reference/controls/person-picture.md" },
+        { "Shapes" = "reference/controls/shapes.md" },
+      ] },
+      { "Windowing and Hosting" = [
+        { "DragArea" = "reference/controls/drag-area.md" },
+        { "Match" = "reference/controls/content-host.md" },
+        { "NativeControl" = "reference/controls/native-control.md" },
+        { "TitleBar" = "reference/controls/title-bar.md" },
+      ] },
+    ] },
+    { "Layout" = [
+      "reference/layout/index.md",
+      { "Panels" = [
+        { "Canvas" = "reference/layout/canvas.md" },
+        { "Fill" = "reference/layout/fill.md" },
+        { "Grid" = "reference/layout/grid.md" },
+        { "LayoutPanel" = "reference/layout/layout-panel.md" },
+        { "Panel" = "reference/layout/panel.md" },
+        { "RelativePanel" = "reference/layout/relative-panel.md" },
+        { "Spacer" = "reference/layout/spacer.md" },
+        { "Stack" = "reference/layout/stack.md" },
+        { "TilePanel" = "reference/layout/tile-panel.md" },
+        { "WrapPanel" = "reference/layout/wrap-panel.md" },
+      ] },
+      { "Containers" = [
+        { "Border" = "reference/layout/border.md" },
+        { "DensityScope" = "reference/layout/density-scope.md" },
+        { "Expander" = "reference/layout/expander.md" },
+        { "GroupBox" = "reference/layout/group-box.md" },
+        { "ScaleToFit" = "reference/layout/scale-to-fit.md" },
+        { "Shortcuts" = "reference/layout/shortcuts.md" },
+        { "Toolbar" = "reference/layout/toolbar.md" },
+      ] },
+      { "Scrolling and Gestures" = [
+        { "AnnotatedScrollBar" = "reference/layout/annotated-scroll-bar.md" },
+        { "Parallax" = "reference/layout/parallax.md" },
+        { "PullToRefresh" = "reference/layout/pull-to-refresh.md" },
+        { "Scroll" = "reference/layout/scroll.md" },
+        { "Swipe" = "reference/layout/swipe.md" },
+      ] },
+      { "Panes and Splitters" = [
+        { "ResizeGripper" = "reference/layout/resize-gripper.md" },
+        { "SidePane" = "reference/layout/side-pane.md" },
+        { "Splitter" = "reference/layout/splitter.md" },
+        { "TwoPane" = "reference/layout/two-pane.md" },
+      ] },
+    ] },
+    { "Tree and Window" = [
+      "reference/tree/index.md",
+      { "Animated Visual Sources" = "reference/tree/animated-visual-sources.md" },
+      { "Easing Functions" = "reference/tree/easing-functions.md" },
+      { "Element Transitions" = "reference/tree/element-transitions.md" },
+      { "Navigation Transitions" = "reference/tree/navigation-transitions.md" },
+      { "Spec Vocabulary" = "reference/tree/spec-vocabulary.md" },
+      { "Classes" = [
+        { "ConnectedAnimation" = "reference/tree/connected-animation.md" },
+        { "ui::AutomationEvents" = "reference/tree/automation-events.md" },
+        { "ui::BackgroundBrush" = "reference/tree/background-brush.md" },
+        { "ui::BackgroundHop" = "reference/tree/background-hop.md" },
+        { "ui::ChildVisitor" = "reference/tree/child-visitor.md" },
+        { "ui::Clipboard" = "reference/tree/clipboard.md" },
+        { "ui::ColorAnimator" = "reference/tree/color-animator.md" },
+        { "ui::CommandHandler" = "reference/tree/command-handler.md" },
+        { "ui::CommandRef" = "reference/tree/command-ref.md" },
+        { "ui::ControlDescription" = "reference/tree/control-description.md" },
+        { "ui::ControlHeader" = "reference/tree/control-header.md" },
+        { "ui::DragDrop" = "reference/tree/drag-drop.md" },
+        { "ui::Element" = "reference/tree/element.md" },
+        { "ui::ElementWatch" = "reference/tree/element-watch.md" },
+        { "ui::ExpandCollapseProvider" = "reference/tree/expand-collapse-provider.md" },
+        { "ui::FireAndForget" = "reference/tree/fire-and-forget.md" },
+        { "ui::GridItemProvider" = "reference/tree/grid-item-provider.md" },
+        { "ui::GridProvider" = "reference/tree/grid-provider.md" },
+        { "ui::InvokeProvider" = "reference/tree/invoke-provider.md" },
+        { "ui::JumpListHost" = "reference/tree/jump-list-host.md" },
+        { "ui::Launcher" = "reference/tree/launcher.md" },
+        { "ui::LottieIconSource" = "reference/tree/lottie-icon-source.md" },
+        { "ui::MessageBoxHost" = "reference/tree/message-box-host.md" },
+        { "ui::Notifier" = "reference/tree/notifier.md" },
+        { "ui::Paint" = "reference/tree/paint.md" },
+        { "ui::PrintHost" = "reference/tree/print-host.md" },
+        { "ui::RangeValueProvider" = "reference/tree/range-value-provider.md" },
+        { "ui::ScrollProvider" = "reference/tree/scroll-provider.md" },
+        { "ui::SelectionItemProvider" = "reference/tree/selection-item-provider.md" },
+        { "ui::SelectionProvider" = "reference/tree/selection-provider.md" },
+        { "ui::TableItemProvider" = "reference/tree/table-item-provider.md" },
+        { "ui::TableProvider" = "reference/tree/table-provider.md" },
+        { "ui::TextInteraction" = "reference/tree/text-interaction.md" },
+        { "ui::ThemeColor" = "reference/tree/theme-color.md" },
+        { "ui::ToggleProvider" = "reference/tree/toggle-provider.md" },
+        { "ui::TrayIcon" = "reference/tree/tray-icon.md" },
+        { "ui::UiThreadHop" = "reference/tree/ui-thread-hop.md" },
+        { "ui::ValueProvider" = "reference/tree/value-provider.md" },
+        { "ui::VisualTree" = "reference/tree/visual-tree.md" },
+        { "ui::Window" = "reference/tree/window.md" },
+        { "ui::WindowRef" = "reference/tree/window-ref.md" },
+      ] },
+      { "Structs" = [
+        { "ui::Accessibility" = "reference/tree/accessibility.md" },
+        { "ui::ArrangeContext" = "reference/tree/arrange-context.md" },
+        { "ui::AutomationProviders" = "reference/tree/automation-providers.md" },
+        { "ui::BringIntoViewOptions" = "reference/tree/bring-into-view-options.md" },
+        { "ui::BrushTransition" = "reference/tree/brush-transition.md" },
+        { "ui::CaptionInsets" = "reference/tree/caption-insets.md" },
+        { "ui::ClipboardContent" = "reference/tree/clipboard-content.md" },
+        { "ui::ClipboardContentOptions" = "reference/tree/clipboard-content-options.md" },
+        { "ui::Command" = "reference/tree/command.md" },
+        { "ui::CommandValues" = "reference/tree/command-values.md" },
+        { "ui::DataPackage" = "reference/tree/data-package.md" },
+        { "ui::DoubleAnimation" = "reference/tree/double-animation.md" },
+        { "ui::DragEventArgs" = "reference/tree/drag-event-args.md" },
+        { "ui::DragResponse" = "reference/tree/drag-response.md" },
+        { "ui::ElementMotionDeleter" = "reference/tree/element-motion-deleter.md" },
+        { "ui::ExpressionAnimation" = "reference/tree/expression-animation.md" },
+        { "ui::FileType" = "reference/tree/file-type.md" },
+        { "ui::Inline" = "reference/tree/inline.md" },
+        { "ui::InstanceActivation" = "reference/tree/instance-activation.md" },
+        { "ui::JumpTask" = "reference/tree/jump-task.md" },
+        { "ui::KeyFrame" = "reference/tree/key-frame.md" },
+        { "ui::KeyFrameAnimation" = "reference/tree/key-frame-animation.md" },
+        { "ui::MeasureContext" = "reference/tree/measure-context.md" },
+        { "ui::MessageBoxOptions" = "reference/tree/message-box-options.md" },
+        { "ui::Notification" = "reference/tree/notification.md" },
+        { "ui::Paragraph" = "reference/tree/paragraph.md" },
+        { "ui::ParallelLayout" = "reference/tree/parallel-layout.md" },
+        { "ui::PickFileOptions" = "reference/tree/pick-file-options.md" },
+        { "ui::PickFolderOptions" = "reference/tree/pick-folder-options.md" },
+        { "ui::PickSaveFileOptions" = "reference/tree/pick-save-file-options.md" },
+        { "ui::PopupChrome" = "reference/tree/popup-chrome.md" },
+        { "ui::PopupClosingArgs" = "reference/tree/popup-closing-args.md" },
+        { "ui::PopupRequest" = "reference/tree/popup-request.md" },
+        { "ui::PrintContext" = "reference/tree/print-context.md" },
+        { "ui::PrintJob" = "reference/tree/print-job.md" },
+        { "ui::PrintPage" = "reference/tree/print-page.md" },
+        { "ui::RenderContext" = "reference/tree/render-context.md" },
+        { "ui::ScalarTransition" = "reference/tree/scalar-transition.md" },
+        { "ui::SpellCheckOptions" = "reference/tree/spell-check-options.md" },
+        { "ui::SpringAnimation" = "reference/tree/spring-animation.md" },
+        { "ui::TaskbarProgress" = "reference/tree/taskbar-progress.md" },
+        { "ui::TextHighlighter" = "reference/tree/text-highlighter.md" },
+        { "ui::ThumbnailButton" = "reference/tree/thumbnail-button.md" },
+        { "ui::TransitionStoryboard" = "reference/tree/transition-storyboard.md" },
+        { "ui::TransitionTargetState" = "reference/tree/transition-target-state.md" },
+        { "ui::TransitionTrack" = "reference/tree/transition-track.md" },
+        { "ui::TrayFlyoutOptions" = "reference/tree/tray-flyout-options.md" },
+        { "ui::TrayIconOptions" = "reference/tree/tray-icon-options.md" },
+        { "ui::Vector3Transition" = "reference/tree/vector3-transition.md" },
+        { "ui::WindowClosingArgs" = "reference/tree/window-closing-args.md" },
+        { "ui::WindowIcon" = "reference/tree/window-icon.md" },
+        { "ui::WindowOptions" = "reference/tree/window-options.md" },
+        { "ui::WindowPlacement" = "reference/tree/window-placement.md" },
+        { "ui::WindowStyle" = "reference/tree/window-style.md" },
+      ] },
+      { "Namespaces" = [
+        { "ui" = "reference/tree/namespace-ui.md" },
+        { "ui::transition_storyboards" = "reference/tree/namespace-ui-transition_storyboards.md" },
+      ] },
+    ] },
+    { "Core" = [
+      "reference/core/index.md",
+      { "Classes" = [
+        { "ui::Binding" = "reference/core/binding.md" },
+        { "ui::Callback" = "reference/core/callback.md" },
+        { "ui::Callback< R(Args...) const >" = "reference/core/callback-r-args-const.md" },
+        { "ui::Callback< R(Args...)>" = "reference/core/callback-r-args.md" },
+        { "ui::CheckedField" = "reference/core/checked-field.md" },
+        { "ui::ChoiceBinding" = "reference/core/choice-binding.md" },
+        { "ui::CodePoints" = "reference/core/code-points.md" },
+        { "ui::Computed" = "reference/core/computed.md" },
+        { "ui::ItemCount" = "reference/core/item-count.md" },
+        { "ui::ItemKey" = "reference/core/item-key.md" },
+        { "ui::ObservableVector" = "reference/core/observable-vector.md" },
+        { "ui::OptionalFloat" = "reference/core/optional-float.md" },
+        { "ui::Property" = "reference/core/property.md" },
+        { "ui::PropertyBase" = "reference/core/property-base.md" },
+        { "ui::Scheduler" = "reference/core/scheduler.md" },
+        { "ui::Signal" = "reference/core/signal.md" },
+        { "ui::Subscription" = "reference/core/subscription.md" },
+        { "ui::TwoWayBinding" = "reference/core/two-way-binding.md" },
+        { "ui::TwoWayField" = "reference/core/two-way-field.md" },
+        { "ui::Utf16Decoder" = "reference/core/utf16-decoder.md" },
+      ] },
+      { "Structs" = [
+        { "ui::CollectionChange" = "reference/core/collection-change.md" },
+        { "ui::Color" = "reference/core/color.md" },
+        { "ui::DateFormatSymbols" = "reference/core/date-format-symbols.md" },
+        { "ui::DecimalFormatter" = "reference/core/decimal-formatter.md" },
+        { "ui::Edges" = "reference/core/edges.md" },
+        { "ui::IncrementNumberRounder" = "reference/core/increment-number-rounder.md" },
+        { "ui::KeyCombo" = "reference/core/key-combo.md" },
+        { "ui::KeyEvent" = "reference/core/key-event.md" },
+        { "ui::ModifierKeys" = "reference/core/modifier-keys.md" },
+        { "ui::NumberFormatSymbols" = "reference/core/number-format-symbols.md" },
+        { "ui::Point" = "reference/core/point.md" },
+        { "ui::PointerEvent" = "reference/core/pointer-event.md" },
+        { "ui::Rect" = "reference/core/rect.md" },
+        { "ui::Size" = "reference/core/size.md" },
+        { "ui::Strings" = "reference/core/strings.md" },
+        { "ui::Symmetric" = "reference/core/symmetric.md" },
+        { "ui::TextInputEvent" = "reference/core/text-input-event.md" },
+        { "ui::Thickness" = "reference/core/thickness.md" },
+        { "ui::ThreadCheckFailure" = "reference/core/thread-check-failure.md" },
+        { "ui::Utf8Decoded" = "reference/core/utf8-decoded.md" },
+        { "ui::Vector3" = "reference/core/vector3.md" },
+      ] },
+      { "Namespaces" = [
+        { "ui" = "reference/core/namespace-ui.md" },
+        { "ui::colors" = "reference/core/namespace-ui-colors.md" },
+      ] },
+    ] },
+    { "Rendering" = [
+      "reference/rendering/index.md",
+      { "Render Commands" = "reference/rendering/render-commands.md" },
+      { "Classes" = [
+        { "ui::AnimatedIconSource" = "reference/rendering/animated-icon-source.md" },
+        { "ui::AnimatedVisualSource" = "reference/rendering/animated-visual-source.md" },
+        { "ui::Bitmap" = "reference/rendering/bitmap.md" },
+        { "ui::ClipScope" = "reference/rendering/clip-scope.md" },
+        { "ui::ContextMenuHost" = "reference/rendering/context-menu-host.md" },
+        { "ui::FontName" = "reference/rendering/font-name.md" },
+        { "ui::GradientStops" = "reference/rendering/gradient-stops.md" },
+        { "ui::IconSource" = "reference/rendering/icon-source.md" },
+        { "ui::ImageSource" = "reference/rendering/image-source.md" },
+        { "ui::NativeHost" = "reference/rendering/native-host.md" },
+        { "ui::OpacityLayerScope" = "reference/rendering/opacity-layer-scope.md" },
+        { "ui::PathGeometry" = "reference/rendering/path-geometry.md" },
+        { "ui::Renderer" = "reference/rendering/renderer.md" },
+        { "ui::RenderRecording" = "reference/rendering/render-recording.md" },
+        { "ui::SpellChecker" = "reference/rendering/spell-checker.md" },
+        { "ui::SvgImage" = "reference/rendering/svg-image.md" },
+        { "ui::TextAnalyzer" = "reference/rendering/text-analyzer.md" },
+        { "ui::TextLayout" = "reference/rendering/text-layout.md" },
+        { "ui::TextMeasurer" = "reference/rendering/text-measurer.md" },
+        { "ui::TransformScope" = "reference/rendering/transform-scope.md" },
+      ] },
+      { "Structs" = [
+        { "ui::AcrylicBrush" = "reference/rendering/acrylic-brush.md" },
+        { "ui::AnimatedImage" = "reference/rendering/animated-image.md" },
+        { "ui::ContextMenuItem" = "reference/rendering/context-menu-item.md" },
+        { "ui::CubicBezier" = "reference/rendering/cubic-bezier.md" },
+        { "ui::FocusRingStyle" = "reference/rendering/focus-ring-style.md" },
+        { "ui::GradientStop" = "reference/rendering/gradient-stop.md" },
+        { "ui::IconGlyph" = "reference/rendering/icon-glyph.md" },
+        { "ui::ImageDecodeOptions" = "reference/rendering/image-decode-options.md" },
+        { "ui::ImageDiff" = "reference/rendering/image-diff.md" },
+        { "ui::LinearGradientBrush" = "reference/rendering/linear-gradient-brush.md" },
+        { "ui::Matrix" = "reference/rendering/matrix.md" },
+        { "ui::NativeControlDesc" = "reference/rendering/native-control-desc.md" },
+        { "ui::NativeNotification" = "reference/rendering/native-notification.md" },
+        { "ui::PathFigure" = "reference/rendering/path-figure.md" },
+        { "ui::PathSegment" = "reference/rendering/path-segment.md" },
+        { "ui::PushClipRoundedRect" = "reference/rendering/push-clip-rounded-rect.md" },
+        { "ui::RadialGradientBrush" = "reference/rendering/radial-gradient-brush.md" },
+        { "ui::ShadowRecipe" = "reference/rendering/shadow-recipe.md" },
+        { "ui::SpellingError" = "reference/rendering/spelling-error.md" },
+        { "ui::StrokeStyle" = "reference/rendering/stroke-style.md" },
+        { "ui::TextColorSpan" = "reference/rendering/text-color-span.md" },
+        { "ui::TextEffect" = "reference/rendering/text-effect.md" },
+        { "ui::TextHighlight" = "reference/rendering/text-highlight.md" },
+        { "ui::TextLayoutOptions" = "reference/rendering/text-layout-options.md" },
+        { "ui::TextLayoutParagraph" = "reference/rendering/text-layout-paragraph.md" },
+        { "ui::TextLayoutRun" = "reference/rendering/text-layout-run.md" },
+        { "ui::TextMetrics" = "reference/rendering/text-metrics.md" },
+        { "ui::TextStyle" = "reference/rendering/text-style.md" },
+      ] },
+      { "Namespaces" = [
+        { "ui" = "reference/rendering/namespace-ui.md" },
+        { "ui::easing" = "reference/rendering/namespace-ui-easing.md" },
+        { "ui::elevation_z" = "reference/rendering/namespace-ui-elevation_z.md" },
+        { "ui::glyphs" = "reference/rendering/namespace-ui-glyphs.md" },
+      ] },
+    ] },
+    { "Testing" = [
+      "reference/testing/index.md",
+      { "Classes" = [
+        { "ui::testing::HeadlessTextMeasurer" = "reference/testing/headless-text-measurer.md" },
+        { "ui::testing::HeadlessUI" = "reference/testing/headless-ui.md" },
+        { "ui::testing::HeadlessWindowHost" = "reference/testing/headless-window-host.md" },
+        { "ui::testing::OffscreenCapture" = "reference/testing/offscreen-capture.md" },
+        { "ui::testing::PerfCountScope" = "reference/testing/perf-count-scope.md" },
+        { "ui::testing::TestAutomationEvents" = "reference/testing/test-automation-events.md" },
+        { "ui::testing::TestClipboard" = "reference/testing/test-clipboard.md" },
+        { "ui::testing::TestContextMenuHost" = "reference/testing/test-context-menu-host.md" },
+        { "ui::testing::TestJumpListHost" = "reference/testing/test-jump-list-host.md" },
+        { "ui::testing::TestLauncher" = "reference/testing/test-launcher.md" },
+        { "ui::testing::TestMessageBoxHost" = "reference/testing/test-message-box-host.md" },
+        { "ui::testing::TestNativeHost" = "reference/testing/test-native-host.md" },
+        { "ui::testing::TestNotifier" = "reference/testing/test-notifier.md" },
+        { "ui::testing::TestPrintHost" = "reference/testing/test-print-host.md" },
+        { "ui::testing::TestRenderer" = "reference/testing/test-renderer.md" },
+        { "ui::testing::TestSpellChecker" = "reference/testing/test-spell-checker.md" },
+        { "ui::testing::WindowSeams" = "reference/testing/window-seams.md" },
+      ] },
+      { "Structs" = [
+        { "ui::testing::ElementAccess" = "reference/testing/element-access.md" },
+        { "ui::testing::PerfCounters" = "reference/testing/perf-counters.md" },
+        { "ui::testing::StartupMilestones" = "reference/testing/startup-milestones.md" },
+        { "ui::testing::VisualStates" = "reference/testing/visual-states.md" },
+      ] },
+      { "Namespaces" = [
+        { "ui::testing" = "reference/testing/namespace-ui-testing.md" },
+      ] },
+    ] },
+    { "Themes" = [
+      "reference/themes/index.md",
+      { "Classes" = [
+        { "ui::FrameColor" = "reference/themes/frame-color.md" },
+      ] },
+      { "Structs" = [
+        { "ui::AccentRamp" = "reference/themes/accent-ramp.md" },
+        { "ui::ButtonVisual" = "reference/themes/button-visual.md" },
+        { "ui::ChromeHints" = "reference/themes/chrome-hints.md" },
+        { "ui::ChromeOverrides" = "reference/themes/chrome-overrides.md" },
+        { "ui::ClassicBevelRamp" = "reference/themes/classic-bevel-ramp.md" },
+        { "ui::ClassicCaption" = "reference/themes/classic-caption.md" },
+        { "ui::ClassicPalette" = "reference/themes/classic-palette.md" },
+        { "ui::EarlyPalette" = "reference/themes/early-palette.md" },
+        { "ui::HighContrastPalette" = "reference/themes/high-contrast-palette.md" },
+        { "ui::InsetWell" = "reference/themes/inset-well.md" },
+        { "ui::Mdl2Palette" = "reference/themes/mdl2-palette.md" },
+        { "ui::MetroPalette" = "reference/themes/metro-palette.md" },
+        { "ui::OsThemeSnapshot" = "reference/themes/os-theme-snapshot.md" },
+        { "ui::Palette" = "reference/themes/palette.md" },
+        { "ui::Surfaces" = "reference/themes/surfaces.md" },
+        { "ui::Theme" = "reference/themes/theme.md" },
+        { "ui::ThemeColors" = "reference/themes/theme-colors.md" },
+        { "ui::ThemeRequest" = "reference/themes/theme-request.md" },
+      ] },
+      { "Namespaces" = [
+        { "ui" = "reference/themes/namespace-ui.md" },
+        { "ui::theme_colors" = "reference/themes/namespace-ui-theme_colors.md" },
+      ] },
+    ] },
+    # END generated reference nav
+  ] },
+  { "Contributing" = [
+    "contributing/index.md",
+    { "Development" = [
+      "contributing/development/index.md",
+      { "Building" = "contributing/development/building.md" },
+      { "Conventions" = "contributing/development/conventions.md" },
+      { "Write Tests" = "contributing/development/write-tests.md" },
+      { "Documentation" = "contributing/development/docs.md" },
+      { "API Stability" = "contributing/development/api-stability.md" },
+    ] },
+    { "How It Works" = [
+      "contributing/how-it-works/index.md",
+      { "The Tree" = "contributing/how-it-works/the-tree.md" },
+      { "Specs and build()" = "contributing/how-it-works/specs-and-build.md" },
+      { "Layout" = "contributing/how-it-works/layout.md" },
+      { "Rendering" = "contributing/how-it-works/rendering.md" },
+      { "Input and Focus" = "contributing/how-it-works/input-and-focus.md" },
+      { "Theming" = "contributing/how-it-works/theming.md" },
+      { "Era Packs" = "contributing/how-it-works/era-packs.md" },
+      { "Platform Seams" = "contributing/how-it-works/platform-seams.md" },
+    ] },
+    { "Hooks" = [
+      "contributing/hooks/index.md",
+      { "Add a Control" = "contributing/hooks/add-a-control.md" },
+      { "Add a Spec Field" = "contributing/hooks/add-a-spec-field.md" },
+      { "Add a Theme Era" = "contributing/hooks/add-a-theme-era.md" },
+      { "Add a Render Command" = "contributing/hooks/add-a-render-command.md" },
+      { "Add a Platform Seam" = "contributing/hooks/add-a-platform-seam.md" },
+    ] },
+  ] },
+  { "Background" = [
+    "background/index.md",
+    { "History of Windows UI" = "background/history.md" },
+    { "Performance" = "background/performance.md" },
+    { "Theme Eras" = [
+      "background/themes/index.md",
+      { "Fluent 2" = "background/themes/fluent2.md" },
+      { "Fluent" = "background/themes/fluent.md" },
+      { "MDL2" = "background/themes/mdl2.md" },
+      { "Metro (MDL)" = "background/themes/mdl.md" },
+      { "Aero" = "background/themes/aero.md" },
+      { "Luna" = "background/themes/luna.md" },
+      { "Windows 9x" = "background/themes/win9x.md" },
+      { "Windows 3.x" = "background/themes/win3x.md" },
+      { "Early Windows" = "background/themes/winold.md" },
+    ] },
+    { "Studies" = [
+      "background/studies/index.md",
+      { "WinUI Internals" = "background/studies/winui-internals.md" },
+      { "WinUI Animations" = "background/studies/winui-animations.md" },
+      { "Declarative UI in C++" = "background/studies/declarative-ui-in-cpp.md" },
+      { "Win32 Theme Stacks" = "background/studies/win32-theme-stacks.md" },
+      { "Metro" = "background/studies/metro.md" },
+      { "Spell Checking" = "background/studies/spell-checking.md" },
+    ] },
+  ] },
+]
+
+[project.theme]
+logo = "assets/logo-small.svg"     # the header; docs/assets/libwinui.ico is the favicon
+favicon = "assets/libwinui.ico"
+features = [
+  "navigation.tabs",
+  "navigation.tabs.sticky",
+  "navigation.sections",
+  "navigation.indexes",
+  "navigation.path",
+  "navigation.top",
+  "navigation.footer",             # previous/next links, so the tutorials read as a course
+  "navigation.tracking",           # the URL follows the heading in view, for linkable sections
+  "navigation.prune",              # render only the open nav subtree; the reference nav is large
+  # Instant loading fetches pages without a full reload. It needs site_url above.
+  "navigation.instant",
+  "navigation.instant.prefetch",
+  "navigation.instant.progress",
+  "toc.follow",                    # the page outline scrolls to the section being read
+  "search.highlight",
+  "search.suggest",
+  "content.code.copy",
+  "content.code.select",
+  "content.code.annotate",
+  "content.tabs.link",             # picking a content tab picks the same tab everywhere
+  "content.tooltips",
+  "content.footnote.tooltips",
+]
+
+# System preference first, then an explicit light and dark; the header toggle cycles them.
+[[project.theme.palette]]
+media = "(prefers-color-scheme)"
+toggle.icon = "lucide/sun-moon"
+toggle.name = "Switch to light mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to system preference"
+
+[project.extra]
+generator = false               # no "Made with Zensical" in the footer
+
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/libwinui/libwinui"
+name = "libwinui on GitHub"
+
+[project.markdown_extensions]
+admonition = {}
+attr_list = {}
+def_list = {}
+footnotes = {}
+md_in_html = {}
+abbr = {}
+tables = {}
+toc.permalink = true
+pymdownx.details = {}
+pymdownx.superfences.custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]
+pymdownx.tabbed.alternate_style = true
+pymdownx.highlight.anchor_linenums = true
+pymdownx.highlight.line_spans = "__span"          # content.code.select needs the line spans
+pymdownx.highlight.pygments_lang_class = true
+pymdownx.inlinehilite = {}
+pymdownx.keys = {}
+pymdownx.mark = {}
+pymdownx.tasklist.custom_checkbox = true
+pymdownx.snippets.base_path = ["."]
+pymdownx.snippets.check_paths = true
+pymdownx.snippets.dedent_subsections = true          # a region cut from inside main() starts at column 0

@@ -1,0 +1,10 @@
+/* Screenshots: a window's client area gets a hairline and the Fluent 2 window corner; an era
+   window keeps its own square frame. */
+.md-typeset img.screenshot {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+}
+
+.md-typeset img.era {
+  border: 1px solid var(--md-default-fg-color--lightest);
+}

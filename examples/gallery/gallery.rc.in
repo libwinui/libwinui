@@ -1,0 +1,3 @@
+// The program icon: the libwinui logo (docs/assets/libwinui.ico). The window shows the
+// executable's first icon when it sets none of its own.
+1 ICON "@GALLERY_ICON@"
