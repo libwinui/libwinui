@@ -52,6 +52,7 @@ nav = [
       { "Testing Your UI" = "tutorials/guides/testing.md" },
       { "Accessibility and UI Automation" = "tutorials/guides/accessibility.md" },
       { "Built-in Text" = "tutorials/guides/built-in-text.md" },
+      { "C++ Modules" = "tutorials/guides/modules.md" },
     ] },
   ] },
   { "Reference" = [

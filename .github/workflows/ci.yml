@@ -22,8 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows MSVC,      os: windows-2025, compiler: cl,       package: true,  flags: '' }
-        - { name: Windows clang-cl,  os: windows-2025, compiler: clang-cl, package: true,  flags: '' }
+        - { name: Windows MSVC,      os: windows-2025, compiler: cl,       package: true,  flags: -DLIBWINUI_BUILD_MODULES=ON }
+        - { name: Windows clang-cl,  os: windows-2025, compiler: clang-cl, package: true,  flags: -DLIBWINUI_BUILD_MODULES=ON }
         - { name: Windows MSVC ASan, os: windows-2025, compiler: cl,       package: false, flags: -DLIBWINUI_ENABLE_ASAN=ON -DLIBWINUI_BUILD_EXAMPLES=OFF }
 
     steps:
@@ -59,7 +59,7 @@ jobs:
       run: cmake --install "$GITHUB_WORKSPACE/build" --config Debug --prefix "$RUNNER_TEMP/winui"
 
     # A project outside the tree that finds the installed package, builds an app and a UI test
-    # against it, and runs the test.
+    # against it, the test once more through the modules, and runs the tests.
     - name: Build Against the Installed Package
       if: matrix.platform.package
       env:
@@ -68,6 +68,7 @@ jobs:
         cmake -S "$GITHUB_WORKSPACE/tests/package" -B "$RUNNER_TEMP/package" -G "Ninja Multi-Config" "-DCMAKE_CXX_COMPILER=$CXX_COMPILER" "-DCMAKE_PREFIX_PATH=$RUNNER_TEMP/winui"
         cmake --build "$RUNNER_TEMP/package" --config Debug --parallel 2
         "$RUNNER_TEMP/package/Debug/package_headless.exe"
+        "$RUNNER_TEMP/package/Debug/package_headless_module.exe"
 
   checks:
     name: Format, API Surface and Docs
@@ -107,7 +108,7 @@ jobs:
     - name: Check Formatting
       run: |
         git ls-files -- 'examples/*.hpp' 'examples/*.cpp' 'include/*.hpp' 'include/*.cpp' \
-                        'src/*.hpp' 'src/*.cpp' 'tests/*.hpp' 'tests/*.cpp' 'tools/*.cpp' > "$RUNNER_TEMP/format-files.txt"
+                        'src/*.hpp' 'src/*.cpp' 'tests/*.hpp' 'tests/*.cpp' 'tools/*.cpp' 'modules/*.cppm' > "$RUNNER_TEMP/format-files.txt"
         clang-format --dry-run --Werror "--files=$RUNNER_TEMP/format-files.txt"
 
     - name: Set Up MSVC Environment

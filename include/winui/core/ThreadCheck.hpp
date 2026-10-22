@@ -26,7 +26,7 @@ namespace ui
 
 /// Whether this build checks thread affinity (see set_thread_check_handler()); LIBWINUI_THREAD_CHECKS
 /// as a constant.
-constexpr bool ThreadChecksEnabled = LIBWINUI_THREAD_CHECKS != 0;
+inline constexpr bool ThreadChecksEnabled = LIBWINUI_THREAD_CHECKS != 0;
 
 /// One wrong-thread call, handed to the thread check handler.
 struct ThreadCheckFailure
