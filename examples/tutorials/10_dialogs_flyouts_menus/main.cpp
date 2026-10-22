@@ -3,6 +3,7 @@
 // --8<-- [start:includes]
 #include <winui/winui.hpp>
 
+#include <coroutine>
 #include <format>
 #include <optional>
 #include <string>
