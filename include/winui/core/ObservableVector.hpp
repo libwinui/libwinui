@@ -873,7 +873,10 @@ public:
 
         std::vector<bool> taken(old.size(), false);
         source.assign(next.size(), std::nullopt);
-        changed.assign(next.size(), false);
+        // Constructed rather than assign()ed: MSVC's vector<bool>::assign calls a helper that
+        // <xutility> declares and <vector> defines with another signature, which an app that
+        // imports the winui module can't link.
+        changed = std::vector<bool>(next.size(), false);
         for (std::size_t i = 0; i < next.size(); ++i)
         {
             const auto [first, last] = by_hash.equal_range(hash_(next[i]));
