@@ -27,7 +27,7 @@ The three tracks stand on their own and can be read in any order after that. If 
 ## Prerequisites
 
 - A C++23 compiler: MSVC 19.3x, Clang 16 or newer, or GCC 14 or newer.
-- CMake 3.21 or newer.
+- CMake 3.28 or newer.
 - Windows to run the result. The library and the tutorials also compile elsewhere, but only Windows gets a window.
 - Network access the first time you configure, since CMake downloads a few small dependencies.
 
