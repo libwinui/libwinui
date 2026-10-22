@@ -2,7 +2,7 @@
 # Development tools, in plain C++ with no dependencies:
 #
 #   winui_check_snippets  checks the gallery's `.code` snippets against the specs (ctest: gallery_snippets)
-#   winui_api_surface     writes or checks api/surface*.txt from Doxygen's XML (targets api-surface, api-check)
+#   winui_api_surface     writes or checks api/surface*.txt and modules/*.cppm from Doxygen's XML (targets api-surface, api-check)
 #   winui_doc_examples    turns the headers' @code examples into sources the build compiles (cmake/DocExamples.cmake)
 #
 # Built with the library when libwinui is the top-level project, or on its own, which is how CI's
