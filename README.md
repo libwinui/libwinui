@@ -53,7 +53,7 @@ with your usual debugger.
 ## Requirements
 
 - A C++23 compiler: MSVC 19.3x, Clang 16+ or GCC 14+
-- CMake 3.21 or newer
+- CMake 3.28 or newer
 - A Windows SDK for the Windows backend
 - Windows 10, version 1703 or newer, to run the result
 

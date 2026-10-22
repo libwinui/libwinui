@@ -2,7 +2,7 @@
 # A project outside the libwinui tree that finds an installed libwinui the way an app does.
 # CI installs the library, configures this against the install prefix, builds both programs
 # and runs the headless one.
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.28)
 project(winui_package_check LANGUAGES CXX)
 
 find_package(winui CONFIG REQUIRED COMPONENTS testing)

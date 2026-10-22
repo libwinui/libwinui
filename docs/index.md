@@ -116,7 +116,7 @@ You fill in a `ui::Button` once and hand it over, and it builds a `ui::ButtonCon
 ## What You Need
 
 - A C++23 compiler: MSVC 19.3x, Clang 16+ or GCC 14+.
-- CMake 3.21 or newer. The library builds as a static library by default.
+- CMake 3.28 or newer. The library builds as a static library by default.
 - A Windows SDK.
 - Windows 10, version 1703 or newer, to run the result.
 - Nothing else on the target machine.

@@ -4,7 +4,7 @@ Requirements, configure, build, test, format.
 
 ## Requirements
 
-- **CMake 3.21** or newer.
+- **CMake 3.28** or newer.
 - **A C++23 compiler.** MSVC 19.3x, Clang 16 or newer, or GCC 14 or newer for the whole library. The platform-independent core also builds with GCC 13.
 - **A Windows SDK** for the Windows backend. Configuring runs the C++/WinRT generator against the installed SDK's metadata.
 

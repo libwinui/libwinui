@@ -1,10 +1,14 @@
 # SPDX-License-Identifier: MIT
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.28)
 
 project(libwinui
     VERSION 0.1.0
     DESCRIPTION "A native, data-oriented, testable Windows UI framework (vertical slice 1)"
     LANGUAGES CXX)
+
+# No source of the library, its tests or examples imports a module, so they skip the scan CMake
+# 3.28 runs for C++20 targets.
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 # ---------------------------------------------------------------------------
 # Options
