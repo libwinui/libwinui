@@ -873,7 +873,7 @@ public:
 
         std::vector<bool> taken(old.size(), false);
         source.assign(next.size(), std::nullopt);
-        changed.assign(next.size(), false);
+        changed = std::vector<bool>(next.size(), false);
         for (std::size_t i = 0; i < next.size(); ++i)
         {
             const auto [first, last] = by_hash.equal_range(hash_(next[i]));
