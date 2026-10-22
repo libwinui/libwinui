@@ -2,6 +2,7 @@
 // libwinui tutorial: background work and the UI thread.
 #include <winui/winui.hpp>
 
+#include <coroutine>
 #include <exception>
 #include <format>
 #include <memory>

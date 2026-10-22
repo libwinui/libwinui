@@ -4,7 +4,9 @@
 #include <winui/winui.hpp>
 
 #include <format>
+#include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <cstddef>
