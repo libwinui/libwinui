@@ -1,11 +1,17 @@
 // SPDX-License-Identifier: MIT
 // Clicks a button through the testing tier of an installed libwinui and checks the bound text.
-#include <winui/testing.hpp>
-#include <winui/winui.hpp>
-
+// Built twice when the package has the modules: with the headers, and with PACKAGE_USE_MODULES
+// through `import winui.testing;`.
 #include <string>
 
 #include <cstdio>
+
+#ifdef PACKAGE_USE_MODULES
+import winui.testing;
+#else
+#include <winui/testing.hpp>
+#include <winui/winui.hpp>
+#endif
 
 int main()
 {

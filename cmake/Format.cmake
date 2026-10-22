@@ -13,6 +13,9 @@ foreach(FOLDER IN ITEMS examples include src tests tools)
     file(GLOB_RECURSE folder_files "${FOLDER}/*.hpp" "${FOLDER}/*.cpp")
     list(APPEND SOURCES ${folder_files})
 endforeach()
+# The generated module interfaces: tools/api_surface.cpp writes them formatted, this keeps it so.
+file(GLOB module_files "modules/*.cppm")
+list(APPEND SOURCES ${module_files})
 
 # The file list goes through a response file: on Windows the paths alone exceed the 32767
 # character command line limit, and the process then fails to start.
