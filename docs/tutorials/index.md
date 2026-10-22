@@ -16,7 +16,7 @@ The tutorials are one course followed by three tracks.
 | [Collections](collections/index.md) | Lists and grids of data, from a handful of rows to a hundred thousand. |
 | [Navigation](navigation/index.md) | An app frame with pages, and the dialogs, flyouts and menus that float above it. |
 | [Extending the Tree](extending-the-tree/index.md) | Your own controls, native Win32 controls, and mixing hand-built subtrees with declared ones. |
-| Guides | [Themes](guides/themes.md), [Testing Your UI](guides/testing.md), [Accessibility and UI Automation](guides/accessibility.md) and [Built-in Text](guides/built-in-text.md). |
+| Guides | [Themes](guides/themes.md), [Testing Your UI](guides/testing.md), [Accessibility and UI Automation](guides/accessibility.md), [Built-in Text](guides/built-in-text.md) and [C++ Modules](guides/modules.md). |
 
 ## Reading Order
 
@@ -27,7 +27,7 @@ The three tracks stand on their own and can be read in any order after that. If 
 ## Prerequisites
 
 - A C++23 compiler: MSVC 19.3x, Clang 16 or newer, or GCC 14 or newer.
-- CMake 3.21 or newer.
+- CMake 3.28 or newer.
 - Windows to run the result. The library and the tutorials also compile elsewhere, but only Windows gets a window.
 - Network access the first time you configure, since CMake downloads a few small dependencies.
 

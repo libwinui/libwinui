@@ -1,10 +1,14 @@
 # SPDX-License-Identifier: MIT
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.28)
 
 project(libwinui
     VERSION 0.1.0
     DESCRIPTION "A native, data-oriented, testable Windows UI framework (vertical slice 1)"
     LANGUAGES CXX)
+
+# No source of the library, its tests or examples imports a module, so they skip the scan CMake
+# 3.28 runs for C++20 targets; the module targets of cmake/Modules.cmake turn it back on.
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 # ---------------------------------------------------------------------------
 # Options
@@ -19,6 +23,8 @@ set_property(CACHE LIBWINUI_THREAD_CHECKS PROPERTY STRINGS AUTO ON OFF)
 # TraceLogging spans for layout, render, present, tick and startup (src/core/Trace.hpp), so
 # Windows Performance Analyzer shows a frame. Off: the spans compile to nothing.
 option(LIBWINUI_ENABLE_TRACING "Emit TraceLogging events from the library" OFF)
+# winui::module and winui::testing_module, for `import winui;` (cmake/Modules.cmake).
+option(LIBWINUI_BUILD_MODULES "Build the C++ modules winui and winui.testing" OFF)
 
 # include/winui/core/Version.hpp spells the version out for the preprocessor; it has to say the
 # same as project(VERSION) above.
@@ -466,6 +472,13 @@ if(LIBWINUI_BUILD_SHARED)
 endif()
 
 # ---------------------------------------------------------------------------
+# C++ modules (optional): `import winui;` and `import winui.testing;` over the static libraries
+# ---------------------------------------------------------------------------
+if(LIBWINUI_BUILD_MODULES)
+    include(cmake/Modules.cmake)
+endif()
+
+# ---------------------------------------------------------------------------
 # Example controls the tests and the examples share (hosting an OS window class)
 # ---------------------------------------------------------------------------
 if(WIN32 AND LIBWINUI_STANDALONE AND (LIBWINUI_BUILD_TESTS OR LIBWINUI_BUILD_EXAMPLES))
@@ -518,6 +531,17 @@ if(LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32)
     add_subdirectory(examples/tutorials/14_todo_list)
     add_subdirectory(examples/tutorials/15_background_work)
     add_subdirectory(examples/tutorials/16_form_from_data)
+    # Each tutorial once more through `import winui;`, so the module exports what the docs use.
+    # 12 stays out: its native controls include the headers again, after the import.
+    if(LIBWINUI_BUILD_MODULES)
+        file(GLOB winui_tutorial_dirs LIST_DIRECTORIES true ${PROJECT_SOURCE_DIR}/examples/tutorials/*)
+        foreach(winui_tutorial_dir IN LISTS winui_tutorial_dirs)
+            get_filename_component(winui_tutorial ${winui_tutorial_dir} NAME)
+            if(EXISTS ${winui_tutorial_dir}/main.cpp AND NOT winui_tutorial STREQUAL "12_hosting_native_controls")
+                winui_add_module_tutorial(tutorial_${winui_tutorial} ${winui_tutorial_dir}/main.cpp)
+            endif()
+        endforeach()
+    endif()
 endif()
 
 # ---------------------------------------------------------------------------
@@ -563,16 +587,29 @@ if(LIBWINUI_BUILD_SHARED)
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
+if(LIBWINUI_BUILD_MODULES)
+    # The interface units, which a consumer's build compiles: a compiled module only fits the
+    # compiler and options it was made with.
+    install(TARGETS winui_module EXPORT winuiTargets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        FILE_SET CXX_MODULES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/winui/modules)
+    install(TARGETS winui_testing_module EXPORT winuiTestingTargets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        FILE_SET CXX_MODULES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/winui/modules)
+    set(winui_cxx_modules_directory CXX_MODULES_DIRECTORY cxx-modules)
+endif()
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 # An app that links the library has to carry both notices.
 install(FILES LICENSE THIRD-PARTY-NOTICES.md DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/winui)
 install(EXPORT winuiTargets
     FILE winuiTargets.cmake
     NAMESPACE winui::
+    ${winui_cxx_modules_directory}
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/winui)
 install(EXPORT winuiTestingTargets
     FILE winuiTestingTargets.cmake
     NAMESPACE winui::
+    ${winui_cxx_modules_directory}
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/winui)
 
 # find_package(winui): the config file, and a version file that accepts only this exact version

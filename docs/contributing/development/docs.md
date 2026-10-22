@@ -62,6 +62,8 @@ cmake --build build --target api-check     # exit 1 if one is stale
 
 Both run Doxygen and then `winui_api_surface` (`tools/api_surface.cpp`). Regenerate the files with every header change, next to the reference.
 
+The same run writes the two C++ module interfaces, `modules/winui.cppm` and `modules/winui.testing.cppm` (see [C++ Modules](../../tutorials/guides/modules.md)). Each includes the headers in its global module fragment and exports every public name of its tier with a `using` declaration, so a name added to a header is in the module after the next `api-surface`, and `api-check` fails while it isn't. A public header that `<winui/winui.hpp>` leaves out gets its own `#include` there.
+
 ## Tutorial Snippets
 
 Tutorial code lives in real projects, one per page: `examples/tutorials/<nn>_<name>/main.cpp` with its own `CMakeLists.txt`, listed in the top-level `CMakeLists.txt`. It is built with the examples, so the code a tutorial shows always compiles.

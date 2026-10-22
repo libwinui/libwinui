@@ -12,7 +12,7 @@ The example for this page builds as `tutorial_01_first_window`.
 libwinui is a CMake project whose library target is `winui::winui`. The simplest way in is to put the repository next to your code (a git submodule, a copy, whatever you prefer) and add it as a subdirectory:
 
 ```cmake
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.28)
 project(my_app LANGUAGES CXX)
 
 add_subdirectory(external/libwinui)

@@ -191,3 +191,12 @@ if(MSVC)
 endif()
 winui_set_warnings(winui_thread_checks_off)
 add_test(NAME thread_checks_off COMMAND winui_thread_checks_off)
+
+# The C++ modules: a headless UI built through `import winui.testing;` alone. See the file.
+if(TARGET winui::testing_module)
+    add_executable(winui_module_import module_import.cpp)
+    target_link_libraries(winui_module_import PRIVATE winui::testing_module)
+    set_target_properties(winui_module_import PROPERTIES CXX_SCAN_FOR_MODULES ON CXX_EXTENSIONS OFF)
+    winui_set_warnings(winui_module_import)
+    add_test(NAME module_import COMMAND winui_module_import)
+endif()

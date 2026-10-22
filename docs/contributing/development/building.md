@@ -4,7 +4,7 @@ Requirements, configure, build, test, format.
 
 ## Requirements
 
-- **CMake 3.21** or newer.
+- **CMake 3.28** or newer.
 - **A C++23 compiler.** MSVC 19.3x, Clang 16 or newer, or GCC 14 or newer for the whole library. The platform-independent core also builds with GCC 13.
 - **A Windows SDK** for the Windows backend. Configuring runs the C++/WinRT generator against the installed SDK's metadata.
 
@@ -68,6 +68,7 @@ GCC and Clang also need `Threads::Threads` (`-pthread`) linked explicitly for th
 | `LIBWINUI_BUILD_TESTS` | `ON` | Builds `winui_tests` and registers it with CTest. |
 | `LIBWINUI_BUILD_EXAMPLES` | `ON` | Builds the example apps and one project per tutorial. |
 | `LIBWINUI_BUILD_SHARED` | `OFF` | Also builds a shared library (`winui::winui_shared`, and `winui::testing_shared` on top of it) from the same sources, exporting every symbol. The DLLs are `winui.dll` and `winui_testing.dll` (`winuid.dll` and `winui_testingd.dll` in Debug); their import libraries are `winui_shared.lib` and `winui_testing_shared.lib` (`winui_sharedd.lib` and `winui_testing_sharedd.lib` in Debug), since `winui.lib` is the static library. The static library is always built. There is no ABI promise: the DLL only works with the headers of its own version, built by the same compiler with the same options. |
+| `LIBWINUI_BUILD_MODULES` | `OFF` | Builds the C++ modules `winui` and `winui.testing` (`winui::module`, `winui::testing_module`) over the static libraries, and each tutorial once more through `import winui;`. See [C++ Modules](../../tutorials/guides/modules.md). |
 | `LIBWINUI_WARNINGS_AS_ERRORS` | `ON` top-level, `OFF` as a subproject | Every compiler warning is an error. The tree builds without a single warning under MSVC. |
 | `LIBWINUI_ENABLE_ASAN` | `OFF` | AddressSanitizer for everything in the build. Under MSVC the runtime DLLs are copied next to each executable. |
 | `LIBWINUI_ENABLE_UBSAN` | `OFF` | UndefinedBehaviorSanitizer, with GCC and Clang off Windows. |
@@ -113,7 +114,9 @@ find_package(winui 0.1.0 EXACT CONFIG REQUIRED)                       # winui::w
 find_package(winui 0.1.0 EXACT CONFIG REQUIRED COMPONENTS testing)    # adds winui::testing
 ```
 
-`tests/package/` is a project outside the tree that does exactly this: it finds an installed copy, builds an app against `winui::main` and a headless UI test against `winui::testing`, and runs the test. CI installs its MSVC and clang-cl builds and checks them this way. To try it locally, install into a prefix and configure it with `-DCMAKE_PREFIX_PATH=<prefix>`.
+A build with `LIBWINUI_BUILD_MODULES` installs the module sources under `include/winui/modules/`, and the package then also has `winui::module` and, with `COMPONENTS testing`, `winui::testing_module`.
+
+`tests/package/` is a project outside the tree that does exactly this: it finds an installed copy, builds an app against `winui::main` and a headless UI test against `winui::testing`, and runs the test. When the package has the modules, it builds the same test once more through `import winui.testing;`. CI installs its MSVC and clang-cl builds and checks them this way. To try it locally, install into a prefix and configure it with `-DCMAKE_PREFIX_PATH=<prefix>`.
 
 The version file only accepts the exact version that was installed, since there is no ABI promise. The headers carry the same version as `LIBWINUI_VERSION_MAJOR`, `LIBWINUI_VERSION_MINOR` and `LIBWINUI_VERSION_PATCH` (and `ui::VersionMajor`, ...) in `<winui/core/Version.hpp>`; configuring fails when those differ from `project(VERSION)`.
 
