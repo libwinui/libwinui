@@ -68,7 +68,7 @@ LIBWINUI_EXPORT struct ShadowRecipe
     /// shadow. In a light theme the directional alpha stops growing at Z 16, so a ToolTip and a
     /// Flyout have the same opacity and differ only in blur and offset. A dark theme uses a flat
     /// 0.26 up to Z 32.
-    [[nodiscard]] static ShadowRecipe for_elevation(float elevation, bool dark)
+    [[nodiscard]] static inline ShadowRecipe for_elevation(float elevation, bool dark)
     {
         const float e = (std::min)(64.0f, elevation * 0.5f);
         if (e < 2.0f)

@@ -81,7 +81,7 @@ public:
 
     // ---- content ----
     /// The header above the items; also the automation name when none is set.
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return header_.text();
     }
@@ -89,12 +89,12 @@ public:
     void set_header(std::string header);
 
     /// The number of options.
-    [[nodiscard]] std::size_t item_count() const
+    [[nodiscard]] inline std::size_t item_count() const
     {
         return items_.size();
     }
     /// The button for item `index`, owned by this control; nullptr past the end.
-    [[nodiscard]] RadioButtonControl* item(std::size_t index) const
+    [[nodiscard]] inline RadioButtonControl* item(std::size_t index) const
     {
         return index < items_.size() ? items_[index].get() : nullptr;
     }
@@ -104,7 +104,7 @@ public:
 
     // ---- selection ----
     /// The checked item; unset when none is.
-    [[nodiscard]] std::optional<std::size_t> selected_index() const
+    [[nodiscard]] inline std::optional<std::size_t> selected_index() const
     {
         return detail::optional_index(selected_index_);
     }
@@ -117,7 +117,7 @@ public:
     /// Fired once per change with the new index (unset when cleared), whether
     /// a click, an arrow key, `set_items()` or `set_selected_index()` caused it. Replaces any
     /// previous handler.
-    void on_selection_changed(Callback<void(std::optional<std::size_t>)> handler)
+    inline void on_selection_changed(Callback<void(std::optional<std::size_t>)> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
@@ -125,7 +125,7 @@ public:
     // ---- layout ----
     /// The most columns items are laid out in; 1 by default. Fewer are used when the
     /// offered width cannot hold them.
-    [[nodiscard]] std::size_t max_columns() const
+    [[nodiscard]] inline std::size_t max_columns() const
     {
         return max_columns_;
     }
@@ -135,12 +135,12 @@ public:
 
     // ---- focus ----
     /// Whether the group has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// The item that has the keyboard's attention while the group is focused; unset otherwise.
-    [[nodiscard]] std::optional<std::size_t> focused_index() const
+    [[nodiscard]] inline std::optional<std::size_t> focused_index() const
     {
         if (!is_focused() || focus_index_ == NoSlot)
         {
@@ -153,7 +153,7 @@ public:
 
     // ---- the owned items ----
     /// The items, in order.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         for (const auto& item : items_)
         {
@@ -161,7 +161,7 @@ public:
         }
     }
     /// Lists only the group, as one tab stop. The arrow keys move between the items.
-    void collect_focusables(std::vector<Element*>& out) override
+    inline void collect_focusables(std::vector<Element*>& out) override
     {
         if (focusable())
         {
@@ -171,12 +171,12 @@ public:
 
     // ---- automation ----
     /// Group; each item is its own SelectionItem.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Group;
     }
     /// The header, when no `Accessibility::name` is set.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_.text();
     }

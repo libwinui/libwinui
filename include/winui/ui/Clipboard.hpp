@@ -146,7 +146,7 @@ public:
     /// A count of clipboard changes. It goes up every time any app, this one included, changes
     /// the clipboard. Observe it to get notified of changes, and drop the Subscription to stop.
     /// The clipboard is only watched from the first call on.
-    [[nodiscard]] const Property<std::uint64_t>& content_changed()
+    [[nodiscard]] inline const Property<std::uint64_t>& content_changed()
     {
         if (!watching_)
         {
@@ -158,12 +158,12 @@ public:
 
 protected:
     /// Starts watching for clipboard changes. Called once, on the first content_changed().
-    virtual void start_watching()
+    inline virtual void start_watching()
     {
     }
     /// Advances content_changed() by one; an implementation calls it on every change it sees,
     /// its own writes included.
-    void raise_content_changed()
+    inline void raise_content_changed()
     {
         ++changes_;
     }

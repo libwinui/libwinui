@@ -59,14 +59,14 @@ public:
     DatePickerControl& operator=(const DatePickerControl&) = delete;
 
     /// The picked date; unset until one is picked.
-    [[nodiscard]] std::optional<std::chrono::year_month_day> selected_date() const
+    [[nodiscard]] inline std::optional<std::chrono::year_month_day> selected_date() const
     {
         return date_;
     }
     /// Sets the date, clamped to the years. Raises the change callback when it differs.
     void set_selected_date(std::optional<std::chrono::year_month_day> date);
     /// Called after the date changed, from the flyout or a setter, with the new date.
-    void on_selected_date_changed(Callback<void(std::optional<std::chrono::year_month_day>)> handler)
+    inline void on_selected_date_changed(Callback<void(std::optional<std::chrono::year_month_day>)> handler)
     {
         on_selected_date_changed_ = std::move(handler);
     }
@@ -89,15 +89,15 @@ public:
     void set_open(bool open);
 
     // ---- Element ----
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Button;
     }
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_.text();
     }
@@ -137,12 +137,12 @@ private:
     Subscription                                               strings_changed_;
 
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.invoke = this;
         out.value  = this;
     }
-    bool invoke() override
+    inline bool invoke() override
     {
         if (!is_enabled())
         {
@@ -152,11 +152,11 @@ private:
         return true;
     }
     [[nodiscard]] std::string text_value() const override;
-    [[nodiscard]] bool        text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return true;
     }
-    bool set_text_value(std::string_view) override
+    inline bool set_text_value(std::string_view) override
     {
         return false;
     }

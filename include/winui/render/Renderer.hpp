@@ -365,7 +365,7 @@ LIBWINUI_EXPORT struct PushTransform
     float m21     = 0.0f; ///< Rotation/skew term; 0 unless the element is rotated.
 
     /// The same transform as a Matrix.
-    [[nodiscard]] Matrix matrix() const
+    [[nodiscard]] inline Matrix matrix() const
     {
         return Matrix{scale, m12, m21, scale_y, offset.x, offset.y};
     }
@@ -731,7 +731,7 @@ public:
     /// found in whatever pack the backend was configured with; ImageThemePack::empty() is the
     /// common case, and every backend must tolerate it. The default draws nothing, which is
     /// what a backend with no pack does.
-    virtual void draw_image_nine_slice(const std::string& image_name, const Rect& bounds, const Thickness& slice_margins)
+    inline virtual void draw_image_nine_slice(const std::string& image_name, const Rect& bounds, const Thickness& slice_margins)
     {
         (void)image_name;
         (void)bounds;
@@ -761,17 +761,17 @@ public:
     virtual void push_matrix(const Matrix& transform) = 0;
     /// Transforms everything drawn until the matching pop_transform() by `transform`; see
     /// push_matrix().
-    void push_transform(const Matrix& transform)
+    inline void push_transform(const Matrix& transform)
     {
         push_matrix(transform);
     }
     /// Scale by `scale_x`/`scale_y` about the origin, then translate by `offset`.
-    void push_transform(float scale_x, float scale_y, Point offset)
+    inline void push_transform(float scale_x, float scale_y, Point offset)
     {
         push_matrix(Matrix{scale_x, 0.0f, 0.0f, scale_y, offset.x, offset.y});
     }
     /// Uniform scale by `scale`, then translate by `offset`.
-    void push_transform(float scale, Point offset)
+    inline void push_transform(float scale, Point offset)
     {
         push_transform(scale, scale, offset);
     }
@@ -787,7 +787,7 @@ public:
     /// Everything else stays in DIPs; this is for the few classic marks that are drawn pixel by
     /// pixel, like the radio well (draw_classic_radio()) and the solid arrows (draw_classic_arrow()),
     /// which pick a mask per device size instead of scaling a 100 % one.
-    [[nodiscard]] virtual float device_scale() const
+    [[nodiscard]] inline virtual float device_scale() const
     {
         return 1.0f;
     }
@@ -814,22 +814,22 @@ LIBWINUI_EXPORT class [[nodiscard]] ClipScope
 {
 public:
     /// Clips to `bounds` (Renderer::push_clip()).
-    ClipScope(Renderer& renderer, const Rect& bounds) : renderer_(renderer)
+    inline ClipScope(Renderer& renderer, const Rect& bounds) : renderer_(renderer)
     {
         renderer_.push_clip(bounds);
     }
     /// Clips to an ellipse (Renderer::push_clip_ellipse()).
-    ClipScope(Renderer& renderer, Point center, float radius_x, float radius_y) : renderer_(renderer)
+    inline ClipScope(Renderer& renderer, Point center, float radius_x, float radius_y) : renderer_(renderer)
     {
         renderer_.push_clip_ellipse(center, radius_x, radius_y);
     }
     /// Clips to a rect with rounded corners (Renderer::push_clip_rounded_rect()).
-    ClipScope(Renderer& renderer, const Rect& bounds, float radius) : renderer_(renderer)
+    inline ClipScope(Renderer& renderer, const Rect& bounds, float radius) : renderer_(renderer)
     {
         renderer_.push_clip_rounded_rect(bounds, radius);
     }
     /// Pops the clip.
-    ~ClipScope()
+    inline ~ClipScope()
     {
         renderer_.pop_clip();
     }
@@ -859,12 +859,12 @@ LIBWINUI_EXPORT class [[nodiscard]] OpacityLayerScope
 {
 public:
     /// Draws everything in the scope as one layer at `opacity` (Renderer::push_opacity_layer()).
-    OpacityLayerScope(Renderer& renderer, float opacity) : renderer_(renderer)
+    inline OpacityLayerScope(Renderer& renderer, float opacity) : renderer_(renderer)
     {
         renderer_.push_opacity_layer(opacity);
     }
     /// Pops the layer.
-    ~OpacityLayerScope()
+    inline ~OpacityLayerScope()
     {
         renderer_.pop_opacity_layer();
     }
@@ -894,22 +894,22 @@ LIBWINUI_EXPORT class [[nodiscard]] TransformScope
 {
 public:
     /// Transforms by `transform` (Renderer::push_transform()).
-    TransformScope(Renderer& renderer, const Matrix& transform) : renderer_(renderer)
+    inline TransformScope(Renderer& renderer, const Matrix& transform) : renderer_(renderer)
     {
         renderer_.push_transform(transform);
     }
     /// Scales by `scale_x`/`scale_y` about the origin, then translates by `offset`.
-    TransformScope(Renderer& renderer, float scale_x, float scale_y, Point offset) : renderer_(renderer)
+    inline TransformScope(Renderer& renderer, float scale_x, float scale_y, Point offset) : renderer_(renderer)
     {
         renderer_.push_transform(scale_x, scale_y, offset);
     }
     /// Scales uniformly by `scale`, then translates by `offset`.
-    TransformScope(Renderer& renderer, float scale, Point offset) : renderer_(renderer)
+    inline TransformScope(Renderer& renderer, float scale, Point offset) : renderer_(renderer)
     {
         renderer_.push_transform(scale, offset);
     }
     /// Pops the transform.
-    ~TransformScope()
+    inline ~TransformScope()
     {
         renderer_.pop_transform();
     }

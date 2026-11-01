@@ -141,7 +141,7 @@ public:
     using Panel::set_padding;
     /// True: measuring touches only the panel and its children. The children are measured in
     /// dependency order on one thread.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
@@ -272,7 +272,7 @@ public:
     std::vector<Placed> items_;
 
     /// Builds `item`'s content and appends it, as one more entry of the braced list would.
-    void add(RelativeItem item)
+    inline void add(RelativeItem item)
     {
         Placed placed{};
         placed.node                                     = item.content.take();

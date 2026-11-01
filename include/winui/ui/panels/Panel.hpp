@@ -53,33 +53,33 @@ LIBWINUI_EXPORT class Panel : public Element
 public:
     /// The owned children in insertion order (not necessarily drawing order, see
     /// `render_order()`). The panel keeps ownership; the pointers stay valid for its lifetime.
-    [[nodiscard]] std::span<const std::unique_ptr<Element>> children() const
+    [[nodiscard]] inline std::span<const std::unique_ptr<Element>> children() const
     {
         return children_;
     }
 
     /// The background, filled behind the children; nullopt (the default) draws nothing.
     /// Returns nullopt as well while a ThemeColor resource is set (see `background_resource()`).
-    [[nodiscard]] const std::optional<Color>& background() const
+    [[nodiscard]] inline const std::optional<Color>& background() const
     {
         return background_.color();
     }
     /// The theme resource the background is drawn from, or null when a fixed color (or
     /// nothing) is set. A ThemeColor is re-read whenever the panel is drawn, so it follows
     /// theme changes without a setter call (ui/BackgroundBrush.hpp).
-    [[nodiscard]] ThemeColor background_resource() const
+    [[nodiscard]] inline ThemeColor background_resource() const
     {
         return background_.resource();
     }
     /// Fixed background color; replaces any resource. Marks the panel for redraw.
-    void set_background(std::optional<Color> color)
+    inline void set_background(std::optional<Color> color)
     {
         background_.set(color);
         mark_dirty(DirtyFlags::Visual);
     }
     /// Theme-resource background, e.g. `[](const Theme& t) { return t.colors().background; }`;
     /// replaces any fixed color. Marks the panel for redraw.
-    void set_background(ThemeColor resource)
+    inline void set_background(ThemeColor resource)
     {
         background_.set(resource);
         mark_dirty(DirtyFlags::Visual);
@@ -87,12 +87,12 @@ public:
     /// With a transition set, a later change of what the background draws (a new color, or a
     /// resource under a new theme) blends from the color on screen (Animation.hpp's
     /// BrushTransition). nullopt (the default) changes it at once.
-    [[nodiscard]] const std::optional<BrushTransition>& background_transition() const
+    [[nodiscard]] inline const std::optional<BrushTransition>& background_transition() const
     {
         return background_.transition();
     }
     /// Enables (or, with nullopt, disables) the background blend; takes effect on the next change.
-    void set_background_transition(std::optional<BrushTransition> transition)
+    inline void set_background_transition(std::optional<BrushTransition> transition)
     {
         background_.set_transition(transition);
     }
@@ -126,64 +126,64 @@ protected:
     // ---- border and padding, published by the panels that have them ----
     /// The outline color; nullopt (the default) draws no border even with a non-zero
     /// `border_thickness()`. Nullopt as well while a ThemeColor is set.
-    [[nodiscard]] std::optional<Color> border_brush() const
+    [[nodiscard]] inline std::optional<Color> border_brush() const
     {
         return border_brush_.color();
     }
     /// The theme resource the border is drawn from, or null.
-    [[nodiscard]] ThemeColor border_brush_resource() const
+    [[nodiscard]] inline ThemeColor border_brush_resource() const
     {
         return border_brush_.resource();
     }
     /// A fixed outline color; replaces any resource. Marks the panel for redraw.
-    void set_border_brush(std::optional<Color> color)
+    inline void set_border_brush(std::optional<Color> color)
     {
         border_brush_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// An outline color read from the theme each time the panel is drawn; replaces any fixed
     /// color. Marks the panel for redraw.
-    void set_border_brush(ThemeColor resource)
+    inline void set_border_brush(ThemeColor resource)
     {
         border_brush_ = resource;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The border width in DIPs per side (default zero); it insets the children like padding.
-    [[nodiscard]] const Thickness& border_thickness() const
+    [[nodiscard]] inline const Thickness& border_thickness() const
     {
         return border_thickness_;
     }
     /// Sets the border width; marks the panel for layout and redraw.
-    void set_border_thickness(const Thickness& thickness)
+    inline void set_border_thickness(const Thickness& thickness)
     {
         border_thickness_ = thickness;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The corner radius in DIPs, uniform for all four corners (default 0, square).
-    [[nodiscard]] float corner_radius() const
+    [[nodiscard]] inline float corner_radius() const
     {
         return corner_radius_;
     }
     /// Sets the corner radius; marks the panel for redraw.
-    void set_corner_radius(float radius)
+    inline void set_corner_radius(float radius)
     {
         corner_radius_ = radius;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The padding in DIPs between the border and the children (default zero).
-    [[nodiscard]] const Thickness& padding() const
+    [[nodiscard]] inline const Thickness& padding() const
     {
         return padding_;
     }
     /// Sets the padding; marks the panel for layout.
-    void set_padding(const Thickness& padding)
+    inline void set_padding(const Thickness& padding)
     {
         padding_ = padding;
         mark_dirty(DirtyFlags::Layout);
     }
 
     /// Border plus padding, the inset taken off every side.
-    [[nodiscard]] Thickness content_inset() const
+    [[nodiscard]] inline Thickness content_inset() const
     {
         return Edges{.left   = border_thickness_.left + padding_.left,
                      .top    = border_thickness_.top + padding_.top,

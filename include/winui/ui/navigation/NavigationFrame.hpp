@@ -152,60 +152,60 @@ public:
     /// empty.
     bool go_forward();
     /// Whether the back stack is not empty.
-    [[nodiscard]] bool can_go_back() const
+    [[nodiscard]] inline bool can_go_back() const
     {
         return !back_stack_.empty();
     }
     /// Whether the forward stack is not empty: a go_back() has not been followed by a navigate()
     /// since.
-    [[nodiscard]] bool can_go_forward() const
+    [[nodiscard]] inline bool can_go_forward() const
     {
         return !forward_stack_.empty();
     }
     /// How many pages go_back() can return to.
-    [[nodiscard]] std::size_t back_stack_depth() const
+    [[nodiscard]] inline std::size_t back_stack_depth() const
     {
         return back_stack_.size();
     }
 
     /// The page on screen, or nullptr before the first navigation.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
     /// The page going away while its navigation transition plays, or nullptr.
-    [[nodiscard]] Element* leaving() const
+    [[nodiscard]] inline Element* leaving() const
     {
         return leaving_;
     }
 
     /// The transitions; a NavigationTransition here animates navigation.
-    [[nodiscard]] const TransitionList& content_transitions() const
+    [[nodiscard]] inline const TransitionList& content_transitions() const
     {
         return content_transitions_;
     }
     /// Replaces the transitions; takes effect from the next navigation.
-    void set_content_transitions(TransitionList transitions)
+    inline void set_content_transitions(TransitionList transitions)
     {
         content_transitions_ = std::move(transitions);
     }
 
     /// Fired after the new page is in place, before it is laid out. A page's arrival work, like
     /// starting a connected animation, goes here.
-    void on_navigated(Callback<void(const NavigationEventArgs&)> handler)
+    inline void on_navigated(Callback<void(const NavigationEventArgs&)> handler)
     {
         on_navigated_ = std::move(handler);
     }
     /// Fired before a navigation, with the page about to leave. The page is still on screen and
     /// laid out, so this is where to prepare a connected animation from it.
-    void on_navigating_from(Callback<void(const NavigatingFromEventArgs&)> handler)
+    inline void on_navigating_from(Callback<void(const NavigatingFromEventArgs&)> handler)
     {
         on_navigating_from_ = std::move(handler);
     }
     /// Visits the page on screen only. A leaving page is never focusable, owns no popups and is
     /// not an automation child, and a NativeControl on a page left behind is hidden.
     /// clear_dirty() and tick_override() reach the leaving page too.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (content_)
         {

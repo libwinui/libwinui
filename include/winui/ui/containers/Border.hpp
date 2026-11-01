@@ -65,7 +65,7 @@ LIBWINUI_EXPORT class BorderControl final : public ContentHost
 {
 public:
     /// Returns false, so the border is hit anywhere in its bounds, even where it draws nothing.
-    [[nodiscard]] bool hit_test_transparent() const override
+    [[nodiscard]] inline bool hit_test_transparent() const override
     {
         return false;
     }
@@ -75,25 +75,25 @@ public:
     /// The fixed background color. nullopt, the default, draws nothing. It also reads nullopt while
     /// a theme resource is set (see background_resource()). A ThemeColor is read again whenever the
     /// border is drawn, so it follows theme switches.
-    [[nodiscard]] const std::optional<Color>& background() const
+    [[nodiscard]] inline const std::optional<Color>& background() const
     {
         return background_.color();
     }
     /// The theme resource set as the background, or nullptr when a fixed color or none is set.
-    [[nodiscard]] ThemeColor background_resource() const
+    [[nodiscard]] inline ThemeColor background_resource() const
     {
         return background_.resource();
     }
     /// Sets a fixed background color, or none with nullopt, and clears any theme resource.
     /// Redraws.
-    void set_background(std::optional<Color> color)
+    inline void set_background(std::optional<Color> color)
     {
         background_.set(color);
         mark_dirty(DirtyFlags::Visual);
     }
     /// Sets a theme resource as the background, for example
     /// `[](const Theme& t) { return t.colors().background; }`. Redraws.
-    void set_background(ThemeColor resource)
+    inline void set_background(ThemeColor resource)
     {
         background_.set(resource);
         mark_dirty(DirtyFlags::Visual);
@@ -101,31 +101,31 @@ public:
     /// How the background changes color. With a BrushTransition set, a later change of what the
     /// background draws, such as a new color or a resource under a new theme, blends from the color
     /// on screen. nullopt, the default, changes it at once.
-    [[nodiscard]] const std::optional<BrushTransition>& background_transition() const
+    [[nodiscard]] inline const std::optional<BrushTransition>& background_transition() const
     {
         return background_.transition();
     }
     /// Sets the background transition. Applies to the next change, and a blend already running
     /// keeps going.
-    void set_background_transition(std::optional<BrushTransition> transition)
+    inline void set_background_transition(std::optional<BrushTransition> transition)
     {
         background_.set_transition(transition);
     }
 
     /// The fixed border color. nullopt, the default, draws no border, though border_thickness()
     /// still takes up room.
-    [[nodiscard]] const std::optional<Color>& border_brush() const
+    [[nodiscard]] inline const std::optional<Color>& border_brush() const
     {
         return border_brush_;
     }
     /// The theme resource set as the border brush, or nullptr.
-    [[nodiscard]] ThemeColor border_brush_resource() const
+    [[nodiscard]] inline ThemeColor border_brush_resource() const
     {
         return border_brush_resource_;
     }
     /// Sets a fixed border color and clears any theme resource set with the other overload.
     /// Redraws.
-    void set_border_brush(std::optional<Color> color)
+    inline void set_border_brush(std::optional<Color> color)
     {
         border_brush_          = color;
         border_brush_resource_ = nullptr;
@@ -133,7 +133,7 @@ public:
     }
     /// Sets a theme resource as the border brush, read again under every theme. It takes
     /// precedence over a fixed border_brush(). Redraws.
-    void set_border_brush(ThemeColor resource)
+    inline void set_border_brush(ThemeColor resource)
     {
         border_brush_resource_ = resource;
         mark_dirty(DirtyFlags::Visual);
@@ -141,12 +141,12 @@ public:
 
     /// The border width per side in DIPs, zero by default. It takes up room whether or not a
     /// border brush is set.
-    [[nodiscard]] const Thickness& border_thickness() const
+    [[nodiscard]] inline const Thickness& border_thickness() const
     {
         return border_thickness_;
     }
     /// Sets the border width. Updates layout and redraws.
-    void set_border_thickness(const Thickness& thickness)
+    inline void set_border_thickness(const Thickness& thickness)
     {
         border_thickness_ = thickness;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -154,24 +154,24 @@ public:
 
     /// The corner radius in DIPs, one value for all four corners. 0, the default, gives square
     /// corners. Applies to the background and the border alike.
-    [[nodiscard]] float corner_radius() const
+    [[nodiscard]] inline float corner_radius() const
     {
         return corner_radius_;
     }
     /// Sets the corner radius. Redraws only, since layout doesn't depend on the radius.
-    void set_corner_radius(float radius)
+    inline void set_corner_radius(float radius)
     {
         corner_radius_ = radius;
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// The padding in DIPs between the inside of the border and the child, zero by default.
-    [[nodiscard]] const Thickness& padding() const
+    [[nodiscard]] inline const Thickness& padding() const
     {
         return padding_;
     }
     /// Sets the padding. Updates layout.
-    void set_padding(const Thickness& padding)
+    inline void set_padding(const Thickness& padding)
     {
         padding_ = padding;
         mark_dirty(DirtyFlags::Layout);
@@ -180,12 +180,12 @@ public:
     /// Whether the border casts a drop shadow sized by elevation(). It draws two black
     /// shadows, ambient and directional, whose blur, offset and opacity grow with the depth and
     /// differ per theme. Off by default.
-    [[nodiscard]] bool shadow() const
+    [[nodiscard]] inline bool shadow() const
     {
         return shadow_;
     }
     /// Turns the shadow on or off. Redraws only, since the shadow takes no layout room.
-    void set_shadow(bool on)
+    inline void set_shadow(bool on)
     {
         shadow_ = on;
         mark_dirty(DirtyFlags::Visual);
@@ -194,12 +194,12 @@ public:
     /// The elevation the shadow is sized by, in DIPs. 0 by default, and below 4 casts no
     /// shadow. It moves nothing on screen. It is the same value as Element::translation().z, so a
     /// translation animation or transition deepens the shadow as it runs.
-    [[nodiscard]] float elevation() const
+    [[nodiscard]] inline float elevation() const
     {
         return translation().z;
     }
     /// Sets only the z of Element::translation(), keeping x and y.
-    void set_elevation(float z)
+    inline void set_elevation(float z)
     {
         Vector3 t = translation();
         t.z       = z;
@@ -209,19 +209,19 @@ public:
     /// Whether the child is clipped to the inside of the border, rounded corners included. Off by
     /// default. When on, a picture in a rounded Border follows the corners, and a child drawn past
     /// the edge, through a negative margin or a transform, is cut off there.
-    [[nodiscard]] bool clip_content() const
+    [[nodiscard]] inline bool clip_content() const
     {
         return clip_content_;
     }
     /// Turns clipping on or off. Redraws.
-    void set_clip_content(bool clip)
+    inline void set_clip_content(bool clip)
     {
         clip_content_ = clip;
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// Returns true, since measuring touches only the child.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }

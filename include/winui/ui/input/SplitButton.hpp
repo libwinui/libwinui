@@ -89,13 +89,13 @@ public:
 
     // ---- content ----
     /// The primary part's text, used while there is no content().
-    [[nodiscard]] const std::string& text() const
+    [[nodiscard]] inline const std::string& text() const
     {
         return text_;
     }
     /// Changes the text, which is also the accessible name when none is set. The button is
     /// measured again and redrawn.
-    void set_text(std::string text)
+    inline void set_text(std::string text)
     {
         text_ = std::move(text);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -112,26 +112,26 @@ public:
         return observer;
     }
     /// The primary part's content (owned by the button), or null.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
     /// Padding around the primary part's content; nullopt keeps the theme's button padding.
-    void set_padding(std::optional<Thickness> padding)
+    inline void set_padding(std::optional<Thickness> padding)
     {
         padding_override_ = padding;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// Whether the primary part takes a click: enabled, and the command (if any) is too.
-    [[nodiscard]] bool primary_enabled() const
+    [[nodiscard]] inline bool primary_enabled() const
     {
         return is_enabled() && command_enabled_;
     }
 
     // ---- behavior ----
     /// The primary part was clicked (or Space/Enter released on the control).
-    void on_click(Callback<void()> handler)
+    inline void on_click(Callback<void()> handler)
     {
         on_click_ = std::move(handler);
     }
@@ -140,7 +140,7 @@ public:
     /// the command's description. A destroyed command leaves the button as if it had none.
     void set_command(CommandRef command, std::string parameter = {});
     /// The command set_command() installed, or null.
-    [[nodiscard]] const Command* command() const
+    [[nodiscard]] inline const Command* command() const
     {
         return command_.get();
     }
@@ -148,12 +148,12 @@ public:
     [[nodiscard]] std::string tool_tip() const override;
 
     /// The flyout the chevron opens. Set for you when the split button becomes a flyout's anchor.
-    void set_flyout(FlyoutBase* flyout)
+    inline void set_flyout(FlyoutBase* flyout)
     {
         flyout_ = flyout;
     }
     /// The flyout the chevron part opens (non-owning; it owns this button), or null.
-    [[nodiscard]] FlyoutBase* flyout() const
+    [[nodiscard]] inline FlyoutBase* flyout() const
     {
         return flyout_;
     }
@@ -187,7 +187,7 @@ protected:
 
 public:
     /// A toggle split button's checked state; always false for a plain SplitButton.
-    [[nodiscard]] virtual bool checked() const
+    [[nodiscard]] inline virtual bool checked() const
     {
         return false;
     }
@@ -197,29 +197,29 @@ public:
     [[nodiscard]] Rect secondary_rect() const;
 
     /// The chevron (an AnimatedIcon).
-    [[nodiscard]] AnimatedIconControl* chevron() const
+    [[nodiscard]] inline AnimatedIconControl* chevron() const
     {
         return chevron_.get();
     }
     /// Whether the control has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// One tab stop for both parts, while enabled.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
 
     // ---- automation ----
     /// A SplitButton.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::SplitButton;
     }
     /// The text, when no accessible name is set.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return text_;
     }
@@ -230,7 +230,7 @@ protected:
 
 private:
     // Enter clicks the primary part, so it is not offered to an open dialog as unclaimed.
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return is_enabled();
     }
@@ -269,14 +269,14 @@ protected:
 
 protected:
     /// The ring follows the button's corner radius.
-    [[nodiscard]] float focus_ring_corner_radius(const Theme& theme) const override
+    [[nodiscard]] inline float focus_ring_corner_radius(const Theme& theme) const override
     {
         return theme.resolved_button_corner_radius();
     }
 
 protected:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.invoke          = this;
         out.expand_collapse = this;
@@ -286,7 +286,7 @@ private:
     // Clicks the primary part; false when it is disabled.
     bool invoke() override;
     // Whether the flyout is open.
-    [[nodiscard]] bool expanded_state() const override
+    [[nodiscard]] inline bool expanded_state() const override
     {
         return is_flyout_open();
     }
@@ -317,19 +317,19 @@ public:
     /// Unchecked, with no text.
     ToggleSplitButtonControl() = default;
     /// Unchecked, the primary part showing `text`.
-    explicit ToggleSplitButtonControl(std::string text) : SplitButtonControl(std::move(text))
+    inline explicit ToggleSplitButtonControl(std::string text) : SplitButtonControl(std::move(text))
     {
     }
 
     /// Whether the button is checked.
-    [[nodiscard]] bool checked() const override
+    [[nodiscard]] inline bool checked() const override
     {
         return checked_;
     }
     /// Sets the checked state; fires on_checked_changed() only when the value changes.
     void set_checked(bool checked);
     /// Fires with the new state after a click or set_checked() changes it.
-    void on_checked_changed(Callback<void(bool)> handler)
+    inline void on_checked_changed(Callback<void(bool)> handler)
     {
         on_checked_changed_ = std::move(handler);
     }
@@ -345,13 +345,13 @@ private:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.toggle          = this;
         out.expand_collapse = this;
     }
     // On while checked, Off otherwise.
-    [[nodiscard]] ToggleState toggle_value() const override
+    [[nodiscard]] inline ToggleState toggle_value() const override
     {
         return checked_ ? ToggleState::On : ToggleState::Off;
     }

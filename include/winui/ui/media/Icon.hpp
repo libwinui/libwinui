@@ -61,17 +61,17 @@ public:
     /// An icon with no source. It measures to nothing and draws nothing.
     IconControl() = default;
     /// An icon showing `source`.
-    explicit IconControl(IconSource source) : source_(std::move(source))
+    inline explicit IconControl(IconSource source) : source_(std::move(source))
     {
     }
 
     /// The icon drawn. Empty by default.
-    [[nodiscard]] const IconSource& source() const
+    [[nodiscard]] inline const IconSource& source() const
     {
         return source_;
     }
     /// Replaces the icon. Updates layout and redraws.
-    void set_source(IconSource source)
+    inline void set_source(IconSource source)
     {
         source_ = std::move(source);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -80,12 +80,12 @@ public:
     /// The icon's size as a square of DIPs: a glyph's font size, or the square a path or picture is
     /// fitted into. nullopt (the default) is the glyph's own size, or the natural size of anything
     /// else.
-    [[nodiscard]] std::optional<float> size() const
+    [[nodiscard]] inline std::optional<float> size() const
     {
         return size_;
     }
     /// Sets or clears the size. Updates layout and redraws.
-    void set_size(OptionalFloat size)
+    inline void set_size(OptionalFloat size)
     {
         size_ = size;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -93,26 +93,26 @@ public:
 
     /// The color of a glyph, a path or a monochrome bitmap: a fixed color or a theme resource.
     /// Unset (the default) is the theme's text color.
-    [[nodiscard]] const Paint& foreground() const
+    [[nodiscard]] inline const Paint& foreground() const
     {
         return foreground_;
     }
     /// Draws in `color` instead of the theme's text color. An empty Paint goes back to the theme's
     /// color. Redraws.
-    void set_foreground(Paint color)
+    inline void set_foreground(Paint color)
     {
         foreground_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// Returns true, since measuring reads only the source's size.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
 
     // ---- automation ----
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Image;
     }

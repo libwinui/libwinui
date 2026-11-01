@@ -90,7 +90,7 @@ LIBWINUI_EXPORT struct NumberFormatSymbols
     bool repeat_last_group = true;
 
     /// The locale-independent symbols, the default.
-    [[nodiscard]] static NumberFormatSymbols invariant()
+    [[nodiscard]] static inline NumberFormatSymbols invariant()
     {
         return {};
     }
@@ -154,7 +154,7 @@ LIBWINUI_EXPORT struct DecimalFormatter
     std::optional<NumberFormatSymbols> symbols{};
 
     /// The separators this formatter writes and reads with: `symbols`, or the regional format.
-    [[nodiscard]] const NumberFormatSymbols& effective_symbols() const
+    [[nodiscard]] inline const NumberFormatSymbols& effective_symbols() const
     {
         return symbols ? *symbols : regional_number_format();
     }

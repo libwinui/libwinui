@@ -103,7 +103,7 @@ public:
     void add_item(SectionsControlItem item);
 
     /// The number of items added.
-    [[nodiscard]] std::size_t item_count() const
+    [[nodiscard]] inline std::size_t item_count() const
     {
         return items_.size();
     }
@@ -113,19 +113,19 @@ public:
     // ---- properties ----
 
     /// The title above the header row; empty collapses the title row.
-    [[nodiscard]] const std::string& title() const
+    [[nodiscard]] inline const std::string& title() const
     {
         return title_;
     }
     /// Sets the title, updates the layout as the title row appears or collapses, and redraws.
-    void set_title(std::string title)
+    inline void set_title(std::string title)
     {
         title_ = std::move(title);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The selected item; unset while there are no items.
-    [[nodiscard]] std::optional<std::size_t> selected_index() const
+    [[nodiscard]] inline std::optional<std::size_t> selected_index() const
     {
         return detail::optional_index(selected_index_);
     }
@@ -134,19 +134,19 @@ public:
     void set_selected_index(std::size_t index);
     /// Fired with the new index whenever the selection changes, by click, keyboard, the
     /// navigation buttons or `set_selected_index()`. Replaces any previous handler.
-    void on_selection_changed(Callback<void(std::size_t)> handler)
+    inline void on_selection_changed(Callback<void(std::size_t)> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
 
     /// Whether the headers form a carousel, true by default. Headers that do not fit then rotate
     /// so the selected one leads. False keeps them in order and scrolls the row to the selection.
-    [[nodiscard]] bool header_carousel_enabled() const
+    [[nodiscard]] inline bool header_carousel_enabled() const
     {
         return carousel_enabled_;
     }
     /// Updates the layout and redraws.
-    void set_header_carousel_enabled(bool enabled)
+    inline void set_header_carousel_enabled(bool enabled)
     {
         carousel_enabled_ = enabled;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -174,19 +174,19 @@ public:
     // ---- geometry, from the last arrange ----
 
     /// Whether the headers all fit, so they stay in place instead of rotating.
-    [[nodiscard]] bool static_headers() const
+    [[nodiscard]] inline bool static_headers() const
     {
         return static_headers_;
     }
     /// The header of item `index` as drawn, or nullopt if it is clipped out of the row.
     [[nodiscard]] std::optional<Rect> header_bounds(std::size_t index) const;
     /// The header row's rect.
-    [[nodiscard]] Rect header_row() const
+    [[nodiscard]] inline Rect header_row() const
     {
         return header_row_;
     }
     /// The area the selected item's content is arranged in, below the header row.
-    [[nodiscard]] Rect content_bounds() const
+    [[nodiscard]] inline Rect content_bounds() const
     {
         return content_rect_;
     }
@@ -197,18 +197,18 @@ public:
     /// Ctrl+Tab / Ctrl+Shift+Tab and Ctrl+PageDown / Ctrl+PageUp, from anywhere inside the Sections.
     bool handle_shortcut(const KeyEvent& e) override;
     /// Whether the header row has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// The header row is a tab stop while enabled and non-empty.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled() && !items_.empty();
     }
     /// Only a press on the header row focuses the Sections. The selected item's content takes
     /// focus on its own.
-    [[nodiscard]] bool takes_focus_at(Point p) const override
+    [[nodiscard]] inline bool takes_focus_at(Point p) const override
     {
         return header_row_.contains(p);
     }
@@ -218,7 +218,7 @@ public:
     /// item's content is set aside, and nothing reaches it until it is selected again.
     void for_each_child(ChildVisitor visit) const override;
     /// Exposed to accessibility tools as a tab control whose value is the selected header.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Tab;
     }
@@ -239,7 +239,7 @@ protected:
 
 
 private:
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowLeft || key == Key::ArrowRight;
     }
@@ -254,9 +254,9 @@ private:
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
-    void                   select(std::size_t index, int direction); // direction: +1 forward, -1 back, 0 from the index
-    void                   move(int delta);                          // previous/next, wrapping while the headers rotate
-    [[nodiscard]] Element* content(std::size_t index) const
+    void select(std::size_t index, int direction); // direction: +1 forward, -1 back, 0 from the index
+    void move(int delta);                          // previous/next, wrapping while the headers rotate
+    [[nodiscard]] inline Element* content(std::size_t index) const
     {
         return index < items_.size() ? items_[index].content.get() : nullptr;
     }
@@ -311,30 +311,30 @@ protected:
 
 protected:
     /// Around the header row, square.
-    [[nodiscard]] Rect focus_ring_rect(const Theme& /*theme*/) const override
+    [[nodiscard]] inline Rect focus_ring_rect(const Theme& /*theme*/) const override
     {
         return header_row_;
     }
-    [[nodiscard]] float focus_ring_corner_radius(const Theme& /*theme*/) const override
+    [[nodiscard]] inline float focus_ring_corner_radius(const Theme& /*theme*/) const override
     {
         return 0.0f;
     }
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.value = this;
     }
-    [[nodiscard]] std::string text_value() const override
+    [[nodiscard]] inline std::string text_value() const override
     {
         return header(selected_index_);
     }
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return true;
     }
-    bool set_text_value(std::string_view /*text*/) override
+    inline bool set_text_value(std::string_view /*text*/) override
     {
         return false;
     }
@@ -383,7 +383,7 @@ public:
     std::vector<Entry> entries;
 
 private:
-    void add(Section&& item)
+    inline void add(Section&& item)
     {
         entries.push_back(Entry{std::move(item.header), item.content.take()});
     }

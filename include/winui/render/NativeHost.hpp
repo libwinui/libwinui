@@ -130,7 +130,7 @@ public:
     /// outside the viewport. NativeControl::sync_native() sends the part its scrolling ancestors
     /// leave in view, through place() whenever the control also moved, so a host may keep the
     /// region relative to the window. The default does nothing, for a host with nothing to cut.
-    virtual void set_clip(VisualId /*id*/, const std::optional<Rect>& /*visible*/)
+    inline virtual void set_clip(VisualId /*id*/, const std::optional<Rect>& /*visible*/)
     {
     }
 
@@ -138,7 +138,7 @@ public:
     /// new position with the new clip, not the one left over from the old position.
     /// NativeControl::sync_native() calls this whenever the bounds changed; the default is
     /// set_bounds() then set_clip().
-    virtual void place(VisualId id, const Rect& bounds, const std::optional<Rect>& visible)
+    inline virtual void place(VisualId id, const Rect& bounds, const std::optional<Rect>& visible)
     {
         set_bounds(id, bounds);
         set_clip(id, visible);
@@ -156,12 +156,12 @@ public:
     /// Other controls get the checker when they take focus. A NativeControl never becomes the
     /// window's focused element, because keyboard focus inside it belongs to the child window,
     /// so it gets the checker through this sync pass instead.
-    void set_spell_checker(SpellChecker* checker)
+    inline void set_spell_checker(SpellChecker* checker)
     {
         spell_checker_ = checker;
     }
     /// The checker set_spell_checker() last published, or null. Non-owning.
-    [[nodiscard]] SpellChecker* spell_checker() const
+    [[nodiscard]] inline SpellChecker* spell_checker() const
     {
         return spell_checker_;
     }
@@ -173,13 +173,13 @@ public:
     /// isn't selected, and present() shows it again the next time a pass reaches it. Only
     /// end_sync() hides anything, so a host whose controls are synced directly never hides one
     /// this way. This one starts a pass.
-    void begin_sync()
+    inline void begin_sync()
     {
         ++pass_;
     }
     /// Ends a pass: hides (set_visible(false)) every shown control present() wasn't called
     /// for since begin_sync().
-    void end_sync()
+    inline void end_sync()
     {
         for (auto& [id, presence] : presence_)
         {
@@ -192,7 +192,7 @@ public:
     }
     /// Called by NativeControl::sync_native() on every sync: `visible` is whether any of the
     /// control shows. Calls set_visible() only on a change; a control starts out shown.
-    void present(VisualId id, bool visible)
+    inline void present(VisualId id, bool visible)
     {
         Presence& presence = presence_[id];
         presence.pass      = pass_;
@@ -203,13 +203,13 @@ public:
         }
     }
     /// Whether present()/end_sync() last left the control shown (true for one never presented).
-    [[nodiscard]] bool presented(VisualId id) const
+    [[nodiscard]] inline bool presented(VisualId id) const
     {
         const auto it = presence_.find(id);
         return it == presence_.end() || it->second.shown;
     }
     /// Drops the control's presence record; NativeControl's destructor calls it before destroy().
-    void forget(VisualId id)
+    inline void forget(VisualId id)
     {
         presence_.erase(id);
     }
@@ -232,7 +232,7 @@ protected:
     /// NativeControl is non-movable, so the pointer can't go stale. The default does nothing,
     /// for a host with no platform events to route. A host implements it, and only NativeControl
     /// calls it.
-    virtual void set_owner(VisualId /*id*/, NativeControl* /*owner*/)
+    inline virtual void set_owner(VisualId /*id*/, NativeControl* /*owner*/)
     {
     }
 

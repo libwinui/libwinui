@@ -62,19 +62,19 @@ LIBWINUI_EXPORT class LinedFlowLayoutEngine final : public VirtualizingLayout
 {
 public:
     /// The line height in DIPs; nullopt (the default) takes the height of item 0.
-    [[nodiscard]] std::optional<float> line_height() const
+    [[nodiscard]] inline std::optional<float> line_height() const
     {
         return line_height_;
     }
     /// Sets the line height and lays out the host again.
     void set_line_height(OptionalFloat height);
     /// The line height of the last measure.
-    [[nodiscard]] float actual_line_height() const
+    [[nodiscard]] inline float actual_line_height() const
     {
         return actual_line_height_;
     }
     /// The vertical gap between lines, DIPs; 0 by default.
-    [[nodiscard]] float line_spacing() const
+    [[nodiscard]] inline float line_spacing() const
     {
         return line_spacing_;
     }
@@ -82,21 +82,21 @@ public:
     void set_line_spacing(float spacing);
     /// The smallest horizontal gap between items on a line, DIPs; 0 by default. Justification may
     /// widen it.
-    [[nodiscard]] float min_item_spacing() const
+    [[nodiscard]] inline float min_item_spacing() const
     {
         return min_item_spacing_;
     }
     /// Sets the minimum item gap and lays out the host again.
     void set_min_item_spacing(float spacing);
     /// Whether short lines are stretched to fill; None by default.
-    [[nodiscard]] LinedFlowLayoutItemsStretch items_stretch() const
+    [[nodiscard]] inline LinedFlowLayoutItemsStretch items_stretch() const
     {
         return stretch_;
     }
     /// Sets the stretch mode and lays out the host again.
     void set_items_stretch(LinedFlowLayoutItemsStretch stretch);
     /// How short lines are placed with LinedFlowLayoutItemsStretch::None; Start by default.
-    [[nodiscard]] ItemsJustification items_justification() const
+    [[nodiscard]] inline ItemsJustification items_justification() const
     {
         return justification_;
     }
@@ -112,7 +112,7 @@ public:
     void               on_items_changed(VirtualizingLayoutContext& context, const ItemsChange& change) override;
 
     /// How many lines the last measure laid out.
-    [[nodiscard]] std::size_t line_count() const
+    [[nodiscard]] inline std::size_t line_count() const
     {
         return lines_.size();
     }
@@ -169,7 +169,7 @@ LIBWINUI_EXPORT struct LinedFlowLayout
     ItemsJustification items_justification = ItemsJustification::Start;
 
     /// Consumes the value and returns the layout object.
-    [[nodiscard]] std::unique_ptr<Layout> build() &&
+    [[nodiscard]] inline std::unique_ptr<Layout> build() &&
     {
         auto layout = std::make_unique<LinedFlowLayoutEngine>();
         layout->set_line_height(line_height);

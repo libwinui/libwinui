@@ -78,7 +78,7 @@ LIBWINUI_EXPORT class ExpanderControl final : public Element, private ExpandColl
 {
 public:
     /// A collapsed Expander with an empty text header and no content.
-    ExpanderControl() : ExpanderControl(std::string{})
+    inline ExpanderControl() : ExpanderControl(std::string{})
     {
     }
     /// An Expander with `header` as its text header, starting expanded or collapsed as `expanded`
@@ -87,12 +87,12 @@ public:
 
     // ---- header ----
     /// The header text, drawn in the header row unless header_content() replaces it.
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return header_;
     }
     /// Changes the header text. Updates layout.
-    void set_header(std::string header)
+    inline void set_header(std::string header)
     {
         header_ = std::move(header);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -120,7 +120,7 @@ public:
     }
     /// The header content set with set_header_content(), or nullptr for a text header. Owned by
     /// the Expander.
-    [[nodiscard]] Element* header_content() const
+    [[nodiscard]] inline Element* header_content() const
     {
         return header_content_.get();
     }
@@ -128,12 +128,12 @@ public:
     /// Which side the content opens on. Up puts the content above the header, rounds the header's
     /// bottom corners only while open, slides the content up from behind the header and turns the
     /// chevron around.
-    [[nodiscard]] ExpandDirection expand_direction() const
+    [[nodiscard]] inline ExpandDirection expand_direction() const
     {
         return expand_direction_;
     }
     /// Changes the direction. Updates layout.
-    void set_expand_direction(ExpandDirection direction)
+    inline void set_expand_direction(ExpandDirection direction)
     {
         expand_direction_ = direction;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -156,13 +156,13 @@ public:
         return observer;
     }
     /// The collapsible content, or nullptr before set_content(). Owned by the Expander.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
 
     /// Whether the content region is open or opening.
-    [[nodiscard]] bool expanded() const
+    [[nodiscard]] inline bool expanded() const
     {
         return expanded_;
     }
@@ -170,7 +170,7 @@ public:
     /// the value changes. Updates layout.
     void set_expanded(bool expanded);
     /// Fired whenever `expanded` changes, through a header click, Space or set_expanded().
-    void on_expanded_changed(Callback<void(bool)> handler)
+    inline void on_expanded_changed(Callback<void(bool)> handler)
     {
         on_expanded_changed_ = std::move(handler);
     }
@@ -179,25 +179,25 @@ public:
     /// The inset between the edges of the open content area and the content inside it, 16 DIPs by
     /// default. A dense list inside an Expander, such as a navigation pane, needs far less room
     /// than card-like content does.
-    [[nodiscard]] const Thickness& content_padding() const
+    [[nodiscard]] inline const Thickness& content_padding() const
     {
         return content_padding_;
     }
     /// Changes the content padding. Updates layout.
-    void set_content_padding(Thickness padding)
+    inline void set_content_padding(Thickness padding)
     {
         content_padding_ = padding;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The header row's own rect from the most recent arrange(), for hit-testing the header.
-    [[nodiscard]] const Rect& header_bounds() const
+    [[nodiscard]] inline const Rect& header_bounds() const
     {
         return header_rect_;
     }
     /// The clipped area the content slides into, from the most recent arrange(). Zero height while
     /// fully collapsed.
-    [[nodiscard]] const Rect& content_bounds() const
+    [[nodiscard]] inline const Rect& content_bounds() const
     {
         return content_rect_;
     }
@@ -213,17 +213,17 @@ public:
     // ---- focus ----
     /// Whether the header has focus. The header itself is the focusable element. The focusable
     /// elements inside content() join the tab order only while expanded (see collect_focusables()).
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// The header is focusable while the Expander is enabled.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
     /// Only a press on the header row focuses the Expander. Presses on the content don't.
-    [[nodiscard]] bool takes_focus_at(Point p) const override
+    [[nodiscard]] inline bool takes_focus_at(Point p) const override
     {
         return header_rect_.contains(p);
     }
@@ -238,7 +238,7 @@ public:
     // ---- the tree ----
     /// Visits the content, but only while the content region exists. A collapsed Expander's
     /// content is skipped by walks over the tree, as it is for layout, rendering and input.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (content_live())
         {
@@ -248,12 +248,12 @@ public:
 
     // ---- automation ----
     /// Exposed to UI Automation as a group.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Group;
     }
     /// The header text names the Expander when accessibility().name doesn't.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_;
     }
@@ -333,28 +333,28 @@ protected:
 
 protected:
     /// The focus ring goes around the header only.
-    [[nodiscard]] Rect focus_ring_rect(const Theme& /*theme*/) const override
+    [[nodiscard]] inline Rect focus_ring_rect(const Theme& /*theme*/) const override
     {
         return header_rect_;
     }
-    [[nodiscard]] float focus_ring_corner_radius(const Theme& /*theme*/) const override
+    [[nodiscard]] inline float focus_ring_corner_radius(const Theme& /*theme*/) const override
     {
         return 0.0f;
     }
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.expand_collapse = this;
     }
     // expanded().
-    [[nodiscard]] bool expanded_state() const override
+    [[nodiscard]] inline bool expanded_state() const override
     {
         return expanded_;
     }
     // set_expanded(). Refused with false while disabled.
-    bool set_expanded_state(bool expand) override
+    inline bool set_expanded_state(bool expand) override
     {
         if (!is_enabled())
         {

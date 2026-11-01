@@ -66,7 +66,7 @@ public:
     /// A dead subscription observing nothing; alive() is false.
     Subscription() = default;
     /// Unsubscribes (see reset()).
-    ~Subscription()
+    inline ~Subscription()
     {
         reset();
     }
@@ -77,12 +77,12 @@ public:
     Subscription& operator=(const Subscription&) = delete;
 
     /// Takes over `other`'s place in the observer list; `other` is left dead.
-    Subscription(Subscription&& other) noexcept
+    inline Subscription(Subscription&& other) noexcept
     {
         splice_from(other);
     }
     /// Unsubscribes this one, then takes over `other`'s place; `other` is left dead.
-    Subscription& operator=(Subscription&& other) noexcept
+    inline Subscription& operator=(Subscription&& other) noexcept
     {
         if (this != &other)
         {
@@ -97,7 +97,7 @@ public:
 
     /// False once this subscription has been reset(), moved from, or had its Property
     /// destroyed out from under it.
-    [[nodiscard]] bool alive() const noexcept
+    [[nodiscard]] inline bool alive() const noexcept
     {
         return owner_ != nullptr;
     }
@@ -144,7 +144,7 @@ public:
 
     /// How many live subscriptions currently observe this property. Exposed for
     /// debugging tools; nothing in the framework branches on it.
-    [[nodiscard]] std::size_t observer_count() const noexcept
+    [[nodiscard]] inline std::size_t observer_count() const noexcept
     {
         std::size_t n = 0;
         for (const Subscription* s = head_; s; s = s->next_)
@@ -159,7 +159,7 @@ protected:
 
     /// Non-virtual and protected: a Property is never owned or destroyed through a
     /// PropertyBase*, so the type needs no vtable.
-    ~PropertyBase()
+    inline ~PropertyBase()
     {
         for (Subscription* s = head_; s;)
         {
@@ -184,8 +184,8 @@ protected:
     /// as `const Property<T>&` and still be bound to.
     ///
     /// `where` names the observe() that called it, for the thread check.
-    [[nodiscard]] Subscription attach(Callback<void(const void*)> fn,
-                                      std::source_location        where = std::source_location::current()) const
+    [[nodiscard]] inline Subscription attach(Callback<void(const void*)> fn,
+                                             std::source_location        where = std::source_location::current()) const
     {
 #if LIBWINUI_THREAD_CHECKS
         if (owner_thread_ != std::thread::id{} && owner_thread_ != std::this_thread::get_id())
@@ -215,7 +215,7 @@ protected:
     /// called after the source is gone. A subscription made during the dispatch is first told of
     /// the next change. A handler that resets its own Subscription destroys its own captures by
     /// doing so, and must not touch them afterwards.
-    void dispatch(const void* value)
+    inline void dispatch(const void* value)
     {
         Cursor cursor{head_, cursor_, this};
         cursor_ = &cursor;
@@ -233,7 +233,7 @@ protected:
     /// observer claims the calling thread, and a later one from any other thread is reported.
     /// A source nobody observes is not checked. `call` names it ("ui::Property::set"); empty
     /// takes the name from `where`.
-    void check_write(std::string_view call, const std::source_location& where) const
+    inline void check_write(std::string_view call, const std::source_location& where) const
     {
         if (head_ == nullptr)
         {
@@ -261,7 +261,7 @@ private:
         Cursor*       outer;
         PropertyBase* owner; // nulled when the source dies during the dispatch
 
-        Cursor(Subscription* first, Cursor* enclosing, PropertyBase* source) noexcept :
+        inline Cursor(Subscription* first, Cursor* enclosing, PropertyBase* source) noexcept :
             next(first),
             outer(enclosing),
             owner(source)
@@ -269,7 +269,7 @@ private:
         }
         Cursor(const Cursor&)            = delete;
         Cursor& operator=(const Cursor&) = delete;
-        ~Cursor()
+        inline ~Cursor()
         {
             if (owner)
             {
@@ -380,24 +380,24 @@ public:
     /// Leaves every remaining Subscription dead.
     ~Signal() = default;
     /// A fresh signal with no observers; `other`'s observers are not copied.
-    Signal(const Signal&) noexcept : PropertyBase()
+    inline Signal(const Signal&) noexcept : PropertyBase()
     {
     }
     /// No-op: this signal keeps its own observers.
-    Signal& operator=(const Signal&) noexcept
+    inline Signal& operator=(const Signal&) noexcept
     {
         return *this;
     }
 
     /// Observe. The returned Subscription must be kept for `fn` to keep firing.
-    [[nodiscard]] Subscription observe(Callback<void()> fn) const
+    [[nodiscard]] inline Subscription observe(Callback<void()> fn) const
     {
         return attach([fn = std::move(fn)](const void*) mutable { fn(); });
     }
 
     /// Tell every observer. Const: raising changes nothing a reader of the signal can see, and the
     /// objects that own one are handed around by const pointer (a control's ui::CommandRef).
-    void raise(std::source_location where = std::source_location::current()) const
+    inline void raise(std::source_location where = std::source_location::current()) const
     {
 #if LIBWINUI_THREAD_CHECKS
         check_write("ui::Signal::raise", where);
@@ -1516,17 +1516,17 @@ public:
     /// Unchecked.
     CheckedField() = default;
     /// Any binding of the field's own type: a constant, bind() or bind_one_way().
-    CheckedField(Binding<std::optional<bool>> binding) : // NOLINT(google-explicit-constructor)
+    inline CheckedField(Binding<std::optional<bool>> binding) : // NOLINT(google-explicit-constructor)
         Binding<std::optional<bool>>(std::move(binding))
     {
     }
     /// A writable `Property<bool>`, two-way: the same as bind() of it.
-    CheckedField(Property<bool>& source) : CheckedField(ui::bind(source)) // NOLINT(google-explicit-constructor)
+    inline CheckedField(Property<bool>& source) : CheckedField(ui::bind(source)) // NOLINT(google-explicit-constructor)
     {
     }
     /// A two-way binding of a bool (bind() of a `Property<bool>`, ui::selects()): the control
     /// follows it, and a click writes true or false back. An indeterminate state is never written.
-    CheckedField(TwoWayBinding<bool> two_way) : // NOLINT(google-explicit-constructor)
+    inline CheckedField(TwoWayBinding<bool> two_way) : // NOLINT(google-explicit-constructor)
         Binding<std::optional<bool>>(
             std::optional<bool>{two_way.initial()},
             [inner = Binding<bool>(two_way)](Callback<void(std::optional<bool>)> sink, std::optional<bool>* now) mutable
@@ -1551,12 +1551,12 @@ public:
     }
 
     /// True when a click writes into a `Property<bool>`, which cannot hold indeterminate.
-    [[nodiscard]] bool writes_bool() const noexcept
+    [[nodiscard]] inline bool writes_bool() const noexcept
     {
         return writes_bool_;
     }
     /// The group of choices it came from, for a binding made by ui::selects(); nullptr otherwise.
-    [[nodiscard]] const void* selection_group() const noexcept
+    [[nodiscard]] inline const void* selection_group() const noexcept
     {
         return group_;
     }

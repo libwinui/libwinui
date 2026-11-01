@@ -42,12 +42,12 @@ LIBWINUI_EXPORT class LottieIconSource : public AnimatedIconSource
 {
 public:
     /// Always 48x48 DIPs.
-    [[nodiscard]] Size natural_size() const override
+    [[nodiscard]] inline Size natural_size() const override
     {
         return Size{48.0f, 48.0f};
     }
     /// Draws the frame at `progress` (0..1) in opaque black.
-    void render_frame(Renderer& renderer, const Rect& bounds, double progress) const override
+    inline void render_frame(Renderer& renderer, const Rect& bounds, double progress) const override
     {
         render_icon_frame(renderer, bounds, progress, colors::Black);
     }

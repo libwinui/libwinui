@@ -44,13 +44,13 @@ namespace ui
 LIBWINUI_EXPORT struct SelectorBarItem
 {
     /// A segment showing `item_text`, with `icon` before it (empty: none).
-    SelectorBarItem(std::string item_text, IconSource icon = {}) :
+    inline SelectorBarItem(std::string item_text, IconSource icon = {}) :
         text(std::move(item_text)),
         icon(std::move(icon)) // NOLINT(google-explicit-constructor)
     {
     }
     /// A segment showing `item_text`.
-    SelectorBarItem(const char* item_text) : text(item_text) // NOLINT(google-explicit-constructor)
+    inline SelectorBarItem(const char* item_text) : text(item_text) // NOLINT(google-explicit-constructor)
     {
     }
 
@@ -87,7 +87,7 @@ public:
 
     // ---- items ----
     /// The items, in order.
-    [[nodiscard]] const std::vector<SelectorBarItem>& items() const
+    [[nodiscard]] inline const std::vector<SelectorBarItem>& items() const
     {
         return items_;
     }
@@ -96,7 +96,7 @@ public:
     void set_items(std::vector<SelectorBarItem> items);
 
     /// The selected item's index; 0 while the list is empty.
-    [[nodiscard]] std::size_t selected_index() const
+    [[nodiscard]] inline std::size_t selected_index() const
     {
         return selected_index_;
     }
@@ -110,19 +110,19 @@ public:
 
     /// Fired whenever the selection changes: an item click, the arrow keys or
     /// set_selected_index(). A call that lands on the already selected item does not fire it.
-    void on_selection_changed(Callback<void(std::size_t)> handler)
+    inline void on_selection_changed(Callback<void(std::size_t)> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
 
     // ---- focus ----
     /// Whether the strip holds keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// Not a tab stop with fewer than two items, since there is nothing to switch.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled() && items_.size() > 1;
     }
@@ -130,7 +130,7 @@ public:
     // ---- automation ----
     /// AutomationRole::Tab. The items have no content of their own, so the strip exposes the
     /// selected item's text as a read-only value.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Tab;
     }
@@ -158,7 +158,7 @@ private:
     // Left/Right move between segments.
     // Claimed so Window's directional focus navigation leaves them alone
     // (Element::key_override).
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowLeft || key == Key::ArrowRight;
     }
@@ -191,28 +191,28 @@ protected:
 
 protected:
     /// A square ring, a little tighter around the strip than the usual focus ring.
-    [[nodiscard]] Rect  focus_ring_rect(const Theme& theme) const override;
-    [[nodiscard]] float focus_ring_corner_radius(const Theme& /*theme*/) const override
+    [[nodiscard]] Rect         focus_ring_rect(const Theme& theme) const override;
+    [[nodiscard]] inline float focus_ring_corner_radius(const Theme& /*theme*/) const override
     {
         return 0.0f;
     }
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.value = this;
     }
     // selected_text().
-    [[nodiscard]] std::string text_value() const override
+    [[nodiscard]] inline std::string text_value() const override
     {
         return selected_text();
     }
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return true;
     }
-    bool set_text_value(std::string_view /*text*/) override
+    inline bool set_text_value(std::string_view /*text*/) override
     {
         return false;
     }

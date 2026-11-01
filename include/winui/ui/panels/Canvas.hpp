@@ -117,7 +117,7 @@ public:
     [[nodiscard]] int z_index(const Element* child) const;
 
     /// True: measuring touches only the canvas and its children.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
@@ -189,7 +189,7 @@ public:
     std::vector<Placed> items_;
 
     /// Builds `item`'s content and appends it, as one more entry of the braced list would.
-    void add(CanvasItem item)
+    inline void add(CanvasItem item)
     {
         items_.push_back(Placed{std::move(item.left), std::move(item.top), std::move(item.z_index), item.content.take()});
     }

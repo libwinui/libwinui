@@ -59,17 +59,17 @@ public:
     /// Draws everything recorded into `target`, in order.
     void replay(Renderer& target) const;
     /// How many calls were recorded.
-    [[nodiscard]] std::size_t size() const
+    [[nodiscard]] inline std::size_t size() const
     {
         return calls_.size();
     }
     /// True when nothing has been recorded (or since clear()).
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return calls_.empty();
     }
     /// Drops every recorded call, for example to take a new snapshot of the same element.
-    void clear()
+    inline void clear()
     {
         calls_.clear();
     }

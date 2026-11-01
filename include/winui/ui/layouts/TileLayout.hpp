@@ -72,42 +72,42 @@ public:
     ~TileLayoutEngine() override;
 
     /// The direction a line of cells runs in; Horizontal by default.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
     /// Changes the fill direction and lays out the host again.
     void set_orientation(Orientation orientation);
     /// The cell width in DIPs; nullopt (the default) takes the width from item 0.
-    [[nodiscard]] std::optional<float> min_item_width() const
+    [[nodiscard]] inline std::optional<float> min_item_width() const
     {
         return min_item_width_;
     }
     /// Sets or clears the cell width and lays out the host again.
     void set_min_item_width(OptionalFloat width);
     /// The cell height in DIPs; nullopt (the default) takes it from item 0.
-    [[nodiscard]] std::optional<float> min_item_height() const
+    [[nodiscard]] inline std::optional<float> min_item_height() const
     {
         return min_item_height_;
     }
     /// Sets or clears the cell height and lays out the host again.
     void set_min_item_height(OptionalFloat height);
     /// The least gap between rows in DIPs; 0 by default. Justification may widen it.
-    [[nodiscard]] float min_row_spacing() const
+    [[nodiscard]] inline float min_row_spacing() const
     {
         return min_row_spacing_;
     }
     /// Sets the row gap and lays out the host again.
     void set_min_row_spacing(float spacing);
     /// The gap between columns in DIPs; 0 by default.
-    [[nodiscard]] float min_column_spacing() const
+    [[nodiscard]] inline float min_column_spacing() const
     {
         return min_column_spacing_;
     }
     /// Sets the column gap and lays out the host again.
     void set_min_column_spacing(float spacing);
     /// How the cells are spread along a line; Start by default.
-    [[nodiscard]] ItemsJustification items_justification() const
+    [[nodiscard]] inline ItemsJustification items_justification() const
     {
         return justification_;
     }
@@ -115,14 +115,14 @@ public:
     void set_items_justification(ItemsJustification justification);
     /// Whether cells grow to use the leftover room on a line; None by default. The leftover room
     /// is shared out in whole pixels per cell, so a line may still fall a few pixels short.
-    [[nodiscard]] TileLayoutItemsStretch items_stretch() const
+    [[nodiscard]] inline TileLayoutItemsStretch items_stretch() const
     {
         return stretch_;
     }
     /// Changes the stretch and lays out the host again.
     void set_items_stretch(TileLayoutItemsStretch stretch);
     /// The most cells per line. 0 (the default) is unlimited.
-    [[nodiscard]] std::size_t maximum_rows_or_columns() const
+    [[nodiscard]] inline std::size_t maximum_rows_or_columns() const
     {
         return max_rows_or_columns_;
     }
@@ -137,7 +137,7 @@ public:
     /// host again. A grouped ui::TileView sets it.
     void set_group_sizes(std::vector<std::size_t> sizes);
     /// The sizes set_group_sizes() was given.
-    [[nodiscard]] const std::vector<std::size_t>& group_sizes() const
+    [[nodiscard]] inline const std::vector<std::size_t>& group_sizes() const
     {
         return group_sizes_;
     }
@@ -148,7 +148,7 @@ public:
     void               uninitialize_for_context(VirtualizingLayoutContext& context) override;
 
     /// The cell size of the last measure in DIPs, stretch included. Zero before the first measure.
-    [[nodiscard]] Size effective_item_size() const
+    [[nodiscard]] inline Size effective_item_size() const
     {
         return item_size_;
     }
@@ -157,19 +157,19 @@ private:
     class Delegates;
     friend class Delegates;
 
-    [[nodiscard]] bool vertical_scroll() const
+    [[nodiscard]] inline bool vertical_scroll() const
     {
         return orientation_ == Orientation::Horizontal;
     }
-    [[nodiscard]] float line_spacing() const
+    [[nodiscard]] inline float line_spacing() const
     {
         return vertical_scroll() ? min_row_spacing_ : min_column_spacing_;
     }
-    [[nodiscard]] float item_spacing() const
+    [[nodiscard]] inline float item_spacing() const
     {
         return vertical_scroll() ? min_column_spacing_ : min_row_spacing_;
     }
-    [[nodiscard]] std::size_t max_per_line() const
+    [[nodiscard]] inline std::size_t max_per_line() const
     {
         return max_rows_or_columns_ == 0 ? (std::numeric_limits<std::size_t>::max)() : max_rows_or_columns_;
     }
@@ -221,7 +221,7 @@ LIBWINUI_EXPORT struct TileLayout
     std::size_t maximum_rows_or_columns = 0;
 
     /// Consumes the value and returns the layout object.
-    [[nodiscard]] std::unique_ptr<Layout> build() &&
+    [[nodiscard]] inline std::unique_ptr<Layout> build() &&
     {
         auto layout = std::make_unique<TileLayoutEngine>();
         layout->set_orientation(orientation);

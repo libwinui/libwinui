@@ -91,7 +91,7 @@ LIBWINUI_EXPORT struct DateFormatSymbols
     [[nodiscard]] bool twelve_hour_clock() const;
 
     /// The locale-independent symbols, the default.
-    [[nodiscard]] static DateFormatSymbols invariant()
+    [[nodiscard]] static inline DateFormatSymbols invariant()
     {
         return {};
     }

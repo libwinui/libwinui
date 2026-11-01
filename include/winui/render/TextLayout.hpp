@@ -212,7 +212,7 @@ public:
     bool set_content(std::vector<TextLayoutParagraph> paragraphs);
 
     /// The paragraphs from the last set_content().
-    [[nodiscard]] const std::vector<TextLayoutParagraph>& content() const
+    [[nodiscard]] inline const std::vector<TextLayoutParagraph>& content() const
     {
         return paragraphs_;
     }
@@ -223,43 +223,43 @@ public:
     void layout(const TextLayoutOptions& options, const TextMeasurer& measurer, std::size_t start = 0);
 
     /// The widest line (with its paragraph's margins) and every line's height with the margins.
-    [[nodiscard]] Size size() const
+    [[nodiscard]] inline Size size() const
     {
         return size_;
     }
     /// The lines of the last layout(), top to bottom.
-    [[nodiscard]] const std::vector<Line>& lines() const
+    [[nodiscard]] inline const std::vector<Line>& lines() const
     {
         return lines_;
     }
     /// Every drawn piece of the last layout(), grouped per line (see Line::fragment_begin).
-    [[nodiscard]] const std::vector<Fragment>& fragments() const
+    [[nodiscard]] inline const std::vector<Fragment>& fragments() const
     {
         return fragments_;
     }
     /// The whole content as one plain UTF-8 string: runs in order, paragraphs joined by `\n`.
     /// Every offset this class takes or returns indexes into it.
-    [[nodiscard]] const std::string& text() const
+    [[nodiscard]] inline const std::string& text() const
     {
         return text_;
     }
     /// Byte length of text().
-    [[nodiscard]] std::size_t length() const
+    [[nodiscard]] inline std::size_t length() const
     {
         return text_.size();
     }
     /// Run `index` of the paragraphs' runs, flattened in order (Fragment::run indexes this).
-    [[nodiscard]] const TextLayoutRun& run(std::size_t index) const
+    [[nodiscard]] inline const TextLayoutRun& run(std::size_t index) const
     {
         return *runs_[index].run;
     }
     /// Number of runs across all paragraphs.
-    [[nodiscard]] std::size_t run_count() const
+    [[nodiscard]] inline std::size_t run_count() const
     {
         return runs_.size();
     }
     /// The `start` offset the last layout() was given; 0 unless this is an overflow continuation.
-    [[nodiscard]] std::size_t start() const
+    [[nodiscard]] inline std::size_t start() const
     {
         return start_;
     }
@@ -356,7 +356,7 @@ private:
     struct StringHash
     {
         using is_transparent = void;
-        [[nodiscard]] std::size_t operator()(std::string_view text) const noexcept
+        [[nodiscard]] inline std::size_t operator()(std::string_view text) const noexcept
         {
             return std::hash<std::string_view>{}(text);
         }

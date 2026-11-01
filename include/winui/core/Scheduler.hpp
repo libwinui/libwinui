@@ -38,7 +38,7 @@ public:
 
     // Blocks until the job has run (it already has in Scheduler::Inline mode). No-op on an empty
     // or moved-from Job.
-    void wait()
+    inline void wait()
     {
         if (future_.valid())
         {
@@ -48,7 +48,7 @@ public:
 
 private:
     friend Job submit(Scheduler& scheduler, Callback<void()> work);
-    explicit Job(std::future<void> future) : future_(std::move(future))
+    inline explicit Job(std::future<void> future) : future_(std::move(future))
     {
     }
     std::future<void> future_;
@@ -105,13 +105,13 @@ public:
     Scheduler& operator=(const Scheduler&) = delete;
 
     /// Real worker thread count (0 in inline mode).
-    [[nodiscard]] std::size_t thread_count() const
+    [[nodiscard]] inline std::size_t thread_count() const
     {
         return threads_.size();
     }
     /// How many jobs can run at once: thread_count(), and 1 in inline mode. Parallel layout
     /// splits its measuring into this many chunks.
-    [[nodiscard]] std::size_t worker_count() const
+    [[nodiscard]] inline std::size_t worker_count() const
     {
         return threads_.empty() ? 1 : threads_.size();
     }

@@ -49,37 +49,37 @@ LIBWINUI_EXPORT class GroupBoxControl final : public ContentHost
 {
 public:
     /// Returns false, so the group box is hit anywhere in its bounds, even where it draws nothing.
-    [[nodiscard]] bool hit_test_transparent() const override
+    [[nodiscard]] inline bool hit_test_transparent() const override
     {
         return false;
     }
     /// A group box with no header and no content.
     GroupBoxControl() = default;
     /// A group box headed `header`.
-    explicit GroupBoxControl(std::string header) : header_(std::move(header))
+    inline explicit GroupBoxControl(std::string header) : header_(std::move(header))
     {
     }
 
     /// The header text. Empty draws no header, and the frame or card starts at the top.
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return header_;
     }
     /// Sets the header text. Updates layout and redraws.
-    void set_header(std::string header)
+    inline void set_header(std::string header)
     {
         header_ = std::move(header);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The header names the group when accessibility().name doesn't.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_;
     }
 
     /// Returns true, since measuring touches only the header text and the child.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }

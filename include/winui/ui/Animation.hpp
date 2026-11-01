@@ -184,22 +184,22 @@ LIBWINUI_EXPORT struct KeyFrame
     EasingFunction easing{};
 
     /// Interpolates linearly from the previous value.
-    [[nodiscard]] static KeyFrame linear(Duration time, float value)
+    [[nodiscard]] static inline KeyFrame linear(Duration time, float value)
     {
         return KeyFrame{time, value, KeyFrameKind::Linear, {}};
     }
     /// Holds the previous value, then jumps to `value` at `time`.
-    [[nodiscard]] static KeyFrame discrete(Duration time, float value)
+    [[nodiscard]] static inline KeyFrame discrete(Duration time, float value)
     {
         return KeyFrame{time, value, KeyFrameKind::Discrete, {}};
     }
     /// Interpolates along the cubic Bézier `spline`.
-    [[nodiscard]] static KeyFrame spline(Duration time, float value, CubicBezier spline)
+    [[nodiscard]] static inline KeyFrame spline(Duration time, float value, CubicBezier spline)
     {
         return KeyFrame{time, value, KeyFrameKind::Spline, spline};
     }
     /// Interpolates along `easing`.
-    [[nodiscard]] static KeyFrame eased(Duration time, float value, EasingFunction easing)
+    [[nodiscard]] static inline KeyFrame eased(Duration time, float value, EasingFunction easing)
     {
         return KeyFrame{time, value, KeyFrameKind::Easing, easing};
     }
@@ -489,7 +489,7 @@ public:
     /// The background is changing from `from` (what current() draws right now) to `to`. Starts a
     /// blend only when `transition` is set, both colors are set and differ, and animations are
     /// on; otherwise stops any running blend so the new color shows at once.
-    void retarget(std::optional<Color> from, std::optional<Color> to, const std::optional<BrushTransition>& transition)
+    inline void retarget(std::optional<Color> from, std::optional<Color> to, const std::optional<BrushTransition>& transition)
     {
         if (!transition || !from || !to || *from == *to || !animations_enabled())
         {
@@ -503,7 +503,7 @@ public:
     }
     /// Advances the blend by `delta`; returns true while blending (including the step that
     /// finishes it), so the owner knows to repaint.
-    bool advance(Duration delta)
+    inline bool advance(Duration delta)
     {
         if (!active_)
         {
@@ -518,7 +518,7 @@ public:
     }
     /// The color to draw for a background whose value is `target`: the blend from the
     /// remembered color while active, `target` itself otherwise.
-    [[nodiscard]] std::optional<Color> current(const std::optional<Color>& target) const
+    [[nodiscard]] inline std::optional<Color> current(const std::optional<Color>& target) const
     {
         if (!active_ || !target)
         {
@@ -527,7 +527,7 @@ public:
         return lerp(from_, *target, static_cast<float>((std::min)(1.0, elapsed_ / duration_)));
     }
     /// Whether a blend is in progress.
-    [[nodiscard]] bool active() const
+    [[nodiscard]] inline bool active() const
     {
         return active_;
     }
@@ -735,7 +735,7 @@ LIBWINUI_EXPORT struct TransitionTargetState
     Point scale_origin{0.5f, 0.5f}; ///< Scale origin as a fraction of the element's size.
 
     /// True at rest: opaque, unmoved and unscaled (scale_origin is irrelevant then).
-    [[nodiscard]] bool is_identity() const
+    [[nodiscard]] inline bool is_identity() const
     {
         return opacity == 1.0f && translate == Point{} && scale_x == 1.0f && scale_y == 1.0f;
     }
@@ -786,7 +786,7 @@ LIBWINUI_EXPORT struct TransitionStoryboard
     /// Total length: the delay plus the longest track.
     [[nodiscard]] Duration duration() const;
     /// True when there is nothing to play (no tracks), e.g. for NoPageTransition.
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return tracks.empty();
     }

@@ -71,7 +71,7 @@ public:
 
     /// Whether this source can be shown at all. A source that depends on something the running
     /// system lacks returns false, and AnimatedVisualPlayer shows its fallback content instead.
-    [[nodiscard]] virtual bool available() const
+    [[nodiscard]] inline virtual bool available() const
     {
         return true;
     }
@@ -132,7 +132,7 @@ public:
     /// render_frame() in the icon's foreground color, which AnimatedIcon passes with every draw.
     /// The source doesn't store the color, because one source object is shared by every icon
     /// showing it. A source with no themable color keeps this default, which ignores `foreground`.
-    virtual void render_icon_frame(Renderer& renderer, const Rect& bounds, double progress, const Color& /*foreground*/) const
+    inline virtual void render_icon_frame(Renderer& renderer, const Rect& bounds, double progress, const Color& /*foreground*/) const
     {
         render_frame(renderer, bounds, progress);
     }

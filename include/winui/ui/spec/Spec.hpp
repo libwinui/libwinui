@@ -133,7 +133,7 @@ public:
     Spec& operator=(Spec&&)      = default;
 
     /// Satisfies SpecLike, so a Spec composes anywhere a spec does. Leaves it empty.
-    [[nodiscard]] std::unique_ptr<Element> build() &&
+    [[nodiscard]] inline std::unique_ptr<Element> build() &&
     {
         return std::move(node_);
     }
@@ -141,13 +141,13 @@ public:
     /// Move the built node out. Const because initializer_list only ever hands out const
     /// references; see the class comment for why that is sound. Calling it twice yields a null
     /// second time, which SpecList never does.
-    [[nodiscard]] std::unique_ptr<Element> take() const
+    [[nodiscard]] inline std::unique_ptr<Element> take() const
     {
         return std::move(node_);
     }
 
     /// True while a node is held: not default-constructed and not yet built or take()n.
-    [[nodiscard]] explicit operator bool() const
+    [[nodiscard]] inline explicit operator bool() const
     {
         return node_ != nullptr;
     }
@@ -224,19 +224,19 @@ public:
     SpecList& operator=(SpecList&&)      = default;
 
     /// True when the list holds no elements.
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return nodes.empty();
     }
     /// The number of elements held.
-    [[nodiscard]] std::size_t size() const
+    [[nodiscard]] inline std::size_t size() const
     {
         return nodes.size();
     }
 
     /// Build `spec` and append it, as one more entry of a braced list would be. An empty Spec
     /// is skipped.
-    void push_back(Spec spec)
+    inline void push_back(Spec spec)
     {
         append(std::move(spec).build());
     }
@@ -245,7 +245,7 @@ public:
     std::vector<std::unique_ptr<Element>> nodes;
 
 private:
-    void append(std::unique_ptr<Element> node)
+    inline void append(std::unique_ptr<Element> node)
     {
         if (node != nullptr)
         {

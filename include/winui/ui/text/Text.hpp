@@ -86,17 +86,17 @@ public:
     /// An empty label.
     TextControl() = default;
     /// A label showing `text` (UTF-8) as one plain run.
-    explicit TextControl(std::string text) : text_(std::move(text))
+    inline explicit TextControl(std::string text) : text_(std::move(text))
     {
     }
 
     /// The content as UTF-8; with inlines, their texts joined (line breaks as `\n`).
-    [[nodiscard]] const std::string& text() const
+    [[nodiscard]] inline const std::string& text() const
     {
         return text_;
     }
     /// Replaces the content with one plain run, and drops any inlines and the selection.
-    void set_text(std::string text)
+    inline void set_text(std::string text)
     {
         text_ = std::move(text);
         inlines_.clear();
@@ -105,7 +105,7 @@ public:
     }
 
     /// The formatted runs; empty for plain text (the default, and after set_text()).
-    [[nodiscard]] const std::vector<Inline>& inlines() const
+    [[nodiscard]] inline const std::vector<Inline>& inlines() const
     {
         return inlines_;
     }
@@ -114,25 +114,25 @@ public:
     void set_inlines(std::vector<Inline> inlines);
 
     /// How each line sits between the left and right edges; Left by default.
-    [[nodiscard]] TextAlignment text_alignment() const
+    [[nodiscard]] inline TextAlignment text_alignment() const
     {
         return alignment_;
     }
     /// Sets the line alignment.
-    void set_text_alignment(TextAlignment alignment)
+    inline void set_text_alignment(TextAlignment alignment)
     {
         alignment_ = alignment;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// Extra space between characters, in thousandths of an em; 0 by default.
-    [[nodiscard]] int character_spacing() const
+    [[nodiscard]] inline int character_spacing() const
     {
         return character_spacing_;
     }
     /// Sets the extra space between characters, in thousandths of an em
     /// (TextStyle::character_spacing).
-    void set_character_spacing(int spacing)
+    inline void set_character_spacing(int spacing)
     {
         character_spacing_ = spacing;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -140,7 +140,7 @@ public:
 
     /// Whether the user can select and copy the text; false by default. While true the block is
     /// focusable.
-    [[nodiscard]] bool selection_enabled() const
+    [[nodiscard]] inline bool selection_enabled() const
     {
         return selection_enabled_;
     }
@@ -151,38 +151,38 @@ public:
 
     /// The fixed color behind selected text; nullopt (the default) when unset or a theme resource
     /// is set. Unset is the accent.
-    [[nodiscard]] std::optional<Color> selection_highlight_color() const
+    [[nodiscard]] inline std::optional<Color> selection_highlight_color() const
     {
         return selection_color_.color();
     }
     /// The color behind selected text as a theme resource, or nullptr.
-    [[nodiscard]] ThemeColor selection_highlight_resource() const
+    [[nodiscard]] inline ThemeColor selection_highlight_resource() const
     {
         return selection_color_.resource();
     }
     /// Sets the fixed color behind selected text and clears a theme resource; nullopt goes back
     /// to the accent.
-    void set_selection_highlight_color(std::optional<Color> color)
+    inline void set_selection_highlight_color(std::optional<Color> color)
     {
         selection_color_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// Sets the color behind selected text to a theme resource, re-read under every theme, and
     /// clears a fixed one.
-    void set_selection_highlight_color(ThemeColor resource)
+    inline void set_selection_highlight_color(ThemeColor resource)
     {
         selection_color_ = resource;
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// The selection as [start, end) byte offsets into text() (inlines joined); {0, 0} when none.
-    [[nodiscard]] std::pair<std::size_t, std::size_t> selection() const
+    [[nodiscard]] inline std::pair<std::size_t, std::size_t> selection() const
     {
         return interaction_.range();
     }
     /// Selects the byte range [start, end) of text(). The selection shows only while the block
     /// has focus and selection is enabled.
-    void select(std::size_t start, std::size_t end)
+    inline void select(std::size_t start, std::size_t end)
     {
         interaction_.select(start, end);
         mark_dirty(DirtyFlags::Visual);
@@ -191,20 +191,20 @@ public:
     void select_all();
     /// The selected part of the laid-out text; empty when nothing is selected or before the
     /// first measure.
-    [[nodiscard]] std::string selected_text() const
+    [[nodiscard]] inline std::string selected_text() const
     {
         return interaction_.selected_text(layout_);
     }
 
     /// The explicit style set by set_text_style(). Meaningful only once set_text_style() was
     /// called. Until then the theme's type ramp entry for role() is used.
-    [[nodiscard]] const TextStyle& text_style() const
+    [[nodiscard]] inline const TextStyle& text_style() const
     {
         return style_;
     }
     /// Fixes the font, size, weight and alignment. From then on it takes precedence over role()
     /// and the theme's type ramp.
-    void set_text_style(TextStyle style)
+    inline void set_text_style(TextStyle style)
     {
         style_          = std::move(style);
         style_explicit_ = true; // an explicit style always wins over the theme's role ramp
@@ -214,26 +214,26 @@ public:
     /// The role this label plays in the theme's `type` ramp; Body by default. The style is looked
     /// up in the current theme, so a plain TextControl follows the theme's own fonts.
     /// set_text_style() always takes precedence.
-    [[nodiscard]] TextRole role() const
+    [[nodiscard]] inline TextRole role() const
     {
         return role_;
     }
     /// Sets the type ramp role.
-    void set_role(TextRole role)
+    inline void set_role(TextRole role)
     {
         role_ = role;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// Whether the text breaks into lines; NoWrap by default.
-    [[nodiscard]] TextWrapping wrapping() const
+    [[nodiscard]] inline TextWrapping wrapping() const
     {
         return wrapping_;
     }
     /// Sets the wrapping mode. Anything but NoWrap wins over the wrapping of a style from
     /// set_text_style(). NoWrap, the default, leaves that style's own `wrapping` in charge. Text
     /// wraps only at a bounded width, and a horizontal StackControl offers an unbounded one.
-    void set_wrapping(TextWrapping wrapping)
+    inline void set_wrapping(TextWrapping wrapping)
     {
         wrapping_ = wrapping;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -241,13 +241,13 @@ public:
 
     /// The fixed text color, if any. Unset (the default) uses the theme's window text color, so
     /// a label without set_color() stays readable under a dark theme.
-    [[nodiscard]] std::optional<Color> color() const
+    [[nodiscard]] inline std::optional<Color> color() const
     {
         return color_;
     }
     /// Fixes the text color and clears any set_foreground() resource. A fixed color does not
     /// follow a theme change.
-    void set_color(Color color)
+    inline void set_color(Color color)
     {
         color_          = color;
         color_resource_ = nullptr;
@@ -255,7 +255,7 @@ public:
     }
     /// Sets the text color to a theme resource, re-read whenever the text is drawn so it follows a
     /// theme change. Wins over set_color(); nullptr clears it.
-    void set_foreground(ThemeColor resource)
+    inline void set_foreground(ThemeColor resource)
     {
         color_resource_ = resource;
         mark_dirty(DirtyFlags::Visual);
@@ -264,43 +264,43 @@ public:
     /// What shows when the text does not fit the arranged box: all of it clipped (None, Clip), or
     /// as much as fits followed by an ellipsis, cut between characters or between words. Only the
     /// plain-text form trims (not inlines, selectable or justified text).
-    [[nodiscard]] TextTrimming trimming() const
+    [[nodiscard]] inline TextTrimming trimming() const
     {
         return trimming_;
     }
     /// Sets the trimming mode.
-    void set_trimming(TextTrimming trimming)
+    inline void set_trimming(TextTrimming trimming)
     {
         trimming_ = trimming;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// Whether the last arrange cut the text short.
-    [[nodiscard]] bool is_text_trimmed() const
+    [[nodiscard]] inline bool is_text_trimmed() const
     {
         return trimmed_;
     }
     /// Fires during arrange with the new is_text_trimmed() value whenever it changes. A typical
     /// use is a tooltip that shows the full text.
-    void on_text_trimmed_changed(Callback<void(bool)> handler)
+    inline void on_text_trimmed_changed(Callback<void(bool)> handler)
     {
         on_trimmed_changed_ = std::move(handler);
     }
 
 
     /// True: measuring reads only the text's own state, the measurer and the theme.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
 
     // ---- selection and links ----
     /// Focusable only while enabled with text selection on.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled() && selection_enabled_;
     }
     /// Whether the block has keyboard focus (only ever true while focusable()).
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
@@ -311,12 +311,12 @@ public:
     /// A hand over a link, an I-beam over selectable text.
     [[nodiscard]] std::optional<CursorShape> cursor_at(Point p) const override;
     /// Always AutomationRole::Text.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Text;
     }
     /// The text, when no accessibility name is set.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return text_;
     }
@@ -339,8 +339,8 @@ protected:
 private:
     // `style_` verbatim once set_text_style() was called, otherwise the theme's `type` ramp entry for
     // `role_` with TextControl's own alignment on top; alignment is layout, not typography.
-    [[nodiscard]] TextStyle resolved_style(const Theme& theme) const;
-    [[nodiscard]] bool      uses_layout() const
+    [[nodiscard]] TextStyle   resolved_style(const Theme& theme) const;
+    [[nodiscard]] inline bool uses_layout() const
     {
         return !inlines_.empty() || selection_enabled_ || alignment_ == TextAlignment::Justify;
     }
@@ -381,12 +381,12 @@ private:
     void                                          place_link_automation() const;
 
 protected:
-    void enabled_changed() override
+    inline void enabled_changed() override
     {
         mark_dirty(DirtyFlags::Visual);
     }
     /// Tracks focus. The selection shows only while the block has focus.
-    void focus_changed(bool /*focused*/) override
+    inline void focus_changed(bool /*focused*/) override
     {
         mark_dirty(DirtyFlags::Visual);
     }
@@ -395,7 +395,7 @@ protected:
 
 protected:
     /// None: selectable text shows focus through its selection.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return false;
     }

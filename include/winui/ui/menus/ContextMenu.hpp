@@ -61,7 +61,7 @@ public:
     /// Closes the menu.
     void hide();
     /// The flyout that shows the menu, for its placement and its opened and closed events.
-    [[nodiscard]] MenuFlyoutControl& menu() const
+    [[nodiscard]] inline MenuFlyoutControl& menu() const
     {
         return *menu_;
     }

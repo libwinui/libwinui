@@ -60,7 +60,7 @@ public:
 
     /// The checked state: `true`, `false`, or `std::nullopt` for indeterminate. Defaults to
     /// `false`.
-    [[nodiscard]] std::optional<bool> checked() const
+    [[nodiscard]] inline std::optional<bool> checked() const
     {
         return checked_;
     }
@@ -70,19 +70,19 @@ public:
 
     /// Whether a click can reach indeterminate (checked -> indeterminate ->
     /// unchecked). Off by default.
-    [[nodiscard]] bool three_state() const
+    [[nodiscard]] inline bool three_state() const
     {
         return three_state_;
     }
     /// Takes effect on the next activation; does not change the current state.
-    void set_three_state(bool three_state)
+    inline void set_three_state(bool three_state)
     {
         three_state_ = three_state;
     }
 
     /// Invoked with the new state whenever `checked` changes (click, Enter/Space, UI Automation
     /// or set_checked()), including into and out of indeterminate. Replaces any previous handler.
-    void on_checked_changed(Callback<void(std::optional<bool>)> handler)
+    inline void on_checked_changed(Callback<void(std::optional<bool>)> handler)
     {
         on_checked_changed_ = std::move(handler);
     }
@@ -104,12 +104,12 @@ private:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.toggle = this;
     }
     // Maps checked() to On / Off, and `std::nullopt` to Indeterminate.
-    [[nodiscard]] ToggleState toggle_value() const override
+    [[nodiscard]] inline ToggleState toggle_value() const override
     {
         if (!checked_)
         {
@@ -119,7 +119,7 @@ private:
     }
     // Advances the state as a click would, but without running the click handler. Returns
     // false (and does nothing) while disabled.
-    bool toggle_next() override
+    inline bool toggle_next() override
     {
         if (!is_enabled())
         {

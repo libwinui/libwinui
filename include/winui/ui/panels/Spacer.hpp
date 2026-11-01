@@ -50,31 +50,31 @@ public:
     SpacerControl() = default;
 
     /// This spacer's share of the leftover room, relative to the other spacers in the same stack.
-    [[nodiscard]] float weight() const
+    [[nodiscard]] inline float weight() const
     {
         return weight_;
     }
     /// Sets the share; negative is treated as 0. Updates the layout.
-    void set_weight(float weight)
+    inline void set_weight(float weight)
     {
         weight_ = (std::max)(0.0f, weight);
         mark_dirty(DirtyFlags::Layout);
     }
 
     /// True: measuring reads nothing at all.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
 
 protected:
     /// Nothing of its own: a spacer is as small as its minimum size until a stack stretches it.
-    [[nodiscard]] Size measure_override(Size, const MeasureContext&) const override
+    [[nodiscard]] inline Size measure_override(Size, const MeasureContext&) const override
     {
         return {};
     }
     /// Draws nothing.
-    void render_override(Renderer&, const RenderContext&) const override
+    inline void render_override(Renderer&, const RenderContext&) const override
     {
     }
 

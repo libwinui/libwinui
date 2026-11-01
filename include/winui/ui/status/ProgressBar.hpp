@@ -82,12 +82,12 @@ public:
 
     // ---- range/value ----
     /// The value at which the bar is empty; 0 by default.
-    [[nodiscard]] double(min)() const
+    [[nodiscard]] inline double(min)() const
     {
         return min_;
     }
     /// The value at which the bar is full; 100 by default.
-    [[nodiscard]] double(max)() const
+    [[nodiscard]] inline double(max)() const
     {
         return max_;
     }
@@ -96,7 +96,7 @@ public:
     void set_range(double min, double max);
 
     /// The value, always within [`min()`, `max()`]; 0 by default. Ignored while indeterminate.
-    [[nodiscard]] double value() const
+    [[nodiscard]] inline double value() const
     {
         return value_;
     }
@@ -106,7 +106,7 @@ public:
 
     // ---- indeterminate ----
     /// Whether it shows an endless sweep instead of a filled share; false by default.
-    [[nodiscard]] bool is_indeterminate() const
+    [[nodiscard]] inline bool is_indeterminate() const
     {
         return indeterminate_;
     }
@@ -115,7 +115,7 @@ public:
 
     // ---- paused/error override ----
     /// The indicator in the caution color; false by default.
-    [[nodiscard]] bool show_paused() const
+    [[nodiscard]] inline bool show_paused() const
     {
         return show_paused_;
     }
@@ -123,7 +123,7 @@ public:
     void set_show_paused(bool show_paused);
     /// The indicator in the critical color, winning over `show_paused()`; false by
     /// default.
-    [[nodiscard]] bool show_error() const
+    [[nodiscard]] inline bool show_error() const
     {
         return show_error_;
     }
@@ -132,14 +132,14 @@ public:
 
     /// Fired with the new, clamped value whenever `value()` changes. Replaces any
     /// previous handler.
-    void on_value_changed(Callback<void(double)> handler)
+    inline void on_value_changed(Callback<void(double)> handler)
     {
         on_value_changed_ = std::move(handler);
     }
 
     // ---- layout ----
     /// True: measuring reads nothing shared.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
@@ -147,7 +147,7 @@ public:
     // ---- automation ----
     /// ProgressBar, with a range value that UI Automation can read but not set, since the bar
     /// takes no input.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::ProgressBar;
     }
@@ -194,31 +194,31 @@ private:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.range_value = this;
     }
-    [[nodiscard]] double range_value() const override
+    [[nodiscard]] inline double range_value() const override
     {
         return value_;
     }
-    [[nodiscard]] double range_minimum() const override
+    [[nodiscard]] inline double range_minimum() const override
     {
         return min_;
     }
-    [[nodiscard]] double range_maximum() const override
+    [[nodiscard]] inline double range_maximum() const override
     {
         return max_;
     }
-    [[nodiscard]] double range_small_change() const override
+    [[nodiscard]] inline double range_small_change() const override
     {
         return 0.0;
     }
-    [[nodiscard]] bool range_read_only() const override
+    [[nodiscard]] inline bool range_read_only() const override
     {
         return false;
     }
-    bool set_range_value(double /*value*/) override
+    inline bool set_range_value(double /*value*/) override
     {
         return false;
     }

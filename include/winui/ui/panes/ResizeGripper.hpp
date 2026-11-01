@@ -61,12 +61,12 @@ public:
     ResizeGripperControl() = default;
 
     /// The square's edge length in DIPs; 16 by default.
-    [[nodiscard]] float size() const
+    [[nodiscard]] inline float size() const
     {
         return size_;
     }
     /// Sets the edge length in DIPs and lays the gripper out again.
-    void set_size(float size)
+    inline void set_size(float size)
     {
         size_ = size;
         mark_dirty(DirtyFlags::Layout);
@@ -74,26 +74,26 @@ public:
 
     /// Fired while the pointer drags, with the (dx, dy) movement since the previous call. Works
     /// like SplitterControl::on_drag_delta, on both axes at once.
-    void on_drag_delta(Callback<void(Point delta)> handler)
+    inline void on_drag_delta(Callback<void(Point delta)> handler)
     {
         on_drag_delta_ = std::move(handler);
     }
 
 
     /// Whether a left-button drag is in progress. The dots draw at hover strength meanwhile.
-    [[nodiscard]] bool dragging() const
+    [[nodiscard]] inline bool dragging() const
     {
         return dragging_;
     }
     /// Whether the pointer is over the gripper.
-    [[nodiscard]] bool hovered() const
+    [[nodiscard]] inline bool hovered() const
     {
         return hovered_;
     }
 
     // ---- automation ----
     /// The diagonal resize arrow, or none while disabled.
-    [[nodiscard]] std::optional<CursorShape> cursor_at(Point) const override
+    [[nodiscard]] inline std::optional<CursorShape> cursor_at(Point) const override
     {
         if (!is_enabled())
         {
@@ -102,7 +102,7 @@ public:
         return CursorShape::SizeNorthwestSoutheast;
     }
     /// Reported to screen readers as a Thumb.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Thumb;
     }

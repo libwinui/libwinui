@@ -51,14 +51,14 @@ public:
     ~StackLayoutEngine() override;
 
     /// The stacking direction; Vertical by default.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
     /// Changes the direction and invalidates the host's measure.
     void set_orientation(Orientation orientation);
     /// The gap between neighboring items along the stack, in DIPs; 0 by default.
-    [[nodiscard]] float spacing() const
+    [[nodiscard]] inline float spacing() const
     {
         return spacing_;
     }
@@ -67,7 +67,7 @@ public:
 
     /// Whether only the items in or near the viewport are realized. When off, every item is
     /// realized, however few of them show.
-    [[nodiscard]] bool is_virtualization_enabled() const
+    [[nodiscard]] inline bool is_virtualization_enabled() const
     {
         return virtualize_;
     }
@@ -123,7 +123,7 @@ LIBWINUI_EXPORT struct StackLayout
     float       spacing     = 0.0f;                  ///< Gap between adjacent items, DIPs.
 
     /// Consumes the value and returns the layout object.
-    [[nodiscard]] std::unique_ptr<Layout> build() &&
+    [[nodiscard]] inline std::unique_ptr<Layout> build() &&
     {
         auto layout = std::make_unique<StackLayoutEngine>();
         layout->set_orientation(orientation);

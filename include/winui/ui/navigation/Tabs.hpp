@@ -168,7 +168,7 @@ public:
     void move_tab(std::size_t from, std::size_t to);
 
     /// The number of tabs.
-    [[nodiscard]] std::size_t tab_count() const
+    [[nodiscard]] inline std::size_t tab_count() const
     {
         return tabs_.size();
     }
@@ -192,7 +192,7 @@ public:
     // ---- selection ----
 
     /// The selected tab; unset while there are no tabs.
-    [[nodiscard]] std::optional<std::size_t> selected_index() const
+    [[nodiscard]] inline std::optional<std::size_t> selected_index() const
     {
         return detail::optional_index(selected_index_);
     }
@@ -200,7 +200,7 @@ public:
     /// the tab is already selected.
     void set_selected_index(std::size_t index);
     /// The selected tab's key; empty while there are no tabs.
-    [[nodiscard]] const std::string& selected_key() const
+    [[nodiscard]] inline const std::string& selected_key() const
     {
         return key(selected_index_);
     }
@@ -210,7 +210,7 @@ public:
     /// Fired with the new tab's key whenever the selection changes: a click, Enter/Space,
     /// Ctrl+Tab, set_selected_index(), set_selected_key(), or a removal that moves it. The key is
     /// empty once the last tab is gone.
-    void on_selection_changed(Callback<void(const std::string&)> handler)
+    inline void on_selection_changed(Callback<void(const std::string&)> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
@@ -218,31 +218,31 @@ public:
     // ---- the strip ----
 
     /// How the tabs share the strip; Equal by default.
-    [[nodiscard]] TabsWidthMode tab_width_mode() const
+    [[nodiscard]] inline TabsWidthMode tab_width_mode() const
     {
         return width_mode_;
     }
     /// Changes the width mode and updates the layout.
-    void set_tab_width_mode(TabsWidthMode mode)
+    inline void set_tab_width_mode(TabsWidthMode mode)
     {
         width_mode_ = mode;
         frozen_tab_width_.reset();
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// Which closable tabs show their close button; Auto by default.
-    [[nodiscard]] TabsCloseButtonOverlayMode close_button_overlay_mode() const
+    [[nodiscard]] inline TabsCloseButtonOverlayMode close_button_overlay_mode() const
     {
         return close_mode_;
     }
     /// Changes the overlay mode; redraws.
-    void set_close_button_overlay_mode(TabsCloseButtonOverlayMode mode)
+    inline void set_close_button_overlay_mode(TabsCloseButtonOverlayMode mode)
     {
         close_mode_ = mode;
         mark_dirty(DirtyFlags::Visual);
     }
     /// Whether the "+" after the last tab shows: the value set, else whether there is an
     /// on_add_tab_button_click() handler.
-    [[nodiscard]] bool is_add_tab_button_visible() const
+    [[nodiscard]] inline bool is_add_tab_button_visible() const
     {
         return add_visible_.value_or(static_cast<bool>(on_add_tab_button_click_));
     }
@@ -250,23 +250,23 @@ public:
     /// handler. Updates the layout.
     void set_add_tab_button_visible(std::optional<bool> visible);
     /// Whether dragging a tab moves it within the strip; true by default.
-    [[nodiscard]] bool can_reorder_tabs() const
+    [[nodiscard]] inline bool can_reorder_tabs() const
     {
         return can_reorder_;
     }
     /// Allows or forbids reordering by drag.
-    void set_can_reorder_tabs(bool can)
+    inline void set_can_reorder_tabs(bool can)
     {
         can_reorder_ = can;
     }
     /// The strip's fill: a fixed color or a theme resource, transparent by default. The content
     /// below it is not filled.
-    [[nodiscard]] const Paint& strip_background() const
+    [[nodiscard]] inline const Paint& strip_background() const
     {
         return strip_background_;
     }
     /// Sets or clears the strip's fill; redraws.
-    void set_strip_background(Paint color)
+    inline void set_strip_background(Paint color)
     {
         strip_background_ = color;
         mark_dirty(DirtyFlags::Visual);
@@ -293,7 +293,7 @@ public:
     /// Fired with the tab's key when its close button, a middle click or Ctrl+F4 asks to close
     /// it. With a handler nothing is removed until it calls remove_tab(); without one the tab is
     /// removed and its neighbor selected.
-    void on_tab_close_requested(Callback<void(const std::string&)> handler)
+    inline void on_tab_close_requested(Callback<void(const std::string&)> handler)
     {
         on_tab_close_requested_ = std::move(handler);
     }
@@ -301,7 +301,7 @@ public:
     /// "+" unless set_add_tab_button_visible() set it explicitly.
     void on_add_tab_button_click(Callback<void()> handler);
     /// Fired when a tab is inserted, removed or moved.
-    void on_tabs_changed(Callback<void()> handler)
+    inline void on_tabs_changed(Callback<void()> handler)
     {
         on_tabs_changed_ = std::move(handler);
     }
@@ -310,12 +310,12 @@ public:
     // ---- geometry, from the last arrange ----
 
     /// The tab strip's rect.
-    [[nodiscard]] Rect strip_bounds() const
+    [[nodiscard]] inline Rect strip_bounds() const
     {
         return Rect{bounds().x, bounds().y, bounds().width, strip_height_};
     }
     /// The selected tab's content area, below the strip.
-    [[nodiscard]] Rect content_bounds() const
+    [[nodiscard]] inline Rect content_bounds() const
     {
         return Rect{bounds().x, bounds().y + strip_height_, bounds().width, (std::max)(0.0f, bounds().height - strip_height_)};
     }
@@ -327,12 +327,12 @@ public:
     [[nodiscard]] std::optional<Rect> scroll_decrease_bounds() const;
     [[nodiscard]] std::optional<Rect> scroll_increase_bounds() const;
     /// How far the strip is scrolled, in DIPs (0 is the first tab at the left).
-    [[nodiscard]] float scroll_offset() const
+    [[nodiscard]] inline float scroll_offset() const
     {
         return scroll_offset_;
     }
     /// The "+" button (owned by the view).
-    [[nodiscard]] ButtonControl* add_button() const
+    [[nodiscard]] inline ButtonControl* add_button() const
     {
         return add_button_;
     }
@@ -342,12 +342,12 @@ public:
 
     // ---- focus ----
     /// Whether the strip has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// The strip is one tab stop while enabled and not empty.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled() && !tabs_.empty();
     }
@@ -371,7 +371,7 @@ public:
     /// The tab the keyboard is on, so a screen reader reads it as the arrow keys move.
     [[nodiscard]] Element* automation_focus() const override;
     /// A Tab control.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Tab;
     }
@@ -402,13 +402,13 @@ protected:
 
 private:
     // Enter selects the focused tab.
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return true;
     }
     // Left/Right move between tabs; claimed so Window's directional focus navigation leaves
     // them alone (Element::key_override).
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowLeft || key == Key::ArrowRight;
     }
@@ -434,10 +434,10 @@ private:
     [[nodiscard]] TabsItemAutomation* item_automation(std::size_t index) const;
     void                              place_item_automation();
 
-    void               select(std::size_t index); // no-op on reselect, marks dirty, fires the callback
-    void               request_close(std::size_t index);
-    [[nodiscard]] bool close_button_shown(std::size_t index) const;
-    [[nodiscard]] bool compact_tab(std::size_t index) const
+    void                      select(std::size_t index); // no-op on reselect, marks dirty, fires the callback
+    void                      request_close(std::size_t index);
+    [[nodiscard]] bool        close_button_shown(std::size_t index) const;
+    [[nodiscard]] inline bool compact_tab(std::size_t index) const
     {
         return width_mode_ == TabsWidthMode::Compact && index != selected_index_;
     }
@@ -446,7 +446,7 @@ private:
     [[nodiscard]] float       natural_width(std::size_t index) const;
     [[nodiscard]] float       tab_x(std::size_t index) const; // unscrolled, from the list's left
     [[nodiscard]] std::size_t tab_at(Point p) const;
-    [[nodiscard]] Rect        viewport() const
+    [[nodiscard]] inline Rect viewport() const
     {
         return viewport_;
     }
@@ -527,43 +527,43 @@ protected:
 
 protected:
     /// Inside the focused tab, cut to the part of it the strip shows.
-    [[nodiscard]] Rect  focus_ring_rect(const Theme& theme) const override;
-    [[nodiscard]] float focus_ring_corner_radius(const Theme& theme) const override
+    [[nodiscard]] Rect         focus_ring_rect(const Theme& theme) const override;
+    [[nodiscard]] inline float focus_ring_corner_radius(const Theme& theme) const override
     {
         return theme.overlay_corner_radius;
     }
-    [[nodiscard]] bool focus_ring_inside() const override
+    [[nodiscard]] inline bool focus_ring_inside() const override
     {
         return true;
     }
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.value     = this;
         out.selection = this;
     }
     // The selected tab's TabItem node.
-    void               selected_items(std::vector<Element*>& out) const override;
-    [[nodiscard]] bool can_select_multiple() const override
+    void                      selected_items(std::vector<Element*>& out) const override;
+    [[nodiscard]] inline bool can_select_multiple() const override
     {
         return false;
     }
-    [[nodiscard]] bool selection_required() const override
+    [[nodiscard]] inline bool selection_required() const override
     {
         return !tabs_.empty();
     }
     // The selected tab's header, or empty with no tabs.
-    [[nodiscard]] std::string text_value() const override
+    [[nodiscard]] inline std::string text_value() const override
     {
         return selected_index_ < tabs_.size() ? tabs_[selected_index_].header : std::string{};
     }
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return true;
     }
-    bool set_text_value(std::string_view /*text*/) override
+    inline bool set_text_value(std::string_view /*text*/) override
     {
         return false;
     }
@@ -611,7 +611,7 @@ public:
     std::vector<Entry> entries;
 
     /// Appends one tab, building its content, for a list put together in a loop.
-    void add(Tab tab)
+    inline void add(Tab tab)
     {
         entries.push_back(Entry{std::move(tab.header), tab.content.take(), tab.icon, tab.closable, std::move(tab.key)});
     }

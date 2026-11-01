@@ -97,7 +97,7 @@ public:
     virtual ~CommandBarElement() = default;
 
     /// The look the holding bar last set (the default look on its own).
-    [[nodiscard]] const AppBarLook& app_bar_look() const
+    [[nodiscard]] inline const AppBarLook& app_bar_look() const
     {
         return look_;
     }
@@ -106,52 +106,52 @@ public:
 
     /// Which commands move into the overflow first when the bar runs out of room. The lowest
     /// positive order goes first, a whole group at once, and 0 goes last, from the right.
-    [[nodiscard]] int dynamic_overflow_order() const
+    [[nodiscard]] inline int dynamic_overflow_order() const
     {
         return dynamic_overflow_order_;
     }
     /// Sets the overflow order, which takes effect on the bar's next layout.
-    void set_dynamic_overflow_order(int order)
+    inline void set_dynamic_overflow_order(int order)
     {
         dynamic_overflow_order_ = order;
     }
 
     /// Whether the bar currently shows this element as an overflow-menu row.
-    [[nodiscard]] bool is_in_overflow() const
+    [[nodiscard]] inline bool is_in_overflow() const
     {
         return look_.overflow;
     }
 
     /// Whether there is text for a bar with Bottom text to reveal on opening. False by
     /// default.
-    [[nodiscard]] virtual bool has_text() const
+    [[nodiscard]] inline virtual bool has_text() const
     {
         return false;
     }
     /// The shortcut as display text ("Ctrl+S"), empty for none; sizes the overflow's shortcut column.
-    [[nodiscard]] virtual std::string shortcut_text() const
+    [[nodiscard]] inline virtual std::string shortcut_text() const
     {
         return {};
     }
     /// Whether the element draws an icon; the overflow then reserves an icon column.
-    [[nodiscard]] virtual bool has_icon() const
+    [[nodiscard]] inline virtual bool has_icon() const
     {
         return false;
     }
     /// True for AppBarToggleButton; the overflow then reserves a check column.
-    [[nodiscard]] virtual bool is_toggle() const
+    [[nodiscard]] inline virtual bool is_toggle() const
     {
         return false;
     }
     /// True for AppBarSeparator.
-    [[nodiscard]] virtual bool is_separator() const
+    [[nodiscard]] inline virtual bool is_separator() const
     {
         return false;
     }
 
     /// Set by the CommandBar (or CommandBarFlyout) that holds the element: a click on a command
     /// closes the bar. Non-owning; null (the default) for a command on its own.
-    void set_command_host(AppBarCommandHost* host)
+    inline void set_command_host(AppBarCommandHost* host)
     {
         command_host_ = host;
     }
@@ -216,7 +216,7 @@ public:
     /// The icon, 16 DIPs in the bar. Falls back to the command's icon.
     [[nodiscard]] const IconSource& icon() const;
     /// Sets the icon; updates the layout and redraws.
-    void set_icon(IconSource icon)
+    inline void set_icon(IconSource icon)
     {
         icon_ = std::move(icon);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -224,24 +224,24 @@ public:
 
     /// Collapsed hides the text whatever the bar's default; Default
     /// (the default) follows the bar.
-    [[nodiscard]] CommandBarTextPosition text_position() const
+    [[nodiscard]] inline CommandBarTextPosition text_position() const
     {
         return text_position_;
     }
     /// Sets the text position; updates the layout and redraws.
-    void set_text_position(CommandBarTextPosition position)
+    inline void set_text_position(CommandBarTextPosition position)
     {
         text_position_ = position;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// Whether the button is drawn compact, without its text. A CommandBar sets it while closed.
-    [[nodiscard]] bool is_compact() const
+    [[nodiscard]] inline bool is_compact() const
     {
         return look_.compact;
     }
     /// Sets the compact flag through set_app_bar_look(); updates the layout and redraws.
-    void set_compact(bool compact)
+    inline void set_compact(bool compact)
     {
         AppBarLook look = look_;
         look.compact    = compact;
@@ -253,7 +253,7 @@ public:
     [[nodiscard]] KeyCombo shortcut() const;
     /// Sets the shortcut; updates the layout, since the overflow sizes its shortcut column by it,
     /// and redraws.
-    void set_shortcut(KeyCombo shortcut)
+    inline void set_shortcut(KeyCombo shortcut)
     {
         shortcut_ = shortcut;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -261,7 +261,7 @@ public:
     /// The shortcut text shown in the overflow and the tooltip
     /// in place of the one derived from shortcut() (e.g. "Ctrl+Shift+Del" for a custom
     /// binding). Empty uses the derived text.
-    void set_shortcut_text(std::string text)
+    inline void set_shortcut_text(std::string text)
     {
         shortcut_text_ = std::move(text);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -274,14 +274,14 @@ public:
     /// Takes the holding bar's look; updates the layout and redraws.
     void set_app_bar_look(const AppBarLook& look) override;
     /// True when text() (own or the command's) is non-empty.
-    [[nodiscard]] bool has_text() const override
+    [[nodiscard]] inline bool has_text() const override
     {
         return !text().empty();
     }
     /// The shortcut text override, or the shortcut formatted as "Ctrl+S"; empty for none.
     [[nodiscard]] std::string shortcut_text() const override;
     /// True when icon() (own or the command's) is set.
-    [[nodiscard]] bool has_icon() const override
+    [[nodiscard]] inline bool has_icon() const override
     {
         return !icon().empty();
     }
@@ -289,7 +289,7 @@ public:
     // ---- Element ----
     /// True: the button can be measured in parallel with other elements, since measuring reads
     /// only its text and icon.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
@@ -299,7 +299,7 @@ public:
     /// Clicks the button when `e` matches shortcut() and the button is enabled; true if handled.
     bool handle_global_shortcut(const KeyEvent& e) override;
     /// The text, when no accessible name was set.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return text();
     }
@@ -310,7 +310,7 @@ protected:
     void on_activated() override;
     /// The toggle's checked state; nullopt for a plain button. AppBarToggleButton overrides it so
     /// the shared rendering can draw the checked look.
-    [[nodiscard]] virtual std::optional<std::optional<bool>> toggle_state() const
+    [[nodiscard]] inline virtual std::optional<std::optional<bool>> toggle_state() const
     {
         return std::nullopt;
     }
@@ -346,7 +346,7 @@ private:
 
 protected:
     /// Around the hover plate inside the button.
-    [[nodiscard]] Rect focus_ring_rect(const Theme& /*theme*/) const override
+    [[nodiscard]] inline Rect focus_ring_rect(const Theme& /*theme*/) const override
     {
         return plate_rect();
     }
@@ -384,7 +384,7 @@ public:
     explicit AppBarToggleButtonControl(std::string text, IconSource icon = {}, std::optional<bool> checked = false);
 
     /// The checked state: true, false, or nullopt for indeterminate. Default false.
-    [[nodiscard]] std::optional<bool> checked() const
+    [[nodiscard]] inline std::optional<bool> checked() const
     {
         return checked_;
     }
@@ -392,24 +392,24 @@ public:
     void set_checked(std::optional<bool> checked);
 
     /// Whether a click can reach indeterminate (checked, then indeterminate, then unchecked).
-    [[nodiscard]] bool three_state() const
+    [[nodiscard]] inline bool three_state() const
     {
         return three_state_;
     }
     /// Enables the indeterminate step in the click cycle.
-    void set_three_state(bool three_state)
+    inline void set_three_state(bool three_state)
     {
         three_state_ = three_state;
     }
 
     /// Called with the new state whenever the checked state changes.
-    void on_checked_changed(Callback<void(std::optional<bool>)> handler)
+    inline void on_checked_changed(Callback<void(std::optional<bool>)> handler)
     {
         on_checked_changed_ = std::move(handler);
     }
 
     /// Always true.
-    [[nodiscard]] bool is_toggle() const override
+    [[nodiscard]] inline bool is_toggle() const override
     {
         return true;
     }
@@ -419,7 +419,7 @@ protected:
     /// Advances the checked state, then closes the holding bar as AppBarButton does.
     void on_activated() override;
     /// checked(), so the shared rendering draws the checked look.
-    [[nodiscard]] std::optional<std::optional<bool>> toggle_state() const override
+    [[nodiscard]] inline std::optional<std::optional<bool>> toggle_state() const override
     {
         return checked_;
     }
@@ -433,12 +433,12 @@ private:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.toggle = this;
     }
     // The checked state as On/Off/Indeterminate.
-    [[nodiscard]] ToggleState toggle_value() const override
+    [[nodiscard]] inline ToggleState toggle_value() const override
     {
         if (!checked_)
         {
@@ -471,12 +471,12 @@ public:
     /// layout.
     void set_app_bar_look(const AppBarLook& look) override;
     /// Always true.
-    [[nodiscard]] bool is_separator() const override
+    [[nodiscard]] inline bool is_separator() const override
     {
         return true;
     }
     /// Exposed to UI Automation as a separator.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Separator;
     }

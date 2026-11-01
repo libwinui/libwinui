@@ -108,7 +108,7 @@ public:
 
     // ---- pages ----
     /// The page count: 0 by default, nullopt for an unknown count.
-    [[nodiscard]] std::optional<std::size_t> number_of_pages() const
+    [[nodiscard]] inline std::optional<std::size_t> number_of_pages() const
     {
         return infinite() ? std::nullopt : std::optional<std::size_t>{static_cast<std::size_t>(number_of_pages_)};
     }
@@ -125,13 +125,13 @@ public:
     }
 
     /// The current page, 0-based.
-    [[nodiscard]] std::size_t selected_index() const
+    [[nodiscard]] inline std::size_t selected_index() const
     {
         return static_cast<std::size_t>(selected_index_);
     }
     /// Selects page `index`, clamped to the last page. With an unknown count there is no upper
     /// limit. A change fires on_selection_changed.
-    void set_selected_index(std::size_t index)
+    inline void set_selected_index(std::size_t index)
     {
         clamp_and_select(index > static_cast<std::size_t>((std::numeric_limits<int>::max)())
                              ? (std::numeric_limits<int>::max)()
@@ -139,7 +139,7 @@ public:
     }
 
     /// Which page selector shows. Auto by default.
-    [[nodiscard]] PagerDisplayMode display_mode() const
+    [[nodiscard]] inline PagerDisplayMode display_mode() const
     {
         return display_mode_;
     }
@@ -150,28 +150,28 @@ public:
 
     // ---- buttons ----
     /// How the First button shows: Visible by default.
-    [[nodiscard]] PagerButtonVisibility first_button_visibility() const
+    [[nodiscard]] inline PagerButtonVisibility first_button_visibility() const
     {
         return button_visibility_[First];
     }
     /// Shows, hides or collapses the First button and updates the layout.
     void set_first_button_visibility(PagerButtonVisibility visibility);
     /// How the Previous button shows: Visible by default.
-    [[nodiscard]] PagerButtonVisibility previous_button_visibility() const
+    [[nodiscard]] inline PagerButtonVisibility previous_button_visibility() const
     {
         return button_visibility_[Previous];
     }
     /// Shows, hides or collapses the Previous button and updates the layout.
     void set_previous_button_visibility(PagerButtonVisibility visibility);
     /// How the Next button shows: Visible by default.
-    [[nodiscard]] PagerButtonVisibility next_button_visibility() const
+    [[nodiscard]] inline PagerButtonVisibility next_button_visibility() const
     {
         return button_visibility_[Next];
     }
     /// Shows, hides or collapses the Next button and updates the layout.
     void set_next_button_visibility(PagerButtonVisibility visibility);
     /// How the Last button shows: Visible by default (never shown with an unknown page count).
-    [[nodiscard]] PagerButtonVisibility last_button_visibility() const
+    [[nodiscard]] inline PagerButtonVisibility last_button_visibility() const
     {
         return button_visibility_[Last];
     }
@@ -180,7 +180,7 @@ public:
 
     /// Whether the button panel always offers page 1 and page N, with an ellipsis between them and
     /// the pages around the current one. True by default.
-    [[nodiscard]] bool button_panel_always_show_first_last_page_index() const
+    [[nodiscard]] inline bool button_panel_always_show_first_last_page_index() const
     {
         return always_show_first_last_;
     }
@@ -189,7 +189,7 @@ public:
 
     // ---- text ----
     /// The text before the selector: the control's own, else strings().pager.prefix ("Page").
-    [[nodiscard]] const std::string& prefix_text() const
+    [[nodiscard]] inline const std::string& prefix_text() const
     {
         return prefix_text_ ? *prefix_text_ : strings().pager.prefix;
     }
@@ -198,7 +198,7 @@ public:
     void set_prefix_text(std::optional<std::string> text);
     /// The text between the selector and the page count: the control's own, else
     /// strings().pager.suffix ("of").
-    [[nodiscard]] const std::string& suffix_text() const
+    [[nodiscard]] inline const std::string& suffix_text() const
     {
         return suffix_text_ ? *suffix_text_ : strings().pager.suffix;
     }
@@ -208,7 +208,7 @@ public:
 
 
     /// Fired with the new page index when the selection changes.
-    void on_selection_changed(Callback<void(std::size_t)> handler)
+    inline void on_selection_changed(Callback<void(std::size_t)> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
@@ -223,39 +223,39 @@ public:
     /// The Last button, owned by the pager.
     [[nodiscard]] ButtonControl* last_button() const;
     /// The NumberBox selector, owned by the pager; only laid out in NumberBox mode.
-    [[nodiscard]] NumberBoxControl* number_box() const
+    [[nodiscard]] inline NumberBoxControl* number_box() const
     {
         return number_box_;
     }
     /// The drop-down selector, owned by the pager; only laid out in ComboBox mode.
-    [[nodiscard]] ComboBoxControl* combo_box() const
+    [[nodiscard]] inline ComboBoxControl* combo_box() const
     {
         return combo_box_;
     }
     /// Whether a navigation button is drawn (not collapsed, and not hidden on its edge).
-    [[nodiscard]] bool first_button_visible() const
+    [[nodiscard]] inline bool first_button_visible() const
     {
         return part_state(nav_part(First)) == PartState::Shown;
     }
     /// As first_button_visible(), for Previous.
-    [[nodiscard]] bool previous_button_visible() const
+    [[nodiscard]] inline bool previous_button_visible() const
     {
         return part_state(nav_part(Previous)) == PartState::Shown;
     }
     /// As first_button_visible(), for Next.
-    [[nodiscard]] bool next_button_visible() const
+    [[nodiscard]] inline bool next_button_visible() const
     {
         return part_state(nav_part(Next)) == PartState::Shown;
     }
     /// As first_button_visible(), for Last.
-    [[nodiscard]] bool last_button_visible() const
+    [[nodiscard]] inline bool last_button_visible() const
     {
         return part_state(nav_part(Last)) == PartState::Shown;
     }
     /// The button panel as a caller sees it: page numbers, and 0 for an ellipsis.
     [[nodiscard]] std::vector<int> button_panel_items() const;
     /// Which button_panel_items() entry the indicator underlines, or -1.
-    [[nodiscard]] int button_panel_selected_item() const
+    [[nodiscard]] inline int button_panel_selected_item() const
     {
         return indicator_slot_;
     }
@@ -268,7 +268,7 @@ public:
 
     // ---- automation ----
     /// AutomationRole::Menu, over its parts.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Menu;
     }
@@ -314,16 +314,16 @@ private:
     static constexpr std::size_t PartLast     = PartNext + 1;
     static constexpr std::size_t PartCount    = PartLast + 1;
 
-    [[nodiscard]] static std::size_t nav_part(std::size_t button)
+    [[nodiscard]] static inline std::size_t nav_part(std::size_t button)
     {
         constexpr std::array<std::size_t, 4> Parts{PartFirst, PartPrevious, PartNext, PartLast};
         return Parts[button];
     }
-    [[nodiscard]] PartState part_state(std::size_t part) const
+    [[nodiscard]] inline PartState part_state(std::size_t part) const
     {
         return states_[part];
     }
-    [[nodiscard]] bool infinite() const
+    [[nodiscard]] inline bool infinite() const
     {
         return number_of_pages_ < 0;
     }

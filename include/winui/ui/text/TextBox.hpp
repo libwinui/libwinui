@@ -104,7 +104,7 @@ public:
 
     // ---- content ----
     /// The edited string, UTF-8.
-    [[nodiscard]] const std::string& text() const
+    [[nodiscard]] inline const std::string& text() const
     {
         return text_;
     }
@@ -114,7 +114,7 @@ public:
     void set_text(std::string text);
 
     /// The caret position, a byte offset into text().
-    [[nodiscard]] std::size_t caret() const
+    [[nodiscard]] inline std::size_t caret() const
     {
         return caret_;
     }
@@ -124,12 +124,12 @@ public:
     [[nodiscard]] bool has_selection() const;
 
     /// The header text; empty when there is none.
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return header_.text();
     }
     /// The label above the control. Empty (the default) draws none and takes no room.
-    void set_header(std::string header)
+    inline void set_header(std::string header)
     {
         if (header_.set_text(std::move(header)))
         {
@@ -137,12 +137,12 @@ public:
         }
     }
     /// The secondary text under the box; empty (the default) draws none.
-    [[nodiscard]] const std::string& description() const
+    [[nodiscard]] inline const std::string& description() const
     {
         return description_.text();
     }
     /// Sets the description. Empty draws none and takes no room.
-    void set_description(std::string description)
+    inline void set_description(std::string description)
     {
         if (description_.set_text(std::move(description)))
         {
@@ -151,12 +151,12 @@ public:
     }
     /// What is wrong with the value, shown in the description's place in the critical color,
     /// with the border in the same color; empty (the default) shows the description.
-    [[nodiscard]] const std::string& error() const
+    [[nodiscard]] inline const std::string& error() const
     {
         return description_.error();
     }
     /// Sets the error. Empty shows the description again.
-    void set_error(std::string error)
+    inline void set_error(std::string error)
     {
         if (description_.set_error(std::move(error)))
         {
@@ -165,37 +165,37 @@ public:
     }
     /// The description, or the error while one is set, is the help text a screen reader offers
     /// when accessibility().description is empty.
-    [[nodiscard]] std::string automation_help_text_fallback() const override
+    [[nodiscard]] inline std::string automation_help_text_fallback() const override
     {
         return description_.shown();
     }
     /// Invalid while an error is set.
-    [[nodiscard]] bool automation_invalid() const override
+    [[nodiscard]] inline bool automation_invalid() const override
     {
         return description_.has_error();
     }
     /// The header names the control when accessibility().name does not.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_.text();
     }
 
 
     /// Whether the pointer is over the box, which draws it in its hover colors.
-    [[nodiscard]] bool hovered() const
+    [[nodiscard]] inline bool hovered() const
     {
         return hovered_;
     }
 
     /// The placeholder hint; empty (the default) draws none.
-    [[nodiscard]] const std::string& placeholder_text() const
+    [[nodiscard]] inline const std::string& placeholder_text() const
     {
         return placeholder_text_;
     }
     /// Whether measure applies the theme's minimum text box height (32 by default). On for a
     /// TextBox of its own, off for one serving as another control's edit part (ComboBox,
     /// NumberBox), which sizes itself.
-    void set_uses_theme_min_height(bool uses)
+    inline void set_uses_theme_min_height(bool uses)
     {
         theme_min_height_ = uses;
         mark_dirty(DirtyFlags::Layout);
@@ -203,7 +203,7 @@ public:
 
     /// A hint drawn in a secondary text color while text() is empty, focused or not. Never
     /// part of text(), never measured into the desired size.
-    void set_placeholder_text(std::string text)
+    inline void set_placeholder_text(std::string text)
     {
         placeholder_text_ = std::move(text);
         mark_dirty(DirtyFlags::Visual);
@@ -212,118 +212,118 @@ public:
     /// A chromeless box draws no background fill, border stroke or focus underline, only the
     /// text, selection and caret, so a host control (ComboBox) can paint one background and
     /// border under its whole surface.
-    void set_chromeless(bool chromeless)
+    inline void set_chromeless(bool chromeless)
     {
         chromeless_ = chromeless;
     }
 
     // ---- formatting ----
     /// The font family override; unset (the default) follows the theme.
-    [[nodiscard]] const std::optional<std::string>& font_family() const
+    [[nodiscard]] inline const std::optional<std::string>& font_family() const
     {
         return font_family_;
     }
     /// Sets or clears the font family; unset follows the theme.
-    void set_font_family(std::optional<std::string> family)
+    inline void set_font_family(std::optional<std::string> family)
     {
         font_family_ = std::move(family);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The font size override in DIPs; unset (the default) follows the theme.
-    [[nodiscard]] std::optional<float> font_size() const
+    [[nodiscard]] inline std::optional<float> font_size() const
     {
         return font_size_;
     }
     /// Sets or clears the font size; unset follows the theme. The box grows with it.
-    void set_font_size(OptionalFloat size)
+    inline void set_font_size(OptionalFloat size)
     {
         font_size_ = size;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The font weight override; nullopt (the default) follows the theme.
-    [[nodiscard]] std::optional<FontWeight> font_weight() const
+    [[nodiscard]] inline std::optional<FontWeight> font_weight() const
     {
         return font_weight_;
     }
     /// Sets the font weight; nullopt follows the theme.
-    void set_font_weight(std::optional<FontWeight> weight)
+    inline void set_font_weight(std::optional<FontWeight> weight)
     {
         font_weight_ = weight;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// Whether the text is italic; false by default.
-    [[nodiscard]] bool italic() const
+    [[nodiscard]] inline bool italic() const
     {
         return italic_;
     }
     /// Italic text.
-    void set_italic(bool italic)
+    inline void set_italic(bool italic)
     {
         italic_ = italic;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The extra space between characters in thousandths of an em; 0 by default.
-    [[nodiscard]] int character_spacing() const
+    [[nodiscard]] inline int character_spacing() const
     {
         return character_spacing_;
     }
     /// Sets the extra space between characters, in thousandths of an em.
-    void set_character_spacing(int spacing)
+    inline void set_character_spacing(int spacing)
     {
         character_spacing_ = spacing;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The text color: a fixed color or a theme resource; empty (the default) follows the theme.
-    [[nodiscard]] const Paint& foreground() const
+    [[nodiscard]] inline const Paint& foreground() const
     {
         return foreground_;
     }
     /// The text's color; unset follows the theme. The placeholder keeps its own.
-    void set_foreground(Paint color)
+    inline void set_foreground(Paint color)
     {
         foreground_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The fixed color behind selected text; nullopt (the default) when unset or a theme resource
     /// is set. Unset is the accent.
-    [[nodiscard]] std::optional<Color> selection_highlight_color() const
+    [[nodiscard]] inline std::optional<Color> selection_highlight_color() const
     {
         return selection_color_.color();
     }
     /// The color behind selected text as a theme resource, or nullptr.
-    [[nodiscard]] ThemeColor selection_highlight_resource() const
+    [[nodiscard]] inline ThemeColor selection_highlight_resource() const
     {
         return selection_color_.resource();
     }
     /// Sets the fixed color behind selected text and clears a theme resource; nullopt goes back
     /// to the accent.
-    void set_selection_highlight_color(std::optional<Color> color)
+    inline void set_selection_highlight_color(std::optional<Color> color)
     {
         selection_color_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// Sets the color behind selected text to a theme resource, re-read under every theme, and
     /// clears a fixed one.
-    void set_selection_highlight_color(ThemeColor resource)
+    inline void set_selection_highlight_color(ThemeColor resource)
     {
         selection_color_ = resource;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The color behind selected text while the box doesn't have focus, as a fixed color or a
     /// theme resource. Empty (the default) hides the selection then.
-    [[nodiscard]] const Paint& unfocused_selection_highlight_color() const
+    [[nodiscard]] inline const Paint& unfocused_selection_highlight_color() const
     {
         return unfocused_selection_color_;
     }
     /// Shows the selection in `color` while the box doesn't have focus, with the text over it
     /// unchanged. A find bar uses this to keep the match it selected visible. nullopt hides it again.
-    void set_unfocused_selection_highlight_color(std::optional<Color> color)
+    inline void set_unfocused_selection_highlight_color(std::optional<Color> color)
     {
         unfocused_selection_color_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The theme-resource form of set_unfocused_selection_highlight_color().
-    void set_unfocused_selection_highlight_color(ThemeColor resource)
+    inline void set_unfocused_selection_highlight_color(ThemeColor resource)
     {
         unfocused_selection_color_ = resource;
         mark_dirty(DirtyFlags::Visual);
@@ -333,7 +333,7 @@ public:
 
     // ---- behavior ----
     /// Whether the text is read-only; false by default.
-    [[nodiscard]] bool read_only() const
+    [[nodiscard]] inline bool read_only() const
     {
         return read_only_;
     }
@@ -341,54 +341,54 @@ public:
     void set_read_only(bool read_only);
 
     /// Whether Enter inserts a line break; false by default.
-    [[nodiscard]] bool accepts_return() const
+    [[nodiscard]] inline bool accepts_return() const
     {
         return accepts_return_;
     }
     /// Enter inserts a line break instead of submitting, and pasted line breaks are kept. Makes
     /// the box multi-line.
-    void set_accepts_return(bool accepts)
+    inline void set_accepts_return(bool accepts)
     {
         accepts_return_ = accepts;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// Whether lines break at the box's width; NoWrap by default.
-    [[nodiscard]] TextWrapping wrapping() const
+    [[nodiscard]] inline TextWrapping wrapping() const
     {
         return wrapping_;
     }
     /// Anything but NoWrap breaks the text at the box's width and makes it
     /// multi-line.
-    void set_wrapping(TextWrapping wrapping)
+    inline void set_wrapping(TextWrapping wrapping)
     {
         wrapping_ = wrapping;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// Whether the text is laid out as lines, which accepts_return() or wrapping turns on.
-    [[nodiscard]] bool multiline() const
+    [[nodiscard]] inline bool multiline() const
     {
         return accepts_return_ || wrapping_ != TextWrapping::NoWrap;
     }
     /// Whether Tab inserts a tab character; false by default.
-    [[nodiscard]] bool accepts_tab() const
+    [[nodiscard]] inline bool accepts_tab() const
     {
         return accepts_tab_;
     }
     /// Tab inserts a tab character instead of moving focus, while the box is editable. Shift+Tab
     /// then does nothing. An `on_key_down` handler can take both keys to indent and outdent.
-    void set_accepts_tab(bool accepts)
+    inline void set_accepts_tab(bool accepts)
     {
         accepts_tab_ = accepts;
     }
     /// While accepts_tab() and editable.
-    [[nodiscard]] bool takes_tab_key() const override
+    [[nodiscard]] inline bool takes_tab_key() const override
     {
         return accepts_tab_ && editable();
     }
 
     // ---- code ----
     /// Colors for ranges of the text; empty by default.
-    [[nodiscard]] const std::vector<TextColorSpan>& color_spans() const
+    [[nodiscard]] inline const std::vector<TextColorSpan>& color_spans() const
     {
         return color_spans_;
     }
@@ -398,45 +398,45 @@ public:
     /// their text until the next call. Multi-line boxes only.
     void set_color_spans(std::vector<TextColorSpan> spans);
     /// Whether a multi-line box numbers its lines; false by default.
-    [[nodiscard]] bool line_numbers() const
+    [[nodiscard]] inline bool line_numbers() const
     {
         return line_numbers_;
     }
     /// Shows a column of line numbers left of a multi-line box's text, one per line of the text
     /// (a wrapped line keeps one number).
-    void set_line_numbers(bool shown)
+    inline void set_line_numbers(bool shown)
     {
         line_numbers_ = shown;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The most characters the user can enter, in code points; 0 (the default) is no limit.
-    [[nodiscard]] std::size_t max_length() const
+    [[nodiscard]] inline std::size_t max_length() const
     {
         return max_length_;
     }
     /// The most characters (code points) the user can type or paste; 0, the default, is no limit.
     /// A paste is cut to what fits. Text already in the box or set from code is left alone, even
     /// when it is longer.
-    void set_max_length(std::size_t length)
+    inline void set_max_length(std::size_t length)
     {
         max_length_ = length;
     }
     /// How typed text is cased; Normal (keep as typed) by default.
-    [[nodiscard]] CharacterCasing character_casing() const
+    [[nodiscard]] inline CharacterCasing character_casing() const
     {
         return casing_;
     }
     /// What the user types or pastes from now on is lower- or upper-cased. Text already in the box
     /// keeps its case.
-    void set_character_casing(CharacterCasing casing)
+    inline void set_character_casing(CharacterCasing casing)
     {
         casing_ = casing;
     }
 
     /// Whether this box has a delete button at all. On for a TextBox of its own. A control that
     /// uses one as its edit part and shows no delete button (ComboBox) turns it off.
-    void set_delete_button_enabled(bool enabled)
+    inline void set_delete_button_enabled(bool enabled)
     {
         delete_button_enabled_ = enabled;
         mark_dirty(DirtyFlags::Visual);
@@ -444,13 +444,13 @@ public:
     /// Room kept free at the right edge, after the delete button, for a button the owning control
     /// draws there itself, such as PasswordBox's reveal button or AutoSuggestBox's query button.
     /// The text never runs under it.
-    void set_trailing_space(float width)
+    inline void set_trailing_space(float width)
     {
         trailing_space_ = width;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The width in DIPs kept free by set_trailing_space(); 0 by default.
-    [[nodiscard]] float trailing_space() const
+    [[nodiscard]] inline float trailing_space() const
     {
         return trailing_space_;
     }
@@ -468,7 +468,7 @@ public:
     /// selection, which a password must not offer. nullopt shows the text.
     void set_password_char(std::optional<char32_t> mask);
     /// The mask character; nullopt (the default) when the text is shown.
-    [[nodiscard]] std::optional<char32_t> password_char() const
+    [[nodiscard]] inline std::optional<char32_t> password_char() const
     {
         return password_char_;
     }
@@ -476,24 +476,24 @@ public:
     /// Fired after any user-driven edit (typing, Backspace, Delete, cut, paste, undo and redo)
     /// and after replace_selection(), undo() and redo(), with the new text. set_text() raises
     /// nothing.
-    void on_text_changed(Callback<void(const std::string&)> handler)
+    inline void on_text_changed(Callback<void(const std::string&)> handler)
     {
         on_text_changed_ = std::move(handler);
     }
     /// Fired for every change to the text, with what changed: typing, pasting, undo and redo,
     /// replace_selection() and set_text() too. Runs right after the change, before on_text_changed()
     /// and before the caret moves. Don't edit the box from it. Use it to feed an incremental parser.
-    void on_edit(Callback<void(const TextBoxEditArgs&)> handler)
+    inline void on_edit(Callback<void(const TextBoxEditArgs&)> handler)
     {
         on_edit_ = std::move(handler);
     }
     /// Fired when the user presses Enter, unless accepts_return() makes Enter insert a line break.
-    void on_submit(Callback<void()> handler)
+    inline void on_submit(Callback<void()> handler)
     {
         on_submit_ = std::move(handler);
     }
     /// Fired when the caret or the selection moved, by a key, the pointer, an edit or a call.
-    void on_selection_changed(Callback<void()> handler)
+    inline void on_selection_changed(Callback<void()> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
@@ -514,12 +514,12 @@ public:
 
     // ---- undo ----
     /// Whether there is an edit undo() can take back. Ctrl+Z does the same.
-    [[nodiscard]] bool can_undo() const
+    [[nodiscard]] inline bool can_undo() const
     {
         return !undo_.empty();
     }
     /// Whether there is an undone edit redo() can make again. Ctrl+Y and Ctrl+Shift+Z do the same.
-    [[nodiscard]] bool can_redo() const
+    [[nodiscard]] inline bool can_redo() const
     {
         return !redo_.empty();
     }
@@ -537,19 +537,19 @@ public:
 
     // ---- layout ----
     /// True: measuring reads only the box's own state, the measurer and the theme.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
 
     // ---- focus ----
     /// Whether the box has keyboard focus (caret shown, blink running).
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// Focusable while enabled (a read-only box too, for selecting and copying).
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
@@ -557,7 +557,7 @@ public:
     // ---- spell checking ----
     /// Whether spell checking is on; true by default. Without a SpellChecker from the host it
     /// does nothing either way.
-    [[nodiscard]] bool spell_check() const
+    [[nodiscard]] inline bool spell_check() const
     {
         return spell_check_enabled_;
     }
@@ -566,7 +566,7 @@ public:
 
     /// The current misspellings, sorted by start. Includes the word being typed, which gets no
     /// squiggle until it's finished.
-    [[nodiscard]] const std::vector<SpellingError>& spelling_errors() const
+    [[nodiscard]] inline const std::vector<SpellingError>& spelling_errors() const
     {
         return spelling_errors_;
     }
@@ -590,14 +590,14 @@ public:
     static constexpr double CaretBlinkIntervalMs = 530.0;
 
     /// The current blink phase: whether a focused box draws its caret right now.
-    [[nodiscard]] bool caret_visible() const
+    [[nodiscard]] inline bool caret_visible() const
     {
         return caret_visible_;
     }
 
     // ---- automation ----
     /// Always AutomationRole::Edit.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Edit;
     }
@@ -637,7 +637,7 @@ private:
 
     // An owner that shows its own error text under itself (NumberBox, AutoSuggestBox, ComboBox)
     // still has this box draw the critical border.
-    void set_invalid_border(bool invalid)
+    inline void set_invalid_border(bool invalid)
     {
         if (invalid_border_ != invalid)
         {
@@ -653,14 +653,14 @@ private:
     // Left/Right drive the caret; a single-line field has no use for Up/Down, so those carry
     // focus out of it, while a multi-line one moves between its lines with them. Claimed so
     // Window's directional focus navigation leaves them alone (Element::key_override).
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowLeft || key == Key::ArrowRight ||
                (multiline() && (key == Key::ArrowUp || key == Key::ArrowDown));
     }
     // Enter means something only to a field with a submit handler; otherwise it reaches a
     // dialog's default button (Element::key_override()).
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return static_cast<bool>(on_submit_) || (accepts_return_ && !read_only_);
     }
@@ -670,7 +670,7 @@ private:
     [[nodiscard]] std::size_t hit_test(float local_x) const;         // local_x relative to the text origin (left inset)
     [[nodiscard]] std::size_t hit_at(Point window_point) const;      // either mode
     [[nodiscard]] std::string display_text() const;
-    [[nodiscard]] bool        editable() const
+    [[nodiscard]] inline bool editable() const
     {
         return is_enabled() && !read_only_;
     }
@@ -862,30 +862,30 @@ protected:
 
 protected:
     /// None: the field shows focus with its accent border.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return false;
     }
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.value = this;
     }
     // The whole text (not masked for a password box).
-    [[nodiscard]] std::string text_value() const override
+    [[nodiscard]] inline std::string text_value() const override
     {
         return text_;
     }
     // True while disabled or read-only.
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return !is_enabled() || read_only_;
     }
     // Replaces the text as set_text() does, then fires on_text_changed() like a user edit;
     // false (and nothing changes) while disabled or read-only.
-    bool set_text_value(std::string_view value) override
+    inline bool set_text_value(std::string_view value) override
     {
         if (!is_enabled() || read_only_)
         {

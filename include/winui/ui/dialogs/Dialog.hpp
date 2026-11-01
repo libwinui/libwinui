@@ -123,7 +123,7 @@ public:
     /// Sets the heading above the content (UTF-8), drawn 20 DIPs, semibold and wrapping.
     void set_title(std::string title);
     /// The title; empty by default. Screen readers also use it as the name when none is set.
-    [[nodiscard]] const std::string& title() const
+    [[nodiscard]] inline const std::string& title() const
     {
         return title_->text();
     }
@@ -148,17 +148,17 @@ public:
     ButtonControl* set_close_button(std::string text, Callback<void()> on_click);
 
     /// The primary button, or nullptr when none was set.
-    [[nodiscard]] ButtonControl* primary_button() const
+    [[nodiscard]] inline ButtonControl* primary_button() const
     {
         return primary_.get();
     }
     /// The secondary button, or nullptr when none was set.
-    [[nodiscard]] ButtonControl* secondary_button() const
+    [[nodiscard]] inline ButtonControl* secondary_button() const
     {
         return secondary_.get();
     }
     /// The close button, or nullptr when none was set.
-    [[nodiscard]] ButtonControl* close_button() const
+    [[nodiscard]] inline ButtonControl* close_button() const
     {
         return close_.get();
     }
@@ -177,14 +177,14 @@ public:
     void hide();
 
     /// What the last close reported; `None` until one happened.
-    [[nodiscard]] DialogResult result() const
+    [[nodiscard]] inline DialogResult result() const
     {
         return result_;
     }
 
     /// Raised before every close with its result; return ui::Cancel to keep the
     /// dialog open (a Primary click on a form that does not validate, say).
-    void on_closing(Callback<Decision(const DialogClosingArgs&)> handler)
+    inline void on_closing(Callback<Decision(const DialogClosingArgs&)> handler)
     {
         on_closing_ = std::move(handler);
     }
@@ -192,7 +192,7 @@ public:
     /// Raised once the dialog is closed and out of the window, with what closed it. The dialog is
     /// destroyed by then, so the handler may show the next one. A dialog replaced by another
     /// show_modal() does not raise it.
-    void on_closed(Callback<void(DialogResult)> handler)
+    inline void on_closed(Callback<void(DialogResult)> handler)
     {
         on_closed_ = std::move(handler);
     }
@@ -207,19 +207,19 @@ public:
     /// The opening fade's opacity, rising linearly from 0 to 1 over 250 ms. The dimmed backdrop
     /// behind the dialog fades in with it. There is no closing fade. Window::close_modal() removes
     /// the dialog and restores focus at once.
-    [[nodiscard]] float transition_opacity() const override
+    [[nodiscard]] inline float transition_opacity() const override
     {
         return open_ms_ >= OpenTransitionMs || !animations_enabled() ? 1.0f : static_cast<float>(open_ms_ / OpenTransitionMs);
     }
 
     // ---- automation ----
     /// Always AutomationRole::Pane.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Pane;
     }
     /// title(), used when Accessibility::name is not set.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return title();
     }
@@ -309,7 +309,7 @@ LIBWINUI_EXPORT struct DialogButton
     Action on_click{};
 
     /// True when the button exists, which means it has a caption.
-    [[nodiscard]] explicit operator bool() const
+    [[nodiscard]] inline explicit operator bool() const
     {
         return !text.empty();
     }
@@ -411,18 +411,18 @@ LIBWINUI_EXPORT class DialogAwaiter
 {
 public:
     /// Holds `spec` until the coroutine suspends.
-    DialogAwaiter(Window& window, Dialog spec) : window_(&window), spec_(std::move(spec))
+    inline DialogAwaiter(Window& window, Dialog spec) : window_(&window), spec_(std::move(spec))
     {
     }
     /// Never ready: the dialog is shown when the coroutine suspends.
-    [[nodiscard]] bool await_ready() const noexcept
+    [[nodiscard]] inline bool await_ready() const noexcept
     {
         return false;
     }
     /// Shows the dialog and hands `coroutine` to its close.
     void await_suspend(std::coroutine_handle<> coroutine);
     /// What closed the dialog.
-    [[nodiscard]] DialogResult await_resume() const noexcept
+    [[nodiscard]] inline DialogResult await_resume() const noexcept
     {
         return result_;
     }

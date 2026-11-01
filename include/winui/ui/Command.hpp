@@ -72,7 +72,7 @@ public:
     }
 
     /// Runs the handler with `parameter`; a no-op when empty.
-    void operator()(std::string_view parameter = {}) const
+    inline void operator()(std::string_view parameter = {}) const
     {
         if (fn_)
         {
@@ -80,7 +80,7 @@ public:
         }
     }
     /// True when a handler was given.
-    [[nodiscard]] explicit operator bool() const
+    [[nodiscard]] inline explicit operator bool() const
     {
         return static_cast<bool>(fn_);
     }
@@ -118,12 +118,12 @@ class CommandLive
 {
 public:
     CommandLive() = default;
-    CommandLive(const CommandLive&) noexcept
+    inline CommandLive(const CommandLive&) noexcept
     {
     }
     // The command's fields may have changed with the assignment: read them again on the next use
     // and tell whoever watches this command. Its refs stay: they point at this object.
-    CommandLive& operator=(const CommandLive&) noexcept
+    inline CommandLive& operator=(const CommandLive&) noexcept
     {
         subscriptions_.clear();
         connected_ = false;
@@ -156,7 +156,7 @@ public:
     /// No command.
     CommandRef() noexcept = default;
     /// No command.
-    CommandRef(std::nullptr_t) noexcept // NOLINT(google-explicit-constructor)
+    inline CommandRef(std::nullptr_t) noexcept // NOLINT(google-explicit-constructor)
     {
     }
     /// A reference to `command`; implicit, so a field takes `.command = save`.
@@ -168,17 +168,17 @@ public:
     ~CommandRef();
 
     /// The command, or nullptr when there is none or it was destroyed.
-    [[nodiscard]] const Command* get() const noexcept
+    [[nodiscard]] inline const Command* get() const noexcept
     {
         return command_;
     }
     /// The command, or nullptr: a CommandRef reads like the pointer it replaces.
-    operator const Command*() const noexcept // NOLINT(google-explicit-constructor)
+    inline operator const Command*() const noexcept // NOLINT(google-explicit-constructor)
     {
         return command_;
     }
     /// The command. Only use it while there is one.
-    const Command* operator->() const noexcept
+    inline const Command* operator->() const noexcept
     {
         return command_;
     }

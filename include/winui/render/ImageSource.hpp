@@ -64,15 +64,16 @@ public:
     /// An empty source; an Image showing it draws nothing.
     ImageSource() = default;
     /// A still picture.
-    ImageSource(Bitmap image) : content_(std::move(image)) // NOLINT(google-explicit-constructor): a picture is a source
+    inline ImageSource(Bitmap image) :
+        content_(std::move(image)) // NOLINT(google-explicit-constructor): a picture is a source
     {
     }
     /// An animated picture, which the Image element plays.
-    ImageSource(AnimatedImage image) : content_(std::move(image)) // NOLINT(google-explicit-constructor)
+    inline ImageSource(AnimatedImage image) : content_(std::move(image)) // NOLINT(google-explicit-constructor)
     {
     }
     /// An SVG document.
-    ImageSource(SvgImage svg) : content_(std::move(svg)) // NOLINT(google-explicit-constructor)
+    inline ImageSource(SvgImage svg) : content_(std::move(svg)) // NOLINT(google-explicit-constructor)
     {
     }
 
@@ -92,7 +93,7 @@ public:
     [[nodiscard]] std::string load_error() const;
 
     /// True when there is no content, or the content itself is empty (zero-size or no frames).
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         if (const Bitmap* image = bitmap())
         {
@@ -111,7 +112,7 @@ public:
 
     /// The content's own size in DIPs, one pixel to a DIP for a bitmap: what an Image with
     /// Stretch None draws at.
-    [[nodiscard]] Size natural_size() const
+    [[nodiscard]] inline Size natural_size() const
     {
         if (const Bitmap* image = bitmap())
         {
@@ -129,23 +130,23 @@ public:
     }
 
     /// The still picture, or nullptr when the source is something else (or still loading).
-    [[nodiscard]] const Bitmap* bitmap() const
+    [[nodiscard]] inline const Bitmap* bitmap() const
     {
         return std::get_if<Bitmap>(&content());
     }
     /// The animated picture, or nullptr when the source is something else (or still loading).
-    [[nodiscard]] const AnimatedImage* animated() const
+    [[nodiscard]] inline const AnimatedImage* animated() const
     {
         return std::get_if<AnimatedImage>(&content());
     }
     /// The SVG document, or nullptr when the source is something else (or still loading).
-    [[nodiscard]] const SvgImage* svg() const
+    [[nodiscard]] inline const SvgImage* svg() const
     {
         return std::get_if<SvgImage>(&content());
     }
 
     /// The same picture: equal content, or the same load().
-    friend bool operator==(const ImageSource& a, const ImageSource& b)
+    friend inline bool operator==(const ImageSource& a, const ImageSource& b)
     {
         return a.content_ == b.content_ && a.load_ == b.load_;
     }

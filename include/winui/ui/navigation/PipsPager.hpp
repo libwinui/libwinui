@@ -102,7 +102,7 @@ public:
 
     // ---- pages ----
     /// The page count; nullopt for an open-ended count (see `infinite()`).
-    [[nodiscard]] std::optional<std::size_t> number_of_pages() const
+    [[nodiscard]] inline std::optional<std::size_t> number_of_pages() const
     {
         return infinite() ? std::nullopt : std::optional<std::size_t>{static_cast<std::size_t>(number_of_pages_)};
     }
@@ -119,20 +119,20 @@ public:
     }
     /// Whether the page count is open-ended: Next never hides and the pip list grows as the
     /// selection advances.
-    [[nodiscard]] bool infinite() const
+    [[nodiscard]] inline bool infinite() const
     {
         return number_of_pages_ < 0;
     }
 
     /// The current page, 0-based; 0 by default and with no pages.
-    [[nodiscard]] std::size_t selected_index() const
+    [[nodiscard]] inline std::size_t selected_index() const
     {
         return static_cast<std::size_t>(selected_index_);
     }
     /// Selects page `index`, clamped to [0, number_of_pages()-1], or to 0 with no pages. With an
     /// open-ended count there is no upper limit. Does nothing, and fires nothing, if the page is
     /// already selected.
-    void set_selected_index(std::size_t index)
+    inline void set_selected_index(std::size_t index)
     {
         clamp_and_select(index > static_cast<std::size_t>((std::numeric_limits<int>::max)())
                              ? (std::numeric_limits<int>::max)()
@@ -140,7 +140,7 @@ public:
     }
 
     /// The most pips shown at once; 5 by default.
-    [[nodiscard]] std::size_t max_visible_pips() const
+    [[nodiscard]] inline std::size_t max_visible_pips() const
     {
         return static_cast<std::size_t>(max_visible_pips_);
     }
@@ -150,7 +150,7 @@ public:
     void set_max_visible_pips(std::size_t max_visible_pips);
 
     /// Horizontal by default.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
@@ -158,14 +158,14 @@ public:
     void set_orientation(Orientation orientation);
 
     /// How the previous button shows; Collapsed by default.
-    [[nodiscard]] PipsPagerButtonVisibility previous_button_visibility() const
+    [[nodiscard]] inline PipsPagerButtonVisibility previous_button_visibility() const
     {
         return previous_button_visibility_;
     }
     /// Updates the layout. Only Collapsed gives up the reserved 24x24 DIP slot.
     void set_previous_button_visibility(PipsPagerButtonVisibility visibility);
     /// How the next button shows; Collapsed by default.
-    [[nodiscard]] PipsPagerButtonVisibility next_button_visibility() const
+    [[nodiscard]] inline PipsPagerButtonVisibility next_button_visibility() const
     {
         return next_button_visibility_;
     }
@@ -173,12 +173,12 @@ public:
     void set_next_button_visibility(PipsPagerButtonVisibility visibility);
 
     /// What happens at the ends; None by default.
-    [[nodiscard]] PipsPagerWrapMode wrap_mode() const
+    [[nodiscard]] inline PipsPagerWrapMode wrap_mode() const
     {
         return wrap_mode_;
     }
     /// Sets what happens at the ends and redraws, since the edge buttons may appear or hide.
-    void set_wrap_mode(PipsPagerWrapMode wrap_mode)
+    inline void set_wrap_mode(PipsPagerWrapMode wrap_mode)
     {
         wrap_mode_ = wrap_mode;
         mark_dirty(DirtyFlags::Visual);
@@ -187,12 +187,12 @@ public:
     /// Whether the previous button is drawn and can be clicked right now. It must not be
     /// Collapsed or hidden at its edge, and with VisibleOnPointerOver the pointer must be over the
     /// pager or focus in it.
-    [[nodiscard]] bool previous_button_visible() const
+    [[nodiscard]] inline bool previous_button_visible() const
     {
         return previous_button_shown();
     }
     /// The Next button's counterpart of `previous_button_visible()`.
-    [[nodiscard]] bool next_button_visible() const
+    [[nodiscard]] inline bool next_button_visible() const
     {
         return next_button_shown();
     }
@@ -200,19 +200,19 @@ public:
 
     /// Fired whenever selected_index() changes: by a pip click, a button click, an arrow key,
     /// Home/End, or set_selected_index().
-    void on_selection_changed(Callback<void(std::size_t)> handler)
+    inline void on_selection_changed(Callback<void(std::size_t)> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
 
     // ---- focus ----
     /// Whether the strip has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// Not a tab stop while there is nothing to switch between.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled() && (number_of_pages_ > 1 || infinite());
     }
@@ -243,7 +243,7 @@ protected:
 public:
     // ---- automation ----
     /// Exposed to accessibility tools as a spin button whose range value is the page index.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::SpinButton;
     }
@@ -252,19 +252,19 @@ private:
     // Only the axis the pager runs along; the other one is free to move focus.
     // Claimed so Window's directional focus navigation leaves them alone
     // (Element::key_override).
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return horizontal() ? (key == Key::ArrowLeft || key == Key::ArrowRight)
                             : (key == Key::ArrowUp || key == Key::ArrowDown);
     }
     // ui::detail::NoIndex in the int form the index arithmetic below uses.
-    static constexpr int NoSlot = -1;
-    [[nodiscard]] bool   horizontal() const
+    static constexpr int      NoSlot = -1;
+    [[nodiscard]] inline bool horizontal() const
     {
         return orientation_ == Orientation::Horizontal;
     }
 
-    [[nodiscard]] int page_count() const
+    [[nodiscard]] inline int page_count() const
     {
         return infinite() ? infinite_items_ : number_of_pages_;
     }
@@ -277,11 +277,11 @@ private:
     [[nodiscard]] int visible_count() const;
     [[nodiscard]] int first_visible_index() const;
 
-    [[nodiscard]] bool previous_button_reserved() const
+    [[nodiscard]] inline bool previous_button_reserved() const
     {
         return previous_button_visibility_ != PipsPagerButtonVisibility::Collapsed;
     }
-    [[nodiscard]] bool next_button_reserved() const
+    [[nodiscard]] inline bool next_button_reserved() const
     {
         return next_button_visibility_ != PipsPagerButtonVisibility::Collapsed;
     }
@@ -328,29 +328,29 @@ protected:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.range_value = this;
     }
-    [[nodiscard]] double range_value() const override
+    [[nodiscard]] inline double range_value() const override
     {
         return selected_index_;
     }
-    [[nodiscard]] double range_minimum() const override
+    [[nodiscard]] inline double range_minimum() const override
     {
         return 0.0;
     }
-    [[nodiscard]] double range_maximum() const override
+    [[nodiscard]] inline double range_maximum() const override
     {
         const int pages = page_count();
         return pages > 0 ? pages - 1 : 0.0;
     }
-    [[nodiscard]] double range_small_change() const override
+    [[nodiscard]] inline double range_small_change() const override
     {
         return 1.0;
     }
     // Selects page `value` (truncated and clamped); false while disabled.
-    bool set_range_value(double value) override
+    inline bool set_range_value(double value) override
     {
         if (!is_enabled())
         {
@@ -359,7 +359,7 @@ private:
         clamp_and_select(static_cast<int>(value));
         return true;
     }
-    [[nodiscard]] bool range_read_only() const override
+    [[nodiscard]] inline bool range_read_only() const override
     {
         return false;
     }

@@ -72,18 +72,18 @@ public:
     /// A compact scope with no child yet.
     DensityScopeControl() = default;
     /// A scope at `density`, with no child yet.
-    explicit DensityScopeControl(Density density) : density_(density)
+    inline explicit DensityScopeControl(Density density) : density_(density)
     {
     }
 
     /// The density applied to the child. Density::Compact by default.
-    [[nodiscard]] Density density() const
+    [[nodiscard]] inline Density density() const
     {
         return density_;
     }
     /// Changes the density. Updates layout and redraws, since every control underneath measures
     /// again against the new sizing.
-    void set_density(Density density)
+    inline void set_density(Density density)
     {
         density_ = density;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);

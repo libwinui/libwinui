@@ -50,26 +50,26 @@ public:
     struct promise_type
     {
         /// The (empty) handle the call returns.
-        FireAndForget get_return_object() const noexcept
+        inline FireAndForget get_return_object() const noexcept
         {
             return {};
         }
         /// Runs at once, on the calling thread.
-        std::suspend_never initial_suspend() const noexcept
+        inline std::suspend_never initial_suspend() const noexcept
         {
             return {};
         }
         /// The frame frees itself at the end.
-        std::suspend_never final_suspend() const noexcept
+        inline std::suspend_never final_suspend() const noexcept
         {
             return {};
         }
         /// Nothing to hand back.
-        void return_void() const noexcept
+        inline void return_void() const noexcept
         {
         }
         /// An exception escaping the coroutine ends the program; see the class comment.
-        [[noreturn]] void unhandled_exception() const noexcept
+        [[noreturn]] inline void unhandled_exception() const noexcept
         {
             std::terminate();
         }
@@ -82,18 +82,18 @@ LIBWINUI_EXPORT class UiThreadHop
 {
 public:
     /// That Window, while it exists.
-    explicit UiThreadHop(WindowRef window) noexcept : window_(window)
+    inline explicit UiThreadHop(WindowRef window) noexcept : window_(window)
     {
     }
     /// Never ready: the coroutine always suspends.
-    [[nodiscard]] bool await_ready() const noexcept
+    [[nodiscard]] inline bool await_ready() const noexcept
     {
         return false; // always through post(), also from the UI thread itself
     }
     /// Hands `coroutine` over to be resumed there.
     void await_suspend(std::coroutine_handle<> coroutine) const;
     /// Nothing to return.
-    void await_resume() const noexcept
+    inline void await_resume() const noexcept
     {
     }
 
@@ -107,18 +107,18 @@ LIBWINUI_EXPORT class BackgroundHop
 {
 public:
     /// Resumes on one of `scheduler`'s workers.
-    explicit BackgroundHop(Scheduler& scheduler) noexcept : scheduler_(&scheduler)
+    inline explicit BackgroundHop(Scheduler& scheduler) noexcept : scheduler_(&scheduler)
     {
     }
     /// Never ready: the coroutine always suspends.
-    [[nodiscard]] bool await_ready() const noexcept
+    [[nodiscard]] inline bool await_ready() const noexcept
     {
         return false;
     }
     /// Hands `coroutine` over to be resumed there.
     void await_suspend(std::coroutine_handle<> coroutine) const;
     /// Nothing to return.
-    void await_resume() const noexcept
+    inline void await_resume() const noexcept
     {
     }
 

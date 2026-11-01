@@ -116,7 +116,7 @@ public:
         return observer;
     }
     /// The pane's element (owned by the view), or null.
-    [[nodiscard]] Element* pane() const
+    [[nodiscard]] inline Element* pane() const
     {
         return pane_.get();
     }
@@ -137,14 +137,14 @@ public:
         return observer;
     }
     /// The content's element (owned by the view), or null.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
 
     /// Whether the pane is open. Opening raises on_pane_opening, then on_pane_opened. Closing raises
     /// on_pane_closing, which cannot cancel a close made this way, then on_pane_closed.
-    [[nodiscard]] bool is_pane_open() const
+    [[nodiscard]] inline bool is_pane_open() const
     {
         return pane_open_;
     }
@@ -152,7 +152,7 @@ public:
     void set_pane_open(bool open);
 
     /// How the pane shows and whether it pushes the content; Overlay by default.
-    [[nodiscard]] SidePaneDisplayMode display_mode() const
+    [[nodiscard]] inline SidePaneDisplayMode display_mode() const
     {
         return display_mode_;
     }
@@ -160,95 +160,95 @@ public:
     void set_display_mode(SidePaneDisplayMode mode);
 
     /// Which side the pane is on; Left by default.
-    [[nodiscard]] SidePanePlacement pane_placement() const
+    [[nodiscard]] inline SidePanePlacement pane_placement() const
     {
         return pane_placement_;
     }
     /// Moves the pane to the given side and lays the view out again.
-    void set_pane_placement(SidePanePlacement placement)
+    inline void set_pane_placement(SidePanePlacement placement)
     {
         pane_placement_ = placement;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The open pane's width in DIPs, 320 by default; nullopt is Auto, the pane's own width.
-    [[nodiscard]] std::optional<float> open_pane_length() const
+    [[nodiscard]] inline std::optional<float> open_pane_length() const
     {
         return open_pane_length_;
     }
     /// Changes the open width, in DIPs, and lays the view out again.
-    void set_open_pane_length(OptionalFloat length)
+    inline void set_open_pane_length(OptionalFloat length)
     {
         open_pane_length_ = length;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The compact strip's width in DIPs, 48 by default.
-    [[nodiscard]] float compact_pane_length() const
+    [[nodiscard]] inline float compact_pane_length() const
     {
         return compact_pane_length_;
     }
     /// Changes the compact strip's width, in DIPs, and lays the view out again.
-    void set_compact_pane_length(float length)
+    inline void set_compact_pane_length(float length)
     {
         compact_pane_length_ = length;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The pane's fixed fill; nullopt uses the theme's pane color.
-    [[nodiscard]] std::optional<Color> pane_background() const
+    [[nodiscard]] inline std::optional<Color> pane_background() const
     {
         return pane_background_.color();
     }
     /// The theme color the pane is filled from, or null.
-    [[nodiscard]] ThemeColor pane_background_resource() const
+    [[nodiscard]] inline ThemeColor pane_background_resource() const
     {
         return pane_background_.resource();
     }
     /// Sets or clears the pane's fixed fill, replacing any theme color. Redraws.
-    void set_pane_background(std::optional<Color> color)
+    inline void set_pane_background(std::optional<Color> color)
     {
         pane_background_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// Fills the pane with a theme color read each time it is drawn, replacing any fixed color.
-    void set_pane_background(ThemeColor resource)
+    inline void set_pane_background(ThemeColor resource)
     {
         pane_background_ = resource;
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// Whether an open overlay pane dims the content behind it. Only On dims. Auto by default.
-    [[nodiscard]] LightDismissOverlayMode light_dismiss_overlay_mode() const
+    [[nodiscard]] inline LightDismissOverlayMode light_dismiss_overlay_mode() const
     {
         return light_dismiss_overlay_mode_;
     }
     /// Changes the overlay mode and redraws.
-    void set_light_dismiss_overlay_mode(LightDismissOverlayMode mode)
+    inline void set_light_dismiss_overlay_mode(LightDismissOverlayMode mode)
     {
         light_dismiss_overlay_mode_ = mode;
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// The pane is about to open.
-    void on_pane_opening(Callback<void()> handler)
+    inline void on_pane_opening(Callback<void()> handler)
     {
         on_pane_opening_ = std::move(handler);
     }
     /// Raised right after on_pane_opening, as the slide starts.
-    void on_pane_opened(Callback<void()> handler)
+    inline void on_pane_opened(Callback<void()> handler)
     {
         on_pane_opened_ = std::move(handler);
     }
     /// The pane is about to close. Return ui::Cancel to keep it open. Only a light dismiss can be
     /// canceled. Closing through set_pane_open(false) raises it but closes regardless.
-    void on_pane_closing(Callback<Decision()> handler)
+    inline void on_pane_closing(Callback<Decision()> handler)
     {
         on_pane_closing_ = std::move(handler);
     }
     /// The pane has closed, however that happened. Use it to learn about a light dismiss when
     /// `is_pane_open` is not bound two-way.
-    void on_pane_closed(Callback<void()> handler)
+    inline void on_pane_closed(Callback<void()> handler)
     {
         on_pane_closed_ = std::move(handler);
     }
@@ -258,12 +258,12 @@ public:
     [[nodiscard]] bool can_light_dismiss() const;
 
     /// The pane's column at its full open length, from the last arrange.
-    [[nodiscard]] const Rect& pane_bounds() const
+    [[nodiscard]] inline const Rect& pane_bounds() const
     {
         return pane_rect_;
     }
     /// The content's column, from the last arrange.
-    [[nodiscard]] const Rect& content_bounds() const
+    [[nodiscard]] inline const Rect& content_bounds() const
     {
         return content_rect_;
     }
@@ -300,7 +300,7 @@ protected:
     /// Enter as a light-dismissable pane opens, Restore as it closes. The Window moves focus.
     [[nodiscard]] FocusRequest take_focus_request() override;
     /// The pane: where an Enter request puts focus.
-    [[nodiscard]] Element* focus_request_root() override
+    [[nodiscard]] inline Element* focus_request_root() override
     {
         return pane_.get();
     }

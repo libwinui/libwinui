@@ -127,7 +127,7 @@ public:
         return observer;
     }
     /// The pulled content (non-owning), or nullptr.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
@@ -143,14 +143,14 @@ public:
     }
     /// The indicator element (non-owning): the default Refresh symbol, or what
     /// `set_visualizer_content()` installed.
-    [[nodiscard]] Element* visualizer_content() const
+    [[nodiscard]] inline Element* visualizer_content() const
     {
         return indicator_.get();
     }
 
     // ---- direction ----
     /// Which edge the content is pulled from; TopToBottom by default. Changing it mid-pull ends the pull.
-    [[nodiscard]] RefreshPullDirection pull_direction() const
+    [[nodiscard]] inline RefreshPullDirection pull_direction() const
     {
         return direction_;
     }
@@ -158,12 +158,12 @@ public:
     void set_pull_direction(RefreshPullDirection direction);
 
     /// How the indicator is turned; Auto by default.
-    [[nodiscard]] RefreshVisualizerOrientation visualizer_orientation() const
+    [[nodiscard]] inline RefreshVisualizerOrientation visualizer_orientation() const
     {
         return orientation_;
     }
     /// Marks the control for redraw.
-    void set_visualizer_orientation(RefreshVisualizerOrientation orientation)
+    inline void set_visualizer_orientation(RefreshVisualizerOrientation orientation)
     {
         orientation_ = orientation;
         mark_dirty(DirtyFlags::Visual);
@@ -171,12 +171,12 @@ public:
 
     // ---- state ----
     /// The visualizer's current state; Idle by default.
-    [[nodiscard]] PullToRefreshState state() const
+    [[nodiscard]] inline PullToRefreshState state() const
     {
         return state_;
     }
     /// How far the content is pushed along the pull, in [0, 100].
-    [[nodiscard]] float pull_distance() const
+    [[nodiscard]] inline float pull_distance() const
     {
         return pull_distance_;
     }
@@ -189,18 +189,18 @@ public:
     void complete_refresh();
 
     /// Fires with the old and the new state.
-    void on_refresh_state_changed(Callback<void(const PullToRefreshStateChangedArgs&)> handler)
+    inline void on_refresh_state_changed(Callback<void(const PullToRefreshStateChangedArgs&)> handler)
     {
         on_refresh_state_changed_ = std::move(handler);
     }
     /// Fires when a refresh starts; the refresh lasts until complete_refresh().
-    void on_refresh_requested(Callback<void()> handler)
+    inline void on_refresh_requested(Callback<void()> handler)
     {
         on_refresh_requested_ = std::move(handler);
     }
     /// Visits the content only. The indicator takes no focus, so it is added separately to the
     /// visual tree and the accessibility tree while it shows (below).
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (content_)
         {
@@ -214,7 +214,7 @@ protected:
 
 public:
     /// The content, then the indicator while it is pulled into view.
-    void automation_children(std::vector<Element*>& out) const override
+    inline void automation_children(std::vector<Element*>& out) const override
     {
         Element::automation_children(out);
         if (indicator_visible())
@@ -240,14 +240,14 @@ protected:
 
 
 private:
-    [[nodiscard]] bool indicator_visible() const;
-    [[nodiscard]] bool can_start_pull() const;
-    [[nodiscard]] bool vertical() const
+    [[nodiscard]] bool        indicator_visible() const;
+    [[nodiscard]] bool        can_start_pull() const;
+    [[nodiscard]] inline bool vertical() const
     {
         return direction_ == RefreshPullDirection::TopToBottom || direction_ == RefreshPullDirection::BottomToTop;
     }
     /// +1 when the pull comes from the start of its axis (TopToBottom, LeftToRight), -1 from its end.
-    [[nodiscard]] float pull_sign() const
+    [[nodiscard]] inline float pull_sign() const
     {
         return direction_ == RefreshPullDirection::TopToBottom || direction_ == RefreshPullDirection::LeftToRight
                    ? 1.0f

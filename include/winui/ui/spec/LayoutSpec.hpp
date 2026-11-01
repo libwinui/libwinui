@@ -79,13 +79,13 @@ public:
     LayoutSpec& operator=(LayoutSpec&&)      = default;
 
     /// Moves the layout out; null if none was given.
-    [[nodiscard]] std::unique_ptr<Layout> take()
+    [[nodiscard]] inline std::unique_ptr<Layout> take()
     {
         return std::move(layout_);
     }
 
     /// True while a layout is held.
-    [[nodiscard]] explicit operator bool() const
+    [[nodiscard]] inline explicit operator bool() const
     {
         return layout_ != nullptr;
     }

@@ -83,13 +83,13 @@ public:
     AnimatedIconControl() = default;
 
     /// The animated source being shown, or null (then the fallback glyph is drawn, if any).
-    [[nodiscard]] const AnimatedIconSource* source() const
+    [[nodiscard]] inline const AnimatedIconSource* source() const
     {
         return source_;
     }
     /// Sets the animated source. The icon doesn't own it, so it must outlive the icon. The current
     /// progress carries over to the new source. Updates layout and redraws.
-    void set_source(const AnimatedIconSource* source)
+    inline void set_source(const AnimatedIconSource* source)
     {
         source_ = source;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -98,12 +98,12 @@ public:
     /// The icon drawn while there is no source that can be shown (none set, or its `available()`
     /// is false): a glyph at its own size, anything else fitted into the icon's box. Empty by
     /// default.
-    [[nodiscard]] const IconSource& fallback() const
+    [[nodiscard]] inline const IconSource& fallback() const
     {
         return fallback_;
     }
     /// Sets the fallback icon. Updates layout and redraws.
-    void set_fallback(IconSource icon)
+    inline void set_fallback(IconSource icon)
     {
         fallback_ = std::move(icon);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -111,19 +111,19 @@ public:
 
     /// The icon's color: a fixed color or a theme resource. Empty, the default, uses the theme's
     /// text color.
-    [[nodiscard]] const Paint& foreground() const
+    [[nodiscard]] inline const Paint& foreground() const
     {
         return foreground_;
     }
     /// Sets the color the source draws in. Empty goes back to the theme's text color. Redraws.
-    void set_foreground(Paint color)
+    inline void set_foreground(Paint color)
     {
         foreground_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// The state the icon was last asked for.
-    [[nodiscard]] const std::string& state() const
+    [[nodiscard]] inline const std::string& state() const
     {
         return state_;
     }
@@ -132,46 +132,46 @@ public:
     void set_state(std::string state);
 
     /// The state the last transition went to, which the next one starts from.
-    [[nodiscard]] const std::string& current_state() const
+    [[nodiscard]] inline const std::string& current_state() const
     {
         return current_state_;
     }
 
     /// The source's normalized progress (0..1) currently shown.
-    [[nodiscard]] double progress() const
+    [[nodiscard]] inline double progress() const
     {
         return progress_;
     }
     /// True while a transition segment is animating (tick_override() advances it).
-    [[nodiscard]] bool is_playing() const
+    [[nodiscard]] inline bool is_playing() const
     {
         return playing_;
     }
 
     /// What a set_state() does while a transition plays. QueueOne by default.
-    [[nodiscard]] AnimatedIconQueueBehavior queue_behavior() const
+    [[nodiscard]] inline AnimatedIconQueueBehavior queue_behavior() const
     {
         return queue_behavior_;
     }
     /// Sets the queue behavior for subsequent set_state() calls.
-    void set_queue_behavior(AnimatedIconQueueBehavior behavior)
+    inline void set_queue_behavior(AnimatedIconQueueBehavior behavior)
     {
         queue_behavior_ = behavior;
     }
 
     /// The segment name the last transition resolved to, for example "NormalToPointerOver". Meant
     /// for tests.
-    [[nodiscard]] const std::string& last_segment() const
+    [[nodiscard]] inline const std::string& last_segment() const
     {
         return last_segment_;
     }
     /// The start marker the last transition used (empty if it had none).
-    [[nodiscard]] const std::string& last_segment_start() const
+    [[nodiscard]] inline const std::string& last_segment_start() const
     {
         return last_segment_start_;
     }
     /// The end marker the last transition used (empty if it had none).
-    [[nodiscard]] const std::string& last_segment_end() const
+    [[nodiscard]] inline const std::string& last_segment_end() const
     {
         return last_segment_end_;
     }
@@ -180,7 +180,7 @@ public:
     void render_in(Renderer& renderer, const Theme& theme, const Color& foreground) const;
 
     /// Exposed to UI Automation as an image.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Image;
     }
@@ -195,7 +195,7 @@ protected:
 
 
 private:
-    [[nodiscard]] bool showing_source() const
+    [[nodiscard]] inline bool showing_source() const
     {
         return source_ != nullptr && source_->available();
     }

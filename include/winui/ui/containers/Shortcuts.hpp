@@ -53,7 +53,7 @@ public:
     std::vector<Shortcut> entries;
 
     /// Appends one shortcut, for a list put together in a loop.
-    void add(Shortcut shortcut)
+    inline void add(Shortcut shortcut)
     {
         entries.push_back(std::move(shortcut));
     }

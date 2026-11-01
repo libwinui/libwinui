@@ -99,7 +99,7 @@ public:
     /// Caps the cells per row (per column when Vertical) and lays the view out again.
     void set_maximum_rows_or_columns(std::size_t max);
     /// The fill direction; Horizontal by default.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }

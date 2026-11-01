@@ -54,7 +54,7 @@ LIBWINUI_EXPORT class DragAreaControl final : public ContentHost
 {
 public:
     /// False: the whole area takes the pointer, empty parts included, since they drag the window.
-    [[nodiscard]] bool hit_test_transparent() const override
+    [[nodiscard]] inline bool hit_test_transparent() const override
     {
         return false;
     }
@@ -63,7 +63,7 @@ public:
 
     /// Caption everywhere inside the area, except Client along the path under `p` from the first
     /// focusable element down (that element takes the press).
-    [[nodiscard]] HitRegion hit_region(Point p) const override
+    [[nodiscard]] inline HitRegion hit_region(Point p) const override
     {
         // Down the path under the pointer: the first focusable element on it takes the press.
         const Element* node = child();

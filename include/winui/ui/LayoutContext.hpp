@@ -38,7 +38,7 @@ LIBWINUI_EXPORT struct MeasureContext
 
     /// The same context under another theme, for a container that hands its children one of
     /// its own.
-    [[nodiscard]] MeasureContext with_theme(const Theme& other) const
+    [[nodiscard]] inline MeasureContext with_theme(const Theme& other) const
     {
         return {measurer, other};
     }
@@ -53,7 +53,7 @@ LIBWINUI_EXPORT struct ArrangeContext
     const Theme&        theme;    ///< The theme in effect here, as the last measure() saw it.
 
     /// The measure context for measuring children again from arrange_override().
-    [[nodiscard]] MeasureContext measure_context() const
+    [[nodiscard]] inline MeasureContext measure_context() const
     {
         return {measurer, theme};
     }
@@ -86,7 +86,7 @@ LIBWINUI_EXPORT struct RenderContext
 
     /// The same context under another theme, for a container that draws its children with one
     /// of its own.
-    [[nodiscard]] RenderContext with_theme(const Theme& other) const
+    [[nodiscard]] inline RenderContext with_theme(const Theme& other) const
     {
         return {other};
     }

@@ -108,7 +108,7 @@ public:
 
     // ---- mode ----
     /// Whether the user can type a value of their own. False (the default) only picks items.
-    [[nodiscard]] bool editable() const
+    [[nodiscard]] inline bool editable() const
     {
         return editable_;
     }
@@ -118,7 +118,7 @@ public:
 
     // ---- items ----
     /// The list's choices (UTF-8), in display order.
-    [[nodiscard]] const std::vector<std::string>& items() const
+    [[nodiscard]] inline const std::vector<std::string>& items() const
     {
         return items_;
     }
@@ -129,7 +129,7 @@ public:
 
     /// Index into items() of the selected item: the item the text matches exactly, when editable.
     /// Unset when nothing is selected.
-    [[nodiscard]] std::optional<std::size_t> selected_index() const
+    [[nodiscard]] inline std::optional<std::size_t> selected_index() const
     {
         return detail::optional_index(selected_);
     }
@@ -148,7 +148,7 @@ public:
     void set_text(std::string text);
 
     /// The hint shown while nothing is selected or the text is empty; empty by default.
-    [[nodiscard]] const std::string& placeholder_text() const
+    [[nodiscard]] inline const std::string& placeholder_text() const
     {
         return placeholder_text_;
     }
@@ -156,12 +156,12 @@ public:
     void set_placeholder_text(std::string text);
 
     /// The label above the control. Empty by default.
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return header_.text();
     }
     /// Sets the header. Empty draws none and takes no room. A change updates the layout.
-    void set_header(std::string header)
+    inline void set_header(std::string header)
     {
         if (header_.set_text(std::move(header)))
         {
@@ -169,12 +169,12 @@ public:
         }
     }
     /// The secondary text under the box; empty (the default) draws none.
-    [[nodiscard]] const std::string& description() const
+    [[nodiscard]] inline const std::string& description() const
     {
         return description_.text();
     }
     /// Sets the description. Empty draws none and takes no room. A change updates the layout.
-    void set_description(std::string description)
+    inline void set_description(std::string description)
     {
         if (description_.set_text(std::move(description)))
         {
@@ -183,12 +183,12 @@ public:
     }
     /// What is wrong with the value, shown in the description's place in the critical color,
     /// with the border in the same color; empty (the default) shows the description.
-    [[nodiscard]] const std::string& error() const
+    [[nodiscard]] inline const std::string& error() const
     {
         return description_.error();
     }
     /// Sets the error. A change updates the layout and redraws.
-    void set_error(std::string error)
+    inline void set_error(std::string error)
     {
         if (description_.set_error(std::move(error)))
         {
@@ -198,17 +198,17 @@ public:
     }
     /// The description, or the error while one is set, is the help text a screen reader offers
     /// when accessibility().description is empty.
-    [[nodiscard]] std::string automation_help_text_fallback() const override
+    [[nodiscard]] inline std::string automation_help_text_fallback() const override
     {
         return description_.shown();
     }
     /// Invalid while an error is set.
-    [[nodiscard]] bool automation_invalid() const override
+    [[nodiscard]] inline bool automation_invalid() const override
     {
         return description_.has_error();
     }
     /// The header names the control when accessibility().name does not.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_.text();
     }
@@ -217,7 +217,7 @@ public:
     /// Fires when the selection changes: an item picked, Up/Down or typing while closed,
     /// text typed or set that matches another item or none, set_items() or set_selected_index().
     /// Unset when it was cleared; not for a write that lands on the current item.
-    void on_selection_changed(Callback<void(std::optional<std::size_t>)> handler)
+    inline void on_selection_changed(Callback<void(std::optional<std::size_t>)> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
@@ -225,7 +225,7 @@ public:
     /// Fires when the user picks an item from the open list (a click, or Enter on the highlighted
     /// item), even if the box already showed it, and when an editable box commits typed text equal
     /// to an item. Receives the index into items(); the box already shows the item when it fires.
-    void on_item_chosen(Callback<void(std::size_t)> handler)
+    inline void on_item_chosen(Callback<void(std::size_t)> handler)
     {
         on_item_chosen_ = std::move(handler);
     }
@@ -234,7 +234,7 @@ public:
     /// Delete, UI Automation's SetValue), once completion has filled it in. Not fired after
     /// set_text() or when an item is picked (that is on_item_chosen()). Replaces any previous
     /// handler.
-    void on_text_changed(Callback<void(const std::string&)> handler)
+    inline void on_text_changed(Callback<void(const std::string&)> handler)
     {
         on_text_changed_ = std::move(handler);
     }
@@ -242,27 +242,27 @@ public:
     /// Editable only: fires when typed text matching no item is committed (see the class comment).
     /// Return ui::Cancel to reject the text, typically after putting the last good value back with
     /// set_text(); the text is then not committed.
-    void on_text_submitted(Callback<Decision(const ComboBoxTextSubmittedArgs&)> handler)
+    inline void on_text_submitted(Callback<Decision(const ComboBoxTextSubmittedArgs&)> handler)
     {
         on_text_submitted_ = std::move(handler);
     }
 
     /// Whether the item list is open. Opened by the user or through UI Automation's
     /// ExpandCollapse; never opens while items() is empty, and there is no public setter.
-    [[nodiscard]] bool expanded() const
+    [[nodiscard]] inline bool expanded() const
     {
         return expanded_;
     }
 
     // ---- focus ----
     /// Whether the control (and so, editable, its inner TextBox) holds keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// True while enabled and holding at least one item; an editable box needs no items, since
     /// it is still a free-text field.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled() && (editable_ || !items_.empty());
     }
@@ -298,7 +298,7 @@ public:
     // ---- the internal TextBox ----
     /// Lists the internal TextBox while editable, so it is updated, animated and drawn along
     /// with the combo box.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (editable_)
         {
@@ -306,7 +306,7 @@ public:
         }
     }
     /// One tab stop: the internal TextBox is part of this control, not a stop of its own.
-    void collect_focusables(std::vector<Element*>& out) override
+    inline void collect_focusables(std::vector<Element*>& out) override
     {
         if (focusable())
         {
@@ -325,18 +325,18 @@ public:
 
     // ---- automation ----
     /// Editable: the text field's cursor over the text field (an I-beam, an arrow over its buttons).
-    [[nodiscard]] std::optional<CursorShape> cursor_at(Point p) const override
+    [[nodiscard]] inline std::optional<CursorShape> cursor_at(Point p) const override
     {
         return editable_ && text_box_->bounds().contains(p) ? text_box_->cursor_at(p) : std::nullopt;
     }
     /// A ComboBox, with its text as the Value pattern (read-only unless editable) and
     /// ExpandCollapse for open and close.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::ComboBox;
     }
     /// Editable: the inner text box's caret.
-    [[nodiscard]] std::optional<Rect> caret_bounds() const override
+    [[nodiscard]] inline std::optional<Rect> caret_bounds() const override
     {
         return editable_ ? text_box_->caret_bounds() : std::nullopt;
     }
@@ -347,18 +347,18 @@ private:
     // Up/Down step the selection, and when editable Left/Right reach the inner TextBox caret.
     // Claimed so Window's directional focus navigation leaves them alone
     // (Element::key_override).
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowUp || key == Key::ArrowDown ||
                (editable_ && (key == Key::ArrowLeft || key == Key::ArrowRight));
     }
     // Enter opens, commits or submits (Element::key_override()).
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return true;
     }
     // This control alone: the internal TextBox is not live on its own.
-    void collect_live(std::vector<Element*>& out) override
+    inline void collect_live(std::vector<Element*>& out) override
     {
         out.push_back(this);
     }
@@ -451,25 +451,25 @@ protected:
     [[nodiscard]] Rect  focus_ring_rect(const Theme& theme) const override;
     [[nodiscard]] float focus_ring_corner_radius(const Theme& theme) const override;
     /// Read-only only: an editable box shows focus with its accent border.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return !editable_;
     }
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.expand_collapse = this;
         out.value           = this;
     }
     // expanded().
-    [[nodiscard]] bool expanded_state() const override
+    [[nodiscard]] inline bool expanded_state() const override
     {
         return expanded_;
     }
     // Opens or closes the list when enabled; false and nothing happens when disabled.
-    bool set_expanded_state(bool expand) override
+    inline bool set_expanded_state(bool expand) override
     {
         if (!is_enabled())
         {
@@ -479,18 +479,18 @@ private:
         return true;
     }
     // text().
-    [[nodiscard]] std::string text_value() const override
+    [[nodiscard]] inline std::string text_value() const override
     {
         return text();
     }
     // Writable only while editable and enabled.
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return !editable_ || !is_enabled();
     }
     // Sets the text through the inner TextBox's own Value pattern, so on_text_changed() fires
     // as for a user edit. False when read-only or disabled.
-    bool set_text_value(std::string_view value) override
+    inline bool set_text_value(std::string_view value) override
     {
         if (!editable_ || !is_enabled())
         {

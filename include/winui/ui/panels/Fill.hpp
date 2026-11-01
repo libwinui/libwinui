@@ -50,12 +50,12 @@ public:
 
     /// This fill's share of the leftover room, relative to the other fills and spacers in the
     /// same stack.
-    [[nodiscard]] float weight() const
+    [[nodiscard]] inline float weight() const
     {
         return weight_;
     }
     /// Sets the share; negative is treated as 0. Updates the layout.
-    void set_weight(float weight)
+    inline void set_weight(float weight)
     {
         weight_ = (std::max)(0.0f, weight);
         mark_dirty(DirtyFlags::Layout);

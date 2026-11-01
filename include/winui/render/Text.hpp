@@ -57,7 +57,8 @@ public:
         }
     }
     /// From a string, copied.
-    FontName(const std::string& name) noexcept : FontName(std::string_view{name}) // NOLINT(google-explicit-constructor)
+    inline FontName(const std::string& name) noexcept :
+        FontName(std::string_view{name}) // NOLINT(google-explicit-constructor)
     {
     }
 
@@ -92,7 +93,7 @@ public:
         return data_;
     }
     /// The name as a std::string.
-    [[nodiscard]] std::string str() const
+    [[nodiscard]] inline std::string str() const
     {
         return std::string{view()};
     }
@@ -277,7 +278,7 @@ LIBWINUI_EXPORT struct TextStyle
     int character_spacing = 0;
 
     /// `character_spacing` converted to DIPs per character at this style's `font_size`.
-    [[nodiscard]] float character_spacing_dips() const
+    [[nodiscard]] inline float character_spacing_dips() const
     {
         return static_cast<float>(character_spacing) * font_size / 1000.0f;
     }
@@ -309,11 +310,11 @@ LIBWINUI_EXPORT struct TextMetrics
     int line_count = 1;
 
     /// The extent, width x height.
-    [[nodiscard]] Size size() const
+    [[nodiscard]] inline Size size() const
     {
         return {width, height};
     }
-    operator Size() const // NOLINT(google-explicit-constructor): the extent is what most callers want
+    inline operator Size() const // NOLINT(google-explicit-constructor): the extent is what most callers want
     {
         return size();
     }
@@ -360,7 +361,7 @@ public:
     /// line's width and the height of all lines together. A width of 0 or less, an infinite one
     /// (ui::Unbounded), or a NoWrap style, is measure(). The default ignores wrapping
     /// altogether; both shipped measurers override it.
-    [[nodiscard]] virtual TextMetrics measure_wrapped(std::string_view text, const TextStyle& style, float /*max_width*/) const
+    [[nodiscard]] inline virtual TextMetrics measure_wrapped(std::string_view text, const TextStyle& style, float /*max_width*/) const
     {
         return measure(text, style);
     }

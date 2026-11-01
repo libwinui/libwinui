@@ -104,7 +104,7 @@ public:
 
     /// Destroys the current child, leaving the host empty (it then measures to nothing).
     /// Updates the layout and redraws.
-    void clear_child()
+    inline void clear_child()
     {
         retire_child();
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -113,26 +113,26 @@ public:
     /// Takes the child out alive and hands it back, leaving the host empty, for adding it
     /// somewhere else. Focus inside it is cleared and it plays no exit transition. Null when the
     /// host is empty. Updates the layout and redraws.
-    [[nodiscard]] std::unique_ptr<Element> orphan_child()
+    [[nodiscard]] inline std::unique_ptr<Element> orphan_child()
     {
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
         return detail::orphan(std::move(child_));
     }
 
     /// The current child as a non-owning observer, or nullptr when empty.
-    [[nodiscard]] Element* child() const
+    [[nodiscard]] inline Element* child() const
     {
         return child_.get();
     }
     /// True while the host has no child, or its child is not Visible: the pointer then reaches what
     /// is behind the host. A host that draws something of its own (a background, a header)
     /// overrides this to return false.
-    [[nodiscard]] bool hit_test_transparent() const override
+    [[nodiscard]] inline bool hit_test_transparent() const override
     {
         return child_ == nullptr || child_->visibility() != Visibility::Visible;
     }
     /// Lists the child, if any.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (child_)
         {

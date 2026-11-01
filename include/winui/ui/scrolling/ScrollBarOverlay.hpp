@@ -73,12 +73,12 @@ LIBWINUI_EXPORT class ScrollBarOverlay
 {
 public:
     /// A bar for one axis, collapsed and idle.
-    explicit ScrollBarOverlay(Orientation orientation = Orientation::Vertical) : orientation_(orientation)
+    inline explicit ScrollBarOverlay(Orientation orientation = Orientation::Vertical) : orientation_(orientation)
     {
     }
 
     /// The axis given at construction.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
@@ -86,24 +86,24 @@ public:
     /// Whether there is anything to scroll at all, which decides whether the bar draws and takes
     /// input. This static form checks the vertical axis, and scrollable() below checks this bar's
     /// own axis.
-    [[nodiscard]] static bool is_scrollable(const Rect& viewport, float content_length)
+    [[nodiscard]] static inline bool is_scrollable(const Rect& viewport, float content_length)
     {
         return content_length > viewport.height;
     }
     /// Whether `content_length` (DIPs along this bar's axis) exceeds the viewport along it.
-    [[nodiscard]] bool scrollable(const Rect& viewport, float content_length) const
+    [[nodiscard]] inline bool scrollable(const Rect& viewport, float content_length) const
     {
         return content_length > (orientation_ == Orientation::Vertical ? viewport.height : viewport.width);
     }
 
     /// ScrollBarVisibility::Visible: draw the bar even with nothing to scroll. Its thumb then
     /// fills the track, and it takes no input. Off by default, which is Auto.
-    [[nodiscard]] bool always_visible() const
+    [[nodiscard]] inline bool always_visible() const
     {
         return always_visible_;
     }
     /// The owner redraws. This class marks nothing dirty.
-    void set_always_visible(bool always)
+    inline void set_always_visible(bool always)
     {
         always_visible_ = always;
     }
@@ -114,7 +114,7 @@ public:
     void apply_theme(const Theme& theme) const;
     /// The room the bar takes from its scroller's viewport while it shows, in DIPs: the era bar's
     /// thickness, or 0 for the overlay, which draws over the content.
-    [[nodiscard]] float gutter() const
+    [[nodiscard]] inline float gutter() const
     {
         return gutter_;
     }
@@ -141,12 +141,12 @@ public:
 
     /// True while hovered or dragging: the expanded look (thicker thumb, visible track) instead of
     /// the collapsed one (thin thumb, no track).
-    [[nodiscard]] bool expanded() const
+    [[nodiscard]] inline bool expanded() const
     {
         return hovered_ || dragging_;
     }
     /// True while the thumb is being dragged.
-    [[nodiscard]] bool dragging() const
+    [[nodiscard]] inline bool dragging() const
     {
         return dragging_;
     }
@@ -172,7 +172,7 @@ public:
     /// see, such as a wheel turn the owner scrolled with, whether or not the pointer is over the
     /// band. Scroll and VirtualList call it from their wheel handling. Hovering and dragging keep
     /// the clock reset by themselves.
-    void notify_activity()
+    inline void notify_activity()
     {
         idle_seconds_ = 0.0f;
     }

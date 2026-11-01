@@ -104,48 +104,48 @@ public:
     }
 
     /// The flow direction: Horizontal (rows, the default) or Vertical (columns).
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
     /// Changes the flow direction; invalidates layout.
-    void set_orientation(Orientation orientation)
+    inline void set_orientation(Orientation orientation)
     {
         orientation_ = orientation;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The gap between two children in a line, in DIPs. Default 0.
-    [[nodiscard]] float item_spacing() const
+    [[nodiscard]] inline float item_spacing() const
     {
         return item_spacing_;
     }
     /// Sets the gap between children; invalidates layout.
-    void set_item_spacing(float spacing)
+    inline void set_item_spacing(float spacing)
     {
         item_spacing_ = spacing;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The gap between two lines, in DIPs. Default 0.
-    [[nodiscard]] float line_spacing() const
+    [[nodiscard]] inline float line_spacing() const
     {
         return line_spacing_;
     }
     /// Sets the gap between lines; invalidates layout.
-    void set_line_spacing(float spacing)
+    inline void set_line_spacing(float spacing)
     {
         line_spacing_ = spacing;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// Whether the last child is widened to the end of its line. Default None.
-    [[nodiscard]] WrapPanelItemsStretch items_stretch() const
+    [[nodiscard]] inline WrapPanelItemsStretch items_stretch() const
     {
         return items_stretch_;
     }
     /// Sets whether the last child is widened; invalidates layout.
-    void set_items_stretch(WrapPanelItemsStretch stretch)
+    inline void set_items_stretch(WrapPanelItemsStretch stretch)
     {
         items_stretch_ = stretch;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -162,7 +162,7 @@ public:
     using Panel::set_padding;
 
     /// True: measuring touches only the panel and its children.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
