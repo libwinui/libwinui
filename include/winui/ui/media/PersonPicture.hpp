@@ -70,12 +70,12 @@ public:
     PersonPictureControl() = default;
 
     /// The size when no width or height is set, in DIPs. 96 by default.
-    [[nodiscard]] float diameter() const
+    [[nodiscard]] inline float diameter() const
     {
         return diameter_;
     }
     /// Sets the diameter, at least 1 DIP. Updates layout and redraws.
-    void set_diameter(float diameter)
+    inline void set_diameter(float diameter)
     {
         diameter_ = (std::max)(1.0f, diameter);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -85,12 +85,12 @@ public:
     [[nodiscard]] float effective_diameter() const;
 
     /// The person's name. The initials and the accessible name are derived from it.
-    [[nodiscard]] const std::string& display_name() const
+    [[nodiscard]] inline const std::string& display_name() const
     {
         return display_name_;
     }
     /// Sets the display name. Redraws.
-    void set_display_name(std::string name)
+    inline void set_display_name(std::string name)
     {
         display_name_ = std::move(name);
         mark_dirty(DirtyFlags::Visual);
@@ -98,24 +98,24 @@ public:
 
     /// Explicit initials. When not empty, they replace the initials derived from display_name()
     /// (see `effective_initials()`).
-    [[nodiscard]] const std::string& initials() const
+    [[nodiscard]] inline const std::string& initials() const
     {
         return initials_;
     }
     /// Sets the explicit initials. Redraws.
-    void set_initials(std::string initials)
+    inline void set_initials(std::string initials)
     {
         initials_ = std::move(initials);
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// Whether the picture shows the "People" glyph, even over a set profile picture.
-    [[nodiscard]] bool is_group() const
+    [[nodiscard]] inline bool is_group() const
     {
         return is_group_;
     }
     /// Turns the group glyph on or off. Redraws.
-    void set_group(bool group)
+    inline void set_group(bool group)
     {
         is_group_ = group;
         mark_dirty(DirtyFlags::Visual);
@@ -123,12 +123,12 @@ public:
 
     /// A decoded photo, drawn clipped to the circle. An empty Bitmap, the default, falls back to
     /// the initials.
-    [[nodiscard]] const Bitmap& profile_picture() const
+    [[nodiscard]] inline const Bitmap& profile_picture() const
     {
         return profile_picture_;
     }
     /// Sets the photo. Redraws.
-    void set_profile_picture(Bitmap picture)
+    inline void set_profile_picture(Bitmap picture)
     {
         profile_picture_ = std::move(picture);
         mark_dirty(DirtyFlags::Visual);
@@ -136,12 +136,12 @@ public:
 
     // ---- badge ----
     /// The badge number. 0 or less shows no number.
-    [[nodiscard]] int badge_number() const
+    [[nodiscard]] inline int badge_number() const
     {
         return badge_number_;
     }
     /// Sets the badge number. Measures and redraws, since the badge widens for "99+".
-    void set_badge_number(int number)
+    inline void set_badge_number(int number)
     {
         badge_number_ = number;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -149,23 +149,23 @@ public:
     /// The badge icon, shown while badge_number() isn't: a Symbol, a glyph, a path or a picture.
     /// It is drawn at 60% of the badge's size in the badge's text color, and a picture keeps its
     /// own colors. Empty shows no icon.
-    [[nodiscard]] const IconSource& badge_icon() const
+    [[nodiscard]] inline const IconSource& badge_icon() const
     {
         return badge_icon_;
     }
     /// Sets the badge icon. Redraws.
-    void set_badge_icon(IconSource icon)
+    inline void set_badge_icon(IconSource icon)
     {
         badge_icon_ = std::move(icon);
         mark_dirty(DirtyFlags::Visual);
     }
     /// What screen readers hear in place of ", N items" or ", icon".
-    [[nodiscard]] const std::string& badge_text() const
+    [[nodiscard]] inline const std::string& badge_text() const
     {
         return badge_text_;
     }
     /// Sets the badge text. It changes only the accessible name, so nothing is redrawn.
-    void set_badge_text(std::string text)
+    inline void set_badge_text(std::string text)
     {
         badge_text_ = std::move(text);
     }
@@ -173,7 +173,7 @@ public:
     /// The number the badge shows, "99+" past 99. Empty when it shows the icon or nothing.
     [[nodiscard]] std::string badge_content() const;
     /// Whether any badge shows.
-    [[nodiscard]] bool has_badge() const
+    [[nodiscard]] inline bool has_badge() const
     {
         return badge_number_ > 0 || !badge_icon_.empty();
     }
@@ -194,7 +194,7 @@ public:
 
     // ---- automation ----
     /// Exposed to UI Automation as text.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Text;
     }

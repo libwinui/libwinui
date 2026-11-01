@@ -99,7 +99,7 @@ public:
     /// EN_CHANGE notification, as a RichEdit sends. The framework can't see such an edit
     /// otherwise, since the text lives inside the native control and the keystrokes go straight
     /// to the child HWND.
-    virtual void on_native_content_changed()
+    inline virtual void on_native_content_changed()
     {
     }
 
@@ -110,7 +110,7 @@ public:
     /// window class: a month calendar's MCN_SELECT, a date picker's DTN_DATETIMECHANGE or the
     /// colors an EDIT asks for, none of which the element could see otherwise. EN_CHANGE still
     /// reaches on_native_content_changed() when this declines it.
-    virtual bool handle_native_notification(NativeNotification& /*notification*/)
+    inline virtual bool handle_native_notification(NativeNotification& /*notification*/)
     {
         return false;
     }
@@ -118,7 +118,7 @@ public:
     /// The fixed size measure() reports. Changing it measures the control again, for a control
     /// that learns the size it wants from the native window once it exists (a month calendar's
     /// MCM_GETMINREQRECT, read in on_native_created()).
-    [[nodiscard]] Size native_size() const
+    [[nodiscard]] inline Size native_size() const
     {
         return size_;
     }
@@ -133,7 +133,7 @@ public:
     // ---- automation ----
     /// True: the framework's automation tree leaves the control out, because the child HWND
     /// provides its own accessibility once created.
-    [[nodiscard]] bool automation_is_native_host() const override
+    [[nodiscard]] inline bool automation_is_native_host() const override
     {
         return true;
     }
@@ -141,7 +141,7 @@ public:
     /// The raw platform handle (HWND on Windows), for a derived control to send it
     /// control-specific messages. nullptr before the first sync_native() call, and after the
     /// window that held it was closed.
-    [[nodiscard]] NativeHandle native_handle() const
+    [[nodiscard]] inline NativeHandle native_handle() const
     {
         return host_ ? host_->native_handle(visual_id()) : nullptr;
     }
@@ -157,7 +157,7 @@ protected:
     ///
     /// It is also the place to read a size the native control wants (a month calendar's
     /// MCM_GETMINREQRECT) and hand it to set_native_size().
-    virtual void on_native_created(NativeHandle /*handle*/)
+    inline virtual void on_native_created(NativeHandle /*handle*/)
     {
     }
 
@@ -176,7 +176,7 @@ private:
 
     // A NativeHost that is going away while this control lives on: forget it and the native
     // window, and get a new one from the next sync_native(), when the window is shown again.
-    void host_lost() noexcept
+    inline void host_lost() noexcept
     {
         host_    = nullptr;
         created_ = false;

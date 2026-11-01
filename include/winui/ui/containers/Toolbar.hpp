@@ -83,17 +83,17 @@ public:
     [[nodiscard]] static std::unique_ptr<Element> make_separator();
 
     /// The gap between adjacent items in DIPs, 4 by default.
-    [[nodiscard]] float spacing() const
+    [[nodiscard]] inline float spacing() const
     {
         return panel_->spacing();
     }
     /// Changes the gap. Updates layout.
-    void set_spacing(float spacing)
+    inline void set_spacing(float spacing)
     {
         panel_->set_spacing(spacing);
     }
     /// Visits the internal StackControl that lays the items out.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         visit(*panel_);
     }
@@ -101,7 +101,7 @@ public:
     // ---- automation ----
     /// Reports the toolbar's items and separators as its direct children. The internal
     /// StackControl that for_each_child() visits never appears in the automation tree.
-    void automation_children(std::vector<Element*>& out) const override
+    inline void automation_children(std::vector<Element*>& out) const override
     {
         for (const auto& child : panel_->children())
         {
@@ -109,7 +109,7 @@ public:
         }
     }
     /// Exposed to UI Automation as a toolbar.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::ToolBar;
     }
@@ -198,7 +198,7 @@ public:
     SeparatorControl() = default;
 
     /// Exposed to UI Automation as a separator.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Separator;
     }

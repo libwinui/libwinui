@@ -185,7 +185,7 @@ public:
     }
 
     /// The root of the content tree (non-owning), or nullptr before set_content().
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
@@ -285,12 +285,12 @@ public:
     /// layout(), after that callback has returned.
     void close_modal();
     /// Whether a modal is open (a close_modal() still pending counts as open).
-    [[nodiscard]] bool has_modal() const
+    [[nodiscard]] inline bool has_modal() const
     {
         return modal_ != nullptr;
     }
     /// The open modal (non-owning), or nullptr.
-    [[nodiscard]] Element* modal() const
+    [[nodiscard]] inline Element* modal() const
     {
         return modal_.get();
     }
@@ -300,7 +300,7 @@ public:
     /// destroy part of the tree while the Window itself survives. Code that holds an Element*
     /// across calls, such as the accessibility provider, records the generation it saw and stops
     /// using the pointer once the counter has changed.
-    [[nodiscard]] std::uint64_t content_generation() const
+    [[nodiscard]] inline std::uint64_t content_generation() const
     {
         return content_generation_;
     }
@@ -314,21 +314,21 @@ public:
     // ---- invalidation ----
     /// How many times layout() has run measure and arrange. A layout() call that finds nothing
     /// dirty skips the pass and doesn't count. Useful for checking that invalidation works.
-    [[nodiscard]] std::size_t layout_pass_count() const
+    [[nodiscard]] inline std::size_t layout_pass_count() const
     {
         return layout_pass_count_;
     }
 
     /// The client size, in DIPs, passed to the most recent layout(); zero before the first.
     /// WindowOptions::size is the size asked for at creation.
-    [[nodiscard]] Size layout_size() const
+    [[nodiscard]] inline Size layout_size() const
     {
         return client_size_;
     }
     /// The theme every control in the tree measures and draws with. Theme::light() until the
     /// host reports the OS theme state, then the one resolved from theme_request(), unless the
     /// app pinned one with pin_theme().
-    [[nodiscard]] const Theme& theme() const
+    [[nodiscard]] inline const Theme& theme() const
     {
         return theme_;
     }
@@ -340,27 +340,27 @@ public:
     void pin_theme(Theme theme);
     /// What the theme is resolved from; WindowOptions::theme until changed. The window
     /// re-resolves it whenever the OS theme state changes, unless pin_theme() pinned a theme.
-    [[nodiscard]] const ThemeRequest& theme_request() const
+    [[nodiscard]] inline const ThemeRequest& theme_request() const
     {
         return theme_request_;
     }
     /// Resolves the theme from `request` against the OS theme state last reported, and keeps
     /// following it. Unpins a theme set with pin_theme().
-    void set_theme(ThemeRequest request)
+    inline void set_theme(ThemeRequest request)
     {
         theme_request_ = request;
         theme_pinned_  = false;
         set_resolved_theme();
     }
     /// Whether pin_theme() pinned the current theme.
-    [[nodiscard]] bool theme_pinned() const
+    [[nodiscard]] inline bool theme_pinned() const
     {
         return theme_pinned_;
     }
     /// Bumped by every pin_theme(). The host checks it to notice a theme change the app made,
     /// such as a dark mode toggle, and then updates what the OS draws for the window: the caption
     /// colors from Theme::chrome and the light or dark system backdrop.
-    [[nodiscard]] unsigned theme_revision() const
+    [[nodiscard]] inline unsigned theme_revision() const
     {
         return theme_revision_;
     }
@@ -383,7 +383,7 @@ public:
     ///     .on_click = [w = &window] { w->toggle_fullscreen(); },
     /// }
     /// @endcode
-    [[nodiscard]] const Property<WindowState>& state() const
+    [[nodiscard]] inline const Property<WindowState>& state() const
     {
         return state_;
     }
@@ -398,7 +398,7 @@ public:
     ///     .on_click = [w = &window] { w->restore(); },
     /// }
     /// @endcode
-    [[nodiscard]] const Property<WindowState>& restores_to() const
+    [[nodiscard]] inline const Property<WindowState>& restores_to() const
     {
         return restores_to_;
     }
@@ -442,7 +442,7 @@ public:
     /// Asked before the window closes, however that was requested (close button, Alt+F4, the
     /// taskbar, close()); return ui::Cancel to keep it open. One slot; empty, or a handler that
     /// returns nothing, lets the close through.
-    void on_closing(Callback<Decision(const WindowClosingArgs&)> handler)
+    inline void on_closing(Callback<Decision(const WindowClosingArgs&)> handler)
     {
         closing_handler_ = std::move(handler);
     }
@@ -450,14 +450,14 @@ public:
     /// the place to stop and join worker threads that post() to it: post() drops its work from
     /// here on, until the window is shown again. The Window object itself stays valid after it
     /// closed; it is the app's to destroy.
-    void on_closed(Callback<void()> handler)
+    inline void on_closed(Callback<void()> handler)
     {
         closed_handler_ = std::move(handler);
     }
     /// Called after the theme was resolved again: the OS switched dark mode, accent color or
     /// contrast, or set_theme() or pin_theme() asked for another. theme() is the new one, which may
     /// equal the old. For colors an app works out itself, such as a syntax highlighter's palette.
-    void on_theme_changed(Callback<void(const Theme&)> handler)
+    inline void on_theme_changed(Callback<void(const Theme&)> handler)
     {
         theme_changed_handler_ = std::move(handler);
     }
@@ -513,12 +513,12 @@ public:
     /// and set_size_limits(). The other fields are read when the OS window is created, so they
     /// are writable until then; a change after the window was shown only takes effect the next
     /// time it is created.
-    [[nodiscard]] WindowOptions& options()
+    [[nodiscard]] inline WindowOptions& options()
     {
         return options_;
     }
     /// The same, read-only.
-    [[nodiscard]] const WindowOptions& options() const
+    [[nodiscard]] inline const WindowOptions& options() const
     {
         return options_;
     }
@@ -539,14 +539,14 @@ public:
     void hide();
     /// Whether the window is shown. Host-written, like state(); false until
     /// a host reports the window shown.
-    [[nodiscard]] const Property<bool>& visible() const
+    [[nodiscard]] inline const Property<bool>& visible() const
     {
         return visible_;
     }
     /// Whether the window is open: true from the moment ui::run() or show() created it until it
     /// closes, hidden or not. Host-written, like visible(), so it can be bound, a menu item's
     /// check mark following whether a tool window is open.
-    [[nodiscard]] const Property<bool>& is_open() const
+    [[nodiscard]] inline const Property<bool>& is_open() const
     {
         return open_;
     }
@@ -556,19 +556,19 @@ public:
     /// an axis leaves it unconstrained; not applied while full screen.
     void set_size_limits(Size min, Size max);
     /// The minimum client size last given to set_size_limits(), in DIPs (zero: none).
-    [[nodiscard]] const Size& min_size() const
+    [[nodiscard]] inline const Size& min_size() const
     {
         return min_size_;
     }
     /// The maximum client size last given to set_size_limits(), in DIPs (zero: none).
-    [[nodiscard]] const Size& max_size() const
+    [[nodiscard]] inline const Size& max_size() const
     {
         return max_size_;
     }
 
     /// Whether this is the foreground window, which a TitleBar dims itself by. Host-written;
     /// false until a host reports the window activated.
-    [[nodiscard]] const Property<bool>& active() const
+    [[nodiscard]] inline const Property<bool>& active() const
     {
         return active_;
     }
@@ -584,7 +584,7 @@ public:
     ///     .content = ui::Text{.text = "Drop PDF files here"},
     /// };
     /// @endcode
-    [[nodiscard]] const Property<bool>& external_drag() const
+    [[nodiscard]] inline const Property<bool>& external_drag() const
     {
         return external_drag_;
     }
@@ -596,7 +596,7 @@ public:
     /// @code
     /// const float pixels = 160.0f * window.scale().get(); // a 160 DIP thumbnail, sharp at any scale
     /// @endcode
-    [[nodiscard]] const Property<float>& scale() const
+    [[nodiscard]] inline const Property<float>& scale() const
     {
         return scale_;
     }
@@ -605,7 +605,7 @@ public:
     [[nodiscard]] const DataPackage* external_drag_data() const;
     /// The caption space an extended title bar must leave alone (CaptionInsets). Host-written;
     /// all zero unless WindowStyle::extend_content_into_title_bar is on.
-    [[nodiscard]] const Property<CaptionInsets>& caption_insets() const
+    [[nodiscard]] inline const Property<CaptionInsets>& caption_insets() const
     {
         return caption_insets_;
     }
@@ -621,28 +621,28 @@ private:
     void report_state(WindowState state);
     /// The same, from a host that knows where restore() lands (the OS's restore-to-maximized
     /// flag, a placement applied at startup) and says so.
-    void report_state(WindowState state, WindowState restores_to)
+    inline void report_state(WindowState state, WindowState restores_to)
     {
         restores_to_.set(restores_to); // first, so an observer of state() reads the new answer
         state_.set(state);
     }
     /// Host-only: the window became (or stopped being) the foreground window; feeds active().
-    void report_active(bool active)
+    inline void report_active(bool active)
     {
         active_.set(active);
     }
     /// Host-only: device pixels per DIP on the window's monitor; feeds scale().
-    void report_scale(float scale)
+    inline void report_scale(float scale)
     {
         scale_.set(scale > 0.0f ? scale : 1.0f);
     }
     /// Host-only: the space the caption buttons take; feeds caption_insets().
-    void report_caption_insets(const CaptionInsets& insets)
+    inline void report_caption_insets(const CaptionInsets& insets)
     {
         caption_insets_.set(insets);
     }
     /// Host-only: the window was shown or hidden; feeds visible().
-    void report_visible(bool visible)
+    inline void report_visible(bool visible)
     {
         visible_.set(visible);
     }
@@ -654,7 +654,7 @@ private:
     void report_blur_behind(bool active);
     /// Host-only: the OS theme state, at creation and after every change. Re-resolves the
     /// theme unless pin_theme() pinned one.
-    void report_os_theme(const OsThemeSnapshot& os)
+    inline void report_os_theme(const OsThemeSnapshot& os)
     {
         os_theme_ = os;
         if (!theme_pinned_)
@@ -662,7 +662,7 @@ private:
             set_resolved_theme();
         }
     }
-    void set_resolved_theme()
+    inline void set_resolved_theme()
     {
         theme_ = resolve_theme(theme_request_, os_theme_);
         ++theme_revision_;
@@ -682,11 +682,11 @@ private:
     [[nodiscard]] Element*                      drawn_title_bar() const;
     [[nodiscard]] bool                          wants_blur_behind() const;
     [[nodiscard]] std::span<const std::uint8_t> frame_corner_cut() const;
-    [[nodiscard]] const Bitmap&                 caption_icon() const
+    [[nodiscard]] inline const Bitmap&          caption_icon() const
     {
         return caption_icon_;
     }
-    [[nodiscard]] bool blur_behind() const
+    [[nodiscard]] inline bool blur_behind() const
     {
         return blur_behind_;
     }
@@ -694,7 +694,7 @@ private:
 public:
     // ---- frame ----
     /// The caption and taskbar text. Seeded from `ui::WindowOptions::title` at creation.
-    [[nodiscard]] const std::string& title() const
+    [[nodiscard]] inline const std::string& title() const
     {
         return title_;
     }
@@ -702,7 +702,7 @@ public:
     void set_title(std::string title);
     /// The frame the window is drawn with (WindowStyle). Seeded from
     /// `ui::WindowOptions::style` at creation.
-    [[nodiscard]] const WindowStyle& style() const
+    [[nodiscard]] inline const WindowStyle& style() const
     {
         return style_;
     }
@@ -711,7 +711,7 @@ public:
     void set_style(const WindowStyle& style);
     /// The system backdrop (ui/WindowStyle.hpp's Backdrop). Seeded from the host's options at
     /// creation (ui::WindowOptions::backdrop) and applied live by the host afterwards.
-    [[nodiscard]] Backdrop backdrop() const
+    [[nodiscard]] inline Backdrop backdrop() const
     {
         return backdrop_;
     }
@@ -719,7 +719,7 @@ public:
     void set_backdrop(Backdrop backdrop);
     /// This window's own frame colors and corners (ChromeOverrides), merged over the theme's
     /// ChromeHints by the host. Seeded from `ui::WindowOptions::chrome`.
-    [[nodiscard]] const ChromeOverrides& chrome() const
+    [[nodiscard]] inline const ChromeOverrides& chrome() const
     {
         return chrome_;
     }
@@ -744,7 +744,7 @@ public:
     // ---- native extension points ----
     /// The icon set with set_icon() or seeded from `ui::WindowOptions::icon`, or nullopt, which
     /// shows the executable's first icon resource (or the system's default without one).
-    [[nodiscard]] const std::optional<WindowIcon>& icon() const
+    [[nodiscard]] inline const std::optional<WindowIcon>& icon() const
     {
         return icon_;
     }
@@ -753,7 +753,7 @@ public:
 
     /// The app's own system-menu entries, in the order set. A toggle's or radio item's
     /// is_checked() is its current state.
-    [[nodiscard]] const std::vector<MenuItem>& system_menu() const
+    [[nodiscard]] inline const std::vector<MenuItem>& system_menu() const
     {
         return system_menu_;
     }
@@ -775,17 +775,17 @@ private:
 public:
     /// The taskbar button's progress bar. App-written, unlike state(): nothing can refuse it,
     /// so it is an ordinary Property. Write it, or drive it from a binding of your own.
-    [[nodiscard]] Property<TaskbarProgress>& taskbar_progress()
+    [[nodiscard]] inline Property<TaskbarProgress>& taskbar_progress()
     {
         return taskbar_progress_;
     }
     /// The badge over the taskbar button, or nullopt for none (set_taskbar_overlay()).
-    [[nodiscard]] const std::optional<WindowIcon>& taskbar_overlay() const
+    [[nodiscard]] inline const std::optional<WindowIcon>& taskbar_overlay() const
     {
         return taskbar_overlay_;
     }
     /// What a screen reader announces for taskbar_overlay().
-    [[nodiscard]] const std::string& taskbar_overlay_description() const
+    [[nodiscard]] inline const std::string& taskbar_overlay_description() const
     {
         return taskbar_overlay_description_;
     }
@@ -800,7 +800,7 @@ public:
     void cancel_attention();
 
     /// The taskbar thumbnail's buttons as last set (ThumbnailButton).
-    [[nodiscard]] const std::vector<ThumbnailButton>& thumbnail_buttons() const
+    [[nodiscard]] inline const std::vector<ThumbnailButton>& thumbnail_buttons() const
     {
         return thumbnail_buttons_;
     }
@@ -828,12 +828,12 @@ public:
     /// Let layout() measure large batches of independent siblings on worker threads (see
     /// ParallelLayout). On by default; `{.enabled = false}` keeps every measure on the UI thread.
     /// The layout is the same, bit for bit, either way.
-    void set_parallel_layout(ParallelLayout options)
+    inline void set_parallel_layout(ParallelLayout options)
     {
         parallel_layout_ = options;
     }
     /// The parallel layout options set_parallel_layout() last set.
-    [[nodiscard]] const ParallelLayout& parallel_layout() const
+    [[nodiscard]] inline const ParallelLayout& parallel_layout() const
     {
         return parallel_layout_;
     }
@@ -842,7 +842,7 @@ public:
     /// it. On by default. Off centers the content at its desired size instead.
     void set_stretch_content(bool stretch);
     /// Whether the content is arranged at the whole client size (see set_stretch_content()).
-    [[nodiscard]] bool stretch_content() const
+    [[nodiscard]] inline bool stretch_content() const
     {
         return stretch_content_;
     }
@@ -853,7 +853,7 @@ public:
     void set_background(std::optional<Color> background);
     /// The effective client background: set_background()'s color, else the theme's
     /// `colors.background`.
-    [[nodiscard]] Color background() const
+    [[nodiscard]] inline Color background() const
     {
         return background_.value_or(theme_.colors().background);
     }
@@ -880,7 +880,7 @@ public:
     // ---- connected animations ----
     /// The window's connected animations
     /// (ui/ConnectedAnimation.hpp), drawn above the tree and below the popups.
-    [[nodiscard]] ConnectedAnimationService& connected_animation_service()
+    [[nodiscard]] inline ConnectedAnimationService& connected_animation_service()
     {
         return connected_animations_;
     }
@@ -900,7 +900,7 @@ public:
     /// next_wake() says when to tick for them. Neither does a change made only by such a timed
     /// step (a caret blink, an image's next frame), as long as nothing else was marked dirty
     /// since the last tick.
-    [[nodiscard]] bool wants_ticks() const
+    [[nodiscard]] inline bool wants_ticks() const
     {
         return wants_ticks_;
     }
@@ -917,7 +917,7 @@ public:
     /// tick(), before the controls' own tick_override(), with the same `delta`. There is no fixed
     /// rate. The window ticks after every input or system event it handles and at least every
     /// 100 ms while idle. One slot, like on_key_preview(); an empty handler removes it.
-    void on_tick(Callback<void(Duration)> handler)
+    inline void on_tick(Callback<void(Duration)> handler)
     {
         tick_handler_ = std::move(handler);
     }
@@ -1014,7 +1014,7 @@ public:
     /// A weak handle to this Window for a worker that may outlive it: its WindowRef::post() is
     /// post() while this Window exists and drops the work once it is destroyed, also when another
     /// Window was built at the same address since. Callable from any thread while the Window exists.
-    [[nodiscard]] WindowRef ref() const noexcept
+    [[nodiscard]] inline WindowRef ref() const noexcept
     {
         return WindowRef{this, serial_};
     }
@@ -1050,7 +1050,7 @@ public:
     ///     return ui::Handled;
     /// });
     /// @endcode
-    void on_key_preview(Callback<Handling(const KeyEvent&)> handler)
+    inline void on_key_preview(Callback<Handling(const KeyEvent&)> handler)
     {
         key_preview_ = std::move(handler);
     }
@@ -1128,14 +1128,14 @@ public:
     /// is still in the ring, otherwise the first stop, as focus_content() does.
     void restore_focus();
     /// The element with keyboard focus (non-owning), or nullptr.
-    [[nodiscard]] Element* focused() const
+    [[nodiscard]] inline Element* focused() const
     {
         return focus_watch_.get();
     }
     /// Where text typed now would go: the focused element's Element::caret_bounds(), in client
     /// DIPs, or nullopt. The backend keeps an input method's candidate window and the emoji panel
     /// there.
-    [[nodiscard]] std::optional<Rect> caret_bounds() const
+    [[nodiscard]] inline std::optional<Rect> caret_bounds() const
     {
         return focused() != nullptr ? focused()->caret_bounds() : std::nullopt;
     }
@@ -1156,7 +1156,7 @@ public:
     /// Returns false when no scope is entered.
     bool exit_focus_scope();
     /// The innermost entered scope, or nullptr when the tab ring is the whole tree.
-    [[nodiscard]] Element* entered_focus_scope() const
+    [[nodiscard]] inline Element* entered_focus_scope() const
     {
         return focus_scope_stack_.empty() ? nullptr : focus_scope_stack_.back()->get();
     }
@@ -1170,7 +1170,7 @@ private:
 
     /// Optional, non-owning: the backend installs its compositor here. Left null, no composition
     /// calls are made, and controls draw their current state through the ordinary repaint.
-    void set_compositor(detail::Compositor* compositor)
+    inline void set_compositor(detail::Compositor* compositor)
     {
         compositor_ = compositor;
     }
@@ -1178,7 +1178,7 @@ private:
     /// Optional and non-owning, like set_compositor(): the backend's native-control host
     /// installs itself here. Left null, no native-control calls are made, and a NativeControl
     /// in the tree never creates its real window.
-    void set_native_host(NativeHost* host)
+    inline void set_native_host(NativeHost* host)
     {
         native_host_ = host;
     }
@@ -1186,13 +1186,13 @@ private:
     /// Optional and non-owning, like set_native_host(): the backend installs its spell checker
     /// here. Left null, a TextBox shows no squiggles.
     /// See Element::sync_spell_checker() for how it reaches a control.
-    void set_spell_checker(SpellChecker* checker)
+    inline void set_spell_checker(SpellChecker* checker)
     {
         spell_checker_ = checker;
     }
     /// Optional: what set_spell_checker() would be given, asked the first time a control needs a
     /// checker and none is set, so the backend makes one only for a window that has use for it.
-    void set_spell_checker_source(Callback<SpellChecker*()> source)
+    inline void set_spell_checker_source(Callback<SpellChecker*()> source)
     {
         spell_checker_source_ = std::move(source);
     }
@@ -1200,7 +1200,7 @@ private:
     /// Optional and non-owning: the host that pops up real context menus. Left null,
     /// right-click and Shift+F10 do nothing; see handle_context_menu() and
     /// Element::handle_context_menu().
-    void set_context_menu_host(ContextMenuHost* host)
+    inline void set_context_menu_host(ContextMenuHost* host)
     {
         context_menu_host_ = host;
     }
@@ -1212,7 +1212,7 @@ private:
     /// The host reads everything configured so far (title, style, chrome, icon, system menu,
     /// taskbar state) when it is ready for it, so the order of these setters and of installing
     /// the host doesn't matter.
-    void set_window_host(WindowHost* host)
+    inline void set_window_host(WindowHost* host)
     {
         const std::lock_guard lock{posted_mutex_}; // post() reads it from other threads
         window_host_ = host;
@@ -1277,7 +1277,7 @@ private:
         std::unique_ptr<ElementWatch> owner_watch;
         std::unique_ptr<ElementWatch> content_watch;
         /// Both the owner and its popup content are still alive.
-        [[nodiscard]] bool alive() const
+        [[nodiscard]] inline bool alive() const
         {
             return owner_watch && owner_watch->get() != nullptr && content_watch && content_watch->get() != nullptr;
         }
@@ -1470,7 +1470,7 @@ private:
     // check itself is switched.
     std::thread::id thread_ = std::this_thread::get_id(); // the UI thread: the constructing one
     // Reports a call from another thread. `call` empty names the caller from `where`.
-    void check_thread(std::string_view call = {}, std::source_location where = std::source_location::current()) const
+    inline void check_thread(std::string_view call = {}, std::source_location where = std::source_location::current()) const
     {
 #if LIBWINUI_THREAD_CHECKS
         if (thread_ != std::this_thread::get_id())
@@ -1484,7 +1484,7 @@ private:
     }
     // A content, modal or popup root carries the window's thread for Element's own check.
     // A root with no parent also records the window, for Element::window(), and is told so.
-    void adopt_root(Element& root) const
+    inline void adopt_root(Element& root) const
     {
         root.tree_thread_ = thread_;
         if (root.parent_ == nullptr && root.window_ == nullptr)

@@ -85,7 +85,7 @@ public:
         return observer;
     }
     /// The child, or nullptr. Owned by the ScaleToFit.
-    [[nodiscard]] Element* child() const
+    [[nodiscard]] inline Element* child() const
     {
         return child_.get();
     }
@@ -93,36 +93,36 @@ public:
     /// How the child is scaled. `Uniform` by default. None never scales, and Fill scales each axis
     /// to its room. Uniform fits inside the room and UniformToFill covers it, both keeping the
     /// aspect ratio.
-    [[nodiscard]] Stretch stretch() const
+    [[nodiscard]] inline Stretch stretch() const
     {
         return stretch_;
     }
     /// Changes the stretch. Updates layout.
-    void set_stretch(Stretch stretch)
+    inline void set_stretch(Stretch stretch)
     {
         stretch_ = stretch;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// Whether scaling may enlarge, shrink or both. `Both` by default.
-    [[nodiscard]] StretchDirection stretch_direction() const
+    [[nodiscard]] inline StretchDirection stretch_direction() const
     {
         return stretch_direction_;
     }
     /// Changes which way scaling may go. Updates layout.
-    void set_stretch_direction(StretchDirection direction)
+    inline void set_stretch_direction(StretchDirection direction)
     {
         stretch_direction_ = direction;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The horizontal scale the child is drawn at, from the last arrange. 1 before the first.
-    [[nodiscard]] float scale_x() const
+    [[nodiscard]] inline float scale_x() const
     {
         return scale_x_;
     }
     /// The vertical scale, like scale_x(). The two differ only under Stretch::Fill.
-    [[nodiscard]] float scale_y() const
+    [[nodiscard]] inline float scale_y() const
     {
         return scale_y_;
     }
@@ -132,7 +132,7 @@ public:
     /// both unbounded, the factors are 1 and 1.
     [[nodiscard]] Size compute_scale_factor(Size available, Size content) const;
     /// The child, when there is one.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (child_)
         {
@@ -153,12 +153,12 @@ private:
 
 protected:
     /// The point as the scaled child sees it.
-    [[nodiscard]] Point map_to_children(Point p) const override
+    [[nodiscard]] inline Point map_to_children(Point p) const override
     {
         return to_child(p);
     }
     /// The child is clipped to the bounds, and can be hit only inside them.
-    [[nodiscard]] std::optional<Rect> children_hit_clip() const override
+    [[nodiscard]] inline std::optional<Rect> children_hit_clip() const override
     {
         return bounds();
     }

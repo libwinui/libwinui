@@ -38,7 +38,7 @@ LIBWINUI_EXPORT struct ContextMenuItem
     bool        is_separator = false; ///< A divider line instead of an item.
 
     /// A separator entry (disabled, no text).
-    [[nodiscard]] static ContextMenuItem separator()
+    [[nodiscard]] static inline ContextMenuItem separator()
     {
         return ContextMenuItem{{}, false, true};
     }

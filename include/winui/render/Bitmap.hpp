@@ -126,22 +126,22 @@ public:
     Bitmap(int width, int height, PixelFormat format);
 
     /// Width in pixels; 0 when empty.
-    [[nodiscard]] int width() const
+    [[nodiscard]] inline int width() const
     {
         return width_;
     }
     /// Height in pixels; 0 when empty.
-    [[nodiscard]] int height() const
+    [[nodiscard]] inline int height() const
     {
         return height_;
     }
     /// True when either dimension is zero (nothing to draw).
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return width_ <= 0 || height_ <= 0;
     }
     /// How the bytes are laid out; Rgba8 unless the bitmap was made in another format.
-    [[nodiscard]] PixelFormat format() const
+    [[nodiscard]] inline PixelFormat format() const
     {
         return format_;
     }
@@ -149,13 +149,13 @@ public:
     [[nodiscard]] Bitmap converted(PixelFormat format) const;
 
     /// The pixel bytes in format()'s layout, row-major, 4 per pixel, width * 4 per row.
-    [[nodiscard]] std::span<const std::uint8_t> bytes() const
+    [[nodiscard]] inline std::span<const std::uint8_t> bytes() const
     {
         return px_;
     }
     /// The pixel bytes, writable; width * height * 4 of them. Asking for them counts as a change
     /// to the pixels (content_id()).
-    [[nodiscard]] std::span<std::uint8_t> bytes()
+    [[nodiscard]] inline std::span<std::uint8_t> bytes()
     {
         content_id_ = 0;
         return px_;
@@ -167,7 +167,7 @@ public:
     [[nodiscard]] std::uint64_t content_id() const;
 
     /// Same size, format and bytes.
-    friend bool operator==(const Bitmap& a, const Bitmap& b)
+    friend inline bool operator==(const Bitmap& a, const Bitmap& b)
     {
         return a.width_ == b.width_ && a.height_ == b.height_ && a.format_ == b.format_ && a.px_ == b.px_;
     }
@@ -223,7 +223,7 @@ public:
     [[nodiscard]] Bitmap scaled_to_fit(int max_width, int max_height) const;
 
 private:
-    [[nodiscard]] std::size_t index(int x, int y) const
+    [[nodiscard]] inline std::size_t index(int x, int y) const
     {
         return (static_cast<std::size_t>(y) * width_ + x) * 4;
     }
@@ -260,22 +260,22 @@ LIBWINUI_EXPORT struct AnimatedImage
     bool auto_play = true;
 
     /// True with no frames, or an empty first frame.
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return frames.empty() || frames.front().empty();
     }
     /// True with more than one frame.
-    [[nodiscard]] bool animated() const
+    [[nodiscard]] inline bool animated() const
     {
         return frames.size() > 1;
     }
     /// The first frame's width in pixels; 0 with no frames.
-    [[nodiscard]] int width() const
+    [[nodiscard]] inline int width() const
     {
         return frames.empty() ? 0 : frames.front().width();
     }
     /// The first frame's height in pixels; 0 with no frames.
-    [[nodiscard]] int height() const
+    [[nodiscard]] inline int height() const
     {
         return frames.empty() ? 0 : frames.front().height();
     }
@@ -287,7 +287,7 @@ LIBWINUI_EXPORT struct AnimatedImage
     [[nodiscard]] static AnimatedImage read(const std::filesystem::path& path);
 
     /// Same frames, delays, loop count and auto_play.
-    friend bool operator==(const AnimatedImage&, const AnimatedImage&) = default;
+    friend inline bool operator==(const AnimatedImage&, const AnimatedImage&) = default;
 };
 
 /// Comparison result for golden-image tests, from compare().

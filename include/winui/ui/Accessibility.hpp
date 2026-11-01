@@ -64,7 +64,7 @@ LIBWINUI_EXPORT struct Accessibility
     std::string automation_id{};
 
     /// True when nothing was specified, so the control falls back to its visible text.
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return name.empty() && description.empty() && !decorative && automation_id.empty();
     }

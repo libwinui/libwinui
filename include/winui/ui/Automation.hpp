@@ -138,13 +138,13 @@ public:
     virtual bool select_item() = 0;
     /// Adds this entry to the selection and keeps the others; true when it did. The default is
     /// select_item(), for a container that selects one entry at a time.
-    virtual bool add_to_selection()
+    inline virtual bool add_to_selection()
     {
         return select_item();
     }
     /// Takes this entry out of the selection; true when it did. The default refuses, for an
     /// entry that is deselected only by selecting another one.
-    virtual bool remove_from_selection()
+    inline virtual bool remove_from_selection()
     {
         return false;
     }

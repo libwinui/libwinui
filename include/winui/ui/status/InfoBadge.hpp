@@ -77,12 +77,12 @@ public:
     /// A dot badge in the Default severity.
     InfoBadgeControl() = default;
     /// A badge showing `value` (clamped to >= 0).
-    explicit InfoBadgeControl(int value) : value_((std::max)(0, value))
+    inline explicit InfoBadgeControl(int value) : value_((std::max)(0, value))
     {
     }
 
     /// The number shown; unset (the default) shows the icon, or a dot when there is none.
-    [[nodiscard]] std::optional<int> value() const
+    [[nodiscard]] inline std::optional<int> value() const
     {
         return value_;
     }
@@ -91,7 +91,7 @@ public:
     void set_value(std::optional<int> value);
 
     /// Which severity color the fill comes from; Default (the accent) by default.
-    [[nodiscard]] InfoBadgeSeverity severity() const
+    [[nodiscard]] inline InfoBadgeSeverity severity() const
     {
         return severity_;
     }
@@ -100,7 +100,7 @@ public:
 
     /// The icon shown while value() is unset, sized to the badge: a glyph's code point and font
     /// at the badge's glyph size, or a path or picture fitted into the same square.
-    [[nodiscard]] const IconSource& icon() const
+    [[nodiscard]] inline const IconSource& icon() const
     {
         return icon_;
     }
@@ -109,12 +109,12 @@ public:
 
     /// A local fixed background, overriding the severity's color. nullopt when there is none or
     /// a theme resource is set.
-    [[nodiscard]] const std::optional<Color>& background() const
+    [[nodiscard]] inline const std::optional<Color>& background() const
     {
         return background_;
     }
     /// The local background as a theme resource, or nullptr.
-    [[nodiscard]] ThemeColor background_resource() const
+    [[nodiscard]] inline ThemeColor background_resource() const
     {
         return background_resource_;
     }
@@ -131,17 +131,17 @@ public:
     [[nodiscard]] static IconGlyph severity_glyph(InfoBadgeSeverity severity);
 
     /// True: measuring reads only the badge's own state, the measurer and the theme.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
 
     // ---- automation ----
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Custom;
     }
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return value_ ? std::to_string(*value_) : std::string{};
     }

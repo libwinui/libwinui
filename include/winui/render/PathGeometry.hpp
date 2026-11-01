@@ -132,12 +132,12 @@ LIBWINUI_EXPORT struct PathSegment
     Point           p3{};                         ///< The end of a Cubic; unused otherwise.
 
     /// The point the segment ends at, whichever member that is for its `kind`.
-    [[nodiscard]] Point end() const
+    [[nodiscard]] inline Point end() const
     {
         return kind == PathSegmentKind::Line ? p1 : kind == PathSegmentKind::Quadratic ? p2 : p3;
     }
 
-    friend bool operator==(const PathSegment&, const PathSegment&) = default;
+    friend inline bool operator==(const PathSegment&, const PathSegment&) = default;
 };
 
 /// One figure of a geometry: a start point, its segments, whether the last point joins the first
@@ -159,7 +159,7 @@ LIBWINUI_EXPORT struct PathFigure
     bool                     closed = false; ///< Join the last point back to `start` when stroking.
     bool                     filled = true;  ///< Whether the figure's inside is painted by a fill.
 
-    friend bool operator==(const PathFigure&, const PathFigure&) = default;
+    friend inline bool operator==(const PathFigure&, const PathFigure&) = default;
 };
 
 /// A set of figures and the fill rule between them: what a Path, a path icon or any other Shape draws.
@@ -207,7 +207,7 @@ public:
     [[nodiscard]] static std::optional<PathGeometry> parse(std::string_view markup);
 
     /// True when there are no figures (the geometry draws nothing).
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return figures.empty();
     }
@@ -224,7 +224,7 @@ public:
     /// enough for hit testing.
     [[nodiscard]] bool fill_contains(Point p) const;
 
-    friend bool operator==(const PathGeometry&, const PathGeometry&) = default;
+    friend inline bool operator==(const PathGeometry&, const PathGeometry&) = default;
 };
 
 } // namespace ui

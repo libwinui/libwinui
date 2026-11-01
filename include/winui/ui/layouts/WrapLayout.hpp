@@ -63,7 +63,7 @@ public:
     ~WrapLayoutEngine() override;
 
     /// The line direction; Horizontal by default.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
@@ -71,21 +71,21 @@ public:
     void set_orientation(Orientation orientation);
     /// The least gap between neighbors along a line, in DIPs; 0 by default. The Space* alignments
     /// widen it.
-    [[nodiscard]] float min_item_spacing() const
+    [[nodiscard]] inline float min_item_spacing() const
     {
         return min_item_spacing_;
     }
     /// Changes the item spacing and measures the host again.
     void set_min_item_spacing(float spacing);
     /// The gap between consecutive lines, in DIPs; 0 by default.
-    [[nodiscard]] float line_spacing() const
+    [[nodiscard]] inline float line_spacing() const
     {
         return line_spacing_;
     }
     /// Changes the line spacing and measures the host again.
     void set_line_spacing(float spacing);
     /// How each line distributes its spare room; ItemsJustification::Start by default.
-    [[nodiscard]] ItemsJustification line_alignment() const
+    [[nodiscard]] inline ItemsJustification line_alignment() const
     {
         return line_alignment_;
     }
@@ -106,7 +106,7 @@ private:
     class Delegates;
     friend class Delegates;
 
-    [[nodiscard]] bool vertical_scroll() const
+    [[nodiscard]] inline bool vertical_scroll() const
     {
         return orientation_ == Orientation::Horizontal;
     }
@@ -156,7 +156,7 @@ LIBWINUI_EXPORT struct WrapLayout
     ItemsJustification line_alignment = ItemsJustification::Start;
 
     /// Consumes the value and returns the layout object.
-    [[nodiscard]] std::unique_ptr<Layout> build() &&
+    [[nodiscard]] inline std::unique_ptr<Layout> build() &&
     {
         auto layout = std::make_unique<WrapLayoutEngine>();
         layout->set_orientation(orientation);

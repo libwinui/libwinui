@@ -122,7 +122,7 @@ public:
 
     // ---- suggestions (filtered by the app) ----
     /// The list last passed to set_suggestions(), shown as-is in the popup.
-    [[nodiscard]] const std::vector<std::string>& suggestions() const
+    [[nodiscard]] inline const std::vector<std::string>& suggestions() const
     {
         return suggestions_;
     }
@@ -132,13 +132,13 @@ public:
     void set_suggestions(std::vector<std::string> suggestions);
 
     /// Whether the suggestion popup is showing.
-    [[nodiscard]] bool is_suggestion_list_open() const
+    [[nodiscard]] inline bool is_suggestion_list_open() const
     {
         return is_open_;
     }
 
     /// The query button's icon; empty for no button.
-    [[nodiscard]] const IconSource& query_icon() const
+    [[nodiscard]] inline const IconSource& query_icon() const
     {
         return query_icon_;
     }
@@ -149,24 +149,24 @@ public:
     [[nodiscard]] Rect query_button_rect() const;
 
     /// The hint shown while the text is empty.
-    [[nodiscard]] const std::string& placeholder_text() const
+    [[nodiscard]] inline const std::string& placeholder_text() const
     {
         return text_box_->placeholder_text();
     }
     /// Sets the hint shown while the text is empty.
-    void set_placeholder_text(std::string text)
+    inline void set_placeholder_text(std::string text)
     {
         text_box_->set_placeholder_text(std::move(text));
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// The header text above the box; empty for none.
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return header_.text();
     }
     /// The label above the control. Empty (the default) draws none and takes no room.
-    void set_header(std::string header)
+    inline void set_header(std::string header)
     {
         if (header_.set_text(std::move(header)))
         {
@@ -174,12 +174,12 @@ public:
         }
     }
     /// The secondary text under the box; empty (the default) draws none.
-    [[nodiscard]] const std::string& description() const
+    [[nodiscard]] inline const std::string& description() const
     {
         return description_.text();
     }
     /// Sets the description. Empty draws none and takes no room.
-    void set_description(std::string description)
+    inline void set_description(std::string description)
     {
         if (description_.set_text(std::move(description)))
         {
@@ -188,12 +188,12 @@ public:
     }
     /// What is wrong with the value, shown in the description's place in the critical color,
     /// with the border in the same color; empty (the default) shows the description.
-    [[nodiscard]] const std::string& error() const
+    [[nodiscard]] inline const std::string& error() const
     {
         return description_.error();
     }
     /// Sets the error. Empty shows the description again.
-    void set_error(std::string error)
+    inline void set_error(std::string error)
     {
         if (description_.set_error(std::move(error)))
         {
@@ -203,17 +203,17 @@ public:
     }
     /// The description, or the error while one is set, is the help text a screen reader offers
     /// when accessibility().description is empty.
-    [[nodiscard]] std::string automation_help_text_fallback() const override
+    [[nodiscard]] inline std::string automation_help_text_fallback() const override
     {
         return description_.shown();
     }
     /// Invalid while an error is set.
-    [[nodiscard]] bool automation_invalid() const override
+    [[nodiscard]] inline bool automation_invalid() const override
     {
         return description_.has_error();
     }
     /// The header names the control when accessibility().name does not.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_.text();
     }
@@ -222,7 +222,7 @@ public:
     /// Fired after every change to the text, with the new text and the reason
     /// (AutoSuggestBoxTextChangeReason). set_text() doesn't fire it. When the reason is UserInput,
     /// filter the suggestions here and call set_suggestions().
-    void on_text_changed(Callback<void(const AutoSuggestBoxTextChangedArgs&)> handler)
+    inline void on_text_changed(Callback<void(const AutoSuggestBoxTextChangedArgs&)> handler)
     {
         on_text_changed_ = std::move(handler);
     }
@@ -230,38 +230,38 @@ public:
     /// while an arrow key has it highlighted. A highlight alone doesn't fire it. That shows in
     /// on_text_changed() with the reason AutoSuggestBoxTextChangeReason::Suggestion. Fires right
     /// before on_query_submitted(), with the suggestion already in the box.
-    void on_suggestion_chosen(Callback<void(std::size_t)> handler)
+    inline void on_suggestion_chosen(Callback<void(std::size_t)> handler)
     {
         on_suggestion_chosen_ = std::move(handler);
     }
     /// Fired on Enter, a query button click, or after on_suggestion_chosen() for a row click. It
     /// fires even with nothing highlighted, for a typed query with no chosen index. The popup
     /// closes afterward.
-    void on_query_submitted(Callback<void(const AutoSuggestBoxQuerySubmittedArgs&)> handler)
+    inline void on_query_submitted(Callback<void(const AutoSuggestBoxQuerySubmittedArgs&)> handler)
     {
         on_query_submitted_ = std::move(handler);
     }
 
     // ---- focus ----
     /// Whether the box has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// Focusable while enabled.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
 
     // ---- the internal TextBox ----
     /// Visits the internal TextBox.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         visit(*text_box_);
     }
     /// One tab stop: the internal TextBox is part of this control, not a stop of its own.
-    void collect_focusables(std::vector<Element*>& out) override
+    inline void collect_focusables(std::vector<Element*>& out) override
     {
         if (focusable())
         {
@@ -281,17 +281,17 @@ public:
     // A value only, delegated to text_box_. There is no expand or collapse to expose, because the
     // popup shows whenever the box is focused and has suggestions.
     /// The text field's cursor over the text field: an I-beam, or an arrow over its buttons.
-    [[nodiscard]] std::optional<CursorShape> cursor_at(Point p) const override
+    [[nodiscard]] inline std::optional<CursorShape> cursor_at(Point p) const override
     {
         return text_box_->bounds().contains(p) ? text_box_->cursor_at(p) : std::nullopt;
     }
     /// Always AutomationRole::Edit.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Edit;
     }
     /// The inner text box's caret.
-    [[nodiscard]] std::optional<Rect> caret_bounds() const override
+    [[nodiscard]] inline std::optional<Rect> caret_bounds() const override
     {
         return text_box_->caret_bounds();
     }
@@ -319,19 +319,19 @@ private:
     [[nodiscard]] bool takes_shortcut(const KeyEvent& e) const;
     // Left/Right reach the inner TextBox caret, and Up/Down walk the suggestion list whenever
     // it is open. Claimed so Window's directional focus navigation leaves them alone.
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowUp || key == Key::ArrowDown || key == Key::ArrowLeft || key == Key::ArrowRight;
     }
     // Enter commits the suggestion or the query (Element::key_override()).
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return true;
     }
     // Opens or closes the suggestion list's popup to match is_open_.
     void sync_popup();
     // This control alone: the internal TextBox is not live on its own.
-    void collect_live(std::vector<Element*>& out) override
+    inline void collect_live(std::vector<Element*>& out) override
     {
         out.push_back(this);
     }
@@ -388,29 +388,29 @@ protected:
 
 protected:
     /// None: the field shows focus with its accent border.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return false;
     }
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.value = this;
     }
     // text().
-    [[nodiscard]] std::string text_value() const override
+    [[nodiscard]] inline std::string text_value() const override
     {
         return text();
     }
     // Read-only while disabled.
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return !is_enabled();
     }
     // Sets the text through the internal TextBox; false while disabled.
-    bool set_text_value(std::string_view value) override
+    inline bool set_text_value(std::string_view value) override
     {
         if (!is_enabled())
         {

@@ -294,7 +294,7 @@ public:
 
     // ---- content ----
     /// The columns, left to right. A row's cell `i` is drawn under column `i`.
-    [[nodiscard]] const std::vector<TableViewColumn>& columns() const
+    [[nodiscard]] inline const std::vector<TableViewColumn>& columns() const
     {
         return columns_;
     }
@@ -303,7 +303,7 @@ public:
 
     /// The rows in source order. Each inner vector is one row's cell text, indexed by column. A
     /// row with fewer cells than there are columns shows blank cells past its own size.
-    [[nodiscard]] const std::vector<std::vector<std::string>>& rows() const
+    [[nodiscard]] inline const std::vector<std::vector<std::string>>& rows() const
     {
         return rows_;
     }
@@ -314,7 +314,7 @@ public:
 
     /// Height of every body row in DIPs; 40 by default. The header strip has its own fixed height
     /// of 40.
-    [[nodiscard]] float row_height() const
+    [[nodiscard]] inline float row_height() const
     {
         return row_height_;
     }
@@ -325,7 +325,7 @@ public:
     /// instead of being trimmed, and a template cell or an editor is measured at its own height.
     /// Off by default. A row keeps its height while it is out of view. Rows not yet seen count as
     /// row_height() until they scroll in.
-    [[nodiscard]] bool size_rows_to_content() const
+    [[nodiscard]] inline bool size_rows_to_content() const
     {
         return size_rows_to_content_;
     }
@@ -334,7 +334,7 @@ public:
     // ---- columns ----
     /// The width the last arrange gave a column, whether it is fixed, Auto or a fraction. 0 before
     /// the first arrange or past the last column.
-    [[nodiscard]] float column_actual_width(std::size_t column) const
+    [[nodiscard]] inline float column_actual_width(std::size_t column) const
     {
         return column < actual_widths_.size() ? actual_widths_[column] : 0.0f;
     }
@@ -348,20 +348,20 @@ public:
 
     /// The table-wide switch for dragging header dividers; on by default. A column opts out with
     /// TableViewColumn::can_resize.
-    [[nodiscard]] bool can_user_resize_columns() const
+    [[nodiscard]] inline bool can_user_resize_columns() const
     {
         return can_user_resize_columns_;
     }
     void set_can_user_resize_columns(bool can); ///< See can_user_resize_columns().
 
     /// Called with the column and its new width in DIPs on every step of a user resize drag.
-    void on_column_resized(Callback<void(const TableViewColumnResizedArgs&)> handler)
+    inline void on_column_resized(Callback<void(const TableViewColumnResizedArgs&)> handler)
     {
         on_column_resized_ = std::move(handler);
     }
 
     /// How far the columns are scrolled sideways, DIPs. 0 is the leading edge.
-    [[nodiscard]] float horizontal_offset() const
+    [[nodiscard]] inline float horizontal_offset() const
     {
         return horizontal_offset_;
     }
@@ -371,19 +371,19 @@ public:
     // ---- sorting ----
     /// The table-wide switch for sorting by a header click; on by default. A column opts out with
     /// TableViewColumn::can_sort.
-    [[nodiscard]] bool can_user_sort_columns() const
+    [[nodiscard]] inline bool can_user_sort_columns() const
     {
         return can_user_sort_columns_;
     }
     void set_can_user_sort_columns(bool can); ///< See can_user_sort_columns().
 
     /// The sorted column. Unset while the rows are in source order.
-    [[nodiscard]] std::optional<std::size_t> sort_column() const
+    [[nodiscard]] inline std::optional<std::size_t> sort_column() const
     {
         return detail::optional_index(sort_column_);
     }
     /// The sorted column's direction. None while unsorted.
-    [[nodiscard]] TableViewSortDirection sort_direction() const
+    [[nodiscard]] inline TableViewSortDirection sort_direction() const
     {
         return sort_direction_;
     }
@@ -395,30 +395,30 @@ public:
     /// unless on_sorting() cancels. Returns true when the sort changed.
     bool toggle_sort_direction(std::size_t column);
     /// The column header the keyboard is on. Unset while the keys move through the rows.
-    [[nodiscard]] std::optional<std::size_t> header_cursor() const
+    [[nodiscard]] inline std::optional<std::size_t> header_cursor() const
     {
         return detail::optional_index(header_cursor_);
     }
     /// Restores the source order. Returns true when there was a sort to clear.
-    bool clear_sort()
+    inline bool clear_sort()
     {
         return sort_column_ != detail::NoIndex && sort_by_column(sort_column_, TableViewSortDirection::None);
     }
     /// Sets how two rows compare for a sort. Without one, the default, the cell text is compared,
     /// as numbers when both cells read as numbers (compare_text()).
-    void set_sort_comparer(SortComparer comparer)
+    inline void set_sort_comparer(SortComparer comparer)
     {
         sort_comparer_ = std::move(comparer);
     }
     /// Called before a header click or key sorts a column. Return ui::Cancel to keep the current
     /// order. sort_by_column() does not raise it.
-    void on_sorting(Callback<Decision(const TableViewSortingArgs&)> handler)
+    inline void on_sorting(Callback<Decision(const TableViewSortingArgs&)> handler)
     {
         on_sorting_ = std::move(handler);
     }
     /// Called after every sort change, with the column and its new direction. When the sort was
     /// cleared, the direction is None and there is no column.
-    void on_sorted(Callback<void(const TableViewSortedArgs&)> handler)
+    inline void on_sorted(Callback<void(const TableViewSortedArgs&)> handler)
     {
         on_sorted_ = std::move(handler);
     }
@@ -428,18 +428,18 @@ public:
 
     /// The index into rows() of the row shown at `position` in the sorted and grouped view. Unset
     /// for a group header and past the end.
-    [[nodiscard]] std::optional<std::size_t> row_at_position(std::size_t position) const
+    [[nodiscard]] inline std::optional<std::size_t> row_at_position(std::size_t position) const
     {
         return detail::optional_index(row_at(position));
     }
     /// Where row `row`, an index into rows(), is shown in the view. Unset while its group is
     /// collapsed.
-    [[nodiscard]] std::optional<std::size_t> position_of_row(std::size_t row) const
+    [[nodiscard]] inline std::optional<std::size_t> position_of_row(std::size_t row) const
     {
         return detail::optional_index(row_position(row));
     }
     /// How many positions the view has: the rows shown plus the group header rows.
-    [[nodiscard]] std::size_t position_count() const
+    [[nodiscard]] inline std::size_t position_count() const
     {
         return order_.size();
     }
@@ -447,27 +447,27 @@ public:
     // ---- selection ----
     /// The selection mode; Single by default. Switching to None clears the selection. Switching to
     /// Single keeps at most one row, the first selected.
-    [[nodiscard]] SelectionMode selection_mode() const
+    [[nodiscard]] inline SelectionMode selection_mode() const
     {
         return selection_mode_;
     }
     void set_selection_mode(SelectionMode mode); ///< See selection_mode().
 
     /// The selected row with the lowest index into rows(). Unset when nothing is selected.
-    [[nodiscard]] std::optional<std::size_t> selected_row() const
+    [[nodiscard]] inline std::optional<std::size_t> selected_row() const
     {
         return detail::optional_index(first_selected_row());
     }
     /// Selects `index` alone, clamped to the rows, and scrolls it into view. Does nothing, and
     /// fires no callback, if it is already the selection, if there are no rows, or under
     /// SelectionMode::None. Unset clears the selection.
-    void set_selected_row(std::optional<std::size_t> index)
+    inline void set_selected_row(std::optional<std::size_t> index)
     {
         select_row(detail::index_or_none(index));
     }
 
     /// Every selected row, as ascending indices into rows().
-    [[nodiscard]] const std::vector<std::size_t>& selected_rows() const
+    [[nodiscard]] inline const std::vector<std::size_t>& selected_rows() const
     {
         return selection_;
     }
@@ -481,7 +481,7 @@ public:
     /// Called with selected_row() whenever the selection changes: by click, by key, by
     /// set_selected_row() or set_selected_rows(), or by set_rows() clearing a selection. Replaces
     /// any previous handler.
-    void on_selection_changed(Callback<void(std::optional<std::size_t>)> handler)
+    inline void on_selection_changed(Callback<void(std::optional<std::size_t>)> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
@@ -489,7 +489,7 @@ public:
     /// on the row, or on Shift+F10 or the Menu key while the row is the current one. The row is
     /// selected first, unless it already is or the selection mode is None. An empty list opens no
     /// menu. Replaces any previous one.
-    void set_item_context_menu(Callback<std::vector<MenuItem>(std::size_t row)> menu)
+    inline void set_item_context_menu(Callback<std::vector<MenuItem>(std::size_t row)> menu)
     {
         item_context_menu_ = std::move(menu);
     }
@@ -510,7 +510,7 @@ public:
     /// the table's own tool_tip() shows instead.
     using CellToolTip = Callback<std::string(std::size_t row, std::size_t column) const>;
     /// Sets the per-cell tips; see CellToolTip.
-    void set_cell_tool_tip(CellToolTip tip)
+    inline void set_cell_tool_tip(CellToolTip tip)
     {
         cell_tool_tip_ = std::move(tip);
     }
@@ -523,7 +523,7 @@ public:
     // ---- editing ----
     /// Whether editing is off for the whole table, the default. A column opts out on its own with
     /// TableViewColumn::read_only.
-    [[nodiscard]] bool read_only() const
+    [[nodiscard]] inline bool read_only() const
     {
         return read_only_;
     }
@@ -538,22 +538,22 @@ public:
     void set_cell_editor_factory(CellFactory factory);
 
     /// Whether a cell editor is open.
-    [[nodiscard]] bool is_editing() const
+    [[nodiscard]] inline bool is_editing() const
     {
         return editor_ != nullptr;
     }
     /// The row of the open edit, an index into rows(). Unset when none is open.
-    [[nodiscard]] std::optional<std::size_t> editing_row() const
+    [[nodiscard]] inline std::optional<std::size_t> editing_row() const
     {
         return detail::optional_index(edit_row_);
     }
     /// The column of the open edit. Unset when none is open.
-    [[nodiscard]] std::optional<std::size_t> editing_column() const
+    [[nodiscard]] inline std::optional<std::size_t> editing_column() const
     {
         return detail::optional_index(edit_column_);
     }
     /// The open editor, either the TextBox or what the editor factory built, or nullptr.
-    [[nodiscard]] Element* editor() const
+    [[nodiscard]] inline Element* editor() const
     {
         return editor_.get();
     }
@@ -565,7 +565,7 @@ public:
 
     /// The current column, where a click on a cell or Left and Right put it. F2 edits its cell on
     /// the keyboard's row. Unset until then, and F2 then edits the first editable column.
-    [[nodiscard]] std::optional<std::size_t> current_column() const
+    [[nodiscard]] inline std::optional<std::size_t> current_column() const
     {
         return detail::optional_index(current_column_);
     }
@@ -574,7 +574,7 @@ public:
 
     /// Called before an editor opens on a cell, with its row and column. Return ui::Cancel to keep
     /// it closed.
-    void on_beginning_edit(Callback<Decision(const TableViewCellArgs&)> handler)
+    inline void on_beginning_edit(Callback<Decision(const TableViewCellArgs&)> handler)
     {
         on_beginning_edit_ = std::move(handler);
     }
@@ -582,7 +582,7 @@ public:
     /// text is the cell's own text. Return ui::Cancel to reject the value, which keeps the editor
     /// open. The handler may rewrite `text` to what the cell should show. Without a handler a
     /// commit stores the text in rows().
-    void on_cell_edited(Callback<Decision(const TableViewCellEditArgs&)> handler)
+    inline void on_cell_edited(Callback<Decision(const TableViewCellEditArgs&)> handler)
     {
         on_cell_edited_ = std::move(handler);
     }
@@ -609,13 +609,13 @@ public:
     /// Group `group`'s built header content while its header is in view, else nullptr.
     [[nodiscard]] Element* group_header_element(std::size_t group) const;
     /// The keys set_group_keys() was given.
-    [[nodiscard]] const std::vector<std::string>& group_keys() const
+    [[nodiscard]] inline const std::vector<std::string>& group_keys() const
     {
         return group_keys_;
     }
     /// Whether the keys group the rows; on by default. Off shows the rows ungrouped and keeps the
     /// keys, so turning it back on groups them again.
-    [[nodiscard]] bool grouping_enabled() const
+    [[nodiscard]] inline bool grouping_enabled() const
     {
         return grouping_enabled_;
     }
@@ -623,26 +623,26 @@ public:
     /// Whether group headers are sticky; on by default. The current group's header stays pinned
     /// under the column headers until the next group's header pushes it up. A click on it still
     /// toggles the group.
-    [[nodiscard]] bool sticky_group_headers() const
+    [[nodiscard]] inline bool sticky_group_headers() const
     {
         return sticky_headers_;
     }
     void set_sticky_group_headers(bool sticky); ///< See sticky_group_headers().
 
     /// How many groups there are. 0 while the rows are not grouped.
-    [[nodiscard]] std::size_t group_count() const
+    [[nodiscard]] inline std::size_t group_count() const
     {
         return groups_.size();
     }
     /// A group's key, the text on its header. Empty past the last group.
     [[nodiscard]] const std::string& group_key(std::size_t group) const;
     /// How many rows a group holds, in or out of view. 0 past the last group.
-    [[nodiscard]] std::size_t group_size(std::size_t group) const
+    [[nodiscard]] inline std::size_t group_size(std::size_t group) const
     {
         return group < groups_.size() ? groups_[group].count : 0;
     }
     /// Whether a group's rows are shown.
-    [[nodiscard]] bool is_group_expanded(std::size_t group) const
+    [[nodiscard]] inline bool is_group_expanded(std::size_t group) const
     {
         return group < groups_.size() && groups_[group].expanded;
     }
@@ -652,25 +652,25 @@ public:
     void expand_all_groups();   ///< Expands every group.
     void collapse_all_groups(); ///< Collapses every group.
     /// The group a row is filed under. Unset while the rows are not grouped.
-    [[nodiscard]] std::optional<std::size_t> group_of_row(std::size_t row) const
+    [[nodiscard]] inline std::optional<std::size_t> group_of_row(std::size_t row) const
     {
         return detail::optional_index(row_group(row));
     }
     /// Whether view position `position` is a group header row.
-    [[nodiscard]] bool is_group_header(std::size_t position) const
+    [[nodiscard]] inline bool is_group_header(std::size_t position) const
     {
         return position < order_.size() && order_[position] == detail::NoIndex;
     }
     /// The group of the row or header at view position `position`. Unset past the end or while the
     /// rows are not grouped.
-    [[nodiscard]] std::optional<std::size_t> group_at_position(std::size_t position) const
+    [[nodiscard]] inline std::optional<std::size_t> group_at_position(std::size_t position) const
     {
         return detail::optional_index(position_group(position));
     }
 
     // ---- appearance ----
     /// Row separators, column separators, both (the default) or neither.
-    [[nodiscard]] TableViewGridLinesVisibility grid_lines_visibility() const
+    [[nodiscard]] inline TableViewGridLinesVisibility grid_lines_visibility() const
     {
         return grid_lines_;
     }
@@ -678,7 +678,7 @@ public:
 
     /// Whether rows are banded: every second row in view order gets the alternating background.
     /// Off by default.
-    [[nodiscard]] bool alternating_rows() const
+    [[nodiscard]] inline bool alternating_rows() const
     {
         return alternating_rows_;
     }
@@ -686,7 +686,7 @@ public:
     /// Sets the banding color. Empty, the default, uses the theme's banding color.
     void set_alternating_row_background(Paint paint);
     /// See set_alternating_row_background().
-    [[nodiscard]] const Paint& alternating_row_background() const
+    [[nodiscard]] inline const Paint& alternating_row_background() const
     {
         return alternating_background_;
     }
@@ -695,14 +695,14 @@ public:
     /// nothing. The table owns it.
     void set_empty_content(std::unique_ptr<Element> content);
     /// The empty-state content, or nullptr.
-    [[nodiscard]] Element* empty_content() const
+    [[nodiscard]] inline Element* empty_content() const
     {
         return empty_content_.get();
     }
 
 
     /// The body's current vertical scroll offset, DIPs.
-    [[nodiscard]] float scroll_offset() const
+    [[nodiscard]] inline float scroll_offset() const
     {
         return list_->scroll_offset();
     }
@@ -714,12 +714,12 @@ public:
 
     // ---- focus ----
     /// Whether the grid holds keyboard focus and draws its focus ring.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// Focusable while enabled and holding at least one row.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled() && !rows_.empty();
     }
@@ -738,7 +738,7 @@ public:
     /// group headers, which expand and collapse. A row holds its cells, one per column, each named
     /// by its text. A template cell's Element or an open editor sits under its cell. As in every
     /// virtualizing list, only the rows in view are reported.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::DataGrid;
     }
@@ -787,14 +787,14 @@ private:
     [[nodiscard]] bool takes_shortcut(const KeyEvent& e) const;
     // Enter while an editor is open (it commits), the cursor is on a group header (it toggles) or
     // the keyboard is on a column header (it sorts).
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return editor_ != nullptr || cursor_header_ != detail::NoIndex || header_cursor_ != detail::NoIndex;
     }
     // Up/Down always; Left/Right while the columns overflow the viewport, while editing is
     // possible, or while an editor is open. Claimed so Window's directional focus navigation
     // leaves them alone (Element::key_override).
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowUp || key == Key::ArrowDown ||
                ((key == Key::ArrowLeft || key == Key::ArrowRight) &&
@@ -802,23 +802,23 @@ private:
                  header_cursor_ != detail::NoIndex));
     }
     // The public index getters' private forms, NoIndex for none, as the code below works with them.
-    [[nodiscard]] std::size_t row_at(std::size_t position) const
+    [[nodiscard]] inline std::size_t row_at(std::size_t position) const
     {
         return position < order_.size() ? order_[position] : detail::NoIndex;
     }
-    [[nodiscard]] std::size_t row_position(std::size_t row) const
+    [[nodiscard]] inline std::size_t row_position(std::size_t row) const
     {
         return row < positions_.size() ? positions_[row] : detail::NoIndex;
     }
-    [[nodiscard]] std::size_t row_group(std::size_t row) const
+    [[nodiscard]] inline std::size_t row_group(std::size_t row) const
     {
         return row < row_group_.size() ? row_group_[row] : detail::NoIndex;
     }
-    [[nodiscard]] std::size_t position_group(std::size_t position) const
+    [[nodiscard]] inline std::size_t position_group(std::size_t position) const
     {
         return position < position_group_.size() ? position_group_[position] : detail::NoIndex;
     }
-    [[nodiscard]] std::size_t first_selected_row() const
+    [[nodiscard]] inline std::size_t first_selected_row() const
     {
         return selection_.empty() ? detail::NoIndex : selection_.front();
     }
@@ -911,8 +911,8 @@ private:
     // In the leading run of frozen columns.
     [[nodiscard]] bool column_frozen(std::size_t column) const;
     // In the trailing run of frozen_trailing columns, and not in the leading run.
-    [[nodiscard]] bool column_frozen_trailing(std::size_t column) const;
-    [[nodiscard]] bool column_pinned(std::size_t column) const
+    [[nodiscard]] bool        column_frozen_trailing(std::size_t column) const;
+    [[nodiscard]] inline bool column_pinned(std::size_t column) const
     {
         return column_frozen(column) || column_frozen_trailing(column);
     }
@@ -1070,18 +1070,18 @@ private:
     [[nodiscard]] RingPlace ring_place() const;
 
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.selection = this;
         out.grid      = this;
         out.table     = this;
     }
     // Every view position, group headers included: accessibility grid rows count in view order.
-    [[nodiscard]] std::size_t grid_row_count() const override
+    [[nodiscard]] inline std::size_t grid_row_count() const override
     {
         return position_count();
     }
-    [[nodiscard]] std::size_t grid_column_count() const override
+    [[nodiscard]] inline std::size_t grid_column_count() const override
     {
         return columns_.size();
     }
@@ -1092,12 +1092,12 @@ private:
     // The selected rows in view.
     void selected_items(std::vector<Element*>& out) const override;
     // True under Multiple and Extended selection.
-    [[nodiscard]] bool can_select_multiple() const override
+    [[nodiscard]] inline bool can_select_multiple() const override
     {
         return selection_mode_ == SelectionMode::Multiple || selection_mode_ == SelectionMode::Extended;
     }
     // False: every mode can have nothing selected.
-    [[nodiscard]] bool selection_required() const override
+    [[nodiscard]] inline bool selection_required() const override
     {
         return false;
     }

@@ -60,7 +60,7 @@ public:
 private:
     friend class Window;
     friend class UiThreadHop;
-    WindowRef(const Window* window, std::uint64_t serial) noexcept : window_(window), serial_(serial)
+    inline WindowRef(const Window* window, std::uint64_t serial) noexcept : window_(window), serial_(serial)
     {
     }
 

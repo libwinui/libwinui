@@ -106,7 +106,7 @@ public:
     // ---- content ----
     /// The menus, in header order. Toggle and radio items' is_checked() reflect clicks made in
     /// the open menu and the properties their `checked` is bound to, so read them back from here.
-    [[nodiscard]] const std::vector<MenuBarItem>& items() const
+    [[nodiscard]] inline const std::vector<MenuBarItem>& items() const
     {
         return items_;
     }
@@ -115,7 +115,7 @@ public:
 
 
     /// Which header's menu is open; unset when none is.
-    [[nodiscard]] std::optional<std::size_t> open_index() const
+    [[nodiscard]] inline std::optional<std::size_t> open_index() const
     {
         return detail::optional_index(open_index_);
     }
@@ -123,7 +123,7 @@ public:
     /// none.
     [[nodiscard]] std::optional<std::size_t> active_command() const;
     /// The header the keyboard is on (Left/Right move it); 0 for a fresh bar.
-    [[nodiscard]] std::size_t focused_header() const
+    [[nodiscard]] inline std::size_t focused_header() const
     {
         return focused_header_;
     }
@@ -138,12 +138,12 @@ public:
 
     // ---- focus ----
     /// Whether the bar holds keyboard focus; the focus ring is then drawn around focused_header().
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// One tab stop for the whole bar, while it is enabled and has at least one header.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled() && !items_.empty();
     }
@@ -160,7 +160,7 @@ public:
 
     // ---- automation ----
     /// AutomationRole::MenuBar.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::MenuBar;
     }
@@ -196,13 +196,13 @@ protected:
 
 private:
     // All four arrows belong to the bar and its menus, never to directional focus navigation.
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowUp || key == Key::ArrowDown || key == Key::ArrowLeft || key == Key::ArrowRight;
     }
     // Enter opens a menu or invokes its item, so the Window must not treat it as a default-button
     // press.
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return true;
     }
@@ -257,7 +257,7 @@ protected:
 
 protected:
     /// Around the focused header.
-    [[nodiscard]] Rect focus_ring_rect(const Theme& /*theme*/) const override
+    [[nodiscard]] inline Rect focus_ring_rect(const Theme& /*theme*/) const override
     {
         return focused_header_ < items_.size() ? header_visual(focused_header_) : Rect{};
     }

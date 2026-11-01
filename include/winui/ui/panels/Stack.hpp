@@ -70,7 +70,7 @@ public:
     /// An empty vertical panel, no spacing, no background.
     StackControl() = default;
     /// An empty panel stacking in `orientation`.
-    explicit StackControl(Orientation orientation) : orientation_(orientation)
+    inline explicit StackControl(Orientation orientation) : orientation_(orientation)
     {
     }
 
@@ -111,7 +111,7 @@ public:
         return observer;
     }
     /// The children in stacking order (owned by the panel).
-    [[nodiscard]] std::span<const std::unique_ptr<Element>> children() const
+    [[nodiscard]] inline std::span<const std::unique_ptr<Element>> children() const
     {
         return children_;
     }
@@ -119,7 +119,7 @@ public:
     /// Any observer to it dangles afterwards. With an AddRemoveTransition in
     /// children_transitions(), the child leaves visibly. It drops out of layout, input and the
     /// tab ring at once, fades out where it was, and is destroyed when the fade has played.
-    bool remove(const Element* child)
+    inline bool remove(const Element* child)
     {
         const auto it = std::find_if(children_.begin(),
                                      children_.end(),
@@ -136,7 +136,7 @@ public:
     /// Takes `child` out of the panel alive and hands it back, for adding somewhere else. Focus
     /// inside it is cleared and it plays no exit transition. Null when it is not one of this
     /// panel's children.
-    [[nodiscard]] std::unique_ptr<Element> orphan(const Element* child)
+    [[nodiscard]] inline std::unique_ptr<Element> orphan(const Element* child)
     {
         const auto it = std::find_if(children_.begin(),
                                      children_.end(),
@@ -151,7 +151,7 @@ public:
         return detail::orphan(std::move(owned));
     }
     /// Destroys every child, each one leaving as it does with remove().
-    void clear()
+    inline void clear()
     {
         for (std::unique_ptr<Element>& child : children_)
         {
@@ -162,24 +162,24 @@ public:
     }
 
     /// The stacking direction; Vertical by default.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
     /// Changes the direction; invalidates layout.
-    void set_orientation(Orientation o)
+    inline void set_orientation(Orientation o)
     {
         orientation_ = o;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The gap between neighboring children, in DIPs; 0 by default.
-    [[nodiscard]] float spacing() const
+    [[nodiscard]] inline float spacing() const
     {
         return spacing_;
     }
     /// Changes the gap; invalidates layout.
-    void set_spacing(float spacing)
+    inline void set_spacing(float spacing)
     {
         spacing_ = spacing;
         mark_dirty(DirtyFlags::Layout);
@@ -187,23 +187,23 @@ public:
 
     /// The background, filled behind the children; nullopt (the default) draws nothing.
     /// A ThemeColor is a theme resource, re-read whenever it is drawn (ui/BackgroundBrush.hpp).
-    [[nodiscard]] const std::optional<Color>& background() const
+    [[nodiscard]] inline const std::optional<Color>& background() const
     {
         return background_.color();
     }
     /// The theme resource the background follows, when set_background(ThemeColor) set one.
-    [[nodiscard]] ThemeColor background_resource() const
+    [[nodiscard]] inline ThemeColor background_resource() const
     {
         return background_.resource();
     }
     /// A fixed background color (nullopt clears it); redraws.
-    void set_background(std::optional<Color> color)
+    inline void set_background(std::optional<Color> color)
     {
         background_.set(color);
         mark_dirty(DirtyFlags::Visual);
     }
     /// A theme-resource background, re-read on every theme change; redraws.
-    void set_background(ThemeColor resource)
+    inline void set_background(ThemeColor resource)
     {
         background_.set(resource);
         mark_dirty(DirtyFlags::Visual);
@@ -211,12 +211,12 @@ public:
     /// With a transition set, a later change of what the background draws (a new color, or a
     /// resource under a new theme) blends from the color on screen (Animation.hpp's
     /// BrushTransition). nullopt (the default) changes it at once.
-    [[nodiscard]] const std::optional<BrushTransition>& background_transition() const
+    [[nodiscard]] inline const std::optional<BrushTransition>& background_transition() const
     {
         return background_.transition();
     }
     /// Sets or clears the transition used by later background changes.
-    void set_background_transition(std::optional<BrushTransition> transition)
+    inline void set_background_transition(std::optional<BrushTransition> transition)
     {
         background_.set_transition(transition);
     }
@@ -224,58 +224,58 @@ public:
     // ---- border and padding ----
     /// The outline color; nullopt (the default) draws no border even with a non-zero
     /// border_thickness(). Nullopt as well while a ThemeColor is set.
-    [[nodiscard]] std::optional<Color> border_brush() const
+    [[nodiscard]] inline std::optional<Color> border_brush() const
     {
         return border_brush_.color();
     }
     /// The theme resource the border is drawn from, or null.
-    [[nodiscard]] ThemeColor border_brush_resource() const
+    [[nodiscard]] inline ThemeColor border_brush_resource() const
     {
         return border_brush_.resource();
     }
     /// A fixed outline color; replaces any resource. Redraws.
-    void set_border_brush(std::optional<Color> color)
+    inline void set_border_brush(std::optional<Color> color)
     {
         border_brush_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// An outline color read from the theme each time it is drawn; replaces any fixed color.
     /// Redraws.
-    void set_border_brush(ThemeColor resource)
+    inline void set_border_brush(ThemeColor resource)
     {
         border_brush_ = resource;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The border width in DIPs per side (default zero); it insets the children like padding.
-    [[nodiscard]] const Thickness& border_thickness() const
+    [[nodiscard]] inline const Thickness& border_thickness() const
     {
         return border_thickness_;
     }
     /// Sets the border width; updates the layout and redraws.
-    void set_border_thickness(const Thickness& thickness)
+    inline void set_border_thickness(const Thickness& thickness)
     {
         border_thickness_ = thickness;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The corner radius in DIPs, uniform for all four corners (default 0, square). It rounds the
     /// background and the border; the children are not clipped.
-    [[nodiscard]] float corner_radius() const
+    [[nodiscard]] inline float corner_radius() const
     {
         return corner_radius_;
     }
     /// Sets the corner radius; redraws.
-    void set_corner_radius(float radius)
+    inline void set_corner_radius(float radius)
     {
         corner_radius_ = radius;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The room in DIPs between the border and the children (default zero).
-    [[nodiscard]] const Thickness& padding() const
+    [[nodiscard]] inline const Thickness& padding() const
     {
         return padding_;
     }
     /// Sets the padding and updates the layout.
-    void set_padding(const Thickness& padding)
+    inline void set_padding(const Thickness& padding)
     {
         padding_ = padding;
         mark_dirty(DirtyFlags::Layout);
@@ -285,19 +285,19 @@ public:
     /// child gets the panel's full cross extent and its own horizontal_alignment() /
     /// vertical_alignment() positions it within that. Leading, Center and Trailing place every
     /// child at its desired cross size, and a child's own alignment then has no effect.
-    [[nodiscard]] Alignment child_alignment() const
+    [[nodiscard]] inline Alignment child_alignment() const
     {
         return child_alignment_;
     }
     /// Changes child_alignment(); invalidates layout.
-    void set_child_alignment(Alignment a)
+    inline void set_child_alignment(Alignment a)
     {
         child_alignment_ = a;
         mark_dirty(DirtyFlags::Layout);
     }
 
     /// True: measuring touches only the panel and its children.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
@@ -317,7 +317,7 @@ protected:
 
 
 private:
-    [[nodiscard]] bool vertical() const
+    [[nodiscard]] inline bool vertical() const
     {
         return orientation_ == Orientation::Vertical;
     }
@@ -329,7 +329,7 @@ private:
     [[nodiscard]] float spacing_total() const;
 
     // Border plus padding, taken off every side before the children are laid out.
-    [[nodiscard]] Thickness content_inset() const
+    [[nodiscard]] inline Thickness content_inset() const
     {
         return Edges{.left   = border_thickness_.left + padding_.left,
                      .top    = border_thickness_.top + padding_.top,

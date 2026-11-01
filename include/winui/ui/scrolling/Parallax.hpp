@@ -92,7 +92,7 @@ public:
         return observer;
     }
     /// The content set by `set_child()` (non-owning), or nullptr.
-    [[nodiscard]] Element* child() const
+    [[nodiscard]] inline Element* child() const
     {
         return child_.get();
     }
@@ -100,13 +100,13 @@ public:
     // ---- source ----
     /// The scrolling element to follow (Element::scroll_info()), or nullptr for none. Becomes
     /// nullptr by itself once the source is destroyed.
-    [[nodiscard]] Element* source() const
+    [[nodiscard]] inline Element* source() const
     {
         return source_.get();
     }
     /// Follows `source`, which the Parallax does not own. Pass nullptr to stop following.
     /// Redraws.
-    void set_source(Element* source)
+    inline void set_source(Element* source)
     {
         source_.reset(source);
         mark_dirty(DirtyFlags::Visual);
@@ -116,23 +116,23 @@ public:
     /// How far the child moves over the source's horizontal range, in DIPs. 0, the default, is
     /// no parallax on that axis. The child is laid out this much larger than the view on that
     /// axis.
-    [[nodiscard]] float horizontal_shift() const
+    [[nodiscard]] inline float horizontal_shift() const
     {
         return horizontal_.shift;
     }
     /// Lays the view out again, since the child's size depends on the shift, and redraws.
-    void set_horizontal_shift(float shift)
+    inline void set_horizontal_shift(float shift)
     {
         horizontal_.shift = shift;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// Vertical counterpart of `horizontal_shift()`.
-    [[nodiscard]] float vertical_shift() const
+    [[nodiscard]] inline float vertical_shift() const
     {
         return vertical_.shift;
     }
     /// Lays the view out again and redraws.
-    void set_vertical_shift(float shift)
+    inline void set_vertical_shift(float shift)
     {
         vertical_.shift = shift;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -141,68 +141,68 @@ public:
     /// Where the horizontal parallax starts on the source's scroll range, in DIPs. It is added to
     /// the automatic value or used as is, depending on the offset kind. 0 by default, as are the
     /// other offsets.
-    [[nodiscard]] float horizontal_source_start_offset() const
+    [[nodiscard]] inline float horizontal_source_start_offset() const
     {
         return horizontal_.start;
     }
     /// Redraws. The shift is recomputed on the next frame.
-    void set_horizontal_source_start_offset(float offset)
+    inline void set_horizontal_source_start_offset(float offset)
     {
         horizontal_.start = offset;
         mark_dirty(DirtyFlags::Visual);
     }
     /// Where the horizontal parallax ends on the source's scroll range (see the start offset).
-    [[nodiscard]] float horizontal_source_end_offset() const
+    [[nodiscard]] inline float horizontal_source_end_offset() const
     {
         return horizontal_.end;
     }
     /// Marks the view for redraw.
-    void set_horizontal_source_end_offset(float offset)
+    inline void set_horizontal_source_end_offset(float offset)
     {
         horizontal_.end = offset;
         mark_dirty(DirtyFlags::Visual);
     }
     /// Where the vertical parallax starts on the source's scroll range, in DIPs.
-    [[nodiscard]] float vertical_source_start_offset() const
+    [[nodiscard]] inline float vertical_source_start_offset() const
     {
         return vertical_.start;
     }
     /// Marks the view for redraw.
-    void set_vertical_source_start_offset(float offset)
+    inline void set_vertical_source_start_offset(float offset)
     {
         vertical_.start = offset;
         mark_dirty(DirtyFlags::Visual);
     }
     /// Where the vertical parallax ends on the source's scroll range, in DIPs.
-    [[nodiscard]] float vertical_source_end_offset() const
+    [[nodiscard]] inline float vertical_source_end_offset() const
     {
         return vertical_.end;
     }
     /// Marks the view for redraw.
-    void set_vertical_source_end_offset(float offset)
+    inline void set_vertical_source_end_offset(float offset)
     {
         vertical_.end = offset;
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// How the horizontal start/end offsets are interpreted; Relative by default.
-    [[nodiscard]] ParallaxSourceOffsetKind horizontal_source_offset_kind() const
+    [[nodiscard]] inline ParallaxSourceOffsetKind horizontal_source_offset_kind() const
     {
         return horizontal_.kind;
     }
     /// Marks the view for redraw.
-    void set_horizontal_source_offset_kind(ParallaxSourceOffsetKind kind)
+    inline void set_horizontal_source_offset_kind(ParallaxSourceOffsetKind kind)
     {
         horizontal_.kind = kind;
         mark_dirty(DirtyFlags::Visual);
     }
     /// How the vertical start/end offsets are interpreted; Relative by default.
-    [[nodiscard]] ParallaxSourceOffsetKind vertical_source_offset_kind() const
+    [[nodiscard]] inline ParallaxSourceOffsetKind vertical_source_offset_kind() const
     {
         return vertical_.kind;
     }
     /// Marks the view for redraw.
-    void set_vertical_source_offset_kind(ParallaxSourceOffsetKind kind)
+    inline void set_vertical_source_offset_kind(ParallaxSourceOffsetKind kind)
     {
         vertical_.kind = kind;
         mark_dirty(DirtyFlags::Visual);
@@ -210,23 +210,23 @@ public:
 
     /// The child never moves faster than this times the source's own horizontal scrolling. 1.0
     /// by default.
-    [[nodiscard]] float max_horizontal_shift_ratio() const
+    [[nodiscard]] inline float max_horizontal_shift_ratio() const
     {
         return horizontal_.max_ratio;
     }
     /// Marks the view for redraw.
-    void set_max_horizontal_shift_ratio(float ratio)
+    inline void set_max_horizontal_shift_ratio(float ratio)
     {
         horizontal_.max_ratio = ratio;
         mark_dirty(DirtyFlags::Visual);
     }
     /// Vertical counterpart of `max_horizontal_shift_ratio()`; 1.0 by default.
-    [[nodiscard]] float max_vertical_shift_ratio() const
+    [[nodiscard]] inline float max_vertical_shift_ratio() const
     {
         return vertical_.max_ratio;
     }
     /// Marks the view for redraw.
-    void set_max_vertical_shift_ratio(float ratio)
+    inline void set_max_vertical_shift_ratio(float ratio)
     {
         vertical_.max_ratio = ratio;
         mark_dirty(DirtyFlags::Visual);
@@ -234,23 +234,23 @@ public:
 
     /// Whether the child stops at the ends of the horizontal range instead of moving on with the
     /// scroll. True by default.
-    [[nodiscard]] bool is_horizontal_shift_clamped() const
+    [[nodiscard]] inline bool is_horizontal_shift_clamped() const
     {
         return horizontal_.clamped;
     }
     /// Marks the view for redraw.
-    void set_horizontal_shift_clamped(bool clamped)
+    inline void set_horizontal_shift_clamped(bool clamped)
     {
         horizontal_.clamped = clamped;
         mark_dirty(DirtyFlags::Visual);
     }
     /// Vertical counterpart of `is_horizontal_shift_clamped()`; true by default.
-    [[nodiscard]] bool is_vertical_shift_clamped() const
+    [[nodiscard]] inline bool is_vertical_shift_clamped() const
     {
         return vertical_.clamped;
     }
     /// Marks the view for redraw.
-    void set_vertical_shift_clamped(bool clamped)
+    inline void set_vertical_shift_clamped(bool clamped)
     {
         vertical_.clamped = clamped;
         mark_dirty(DirtyFlags::Visual);
@@ -259,7 +259,7 @@ public:
     /// The child's current parallax offset on each axis, its translation.
     [[nodiscard]] Point current_shift() const;
     /// Visits the child, if there is one.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (child_)
         {
@@ -270,7 +270,7 @@ public:
 protected:
     // ---- Element ----
     /// The child is clipped to the bounds, and so is where it can be hit.
-    [[nodiscard]] std::optional<Rect> children_hit_clip() const override
+    [[nodiscard]] inline std::optional<Rect> children_hit_clip() const override
     {
         return bounds();
     }

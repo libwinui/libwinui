@@ -109,12 +109,12 @@ public:
     /// The plain-text label (UTF-8), drawn centered in the current state's text color, so it
     /// tracks hover/press/disabled automatically. Also the automation name fallback. Ignored
     /// once content() is set.
-    [[nodiscard]] const std::string& text() const
+    [[nodiscard]] inline const std::string& text() const
     {
         return text_;
     }
     /// Sets the label (UTF-8). The button is measured again and redrawn.
-    void set_text(std::string text)
+    inline void set_text(std::string text)
     {
         text_ = std::move(text);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -136,18 +136,18 @@ public:
         return observer;
     }
     /// The content set with set_content() as a non-owning observer, or nullptr for a text button.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
 
     /// The token set the button draws with; ButtonVariant::Neutral by default.
-    [[nodiscard]] ButtonVariant variant() const
+    [[nodiscard]] inline ButtonVariant variant() const
     {
         return variant_;
     }
     /// Redraws only; every style has the same metrics.
-    void set_variant(ButtonVariant variant)
+    inline void set_variant(ButtonVariant variant)
     {
         variant_ = variant;
         mark_dirty(DirtyFlags::Visual);
@@ -157,7 +157,7 @@ public:
     /// button padding. The theme padding clips the icon of a small
     /// fixed-size icon button, such as a 40x40 title-bar back button, so pass Thickness{0} there.
     /// The button is measured again and redrawn.
-    void set_padding(std::optional<Thickness> padding)
+    inline void set_padding(std::optional<Thickness> padding)
     {
         padding_override_ = padding;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -168,19 +168,19 @@ public:
     /// Invoked on a completed click (mouse press and release inside, Enter/Space
     /// while focused, or UI Automation's Invoke) while enabled, before the command runs. The
     /// handler may destroy the button. Replaces any previous handler.
-    void on_click(Callback<void()> handler)
+    inline void on_click(Callback<void()> handler)
     {
         on_click_ = std::move(handler);
     }
     /// A click opens `flyout` (and a second one closes it). Set for you
     /// when a Button becomes a Flyout's anchor; the Flyout owns the Button, so the pointer
     /// never outlives what it points at.
-    void set_flyout(FlyoutBase* flyout)
+    inline void set_flyout(FlyoutBase* flyout)
     {
         flyout_ = flyout;
     }
     /// The flyout a click opens, or nullptr; owned by that flyout, not the button.
-    [[nodiscard]] FlyoutBase* flyout() const
+    [[nodiscard]] inline FlyoutBase* flyout() const
     {
         return flyout_;
     }
@@ -191,24 +191,24 @@ public:
     /// from the command.
     void set_command(CommandRef command, std::string parameter = {});
     /// The command set with set_command(), or nullptr (none, or destroyed); not owned.
-    [[nodiscard]] const Command* command() const
+    [[nodiscard]] inline const Command* command() const
     {
         return command_.get();
     }
     /// The parameter passed to the command's execute.
-    [[nodiscard]] const std::string& command_parameter() const
+    [[nodiscard]] inline const std::string& command_parameter() const
     {
         return command_parameter_;
     }
     /// Every click opens `uri` in its default handler, after the click handler and the
     /// command. Meant for ButtonVariant::Hyperlink, but works with any variant. Empty (the
     /// default) opens nothing.
-    void set_navigate_uri(std::string uri)
+    inline void set_navigate_uri(std::string uri)
     {
         navigate_uri_ = std::move(uri);
     }
     /// The URI a click opens, or empty.
-    [[nodiscard]] const std::string& navigate_uri() const
+    [[nodiscard]] inline const std::string& navigate_uri() const
     {
         return navigate_uri_;
     }
@@ -216,19 +216,19 @@ public:
     // ---- layout ----
     /// True for a text button. A button with content() answers false, because it measures the
     /// content without listing it in for_each_child() (the two share one tab stop).
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return content_ == nullptr;
     }
 
     // ---- focus ----
     /// Whether the button holds keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// A disabled button is skipped in the tab order.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled(); // a disabled button is skipped in the tab order
     }
@@ -236,7 +236,7 @@ public:
     // ---- colors ----
     /// The button's fill at rest. Hover, press and the disabled state still use the theme's
     /// fills. nullopt (the default) keeps the style's. Clears a theme-resource background. Redraws.
-    void set_background(std::optional<Color> color)
+    inline void set_background(std::optional<Color> color)
     {
         background_override_ = color;
         background_resource_ = nullptr;
@@ -244,7 +244,7 @@ public:
     }
     /// The button's fill at rest as a theme resource, re-read under every theme. Clears a fixed
     /// background. Redraws.
-    void set_background(ThemeColor resource)
+    inline void set_background(ThemeColor resource)
     {
         background_override_ = std::nullopt;
         background_resource_ = resource;
@@ -252,7 +252,7 @@ public:
     }
     /// The label color in the Normal state; nullopt (the default)
     /// keeps the style's. Clears a theme-resource foreground. Redraws.
-    void set_foreground(std::optional<Color> color)
+    inline void set_foreground(std::optional<Color> color)
     {
         foreground_override_ = color;
         foreground_resource_ = nullptr;
@@ -260,7 +260,7 @@ public:
     }
     /// The label color in the Normal state as a theme resource, re-read under every theme. It
     /// wins over a fixed foreground color. Redraws.
-    void set_foreground(ThemeColor resource)
+    inline void set_foreground(ThemeColor resource)
     {
         foreground_resource_ = resource;
         mark_dirty(DirtyFlags::Visual);
@@ -270,7 +270,7 @@ private:
     friend class DropdownButtonControl; // answers Enter as its button does
 
     // Enter clicks an enabled button, so it never reaches a dialog's default button past it.
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return is_enabled();
     }
@@ -316,7 +316,7 @@ protected:
 
     /// Forwards the tick to content(), so animated content (an AnimatedIcon, a ProgressRing)
     /// keeps moving inside a button.
-    void tick_override(Duration delta) override
+    inline void tick_override(Duration delta) override
     {
         if (content_)
         {
@@ -330,20 +330,20 @@ public:
     [[nodiscard]] bool is_pressed() const;
 
     /// The Hand cursor for ButtonVariant::Hyperlink; no opinion otherwise.
-    [[nodiscard]] std::optional<CursorShape> cursor_at(Point) const override
+    [[nodiscard]] inline std::optional<CursorShape> cursor_at(Point) const override
     {
         return variant_ == ButtonVariant::Hyperlink ? std::optional<CursorShape>{CursorShape::Hand} : std::nullopt;
     }
 
     // ---- automation ----
     /// Hyperlink for ButtonVariant::Hyperlink, Button otherwise.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return variant_ == ButtonVariant::Hyperlink ? AutomationRole::Hyperlink : AutomationRole::Button;
     }
     /// text(), used when Accessibility::name is not set. Empty for a content button: name
     /// it through set_accessibility().
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return text_; // empty when content() is set
     }
@@ -351,7 +351,7 @@ public:
 protected:
     /// Runs on every completed click (pointer, Enter/Space, UI Automation's Invoke) before the
     /// click handler. ToggleButton flips its state here.
-    virtual void on_activated()
+    inline virtual void on_activated()
     {
     }
     /// The colors the current state draws with; `variant()`'s set by default.
@@ -364,18 +364,18 @@ protected:
     /// Width kept free at the right of the content, inside the padding, for a trailing part the
     /// derived control draws itself: DropdownButton's chevron column. The content (or the label)
     /// is laid out and centered in what is left.
-    void set_trailing_reserve(float width)
+    inline void set_trailing_reserve(float width)
     {
         trailing_reserve_ = width;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The width set by set_trailing_reserve(), DIPs; 0 by default.
-    [[nodiscard]] float trailing_reserve() const
+    [[nodiscard]] inline float trailing_reserve() const
     {
         return trailing_reserve_;
     }
     /// The padding measure_override() last used (padding override or the theme's).
-    [[nodiscard]] const Thickness& padding() const
+    [[nodiscard]] inline const Thickness& padding() const
     {
         return content_padding_;
     }
@@ -413,7 +413,7 @@ private:
 
 protected:
     /// The ring follows the button's own corner radius.
-    [[nodiscard]] float focus_ring_corner_radius(const Theme& theme) const override
+    [[nodiscard]] inline float focus_ring_corner_radius(const Theme& theme) const override
     {
         return theme.resolved_button_corner_radius();
     }
@@ -425,14 +425,14 @@ protected:
 
 protected:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.invoke = this;
     }
 
 private:
     // A full click, as activate(), when enabled; false and nothing happens when disabled.
-    bool invoke() override
+    inline bool invoke() override
     {
         if (!is_enabled())
         {

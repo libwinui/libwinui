@@ -161,35 +161,35 @@ public:
         /// A singular iterator; only assignable.
         iterator() = default;
         /// Positioned at byte `pos` of `text`, which must be a code-point boundary.
-        iterator(std::string_view text, std::size_t pos) : text_(text), pos_(pos)
+        inline iterator(std::string_view text, std::size_t pos) : text_(text), pos_(pos)
         {
         }
 
         /// The code point at the current position (U+FFFD if malformed).
-        [[nodiscard]] char32_t operator*() const
+        [[nodiscard]] inline char32_t operator*() const
         {
             return decode_utf8(text_, pos_).code_point;
         }
         /// Advances past the current code point.
-        iterator& operator++()
+        inline iterator& operator++()
         {
             pos_ = next_code_point(text_, pos_);
             return *this;
         }
         /// Post-increment.
-        iterator operator++(int)
+        inline iterator operator++(int)
         {
             iterator old = *this;
             ++*this;
             return old;
         }
         /// The byte offset of the current code point.
-        [[nodiscard]] std::size_t offset() const
+        [[nodiscard]] inline std::size_t offset() const
         {
             return pos_;
         }
         /// Same byte offset; only meaningful between iterators over the same text.
-        [[nodiscard]] bool operator==(const iterator& other) const
+        [[nodiscard]] inline bool operator==(const iterator& other) const
         {
             return pos_ == other.pos_;
         }
@@ -200,16 +200,16 @@ public:
     };
 
     /// A view over `text`, which must outlive it.
-    explicit CodePoints(std::string_view text) : text_(text)
+    inline explicit CodePoints(std::string_view text) : text_(text)
     {
     }
     /// The first code point.
-    [[nodiscard]] iterator begin() const
+    [[nodiscard]] inline iterator begin() const
     {
         return {text_, 0};
     }
     /// One past the last code point (byte offset `text.size()`).
-    [[nodiscard]] iterator end() const
+    [[nodiscard]] inline iterator end() const
     {
         return {text_, text_.size()};
     }

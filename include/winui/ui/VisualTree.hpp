@@ -62,38 +62,38 @@ public:
     std::size_t add_node(VisualId id, VisualId parent, const Rect& bounds, DirtyFlags flags_at_build = DirtyFlags::None);
 
     /// The number of nodes; valid slots are `0 .. size() - 1`, in insertion (pre-)order.
-    [[nodiscard]] std::size_t size() const
+    [[nodiscard]] inline std::size_t size() const
     {
         return id_.size();
     }
 
     /// The stable VisualId of the node in `slot`. The `*_at()` accessors do not bounds-check.
-    [[nodiscard]] VisualId id_at(std::size_t slot) const
+    [[nodiscard]] inline VisualId id_at(std::size_t slot) const
     {
         return id_[slot];
     }
     /// The parent's id, or InvalidVisualId for the root.
-    [[nodiscard]] VisualId parent_at(std::size_t slot) const
+    [[nodiscard]] inline VisualId parent_at(std::size_t slot) const
     {
         return parent_[slot];
     }
     /// The first child's id, or InvalidVisualId for a leaf.
-    [[nodiscard]] VisualId first_child_at(std::size_t slot) const
+    [[nodiscard]] inline VisualId first_child_at(std::size_t slot) const
     {
         return first_child_[slot];
     }
     /// The next child of the same parent, in add order, or InvalidVisualId for the last one.
-    [[nodiscard]] VisualId next_sibling_at(std::size_t slot) const
+    [[nodiscard]] inline VisualId next_sibling_at(std::size_t slot) const
     {
         return next_sibling_[slot];
     }
     /// The node's arranged bounds at snapshot time, in window DIPs.
-    [[nodiscard]] const Rect& bounds_at(std::size_t slot) const
+    [[nodiscard]] inline const Rect& bounds_at(std::size_t slot) const
     {
         return bounds_[slot];
     }
     /// The node's dirty flags at snapshot time (Window::layout() builds before clearing them).
-    [[nodiscard]] DirtyFlags flags_at(std::size_t slot) const
+    [[nodiscard]] inline DirtyFlags flags_at(std::size_t slot) const
     {
         return flags_[slot];
     }

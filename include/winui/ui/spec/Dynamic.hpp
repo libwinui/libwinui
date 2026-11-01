@@ -57,7 +57,7 @@ namespace detail
 class DynamicHost final : public ContentHost
 {
 public:
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }

@@ -193,7 +193,7 @@ LIBWINUI_EXPORT struct ButtonVisual
     /// Returns this visual's `border_width` if it set one, otherwise `theme_default`, which is
     /// `Theme::border_width`. A control that draws its border itself, without
     /// draw_control_chrome(), calls this to get the same width draw_control_chrome() would use.
-    [[nodiscard]] float resolved_border_width(float theme_default) const
+    [[nodiscard]] inline float resolved_border_width(float theme_default) const
     {
         return border_width.value_or(theme_default);
     }
@@ -762,19 +762,19 @@ struct ControlChromeAccess;
 class ThemeGeneration
 {
 public:
-    ThemeGeneration() noexcept : value_(next_theme_generation())
+    inline ThemeGeneration() noexcept : value_(next_theme_generation())
     {
     }
-    ThemeGeneration(const ThemeGeneration&) noexcept : value_(next_theme_generation())
+    inline ThemeGeneration(const ThemeGeneration&) noexcept : value_(next_theme_generation())
     {
     }
-    ThemeGeneration& operator=(const ThemeGeneration&) noexcept
+    inline ThemeGeneration& operator=(const ThemeGeneration&) noexcept
     {
         value_ = next_theme_generation();
         return *this;
     }
     ~ThemeGeneration() = default;
-    [[nodiscard]] std::uint64_t value() const
+    [[nodiscard]] inline std::uint64_t value() const
     {
         return value_;
     }
@@ -837,7 +837,7 @@ LIBWINUI_EXPORT struct Theme
     /// The colors by role, filled for every era and mode (see ThemeColors), and what a custom
     /// control reads first. Read-only. A different set of colors is a different theme, made by
     /// `fluent(const ThemeColors&)` or `classic(const ThemeColors&, ...)`.
-    [[nodiscard]] const ThemeColors& colors() const noexcept
+    [[nodiscard]] inline const ThemeColors& colors() const noexcept
     {
         return colors_;
     }
@@ -887,7 +887,7 @@ LIBWINUI_EXPORT struct Theme
     /// a new one, so a cache of measurements or derived themes can tell a new or edited theme
     /// from the one it came from. Editing a field in place keeps the number. Hand the edited
     /// theme over as a new value (Window::pin_theme()) for caches to see the change.
-    [[nodiscard]] std::uint64_t generation() const
+    [[nodiscard]] inline std::uint64_t generation() const
     {
         return generation_.value();
     }
@@ -911,7 +911,7 @@ LIBWINUI_EXPORT struct Theme
 
         /// Compact density: text field minimum height 24 and padding 2,2,6,1, ComboBox minimum
         /// height 24 and padding 12,1,0,3.
-        [[nodiscard]] static ControlSizing compact()
+        [[nodiscard]] static inline ControlSizing compact()
         {
             ControlSizing s;
             s.text_control_min_height = 24.0f;
@@ -1011,7 +1011,7 @@ LIBWINUI_EXPORT struct Theme
     std::optional<TextStyle> chrome_text_style{};
 
     /// `chrome_text_style` if this era has one, `text_style` otherwise.
-    [[nodiscard]] const TextStyle& menu_text_style() const
+    [[nodiscard]] inline const TextStyle& menu_text_style() const
     {
         return chrome_text_style ? *chrome_text_style : text_style;
     }
@@ -1027,7 +1027,7 @@ LIBWINUI_EXPORT struct Theme
         std::optional<TextStyle> body_strong{};
 
         /// The style for a TextRole (BodyStrong falls back to `body`; see `body_strong`).
-        [[nodiscard]] const TextStyle& for_role(TextRole role) const
+        [[nodiscard]] inline const TextStyle& for_role(TextRole role) const
         {
             switch (role)
             {
@@ -1064,7 +1064,7 @@ LIBWINUI_EXPORT struct Theme
         RoleColors color{};
 
         /// The color for a TextRole (BodyStrong shares `body`'s); unset means `colors.text`.
-        [[nodiscard]] const std::optional<Color>& color_for_role(TextRole role) const
+        [[nodiscard]] inline const std::optional<Color>& color_for_role(TextRole role) const
         {
             switch (role)
             {
@@ -1155,7 +1155,7 @@ LIBWINUI_EXPORT struct Theme
     OptionalFloat button_corner_radius{};
 
     /// `button_corner_radius` if set, `corner_radius` otherwise.
-    [[nodiscard]] float resolved_button_corner_radius() const
+    [[nodiscard]] inline float resolved_button_corner_radius() const
     {
         return button_corner_radius.value_or(corner_radius);
     }
@@ -1178,7 +1178,7 @@ LIBWINUI_EXPORT struct Theme
     ButtonVisual subtle_button_normal, subtle_button_hover, subtle_button_pressed, subtle_button_disabled;
 
     /// The neutral Button's visual (`button_*`) for an interaction state.
-    [[nodiscard]] const ButtonVisual& for_state(ButtonState s) const
+    [[nodiscard]] inline const ButtonVisual& for_state(ButtonState s) const
     {
         switch (s)
         {
@@ -1197,7 +1197,7 @@ LIBWINUI_EXPORT struct Theme
     /// The borderless `subtle_button_*` visual for an interaction state. Menu bar, command bar
     /// and toolbar buttons use it, the menu bar's items included. A Button the app places itself
     /// uses for_state() unless it opts into ButtonVariant::Subtle.
-    [[nodiscard]] const ButtonVisual& subtle_for_state(ButtonState s) const
+    [[nodiscard]] inline const ButtonVisual& subtle_for_state(ButtonState s) const
     {
         switch (s)
         {
@@ -1215,7 +1215,7 @@ LIBWINUI_EXPORT struct Theme
 
     /// The focus visual settings that render/FocusRing.hpp's draw_focus_ring() and
     /// draw_focus_ring_rings() take, built from this theme's fields.
-    [[nodiscard]] FocusRingStyle focus_ring_style() const
+    [[nodiscard]] inline FocusRingStyle focus_ring_style() const
     {
         return FocusRingStyle{focus_visual,
                               colors_.focus,
@@ -1301,7 +1301,7 @@ LIBWINUI_EXPORT struct Theme
 
     /// Windows 11 Fluent, light: `fluent(Palette::fluent_light())`. The default theme a Window
     /// starts with, and the one to reach for in member defaults.
-    [[nodiscard]] static Theme light()
+    [[nodiscard]] static inline Theme light()
     {
         return fluent(Palette::fluent_light());
     }
@@ -1309,7 +1309,7 @@ LIBWINUI_EXPORT struct Theme
     /// One light() theme that lives as long as the program, the default argument where a control
     /// is measured or drawn on its own. Some containers keep a pointer to the theme they were
     /// last measured with, so a default made of a temporary would dangle.
-    [[nodiscard]] static const Theme& default_light()
+    [[nodiscard]] static inline const Theme& default_light()
     {
         static const Theme theme = light();
         return theme;

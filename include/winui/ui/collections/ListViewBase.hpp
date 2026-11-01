@@ -189,7 +189,7 @@ public:
 
     // ---- items: strings ----
     /// The string items. Empty when the items come from an item template.
-    [[nodiscard]] const std::vector<std::string>& items() const
+    [[nodiscard]] inline const std::vector<std::string>& items() const
     {
         return items_;
     }
@@ -200,7 +200,7 @@ public:
     /// AddRemoveTransition among the item container transitions plays.
     void insert_item(std::size_t index, std::string item);
     /// Appends `item` at the end.
-    void add_item(std::string item)
+    inline void add_item(std::string item)
     {
         insert_item(items_.size(), std::move(item));
     }
@@ -214,7 +214,7 @@ public:
     /// string of items() as text.
     void set_item_template(ItemTemplate item_template);
     /// How many items the list shows: items().size() for strings, else the set_item_count() value.
-    [[nodiscard]] std::size_t item_count() const
+    [[nodiscard]] inline std::size_t item_count() const
     {
         return count_;
     }
@@ -248,12 +248,12 @@ public:
     /// TileView with a tile or stack layout, each header takes a line of its own.
     void set_group_keys(std::vector<std::string> keys);
     /// The keys set_group_keys() was given.
-    [[nodiscard]] const std::vector<std::string>& group_keys() const
+    [[nodiscard]] inline const std::vector<std::string>& group_keys() const
     {
         return group_keys_;
     }
     /// How many groups the keys make; 0 when ungrouped.
-    [[nodiscard]] std::size_t group_count() const
+    [[nodiscard]] inline std::size_t group_count() const
     {
         return group_names_.size();
     }
@@ -264,7 +264,7 @@ public:
     void set_group_header_template(GroupHeaderTemplate header_template);
     /// Whether group headers are sticky; on by default. The current group's header stays pinned to
     /// the top of the viewport until the next header pushes it up.
-    [[nodiscard]] bool sticky_group_headers() const
+    [[nodiscard]] inline bool sticky_group_headers() const
     {
         return sticky_headers_;
     }
@@ -287,12 +287,12 @@ public:
     /// scrolls with the items. Replaces any previous header. An empty text removes a text header.
     void set_header_text(std::string text);
     /// The text set_header_text() shows. Empty while there is none or the header is content.
-    [[nodiscard]] const std::string& header_text() const
+    [[nodiscard]] inline const std::string& header_text() const
     {
         return header_text_;
     }
     /// The current header, non-owning, or nullptr.
-    [[nodiscard]] Element* header() const
+    [[nodiscard]] inline Element* header() const
     {
         return header_;
     }
@@ -306,14 +306,14 @@ public:
         return observer;
     }
     /// The current footer, non-owning, or nullptr.
-    [[nodiscard]] Element* footer() const
+    [[nodiscard]] inline Element* footer() const
     {
         return footer_;
     }
 
     // ---- selection ----
     /// The selection mode; Single by default.
-    [[nodiscard]] SelectionMode selection_mode() const
+    [[nodiscard]] inline SelectionMode selection_mode() const
     {
         return selection_mode_;
     }
@@ -343,18 +343,18 @@ public:
     void deselect_all();
     /// Whether moving keyboard focus with the arrows also selects in Single mode; on by
     /// default.
-    [[nodiscard]] bool single_selection_follows_focus() const
+    [[nodiscard]] inline bool single_selection_follows_focus() const
     {
         return selection_follows_focus_;
     }
     /// Turns selection-follows-focus on or off.
-    void set_single_selection_follows_focus(bool follows)
+    inline void set_single_selection_follows_focus(bool follows)
     {
         selection_follows_focus_ = follows;
     }
     /// Called with selected_index() after the change. Fires for user gestures and programmatic
     /// changes, and only when the selection changed. Replaces any previous handler.
-    void on_selection_changed(Callback<void(std::optional<std::size_t>)> handler)
+    inline void on_selection_changed(Callback<void(std::optional<std::size_t>)> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
@@ -362,44 +362,44 @@ public:
     /// move before it changed selected_index(). It is not a selection change, so
     /// on_selection_changed does not fire. A two-way `.selected_index` uses it to follow the item.
     /// Replaces any previous handler.
-    void on_selected_index_shifted(Callback<void(std::optional<std::size_t>)> handler)
+    inline void on_selected_index_shifted(Callback<void(std::optional<std::size_t>)> handler)
     {
         on_selected_index_shifted_ = std::move(handler);
     }
 
     // ---- item click ----
     /// Whether a click raises on_item_click(); off by default.
-    [[nodiscard]] bool is_item_click_enabled() const
+    [[nodiscard]] inline bool is_item_click_enabled() const
     {
         return item_click_enabled_;
     }
     /// Turns on_item_click() on or off.
-    void set_item_click_enabled(bool enabled)
+    inline void set_item_click_enabled(bool enabled)
     {
         item_click_enabled_ = enabled;
     }
     /// Called with the clicked item, before the click selects, while is_item_click_enabled().
     /// Replaces any previous handler.
-    void on_item_click(Callback<void(std::size_t)> handler)
+    inline void on_item_click(Callback<void(std::size_t)> handler)
     {
         on_item_click_ = std::move(handler);
     }
 
     // ---- item invoked ----
     /// Whether on_item_invoked() is raised; off by default.
-    [[nodiscard]] bool is_item_invoked_enabled() const
+    [[nodiscard]] inline bool is_item_invoked_enabled() const
     {
         return item_invoked_enabled_;
     }
     /// Turns on_item_invoked() on or off.
-    void set_item_invoked_enabled(bool enabled)
+    inline void set_item_invoked_enabled(bool enabled)
     {
         item_invoked_enabled_ = enabled;
     }
     /// Called with the item on Enter or a double-click, and under SelectionMode::None also a
     /// click or Space, while is_item_invoked_enabled(). Raised after the gesture selects.
     /// Replaces any previous handler.
-    void on_item_invoked(Callback<void(std::size_t)> handler)
+    inline void on_item_invoked(Callback<void(std::size_t)> handler)
     {
         on_item_invoked_ = std::move(handler);
     }
@@ -407,48 +407,48 @@ public:
     /// Shift+F10 or the Menu key while the item is the current one. The item is selected first,
     /// unless it already is or the selection mode is None. An empty list opens no menu. Replaces
     /// any previous one.
-    void set_item_context_menu(Callback<std::vector<MenuItem>(std::size_t index)> menu)
+    inline void set_item_context_menu(Callback<std::vector<MenuItem>(std::size_t index)> menu)
     {
         item_context_menu_ = std::move(menu);
     }
 
     // ---- drag and drop ----
     /// Whether an item dragged past the threshold starts a drag; off by default.
-    [[nodiscard]] bool can_drag_items() const
+    [[nodiscard]] inline bool can_drag_items() const
     {
         return can_drag_items_;
     }
     /// Turns item dragging on or off.
-    void set_can_drag_items(bool can)
+    inline void set_can_drag_items(bool can)
     {
         can_drag_items_ = can;
     }
     /// Whether a drag inside the list moves the item; off by default. Needs can_drag_items() and
     /// Element::allow_drop().
-    [[nodiscard]] bool can_reorder_items() const
+    [[nodiscard]] inline bool can_reorder_items() const
     {
         return can_reorder_items_;
     }
     /// Turns reordering on or off.
-    void set_can_reorder_items(bool can)
+    inline void set_can_reorder_items(bool can)
     {
         can_reorder_items_ = can;
     }
     /// A drag of items starts. Fill in the package's text or data, or cancel.
-    void on_drag_items_starting(Callback<Decision(const DragItemsStartingArgs&)> handler)
+    inline void on_drag_items_starting(Callback<Decision(const DragItemsStartingArgs&)> handler)
     {
         on_drag_items_starting_ = std::move(handler);
     }
     /// A drag of items ended, with the items dragged and what the drop did (None when it was
     /// refused or canceled).
-    void on_drag_items_completed(Callback<void(const DragItemsCompletedArgs&)> handler)
+    inline void on_drag_items_completed(Callback<void(const DragItemsCompletedArgs&)> handler)
     {
         on_drag_items_completed_ = std::move(handler);
     }
     /// A drop inside the list moved item `from` to `to`, both positions in the collection after the
     /// move. A string list has already moved it. For a template's collection, move the data here.
     /// The list has already been told through notify_moved().
-    void on_items_reordered(Callback<void(const ItemsReorderedArgs&)> handler)
+    inline void on_items_reordered(Callback<void(const ItemsReorderedArgs&)> handler)
     {
         on_items_reordered_ = std::move(handler);
     }
@@ -462,13 +462,13 @@ public:
     /// The vertical scroll offset, DIPs. Horizontal for a vertical TileView.
     [[nodiscard]] float scroll_offset() const;
     /// The inner Scroll, owned by the list.
-    [[nodiscard]] ScrollControl* scroll_view() const
+    [[nodiscard]] inline ScrollControl* scroll_view() const
     {
         return scroll_;
     }
     /// The inner ForEachControl that realizes the item containers, owned by the list. Its
     /// try_get_element() reaches a realized container by its index, counting group headers.
-    [[nodiscard]] ForEachControl* repeater() const
+    [[nodiscard]] inline ForEachControl* repeater() const
     {
         return repeater_;
     }
@@ -480,12 +480,12 @@ public:
     bool set_relative_scroll_position(const std::string&                                       position,
                                       Callback<std::optional<std::size_t>(const std::string&)> index_of);
     /// How the scroll position reacts to inserts and removes; KeepItemsInView by default.
-    [[nodiscard]] ItemsUpdatingScrollMode items_updating_scroll_mode() const
+    [[nodiscard]] inline ItemsUpdatingScrollMode items_updating_scroll_mode() const
     {
         return updating_mode_;
     }
     /// Sets the scroll mode. KeepLastItemInView makes a chat-style log follow its end.
-    void set_items_updating_scroll_mode(ItemsUpdatingScrollMode mode)
+    inline void set_items_updating_scroll_mode(ItemsUpdatingScrollMode mode)
     {
         updating_mode_ = mode;
     }
@@ -497,7 +497,7 @@ public:
     /// Sets the margin around every item container, DIPs, and lays the items out again.
     void set_item_container_margin(const Thickness& margin);
     /// The margin around each item container.
-    [[nodiscard]] const Thickness& item_container_margin() const
+    [[nodiscard]] inline const Thickness& item_container_margin() const
     {
         return container_margin_;
     }
@@ -506,7 +506,7 @@ public:
     void set_item_horizontal_content_alignment(Alignment alignment);
     /// A fixed container height, DIPs. Unset (the default) sizes each container to its content,
     /// at least 40 DIPs in a ListView.
-    [[nodiscard]] std::optional<float> item_height() const
+    [[nodiscard]] inline std::optional<float> item_height() const
     {
         return item_height_;
     }
@@ -535,12 +535,12 @@ public:
     /// The item container transitions; empty by default. AddRemoveTransition plays on insert
     /// and removal, ContentTransition for a new collection, EntranceTransition when items
     /// first appear and RepositionTransition when they move.
-    [[nodiscard]] const TransitionList& item_transitions() const
+    [[nodiscard]] inline const TransitionList& item_transitions() const
     {
         return item_transitions_;
     }
     /// Sets the item container transitions. They apply to changes reported after the call.
-    void set_item_transitions(TransitionList transitions)
+    inline void set_item_transitions(TransitionList transitions)
     {
         item_transitions_ = std::move(transitions);
     }
@@ -548,12 +548,12 @@ public:
 
     // ---- focus ----
     /// Whether the list has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// The item keyboard focus is on. Unset when there is none.
-    [[nodiscard]] std::optional<std::size_t> current_item() const
+    [[nodiscard]] inline std::optional<std::size_t> current_item() const
     {
         return current_;
     }
@@ -561,11 +561,11 @@ public:
     /// as it is. An index past the end does nothing. The arrow keys go on from there.
     void set_current_item(std::size_t index);
     /// The item Tab steps through while the list is entered as a focus scope. Unset otherwise.
-    [[nodiscard]] std::optional<std::size_t> focus_index() const
+    [[nodiscard]] inline std::optional<std::size_t> focus_index() const
     {
         return detail::optional_index(focus_index_);
     }
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled() && count_ > 0;
     }
@@ -575,7 +575,7 @@ public:
     /// Lists the scroll view that holds the header, the items and the footer, and an open item
     /// context menu. The pinned group header is a drawn copy of a header already in the list and
     /// is not listed.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         visit(*scroll_);
         if (item_menu_ && detail::TreeAccess::popup_request(*item_menu_) != nullptr)
@@ -594,7 +594,7 @@ public:
     void         drag_completed(DataPackageOperation result) override;
 
     // ---- automation ----
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::List;
     }
@@ -614,12 +614,12 @@ protected:
 
 
 private:
-    [[nodiscard]] bool takes_shortcut(const KeyEvent& e) const
+    [[nodiscard]] inline bool takes_shortcut(const KeyEvent& e) const
     {
         return e.modifiers.ctrl && e.key == Key::A;
     }
-    [[nodiscard]] bool takes_arrow_key(Key key) const;
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] bool        takes_arrow_key(Key key) const;
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return true;
     }
@@ -663,18 +663,18 @@ private:
     void invoke_from_automation(std::size_t item);
 
     // ---- groups ----
-    [[nodiscard]] bool grouped() const
+    [[nodiscard]] inline bool grouped() const
     {
         return !group_keys_.empty();
     }
     // Rebuilds the display order from the keys and the item count.
     void regroup();
     // The item shown at display position `rank`, and the display position of `item`.
-    [[nodiscard]] std::size_t item_at_rank(std::size_t rank) const
+    [[nodiscard]] inline std::size_t item_at_rank(std::size_t rank) const
     {
         return grouped() && rank < order_.size() ? order_[rank] : rank;
     }
-    [[nodiscard]] std::size_t rank_of(std::size_t item) const
+    [[nodiscard]] inline std::size_t rank_of(std::size_t item) const
     {
         return grouped() && item < rank_.size() ? rank_[item] : item;
     }
@@ -825,7 +825,7 @@ protected:
 
 protected:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.selection = this;
         out.value     = this;
@@ -837,19 +837,19 @@ private:
     // The realized containers of the selected items.
     void selected_items(std::vector<Element*>& out) const override;
     // True in Multiple and Extended mode.
-    [[nodiscard]] bool can_select_multiple() const override
+    [[nodiscard]] inline bool can_select_multiple() const override
     {
         return selection_mode_ == SelectionMode::Multiple || selection_mode_ == SelectionMode::Extended;
     }
-    [[nodiscard]] bool selection_required() const override
+    [[nodiscard]] inline bool selection_required() const override
     {
         return false;
     }
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return true;
     }
-    bool set_text_value(std::string_view /*text*/) override
+    inline bool set_text_value(std::string_view /*text*/) override
     {
         return false;
     }

@@ -289,14 +289,14 @@ public:
         return observer;
     }
     /// The content (non-owning), or nullptr before set_child().
-    [[nodiscard]] Element* child() const
+    [[nodiscard]] inline Element* child() const
     {
         return child_.get();
     }
 
     // ---- configuration ----
     /// Which axes the child is free to grow along. Vertical by default.
-    [[nodiscard]] ScrollContentOrientation content_orientation() const
+    [[nodiscard]] inline ScrollContentOrientation content_orientation() const
     {
         return content_orientation_;
     }
@@ -304,14 +304,14 @@ public:
     void set_content_orientation(ScrollContentOrientation orientation);
 
     /// Whether user input scrolls horizontally. Auto by default.
-    [[nodiscard]] ScrollMode horizontal_scroll_mode() const
+    [[nodiscard]] inline ScrollMode horizontal_scroll_mode() const
     {
         return horizontal_scroll_mode_;
     }
     /// Takes effect on the next input. Scrolling from code ignores it.
     void set_horizontal_scroll_mode(ScrollMode mode);
     /// Whether user input scrolls vertically. Auto by default.
-    [[nodiscard]] ScrollMode vertical_scroll_mode() const
+    [[nodiscard]] inline ScrollMode vertical_scroll_mode() const
     {
         return vertical_scroll_mode_;
     }
@@ -323,7 +323,7 @@ public:
     [[nodiscard]] ScrollMode computed_vertical_scroll_mode() const;
 
     /// Whether Ctrl+wheel zooms. Disabled by default.
-    [[nodiscard]] ScrollZoomMode zoom_mode() const
+    [[nodiscard]] inline ScrollZoomMode zoom_mode() const
     {
         return zoom_mode_;
     }
@@ -336,7 +336,7 @@ public:
     /// only the axes the user may scroll (computed_horizontal_scroll_mode(),
     /// computed_vertical_scroll_mode()) move. While there is something to pan, the pointer shows
     /// the move cursor over the content.
-    [[nodiscard]] bool pan_on_drag() const
+    [[nodiscard]] inline bool pan_on_drag() const
     {
         return pan_on_drag_;
     }
@@ -349,35 +349,35 @@ public:
     /// Whether a wheel turn this view can't use goes on to the scroller around it, per axis
     /// (ScrollChainMode). Auto by default: a list scrolled to its bottom passes the wheel on to
     /// the page it sits in.
-    [[nodiscard]] ScrollChainMode horizontal_scroll_chain_mode() const
+    [[nodiscard]] inline ScrollChainMode horizontal_scroll_chain_mode() const
     {
         return horizontal_scroll_chain_mode_;
     }
     /// Takes effect on the next wheel turn.
-    void set_horizontal_scroll_chain_mode(ScrollChainMode mode)
+    inline void set_horizontal_scroll_chain_mode(ScrollChainMode mode)
     {
         horizontal_scroll_chain_mode_ = mode;
     }
     /// The vertical axis's chain mode; see horizontal_scroll_chain_mode().
-    [[nodiscard]] ScrollChainMode vertical_scroll_chain_mode() const
+    [[nodiscard]] inline ScrollChainMode vertical_scroll_chain_mode() const
     {
         return vertical_scroll_chain_mode_;
     }
     /// Takes effect on the next wheel turn.
-    void set_vertical_scroll_chain_mode(ScrollChainMode mode)
+    inline void set_vertical_scroll_chain_mode(ScrollChainMode mode)
     {
         vertical_scroll_chain_mode_ = mode;
     }
 
     /// When the horizontal bar shows. Auto by default.
-    [[nodiscard]] ScrollBarVisibility horizontal_scroll_bar_visibility() const
+    [[nodiscard]] inline ScrollBarVisibility horizontal_scroll_bar_visibility() const
     {
         return horizontal_scroll_bar_visibility_;
     }
     /// Redraws. The bars lie over the content, so the layout stays the same.
     void set_horizontal_scroll_bar_visibility(ScrollBarVisibility visibility);
     /// When the vertical bar shows. Auto by default.
-    [[nodiscard]] ScrollBarVisibility vertical_scroll_bar_visibility() const
+    [[nodiscard]] inline ScrollBarVisibility vertical_scroll_bar_visibility() const
     {
         return vertical_scroll_bar_visibility_;
     }
@@ -390,14 +390,14 @@ public:
     [[nodiscard]] bool computed_vertical_scroll_bar_visible() const;
 
     /// The smallest zoom factor. DefaultMinZoomFactor (0.1) by default.
-    [[nodiscard]] float min_zoom_factor() const
+    [[nodiscard]] inline float min_zoom_factor() const
     {
         return min_zoom_factor_;
     }
     /// Clamps the current zoom factor into the new range.
     void set_min_zoom_factor(float value);
     /// The largest zoom factor. DefaultMaxZoomFactor (10) by default.
-    [[nodiscard]] float max_zoom_factor() const
+    [[nodiscard]] inline float max_zoom_factor() const
     {
         return max_zoom_factor_;
     }
@@ -406,23 +406,23 @@ public:
 
     /// The fixed color painted behind the content across the viewport. nullopt, the default,
     /// paints nothing.
-    [[nodiscard]] std::optional<Color> background() const
+    [[nodiscard]] inline std::optional<Color> background() const
     {
         return background_.color();
     }
     /// The theme resource the background is drawn from, or null.
-    [[nodiscard]] ThemeColor background_resource() const
+    [[nodiscard]] inline ThemeColor background_resource() const
     {
         return background_.resource();
     }
     /// A fixed background. Replaces any theme resource and redraws.
-    void set_background(std::optional<Color> color)
+    inline void set_background(std::optional<Color> color)
     {
         background_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// A background read from the theme each time it is drawn. Replaces any fixed color.
-    void set_background(ThemeColor resource)
+    inline void set_background(ThemeColor resource)
     {
         background_ = resource;
         mark_dirty(DirtyFlags::Visual);
@@ -431,7 +431,7 @@ public:
     /// Whether the Scroll itself takes focus, ahead of its content in the tab order, and scrolls
     /// with the keyboard. False by default. focusable() reads it and is false while disabled.
     /// Lays the view out again, since the focus ring needs room.
-    void set_focusable(bool focusable)
+    inline void set_focusable(bool focusable)
     {
         focusable_ = focusable;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -439,54 +439,54 @@ public:
 
     // ---- view ----
     /// How far the view is scrolled right, in zoomed DIPs, in [0, scrollable_width()].
-    [[nodiscard]] float horizontal_offset() const
+    [[nodiscard]] inline float horizontal_offset() const
     {
         return horizontal_offset_;
     }
     /// How far the view is scrolled down, in zoomed DIPs, in [0, scrollable_height()].
-    [[nodiscard]] float vertical_offset() const
+    [[nodiscard]] inline float vertical_offset() const
     {
         return vertical_offset_;
     }
     /// The zoom factor, within [min_zoom_factor(), max_zoom_factor()]. 1 by default.
-    [[nodiscard]] float zoom_factor() const
+    [[nodiscard]] inline float zoom_factor() const
     {
         return zoom_factor_;
     }
     /// The content's arranged width, unzoomed.
-    [[nodiscard]] float extent_width() const
+    [[nodiscard]] inline float extent_width() const
     {
         return extent_.width;
     }
     /// The content's arranged height, unzoomed.
-    [[nodiscard]] float extent_height() const
+    [[nodiscard]] inline float extent_height() const
     {
         return extent_.height;
     }
     /// The view's own arranged width in DIPs, less the room a theme's permanent vertical scroll
     /// bar takes while it shows. The overlay bar takes none.
-    [[nodiscard]] float viewport_width() const
+    [[nodiscard]] inline float viewport_width() const
     {
         return viewport_rect().width;
     }
     /// The view's own arranged height in DIPs, less the room an era's horizontal bar takes.
-    [[nodiscard]] float viewport_height() const
+    [[nodiscard]] inline float viewport_height() const
     {
         return viewport_rect().height;
     }
     /// max(0, extent_width() * zoom_factor() - viewport_width()), the largest
     /// horizontal_offset().
-    [[nodiscard]] float scrollable_width() const
+    [[nodiscard]] inline float scrollable_width() const
     {
         return (std::max)(0.0f, extent_.width * zoom_factor_ - viewport_width());
     }
     /// The largest vertical_offset(), as scrollable_width().
-    [[nodiscard]] float scrollable_height() const
+    [[nodiscard]] inline float scrollable_height() const
     {
         return (std::max)(0.0f, extent_.height * zoom_factor_ - viewport_height());
     }
     /// Element::scroll_info(), whose content can be pulled a whole viewport past either end.
-    [[nodiscard]] std::optional<ScrollInfo> scroll_info() const override
+    [[nodiscard]] inline std::optional<ScrollInfo> scroll_info() const override
     {
         return ScrollInfo{Point{horizontal_offset_, vertical_offset_},
                           viewport_rect().size(),
@@ -496,7 +496,7 @@ public:
                           child_.get()};
     }
     /// What is moving the view: nothing, a thumb drag, inertia or an animation.
-    [[nodiscard]] ScrollInteractionState state() const
+    [[nodiscard]] inline ScrollInteractionState state() const
     {
         return state_;
     }
@@ -524,12 +524,12 @@ public:
     /// Whether this Scroll draws its own vertical scroll bar and lets it take input. True by
     /// default. AnnotatedScrollBarControl::set_target() sets it to false while attached, since
     /// that bar replaces the built-in one.
-    [[nodiscard]] bool show_scrollbar() const
+    [[nodiscard]] inline bool show_scrollbar() const
     {
         return show_scrollbar_;
     }
     /// Redraws when it changes.
-    void set_show_scrollbar(bool show)
+    inline void set_show_scrollbar(bool show)
     {
         if (show_scrollbar_ == show)
         {
@@ -541,60 +541,60 @@ public:
 
     // ---- events (one handler each; setting another replaces it) ----
     /// An offset or the zoom factor changed.
-    void on_view_changed(Callback<void()> handler)
+    inline void on_view_changed(Callback<void()> handler)
     {
         on_view_changed_ = std::move(handler);
     }
     /// The content's arranged size changed.
-    void on_extent_changed(Callback<void()> handler)
+    inline void on_extent_changed(Callback<void()> handler)
     {
         on_extent_changed_ = std::move(handler);
     }
     /// state() changed; read it in the handler.
-    void on_state_changed(Callback<void()> handler)
+    inline void on_state_changed(Callback<void()> handler)
     {
         on_state_changed_ = std::move(handler);
     }
     /// A scroll_to() or scroll_by() finished, with the request's correlation id. A request
     /// replaced by a later one completes when it is replaced.
-    void on_scroll_completed(Callback<void(int correlation_id)> handler)
+    inline void on_scroll_completed(Callback<void(int correlation_id)> handler)
     {
         on_scroll_completed_ = std::move(handler);
     }
     /// A zoom_to() or zoom_by() finished or was replaced, with its correlation id.
-    void on_zoom_completed(Callback<void(int correlation_id)> handler)
+    inline void on_zoom_completed(Callback<void(int correlation_id)> handler)
     {
         on_zoom_completed_ = std::move(handler);
     }
     /// Edit `args.animation` before an animated scroll plays, to change the duration or the path.
-    void on_scroll_animation_starting(Callback<void(ScrollAnimationStarting& args)> handler)
+    inline void on_scroll_animation_starting(Callback<void(ScrollAnimationStarting& args)> handler)
     {
         on_scroll_animation_starting_ = std::move(handler);
     }
     /// Edit `args.animation` before an animated zoom plays.
-    void on_zoom_animation_starting(Callback<void(ZoomAnimationStarting& args)> handler)
+    inline void on_zoom_animation_starting(Callback<void(ZoomAnimationStarting& args)> handler)
     {
         on_zoom_animation_starting_ = std::move(handler);
     }
     /// True: measuring touches only the content, the view's own sizes and its scroll bars' sizes.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
     /// Only after set_focusable(true), and while enabled.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return focusable_ && is_enabled();
     }
     /// Whether the view itself (not its content) holds keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// Visits the content, if any. The scroll bars are drawn by the view and are not children.
     /// Tab reaches the view itself first when it is a tab stop, then what is focusable in the
     /// content.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (child_)
         {
@@ -607,7 +607,7 @@ public:
 
     // ---- automation ----
     /// Reports the Pane role to accessibility tools.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Pane;
     }
@@ -693,19 +693,19 @@ private:
         int   id = 0;
     };
 
-    [[nodiscard]] bool scrollable_horizontally() const
+    [[nodiscard]] inline bool scrollable_horizontally() const
     {
         return scrollable_width() > 0.0f;
     }
-    [[nodiscard]] bool scrollable_vertically() const
+    [[nodiscard]] inline bool scrollable_vertically() const
     {
         return scrollable_height() > 0.0f;
     }
-    [[nodiscard]] bool user_can_scroll_horizontally() const
+    [[nodiscard]] inline bool user_can_scroll_horizontally() const
     {
         return computed_horizontal_scroll_mode() == ScrollMode::Enabled && scrollable_horizontally();
     }
-    [[nodiscard]] bool user_can_scroll_vertically() const
+    [[nodiscard]] inline bool user_can_scroll_vertically() const
     {
         return computed_vertical_scroll_mode() == ScrollMode::Enabled && scrollable_vertically();
     }
@@ -727,7 +727,7 @@ private:
     void set_view(float horizontal, float vertical, OptionalFloat zoom = std::nullopt);
     void set_state(ScrollInteractionState state);
 
-    int next_id()
+    inline int next_id()
     {
         return ++last_id_;
     }
@@ -788,7 +788,7 @@ private:
     mutable float horizontal_gutter_ = 0.0f;
     mutable Size  gutter_room_{}; // the room the gutters were decided in
     // The part of bounds() the content shows in: all of it, less the era bars' gutters.
-    [[nodiscard]] Rect viewport_rect() const
+    [[nodiscard]] inline Rect viewport_rect() const
     {
         return Rect{bounds().x,
                     bounds().y,
@@ -827,18 +827,18 @@ protected:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.scroll = this;
     }
     // horizontal_offset() as a percentage of scrollable_width(); -1 with nothing to scroll.
-    [[nodiscard]] float scroll_horizontal_percent() const override
+    [[nodiscard]] inline float scroll_horizontal_percent() const override
     {
         const float range = scrollable_width();
         return range > 0.0f ? horizontal_offset_ / range * 100.0f : -1.0f;
     }
     // vertical_offset() as a percentage of scrollable_height(); 0 with nothing to scroll.
-    [[nodiscard]] float scroll_vertical_percent() const override
+    [[nodiscard]] inline float scroll_vertical_percent() const override
     {
         const float range = scrollable_height();
         return range > 0.0f ? (vertical_offset_ / range) * 100.0f : 0.0f;

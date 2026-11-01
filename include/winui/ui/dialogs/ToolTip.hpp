@@ -84,7 +84,7 @@ public:
         return observer;
     }
     /// The anchor, or null before set_anchor(). Owned by this ToolTip.
-    [[nodiscard]] Element* anchor() const
+    [[nodiscard]] inline Element* anchor() const
     {
         return anchor_.get();
     }
@@ -103,38 +103,38 @@ public:
         return observer;
     }
     /// The floating content, or null before set_content(). Owned by this ToolTip.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
 
     /// Whether the tip is showing. It opens once the hover delay elapses or show_at() is called.
     /// It closes when the pointer leaves, on a click, on close(), or when the popup is dismissed.
-    [[nodiscard]] bool is_open() const
+    [[nodiscard]] inline bool is_open() const
     {
         return open_;
     }
 
     /// How long the pointer must stay over the anchor before the tooltip opens; 800 ms by default.
-    [[nodiscard]] Duration delay() const
+    [[nodiscard]] inline Duration delay() const
     {
         return Duration{delay_ms_};
     }
     /// Sets the delay. It also applies to a countdown already running, which keeps its elapsed
     /// time.
-    void set_delay(Duration delay)
+    inline void set_delay(Duration delay)
     {
         delay_ms_ = delay.count();
     }
 
     /// Which side of the dock rect the tooltip opens against; Above by default. It flips to Below
     /// near the top edge of the window.
-    [[nodiscard]] PopupPlacement placement() const
+    [[nodiscard]] inline PopupPlacement placement() const
     {
         return placement_;
     }
     /// Sets the side. Takes effect the next time the popup is placed.
-    void set_placement(PopupPlacement placement)
+    inline void set_placement(PopupPlacement placement)
     {
         placement_ = placement;
         sync_popup();
@@ -142,24 +142,24 @@ public:
 
     /// How far the dock rect is inflated on the left and right before the tooltip is placed
     /// against it, in DIPs; 20 by default. vertical_offset() does the same for the top and bottom.
-    [[nodiscard]] float horizontal_offset() const
+    [[nodiscard]] inline float horizontal_offset() const
     {
         return horizontal_offset_;
     }
     /// Sets the horizontal inflation in DIPs. A negative value shrinks the dock rect, pulling the
     /// tip over it.
-    void set_horizontal_offset(float offset)
+    inline void set_horizontal_offset(float offset)
     {
         horizontal_offset_ = offset;
         sync_popup();
     }
     /// The vertical inflation in DIPs; 20 by default. See horizontal_offset().
-    [[nodiscard]] float vertical_offset() const
+    [[nodiscard]] inline float vertical_offset() const
     {
         return vertical_offset_;
     }
     /// Sets the vertical inflation in DIPs.
-    void set_vertical_offset(float offset)
+    inline void set_vertical_offset(float offset)
     {
         vertical_offset_ = offset;
         sync_popup();
@@ -167,12 +167,12 @@ public:
 
     /// The placement rect, in the anchor's own coordinates. The tooltip docks to it instead of
     /// the pointer, so it opens beside the rect and doesn't cover what it describes.
-    [[nodiscard]] const std::optional<Rect>& placement_rect() const
+    [[nodiscard]] inline const std::optional<Rect>& placement_rect() const
     {
         return placement_rect_;
     }
     /// Sets or clears the placement rect. nullopt docks to the pointer again.
-    void set_placement_rect(std::optional<Rect> rect)
+    inline void set_placement_rect(std::optional<Rect> rect)
     {
         placement_rect_ = rect;
         sync_popup();
@@ -180,7 +180,7 @@ public:
     /// Focusable exactly when the anchor is; focus itself goes to the anchor.
     [[nodiscard]] bool focusable() const override;
     /// The anchor, if any. The tip's content is popup content, outside the tree.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (anchor_)
         {
@@ -188,7 +188,7 @@ public:
         }
     }
     /// The tip stands in for its anchor as one tab stop. Focus itself goes to the anchor.
-    void collect_focusables(std::vector<Element*>& out) override
+    inline void collect_focusables(std::vector<Element*>& out) override
     {
         if (focusable())
         {
@@ -196,18 +196,18 @@ public:
         }
     }
     /// No automation children: the anchor is not listed under the tip.
-    void automation_children(std::vector<Element*>&) const override
+    inline void automation_children(std::vector<Element*>&) const override
     {
     }
 
     // ---- automation ----
     /// The anchor's role, name and providers, so screen readers see the anchor. With no anchor,
     /// a Group with nothing to act on.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return anchor_ ? anchor_->automation_role() : AutomationRole::Group;
     }
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return anchor_ ? anchor_->automation_name() : std::string{};
     }
@@ -218,7 +218,7 @@ public:
     void show_at(Point pointer);
     /// Closes the tip and resets the hover countdown. Nothing changes on screen when it is
     /// already closed.
-    void close()
+    inline void close()
     {
         hide();
     }
@@ -241,7 +241,7 @@ protected:
 private:
     // Automation sees the anchor: its providers are this control's, and with no anchor there
     // are none.
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         if (anchor_)
         {
@@ -280,7 +280,7 @@ protected:
 
 protected:
     /// None of its own: the anchor inside it draws its own focus ring.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return false;
     }

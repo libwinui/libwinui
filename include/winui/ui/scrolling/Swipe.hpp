@@ -104,7 +104,7 @@ public:
     }
 
     /// Calls the handler, if there is one.
-    void operator()(SwipeItemInvokedEventArgs& args) const
+    inline void operator()(SwipeItemInvokedEventArgs& args) const
     {
         if (fn_)
         {
@@ -112,7 +112,7 @@ public:
         }
     }
     /// Whether a handler is set.
-    [[nodiscard]] explicit operator bool() const
+    [[nodiscard]] inline explicit operator bool() const
     {
         return static_cast<bool>(fn_);
     }
@@ -242,21 +242,21 @@ public:
         return observer;
     }
     /// The swiped content (owned by the control), or null.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
 
     // ---- items ----
     /// Revealed by dragging the content to the right.
-    [[nodiscard]] const SwipeItems& left_items() const
+    [[nodiscard]] inline const SwipeItems& left_items() const
     {
         return left_items_;
     }
     /// Replaces the item list and snaps closed.
     void set_left_items(SwipeItems items);
     /// Revealed by dragging the content to the left.
-    [[nodiscard]] const SwipeItems& right_items() const
+    [[nodiscard]] inline const SwipeItems& right_items() const
     {
         return right_items_;
     }
@@ -265,31 +265,31 @@ public:
 
     // ---- the content presenter's chrome ----
     /// The fill behind the content, moving with it. Transparent by default.
-    void set_background(std::optional<Color> color)
+    inline void set_background(std::optional<Color> color)
     {
         background_.set(color);
         mark_dirty(DirtyFlags::Visual);
     }
     /// The fill behind the content as a theme resource, re-read on a theme change.
-    void set_background(ThemeColor resource)
+    inline void set_background(ThemeColor resource)
     {
         background_.set(resource);
         mark_dirty(DirtyFlags::Visual);
     }
     /// The border color around the content, moving with it.
-    void set_border_brush(std::optional<Color> color)
+    inline void set_border_brush(std::optional<Color> color)
     {
         border_brush_.set(color);
         mark_dirty(DirtyFlags::Visual);
     }
     /// The border color as a theme resource, re-read on a theme change.
-    void set_border_brush(ThemeColor resource)
+    inline void set_border_brush(ThemeColor resource)
     {
         border_brush_.set(resource);
         mark_dirty(DirtyFlags::Visual);
     }
     /// The border width in DIPs, inside the control's bounds. Lays the control out again.
-    void set_border_thickness(Thickness thickness)
+    inline void set_border_thickness(Thickness thickness)
     {
         border_thickness_ = thickness;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -298,12 +298,12 @@ public:
     // ---- open/closed state ----
     /// Positive: the left items revealed by this many DIPs. Negative: the right items revealed by
     /// |offset|. Zero: closed.
-    [[nodiscard]] float offset() const
+    [[nodiscard]] inline float offset() const
     {
         return offset_;
     }
     /// Whether a strip shows, or is sliding open.
-    [[nodiscard]] bool is_open() const
+    [[nodiscard]] inline bool is_open() const
     {
         return offset_ != 0.0f || (animating_ && target_ != 0.0f);
     }
@@ -313,7 +313,7 @@ public:
     /// Visits the content, the only child. The control itself is not focusable, and whatever is
     /// focusable in the content is always in the tab order. The items are not children: they
     /// work with the mouse only and are not exposed to accessibility tools.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (content_)
         {

@@ -103,7 +103,7 @@ public:
         return observer;
     }
     /// The current layout (non-owning), or nullptr when the panel has none.
-    [[nodiscard]] Layout* layout() const
+    [[nodiscard]] inline Layout* layout() const
     {
         return layout_.get();
     }
@@ -129,8 +129,8 @@ private:
     friend class PanelLayoutContext;
     friend class PanelVirtualizingContext;
 
-    void replace_layout(std::unique_ptr<Layout> layout);
-    void layout_invalidated(bool measure) override
+    void        replace_layout(std::unique_ptr<Layout> layout);
+    inline void layout_invalidated(bool measure) override
     {
         mark_dirty(measure ? (DirtyFlags::Layout | DirtyFlags::Visual) : (DirtyFlags::Arrange | DirtyFlags::Visual));
     }

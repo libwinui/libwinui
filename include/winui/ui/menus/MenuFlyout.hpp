@@ -79,7 +79,7 @@ public:
 
     /// The items. Toggle and radio items' is_checked() track clicks made in the menu and the
     /// properties their `checked` is bound to.
-    [[nodiscard]] const std::vector<MenuItem>& items() const
+    [[nodiscard]] inline const std::vector<MenuItem>& items() const
     {
         return items_;
     }

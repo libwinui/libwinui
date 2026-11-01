@@ -86,24 +86,24 @@ public:
 
     // ---- text ----
     /// The primary caption text. Empty draws none.
-    [[nodiscard]] const std::string& title() const
+    [[nodiscard]] inline const std::string& title() const
     {
         return title_;
     }
     /// Replaces the title and updates the layout. Does not change the window's title.
-    void set_title(std::string title)
+    inline void set_title(std::string title)
     {
         title_ = std::move(title);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// Dimmed secondary text after the title. Empty draws none.
-    [[nodiscard]] const std::string& subtitle() const
+    [[nodiscard]] inline const std::string& subtitle() const
     {
         return subtitle_;
     }
     /// Replaces the subtitle and updates the layout.
-    void set_subtitle(std::string subtitle)
+    inline void set_subtitle(std::string subtitle)
     {
         subtitle_ = std::move(subtitle);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -112,13 +112,13 @@ public:
     // ---- icon ----
     /// The icon left of the title: a glyph at 16 DIPs in the title text's color, or a path or
     /// picture fitted into the same 16x16 box. Empty (the default) shows none.
-    [[nodiscard]] const IconSource& icon() const
+    [[nodiscard]] inline const IconSource& icon() const
     {
         return icon_;
     }
     /// Shows `icon`; an empty source removes it and the title moves left into the freed space.
     /// Updates the layout.
-    void set_icon(IconSource icon)
+    inline void set_icon(IconSource icon)
     {
         icon_ = std::move(icon);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -128,12 +128,12 @@ public:
     /// Where the content sits in the space between the title and the right header. Center, the
     /// default, keeps the content at its own width, centered. Stretch hands it the whole space,
     /// which a search box with a max width wants.
-    [[nodiscard]] Alignment content_alignment() const
+    [[nodiscard]] inline Alignment content_alignment() const
     {
         return content_alignment_;
     }
     /// Changes the content slot's alignment and updates the layout.
-    void set_content_alignment(Alignment alignment)
+    inline void set_content_alignment(Alignment alignment)
     {
         content_alignment_ = alignment;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -142,25 +142,25 @@ public:
     // ---- back button ----
     /// Whether the back button is shown; false by default. A hidden button takes no space, is not a
     /// Tab stop and is not hit-tested.
-    [[nodiscard]] bool is_back_button_visible() const
+    [[nodiscard]] inline bool is_back_button_visible() const
     {
         return back_button_visible_;
     }
     /// Shows or hides the back button and updates the layout.
-    void set_back_button_visible(bool visible)
+    inline void set_back_button_visible(bool visible)
     {
         back_button_visible_ = visible;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// Whether the back button is enabled; true by default. A disabled back button stays visible but
     /// grayed, cannot be clicked, and drags the window when the bar is the caption.
-    [[nodiscard]] bool is_back_button_enabled() const
+    [[nodiscard]] inline bool is_back_button_enabled() const
     {
         return back_enabled_;
     }
     /// Enables or disables the back button (ButtonControl::set_enabled()); a disabled bar keeps
     /// it disabled either way.
-    void set_back_button_enabled(bool enabled)
+    inline void set_back_button_enabled(bool enabled)
     {
         back_enabled_ = enabled;
         back_button_->set_enabled(back_enabled_ && is_enabled());
@@ -169,7 +169,7 @@ public:
     /// Fired on a completed click (or Enter/Space) of the back button.
     /// It cannot fire while the button is hidden, since a hidden button is not hit-tested.
     /// Replaces any previous handler.
-    void on_back_requested(Callback<void()> handler)
+    inline void on_back_requested(Callback<void()> handler)
     {
         on_back_requested_ = std::move(handler);
     }
@@ -177,12 +177,12 @@ public:
     // ---- pane-toggle (hamburger) button ----
     /// Whether the pane-toggle button is shown; false by default. Typically paired with a
     /// NavigationShell whose own pane button is hidden.
-    [[nodiscard]] bool is_pane_toggle_button_visible() const
+    [[nodiscard]] inline bool is_pane_toggle_button_visible() const
     {
         return pane_toggle_visible_;
     }
     /// Shows or hides the pane-toggle button and updates the layout.
-    void set_pane_toggle_button_visible(bool visible)
+    inline void set_pane_toggle_button_visible(bool visible)
     {
         pane_toggle_visible_ = visible;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -190,7 +190,7 @@ public:
     /// Fired when the pane-toggle button is clicked. The bar keeps
     /// no pane state of its own; the handler opens or closes the pane. Replaces any previous
     /// handler.
-    void on_pane_toggle_requested(Callback<void()> handler)
+    inline void on_pane_toggle_requested(Callback<void()> handler)
     {
         on_pane_toggle_requested_ = std::move(handler);
     }
@@ -210,7 +210,7 @@ public:
         return observer;
     }
     /// The left header, or null when the slot is empty. Owned by the bar.
-    [[nodiscard]] Element* left_header_content() const
+    [[nodiscard]] inline Element* left_header_content() const
     {
         return left_header_.get();
     }
@@ -228,7 +228,7 @@ public:
         return observer;
     }
     /// The middle slot's element, or null. Owned by the bar.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
@@ -246,7 +246,7 @@ public:
         return observer;
     }
     /// The right header, or null. Owned by the bar.
-    [[nodiscard]] Element* right_header_content() const
+    [[nodiscard]] inline Element* right_header_content() const
     {
         return right_header_.get();
     }
@@ -256,7 +256,7 @@ public:
     /// otherwise what the window the bar is in reports (Window::caption_insets()), all zero
     /// outside a window. All zero is a TitleBar inside the content. Anything else also keeps a
     /// 48 DIP strip free at the right for dragging the window.
-    [[nodiscard]] const CaptionInsets& caption_insets() const
+    [[nodiscard]] inline const CaptionInsets& caption_insets() const
     {
         return caption_insets_;
     }
@@ -265,7 +265,7 @@ public:
     void set_caption_insets(std::optional<CaptionInsets> insets);
     /// Whether the bar draws as an active window's caption: the value set with set_active(),
     /// otherwise Window::active() of the window the bar is in, true outside a window.
-    [[nodiscard]] bool active() const
+    [[nodiscard]] inline bool active() const
     {
         return active_;
     }
@@ -286,12 +286,12 @@ public:
 
     // ---- automation ----
     /// UI Automation's Header control type.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Header;
     }
     /// The title, when no explicit accessible name is set.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return title_;
     }
@@ -359,7 +359,7 @@ private:
     Rect subtitle_rect_{};
 
 protected:
-    void enabled_changed() override
+    inline void enabled_changed() override
     {
         back_button_->set_enabled(back_enabled_ && is_enabled());
         pane_toggle_button_->set_enabled(is_enabled());

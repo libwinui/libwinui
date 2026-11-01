@@ -97,41 +97,41 @@ public:
         return observer;
     }
     /// The number of primary commands.
-    [[nodiscard]] std::size_t primary_count() const
+    [[nodiscard]] inline std::size_t primary_count() const
     {
         return primary_.size();
     }
     /// The number of secondary commands.
-    [[nodiscard]] std::size_t secondary_count() const
+    [[nodiscard]] inline std::size_t secondary_count() const
     {
         return secondary_.size();
     }
     /// The primary command at `index` as a non-owning observer, or nullptr when out of range.
-    [[nodiscard]] Element* primary(std::size_t index) const
+    [[nodiscard]] inline Element* primary(std::size_t index) const
     {
         return index < primary_.size() ? primary_[index].get() : nullptr;
     }
     /// The secondary command at `index` as a non-owning observer, or nullptr when out of range.
-    [[nodiscard]] Element* secondary(std::size_t index) const
+    [[nodiscard]] inline Element* secondary(std::size_t index) const
     {
         return index < secondary_.size() ? secondary_[index].get() : nullptr;
     }
 
     /// Whether the menu of secondary commands stays open, with no More button.
     /// False by default.
-    [[nodiscard]] bool always_expanded() const
+    [[nodiscard]] inline bool always_expanded() const
     {
         return always_expanded_;
     }
     /// Takes effect the next time the flyout opens.
-    void set_always_expanded(bool always_expanded)
+    inline void set_always_expanded(bool always_expanded)
     {
         always_expanded_ = always_expanded;
     }
 
     /// Whether the secondary menu shows. Every open resets it from the show mode: expanded for
     /// Standard when there are secondary commands, collapsed for Transient.
-    [[nodiscard]] bool is_expanded() const
+    [[nodiscard]] inline bool is_expanded() const
     {
         return expanded_;
     }

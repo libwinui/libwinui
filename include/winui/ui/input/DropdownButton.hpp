@@ -73,14 +73,14 @@ public:
 
     /// The chevron (an AnimatedIcon), for an app that wants another source. Owned by the
     /// button. Its state ("Normal", "PointerOver" or "Pressed") follows the button's.
-    [[nodiscard]] AnimatedIconControl* chevron() const
+    [[nodiscard]] inline AnimatedIconControl* chevron() const
     {
         return chevron_.get();
     }
 
     // ---- Element ----
     /// The same answer as ButtonControl's, since the chevron measures only its glyph.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return ButtonControl::parallel_measure_safe();
     }
@@ -116,7 +116,7 @@ protected:
 
 protected:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.invoke          = this;
         out.expand_collapse = this;
@@ -124,7 +124,7 @@ protected:
 
 private:
     // Expanded while the flyout is open (is_flyout_open()).
-    [[nodiscard]] bool expanded_state() const override
+    [[nodiscard]] inline bool expanded_state() const override
     {
         return is_flyout_open();
     }

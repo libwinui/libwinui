@@ -115,12 +115,12 @@ public:
 
     // ---- value ----
     /// Minimum; committed and stepped values are clamped to it. -infinity by default.
-    [[nodiscard]] double(min)() const
+    [[nodiscard]] inline double(min)() const
     {
         return min_;
     }
     /// Maximum; committed and stepped values are clamped to it. +infinity by default.
-    [[nodiscard]] double(max)() const
+    [[nodiscard]] inline double(max)() const
     {
         return max_;
     }
@@ -129,7 +129,7 @@ public:
     void set_range(double min, double max);
 
     /// The committed number, unset for none. Not what is being typed until it commits.
-    [[nodiscard]] std::optional<double> value() const
+    [[nodiscard]] inline std::optional<double> value() const
     {
         return value_;
     }
@@ -139,30 +139,30 @@ public:
     void set_value(std::optional<double> value);
 
     /// What the arrow keys and spin buttons step by; 1 by default.
-    [[nodiscard]] double step() const
+    [[nodiscard]] inline double step() const
     {
         return step_;
     }
     /// Sets how far a spin button click or an Up or Down key press moves the value. Zero turns
     /// both off. Negative values count as 0.
-    void set_step(double step)
+    inline void set_step(double step)
     {
         step_ = (std::max)(0.0, step);
     }
 
     /// What PageUp/PageDown step by. 10 by default.
-    [[nodiscard]] double large_step() const
+    [[nodiscard]] inline double large_step() const
     {
         return large_step_;
     }
     /// Sets what PageUp and PageDown step by. Negative values count as 0.
-    void set_large_step(double step)
+    inline void set_large_step(double step)
     {
         large_step_ = (std::max)(0.0, step);
     }
 
     /// Where the spin buttons show; Hidden by default.
-    [[nodiscard]] NumberBoxSpinButtonPlacementMode spin_button_placement() const
+    [[nodiscard]] inline NumberBoxSpinButtonPlacementMode spin_button_placement() const
     {
         return placement_;
     }
@@ -170,19 +170,19 @@ public:
     void set_spin_button_placement(NumberBoxSpinButtonPlacementMode placement);
 
     /// Whether committed text is evaluated as arithmetic ("1 + 2^2" is 5). False by default.
-    [[nodiscard]] bool accepts_expression() const
+    [[nodiscard]] inline bool accepts_expression() const
     {
         return accepts_expression_;
     }
     /// Committed text is evaluated as arithmetic.
-    void set_accepts_expression(bool accepts)
+    inline void set_accepts_expression(bool accepts)
     {
         accepts_expression_ = accepts;
     }
 
     /// The formatter the value is shown and typed text parsed with. The default shows up to ten
     /// significant digits with the user's regional separators.
-    [[nodiscard]] const DecimalFormatter& number_formatter() const
+    [[nodiscard]] inline const DecimalFormatter& number_formatter() const
     {
         return formatter_;
     }
@@ -191,36 +191,36 @@ public:
     void set_number_formatter(DecimalFormatter formatter);
 
     /// What happens to input that does not parse; InvalidInputOverwritten by default.
-    [[nodiscard]] NumberBoxValidationMode validation_mode() const
+    [[nodiscard]] inline NumberBoxValidationMode validation_mode() const
     {
         return validation_mode_;
     }
     /// Sets what happens to input that does not parse. Takes effect from the next commit or step,
     /// and the current value is not validated again.
-    void set_validation_mode(NumberBoxValidationMode mode)
+    inline void set_validation_mode(NumberBoxValidationMode mode)
     {
         validation_mode_ = mode;
     }
 
     /// Whether stepping wraps around the range. False by default.
-    [[nodiscard]] bool wrap_enabled() const
+    [[nodiscard]] inline bool wrap_enabled() const
     {
         return wrap_enabled_;
     }
     /// When true, a step past max lands on min, and a step past min lands on max.
-    void set_wrap_enabled(bool wrap)
+    inline void set_wrap_enabled(bool wrap)
     {
         wrap_enabled_ = wrap;
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// The inner TextBox's placeholder; empty by default.
-    [[nodiscard]] const std::string& placeholder_text() const
+    [[nodiscard]] inline const std::string& placeholder_text() const
     {
         return text_box_->placeholder_text();
     }
     /// The hint shown while the box is empty (the value unset).
-    void set_placeholder_text(std::string text)
+    inline void set_placeholder_text(std::string text)
     {
         text_box_->set_placeholder_text(std::move(text));
         mark_dirty(DirtyFlags::Visual);
@@ -234,12 +234,12 @@ public:
     void                             set_text(std::string text);
 
     /// The header text; empty by default.
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return header_.text();
     }
     /// The label above the control. Empty (the default) draws none and takes no room.
-    void set_header(std::string header)
+    inline void set_header(std::string header)
     {
         if (header_.set_text(std::move(header)))
         {
@@ -247,12 +247,12 @@ public:
         }
     }
     /// The secondary text under the box; empty (the default) draws none.
-    [[nodiscard]] const std::string& description() const
+    [[nodiscard]] inline const std::string& description() const
     {
         return description_.text();
     }
     /// Sets the description. Empty draws none and takes no room.
-    void set_description(std::string description)
+    inline void set_description(std::string description)
     {
         if (description_.set_text(std::move(description)))
         {
@@ -261,12 +261,12 @@ public:
     }
     /// What is wrong with the value, shown in the description's place in the critical color,
     /// with the border in the same color; empty (the default) shows the description.
-    [[nodiscard]] const std::string& error() const
+    [[nodiscard]] inline const std::string& error() const
     {
         return description_.error();
     }
     /// Sets the error. Empty shows the description again.
-    void set_error(std::string error)
+    inline void set_error(std::string error)
     {
         if (description_.set_error(std::move(error)))
         {
@@ -276,17 +276,17 @@ public:
     }
     /// The description, or the error while one is set, is the help text a screen reader offers
     /// when accessibility().description is empty.
-    [[nodiscard]] std::string automation_help_text_fallback() const override
+    [[nodiscard]] inline std::string automation_help_text_fallback() const override
     {
         return description_.shown();
     }
     /// Invalid while an error is set.
-    [[nodiscard]] bool automation_invalid() const override
+    [[nodiscard]] inline bool automation_invalid() const override
     {
         return description_.has_error();
     }
     /// The header names the control when accessibility().name does not.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_.text();
     }
@@ -298,24 +298,24 @@ public:
 
     /// Fired whenever `value` changes, from a committed text edit, a spin button click or an
     /// arrow key step.
-    void on_value_changed(Callback<void(std::optional<double>)> handler)
+    inline void on_value_changed(Callback<void(std::optional<double>)> handler)
     {
         on_value_changed_ = std::move(handler);
     }
 
     // ---- focus ----
     /// Whether the box holds keyboard focus. The inner TextBox shows the caret then.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// The inner text box's caret.
-    [[nodiscard]] std::optional<Rect> caret_bounds() const override
+    [[nodiscard]] inline std::optional<Rect> caret_bounds() const override
     {
         return text_box_->caret_bounds();
     }
     /// A tab stop while enabled.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
@@ -355,12 +355,12 @@ protected:
 public:
     // ---- the internal TextBox ----
     /// Visits the internal TextBox.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         visit(*text_box_);
     }
     /// One tab stop: the internal TextBox is part of this control, not a stop of its own.
-    void collect_focusables(std::vector<Element*>& out) override
+    inline void collect_focusables(std::vector<Element*>& out) override
     {
         if (focusable())
         {
@@ -368,7 +368,7 @@ public:
         }
     }
     /// One automation node: the internal TextBox is not listed as a child.
-    void automation_children(std::vector<Element*>&) const override
+    inline void automation_children(std::vector<Element*>&) const override
     {
     }
     /// Shows Cut, Copy, Paste and Select All, with no spelling suggestions.
@@ -376,12 +376,12 @@ public:
 
     // ---- automation ----
     /// The text field's cursor over the text field: an I-beam, or an arrow over its buttons.
-    [[nodiscard]] std::optional<CursorShape> cursor_at(Point p) const override
+    [[nodiscard]] inline std::optional<CursorShape> cursor_at(Point p) const override
     {
         return text_box_->bounds().contains(p) ? text_box_->cursor_at(p) : std::nullopt;
     }
     /// AutomationRole::SpinButton.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::SpinButton;
     }
@@ -392,12 +392,12 @@ private:
     // Up/Down step the value and Left/Right reach the inner TextBox caret.
     // Claimed so Window's directional focus navigation leaves them alone
     // (Element::key_override).
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowUp || key == Key::ArrowDown || key == Key::ArrowLeft || key == Key::ArrowRight;
     }
     // Enter commits the typed value (Element::key_override()).
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return true;
     }
@@ -405,24 +405,24 @@ private:
     // focus. A click outside doesn't close it; it closes when focus leaves the box.
     void sync_popup();
     // This control alone: the internal TextBox is not live on its own.
-    void collect_live(std::vector<Element*>& out) override
+    inline void collect_live(std::vector<Element*>& out) override
     {
         out.push_back(this);
     }
     friend class NumberBoxSpinPopup; // steps and presses through the same state as the inline buttons
 
     // Compact falls back to the inline buttons under a theme without the spin-button popup.
-    [[nodiscard]] bool inline_spinners() const
+    [[nodiscard]] inline bool inline_spinners() const
     {
         return placement_ == NumberBoxSpinButtonPlacementMode::Inline ||
                (placement_ == NumberBoxSpinButtonPlacementMode::Compact && !spin_popup_);
     }
-    [[nodiscard]] bool compact_popup() const
+    [[nodiscard]] inline bool compact_popup() const
     {
         return placement_ == NumberBoxSpinButtonPlacementMode::Compact && spin_popup_;
     }
     // Inline under a theme that stacks the spin buttons inside the field (Aero's up-down).
-    [[nodiscard]] bool stacked_spinners() const
+    [[nodiscard]] inline bool stacked_spinners() const
     {
         return inline_spinners() && stacked_width_ > 0.0f;
     }
@@ -432,12 +432,12 @@ private:
     [[nodiscard]] Rect  up_bounds() const;
     [[nodiscard]] Rect  down_bounds() const;
     // Nothing to step from no value; either way while wrapping or not validating.
-    [[nodiscard]] bool can_step_up() const
+    [[nodiscard]] inline bool can_step_up() const
     {
         return is_enabled() && value_ &&
                (wrap_enabled_ || validation_mode_ == NumberBoxValidationMode::Disabled || *value_ < max_);
     }
-    [[nodiscard]] bool can_step_down() const
+    [[nodiscard]] inline bool can_step_down() const
     {
         return is_enabled() && value_ &&
                (wrap_enabled_ || validation_mode_ == NumberBoxValidationMode::Disabled || *value_ > min_);
@@ -493,39 +493,39 @@ protected:
 
 protected:
     /// None: the field shows focus with its accent border.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return false;
     }
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.range_value = this;
     }
     // value() (NaN with no number).
-    [[nodiscard]] double range_value() const override
+    [[nodiscard]] inline double range_value() const override
     {
         return value_.value_or(std::numeric_limits<double>::quiet_NaN());
     }
     // min().
-    [[nodiscard]] double range_minimum() const override
+    [[nodiscard]] inline double range_minimum() const override
     {
         return min_;
     }
     // max().
-    [[nodiscard]] double range_maximum() const override
+    [[nodiscard]] inline double range_maximum() const override
     {
         return max_;
     }
     // step().
-    [[nodiscard]] double range_small_change() const override
+    [[nodiscard]] inline double range_small_change() const override
     {
         return step_;
     }
     // set_value() from an accessibility client; refused while the box is disabled.
-    bool set_range_value(double value) override
+    inline bool set_range_value(double value) override
     {
         if (!is_enabled())
         {
@@ -534,7 +534,7 @@ private:
         set_value(value);
         return true;
     }
-    [[nodiscard]] bool range_read_only() const override
+    [[nodiscard]] inline bool range_read_only() const override
     {
         return false;
     }

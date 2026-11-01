@@ -117,52 +117,52 @@ public:
     void cancel();
 
     /// The flight path; nullopt (the default) is an ArcFlightPath.
-    [[nodiscard]] const std::optional<FlightPath>& flight_path() const
+    [[nodiscard]] inline const std::optional<FlightPath>& flight_path() const
     {
         return flight_path_;
     }
     /// Set before try_start(); a running flight keeps the path it began with.
-    void set_flight_path(std::optional<FlightPath> path)
+    inline void set_flight_path(std::optional<FlightPath> path)
     {
         flight_path_ = path;
     }
     /// True (the default) scales the snapshots from the source's size to the destination's.
     /// False keeps their own sizes, so they only move, centered on each other.
-    [[nodiscard]] bool is_scale_animation_enabled() const
+    [[nodiscard]] inline bool is_scale_animation_enabled() const
     {
         return scale_enabled_;
     }
     /// Set before try_start().
-    void set_scale_animation_enabled(bool enabled)
+    inline void set_scale_animation_enabled(bool enabled)
     {
         scale_enabled_ = enabled;
     }
     /// Fired when the animation has played (not when it is canceled or times out).
     /// Replaces any previous handler.
-    void on_completed(Callback<void()> handler)
+    inline void on_completed(Callback<void()> handler)
     {
         on_completed_ = std::move(handler);
     }
 
     /// The current state; Prepared right after prepare_to_animate().
-    [[nodiscard]] ConnectedAnimationState state() const
+    [[nodiscard]] inline ConnectedAnimationState state() const
     {
         return state_;
     }
     /// The source's rect when it was prepared (window coordinates).
-    [[nodiscard]] const Rect& source_rect() const
+    [[nodiscard]] inline const Rect& source_rect() const
     {
         return source_rect_;
     }
     /// The destination's rect once running (window coordinates); empty before that.
-    [[nodiscard]] const Rect& destination_rect() const
+    [[nodiscard]] inline const Rect& destination_rect() const
     {
         return destination_rect_;
     }
 
 private:
     friend class ConnectedAnimationService;
-    explicit ConnectedAnimation(ConnectedAnimationService& service) : service_(&service)
+    inline explicit ConnectedAnimation(ConnectedAnimationService& service) : service_(&service)
     {
     }
 
@@ -240,28 +240,28 @@ public:
     [[nodiscard]] ConnectedAnimation* animation(const std::string& key) const;
 
     /// The duration ArcFlightPath and StraightFlightPath use (300 ms by default).
-    [[nodiscard]] Duration default_duration() const
+    [[nodiscard]] inline Duration default_duration() const
     {
         return default_duration_;
     }
     /// Applies to animations that start afterwards.
-    void set_default_duration(Duration duration)
+    inline void set_default_duration(Duration duration)
     {
         default_duration_ = duration;
     }
     /// The easing ArcFlightPath and StraightFlightPath use, a (0.8,0)-(0.2,1) cubic Bézier by default.
-    [[nodiscard]] const EasingFunction& default_easing() const
+    [[nodiscard]] inline const EasingFunction& default_easing() const
     {
         return default_easing_;
     }
     /// Applies to animations that start afterwards.
-    void set_default_easing(EasingFunction easing)
+    inline void set_default_easing(EasingFunction easing)
     {
         default_easing_ = easing;
     }
 
     /// Whether any animation is prepared or running, so something may be on screen.
-    [[nodiscard]] bool active() const
+    [[nodiscard]] inline bool active() const
     {
         return !animations_.empty();
     }
@@ -271,7 +271,7 @@ private:
     friend class Window; // drives the four below
 
     // The theme snapshots are rendered with; not owned.
-    void set_theme(const Theme* theme)
+    inline void set_theme(const Theme* theme)
     {
         theme_ = theme;
     }

@@ -75,7 +75,7 @@ LIBWINUI_EXPORT struct Inline
     std::string navigate_uri{};
 
     /// Whether this inline is a link, which means it has `on_click` or a `navigate_uri`.
-    [[nodiscard]] bool is_link() const
+    [[nodiscard]] inline bool is_link() const
     {
         return static_cast<bool>(on_click) || !navigate_uri.empty();
     }
@@ -210,17 +210,17 @@ public:
     std::optional<std::size_t> pressed_link{};
 
     /// The selection as an ordered [begin, end) pair of layout offsets.
-    [[nodiscard]] std::pair<std::size_t, std::size_t> range() const
+    [[nodiscard]] inline std::pair<std::size_t, std::size_t> range() const
     {
         return {(std::min)(anchor, caret), (std::max)(anchor, caret)};
     }
     /// Whether any text is selected.
-    [[nodiscard]] bool has_selection() const
+    [[nodiscard]] inline bool has_selection() const
     {
         return anchor != caret;
     }
     /// Selects the layout offsets [begin, end); `end` becomes the caret.
-    void select(std::size_t begin, std::size_t end)
+    inline void select(std::size_t begin, std::size_t end)
     {
         anchor = begin;
         caret  = end;

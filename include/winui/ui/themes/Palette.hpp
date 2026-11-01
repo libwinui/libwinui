@@ -192,7 +192,7 @@ LIBWINUI_EXPORT struct Palette
     /// luminosity opacity 0.85, dark has `#2C2C2C` at 0.15 and 0.96, and both fall back to
     /// `acrylic_fallback_default`. Drawn with Renderer::draw_geometry(), it blurs what is
     /// behind it.
-    [[nodiscard]] AcrylicBrush acrylic_in_app_default() const
+    [[nodiscard]] inline AcrylicBrush acrylic_in_app_default() const
     {
         AcrylicBrush brush;
         brush.tint_color              = dark ? Color::from_argb(0xFF2C2C2C) : Color::from_argb(0xFFFCFCFC);

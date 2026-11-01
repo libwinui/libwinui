@@ -107,7 +107,7 @@ LIBWINUI_EXPORT struct CaptionInsets
     float right  = 0.0f; ///< reserved at the right edge (the caption buttons), in DIPs
     float height = 0.0f; ///< the extended caption row's height
 
-    friend bool operator==(const CaptionInsets&, const CaptionInsets&) = default;
+    friend inline bool operator==(const CaptionInsets&, const CaptionInsets&) = default;
 };
 
 /// The state of the taskbar button's progress bar.
@@ -173,7 +173,7 @@ LIBWINUI_EXPORT struct WindowIcon
     std::string resource{};
 
     /// No image, glyph or resource: nothing to show.
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return image.empty() && glyph.codepoint == 0 && resource.empty();
     }

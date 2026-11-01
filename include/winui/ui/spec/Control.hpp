@@ -257,13 +257,13 @@ public:
     }
 
     /// True when a handle was given.
-    [[nodiscard]] explicit operator bool() const
+    [[nodiscard]] inline explicit operator bool() const
     {
         return static_cast<bool>(resolve_);
     }
 
     /// For a spec's build(): see ControlLink::resolve(). Consumes the link.
-    void resolve(Element& owner, Callback<void(Element*)> link)
+    inline void resolve(Element& owner, Callback<void(Element*)> link)
     {
         if (resolve_)
         {

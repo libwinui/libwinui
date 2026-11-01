@@ -279,18 +279,18 @@ public:
 
     /// Every item in the tree, menu and footer, collapsed ones included. This is the pre-order
     /// index space of selected_index() and set_expanded().
-    [[nodiscard]] std::size_t item_count() const
+    [[nodiscard]] inline std::size_t item_count() const
     {
         return all_.size();
     }
     /// How many of those are footer items (the last ones).
-    [[nodiscard]] std::size_t footer_item_count() const
+    [[nodiscard]] inline std::size_t footer_item_count() const
     {
         return all_.size() - footer_begin_;
     }
     /// How many menu rows are currently drawn in the pane, i.e. not hidden inside a collapsed
     /// ancestor. Footer rows are not counted.
-    [[nodiscard]] std::size_t visible_row_count() const
+    [[nodiscard]] inline std::size_t visible_row_count() const
     {
         return menu_rows_.size();
     }
@@ -316,7 +316,7 @@ public:
     /// no-op.
     void set_selects_on_invoke(std::size_t index, bool selects);
     /// The item drawn at menu row `row` (pre-order index); unset if out of range.
-    [[nodiscard]] std::optional<std::size_t> item_at_row(std::size_t row) const
+    [[nodiscard]] inline std::optional<std::size_t> item_at_row(std::size_t row) const
     {
         return row < menu_rows_.size() ? detail::optional_index(menu_rows_[row].item) : std::nullopt;
     }
@@ -324,7 +324,7 @@ public:
     // ---- selection ----
 
     /// The selected item's key ("settings" for Settings), or empty when nothing is selected.
-    [[nodiscard]] const std::string& selected_key() const
+    [[nodiscard]] inline const std::string& selected_key() const
     {
         return key_at(selected_index_);
     }
@@ -332,7 +332,7 @@ public:
     /// clears the selection. A key no item has is a no-op, otherwise as set_selected_index().
     void set_selected_key(std::string_view key);
     /// The selected item's pre-order index, or Settings; unset when nothing is selected.
-    [[nodiscard]] std::optional<std::size_t> selected_index() const
+    [[nodiscard]] inline std::optional<std::size_t> selected_index() const
     {
         return detail::optional_index(selected_index_);
     }
@@ -343,31 +343,31 @@ public:
     /// the next layout, after laying out any expansion made just before.
     void set_selected_index(std::optional<std::size_t> index);
     /// Whether the Settings item is the selection.
-    [[nodiscard]] bool settings_selected() const
+    [[nodiscard]] inline bool settings_selected() const
     {
         return selected_index_ == Settings;
     }
     /// Fired with the new key whenever the selection changes (a click, the keyboard,
     /// set_selected_key(), set_selected_index()); empty when it was cleared. A call that lands on
     /// the already-selected item does not fire it.
-    void on_selection_changed(Callback<void(const std::string&)> handler)
+    inline void on_selection_changed(Callback<void(const std::string&)> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
     /// Fired with the item's key on every click or Enter/Space on an item, Settings included,
     /// whether or not it changes the selection. It is raised before the selection moves.
-    void on_item_invoked(Callback<void(const std::string&)> handler)
+    inline void on_item_invoked(Callback<void(const std::string&)> handler)
     {
         on_item_invoked_ = std::move(handler);
     }
 
     /// Whether moving the keyboard cursor also selects. Disabled by default.
-    [[nodiscard]] NavigationShellSelectionFollowsFocus selection_follows_focus() const
+    [[nodiscard]] inline NavigationShellSelectionFollowsFocus selection_follows_focus() const
     {
         return selection_follows_focus_;
     }
     /// Takes effect on the next cursor move; it does not select the item under the cursor now.
-    void set_selection_follows_focus(NavigationShellSelectionFollowsFocus value)
+    inline void set_selection_follows_focus(NavigationShellSelectionFollowsFocus value)
     {
         selection_follows_focus_ = value;
     }
@@ -377,7 +377,7 @@ public:
     /// Expands or collapses the group at `index`. A no-op on an item with no children.
     void set_expanded(std::size_t index, bool expanded);
     /// Fired whenever a group's expansion changes, by click, chevron or keyboard.
-    void on_expanded_changed(Callback<void(const NavigationShellExpandedChangedArgs&)> handler)
+    inline void on_expanded_changed(Callback<void(const NavigationShellExpandedChangedArgs&)> handler)
     {
         on_expanded_changed_ = std::move(handler);
     }
@@ -385,7 +385,7 @@ public:
     // ---- display mode ----
 
     /// Where the items go. Auto (the default) adapts to the control's width.
-    [[nodiscard]] NavigationShellPaneDisplayMode pane_display_mode() const
+    [[nodiscard]] inline NavigationShellPaneDisplayMode pane_display_mode() const
     {
         return pane_display_mode_;
     }
@@ -393,34 +393,34 @@ public:
     /// closes it.
     void set_pane_display_mode(NavigationShellPaneDisplayMode mode);
     /// What the pane resolved to at the last arrange (Minimal until the first one).
-    [[nodiscard]] NavigationShellDisplayMode display_mode() const
+    [[nodiscard]] inline NavigationShellDisplayMode display_mode() const
     {
         return display_mode_;
     }
     /// Raised from arrange when display_mode() resolves to a new value,
     /// including the first time.
-    void on_display_mode_changed(Callback<void(NavigationShellDisplayMode)> handler)
+    inline void on_display_mode_changed(Callback<void(NavigationShellDisplayMode)> handler)
     {
         on_display_mode_changed_ = std::move(handler);
     }
     /// The width below which Auto is Minimal, in DIPs; 641 by default.
-    [[nodiscard]] float compact_mode_threshold_width() const
+    [[nodiscard]] inline float compact_mode_threshold_width() const
     {
         return compact_threshold_;
     }
     /// Updates the layout; the new threshold applies from the next width change.
-    void set_compact_mode_threshold_width(float width)
+    inline void set_compact_mode_threshold_width(float width)
     {
         compact_threshold_ = width;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The width from which Auto is Expanded, in DIPs; 1008 by default.
-    [[nodiscard]] float expanded_mode_threshold_width() const
+    [[nodiscard]] inline float expanded_mode_threshold_width() const
     {
         return expanded_threshold_;
     }
     /// Updates the layout; the new threshold applies from the next width change.
-    void set_expanded_mode_threshold_width(float width)
+    inline void set_expanded_mode_threshold_width(float width)
     {
         expanded_threshold_ = width;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -431,7 +431,7 @@ public:
     /// Whether the pane is open. Opening raises on_pane_opening and on_pane_opened; closing raises
     /// on_pane_closing (cancelable only for a light dismiss) and on_pane_closed. In Top mode the
     /// pane never opens.
-    [[nodiscard]] bool is_pane_open() const
+    [[nodiscard]] inline bool is_pane_open() const
     {
         return pane_open_;
     }
@@ -439,66 +439,66 @@ public:
     /// way counts as a user close, so growing back into Expanded does not reopen it.
     void set_pane_open(bool open);
     /// Raised when the pane starts to open, before its transition.
-    void on_pane_opening(Callback<void()> handler)
+    inline void on_pane_opening(Callback<void()> handler)
     {
         on_pane_opening_ = std::move(handler);
     }
     /// Raised once the pane is open, as soon as its state flips (not after the slide).
-    void on_pane_opened(Callback<void()> handler)
+    inline void on_pane_opened(Callback<void()> handler)
     {
         on_pane_opened_ = std::move(handler);
     }
     /// Raised before the pane closes; return ui::Cancel to keep it open. Only a light dismiss can
     /// be canceled. The toggle button and set_pane_open(false) always close it.
-    void on_pane_closing(Callback<Decision()> handler)
+    inline void on_pane_closing(Callback<Decision()> handler)
     {
         on_pane_closing_ = std::move(handler);
     }
     /// Raised once the pane is closed, as soon as its state flips (not when canceled).
-    void on_pane_closed(Callback<void()> handler)
+    inline void on_pane_closed(Callback<void()> handler)
     {
         on_pane_closed_ = std::move(handler);
     }
 
     /// The open pane's width in DIPs, 320 by default, clamped to the control's own width.
-    [[nodiscard]] float pane_width() const
+    [[nodiscard]] inline float pane_width() const
     {
         return pane_width_;
     }
     /// Updates the layout. The width is clamped only when the pane is arranged.
-    void set_pane_width(float width)
+    inline void set_pane_width(float width)
     {
         pane_width_ = width;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The closed strip's width in DIPs, 48 by default, which is also the width of the toggle and
     /// search buttons.
-    [[nodiscard]] float compact_pane_length() const
+    [[nodiscard]] inline float compact_pane_length() const
     {
         return compact_pane_length_;
     }
     /// Updates the layout with the new strip width.
-    void set_compact_pane_length(float length)
+    inline void set_compact_pane_length(float length)
     {
         compact_pane_length_ = length;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// Whether the pane shows (true). False hides the pane and its toggle button altogether.
-    [[nodiscard]] bool is_pane_visible() const
+    [[nodiscard]] inline bool is_pane_visible() const
     {
         return pane_visible_;
     }
     /// Shows or hides the pane; the layout adapts to it on the next arrange.
     void set_pane_visible(bool visible);
     /// Whether the hamburger button shows (true).
-    [[nodiscard]] bool is_pane_toggle_button_visible() const
+    [[nodiscard]] inline bool is_pane_toggle_button_visible() const
     {
         return toggle_visible_;
     }
     /// Shows or hides the hamburger button and updates the layout.
     void set_pane_toggle_button_visible(bool visible);
     /// The pane title, shown beside the hamburger while the pane is open.
-    [[nodiscard]] const std::string& pane_title() const
+    [[nodiscard]] inline const std::string& pane_title() const
     {
         return pane_title_;
     }
@@ -507,7 +507,7 @@ public:
     void set_pane_title(std::string title);
 
     /// Whether the back button shows; Auto, the default, shows it.
-    [[nodiscard]] AutoVisibility back_button_visible() const
+    [[nodiscard]] inline AutoVisibility back_button_visible() const
     {
         return back_visible_;
     }
@@ -515,20 +515,20 @@ public:
     void set_back_button_visible(AutoVisibility visible);
     /// Whether the back button is enabled; false by default. A visible back button is disabled
     /// until this is set.
-    [[nodiscard]] bool is_back_enabled() const
+    [[nodiscard]] inline bool is_back_enabled() const
     {
         return back_enabled_;
     }
     /// Enables or disables the back button; typically bound to a frame's can_go_back().
     void set_back_enabled(bool enabled);
     /// Raised when the back button is clicked.
-    void on_back_requested(Callback<void()> handler)
+    inline void on_back_requested(Callback<void()> handler)
     {
         on_back_requested_ = std::move(handler);
     }
 
     /// Whether the Settings item shows at the end of the footer items (true).
-    [[nodiscard]] bool is_settings_visible() const
+    [[nodiscard]] inline bool is_settings_visible() const
     {
         return settings_visible_;
     }
@@ -545,7 +545,7 @@ public:
         return observer;
     }
     /// The search box slot's element (owned by the view), or null.
-    [[nodiscard]] Element* auto_suggest_box() const
+    [[nodiscard]] inline Element* auto_suggest_box() const
     {
         return auto_suggest_box_.get();
     }
@@ -558,7 +558,7 @@ public:
         return observer;
     }
     /// The pane header element (owned by the view), or null.
-    [[nodiscard]] Element* pane_header_content() const
+    [[nodiscard]] inline Element* pane_header_content() const
     {
         return pane_header_.get();
     }
@@ -571,7 +571,7 @@ public:
         return observer;
     }
     /// The custom pane content element (owned by the view), or null.
-    [[nodiscard]] Element* pane_custom_content() const
+    [[nodiscard]] inline Element* pane_custom_content() const
     {
         return pane_custom_content_.get();
     }
@@ -584,7 +584,7 @@ public:
         return observer;
     }
     /// The pane footer element (owned by the view), or null.
-    [[nodiscard]] Element* pane_footer_content() const
+    [[nodiscard]] inline Element* pane_footer_content() const
     {
         return pane_footer_.get();
     }
@@ -593,23 +593,23 @@ public:
 
     /// The content's header text, drawn 28px SemiBold above the content. Empty (the default)
     /// draws no header row.
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return header_;
     }
     /// Sets the header text and updates the content area's layout.
-    void set_header(std::string header)
+    inline void set_header(std::string header)
     {
         header_ = std::move(header);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// Whether the header shows in every display mode (true). False shows it only in Minimal.
-    [[nodiscard]] bool always_show_header() const
+    [[nodiscard]] inline bool always_show_header() const
     {
         return always_show_header_;
     }
     /// Updates the content area's layout.
-    void set_always_show_header(bool show)
+    inline void set_always_show_header(bool show)
     {
         always_show_header_ = show;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -619,12 +619,12 @@ public:
 
     /// The height of one item row in the left pane, in DIPs: 40 by default (a 36-DIP pill in a
     /// 40-DIP slot).
-    [[nodiscard]] float item_row_height() const
+    [[nodiscard]] inline float item_row_height() const
     {
         return item_row_height_;
     }
     /// Updates the pane's layout with the new row height.
-    void set_item_row_height(float height)
+    inline void set_item_row_height(float height)
     {
         item_row_height_ = height;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -632,7 +632,7 @@ public:
 
     /// How far the menu items are scrolled, in DIPs. Menu items taller than their viewport
     /// scroll on the wheel and through an overlay scrollbar.
-    [[nodiscard]] float pane_scroll_offset() const
+    [[nodiscard]] inline float pane_scroll_offset() const
     {
         return pane_scroll_offset_;
     }
@@ -647,7 +647,7 @@ public:
     /// Minimal pane is closed.
     [[nodiscard]] Rect pane_bounds() const;
     /// The content area: right of an inline pane, under the top bar in Top mode.
-    [[nodiscard]] Rect content_bounds() const
+    [[nodiscard]] inline Rect content_bounds() const
     {
         return content_rect_;
     }
@@ -659,28 +659,28 @@ public:
     /// Whether the item at `index` is behind the overflow button in Top mode.
     [[nodiscard]] bool in_overflow(std::size_t index) const;
     /// Whether a children or overflow flyout is open.
-    [[nodiscard]] bool flyout_open() const
+    [[nodiscard]] inline bool flyout_open() const
     {
         return flyout_kind_ != FlyoutKind::None;
     }
     /// The internal buttons, for automation: back, pane toggle, close (Minimal, while
     /// open) and search (the search box's stand-in while closed compact).
-    [[nodiscard]] ButtonControl* back_button() const
+    [[nodiscard]] inline ButtonControl* back_button() const
     {
         return back_button_;
     }
     /// The pane toggle (hamburger) button, owned by the view.
-    [[nodiscard]] ButtonControl* toggle_button() const
+    [[nodiscard]] inline ButtonControl* toggle_button() const
     {
         return toggle_button_;
     }
     /// The close button a Minimal pane shows while open, owned by the view.
-    [[nodiscard]] ButtonControl* close_button() const
+    [[nodiscard]] inline ButtonControl* close_button() const
     {
         return close_button_;
     }
     /// The search button shown in the search box's place while closed compact, owned by the view.
-    [[nodiscard]] ButtonControl* search_button() const
+    [[nodiscard]] inline ButtonControl* search_button() const
     {
         return search_button_;
     }
@@ -690,7 +690,7 @@ public:
 
     // ---- focus ----
     /// Whether the items' tab stop holds keyboard focus (the cursor's pill then shows the ring).
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
@@ -717,7 +717,7 @@ public:
     /// drawn rows, and the control exposes the selected item's text as a read-only value.
     void automation_children(std::vector<Element*>& out) const override;
     /// AutomationRole::List.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::List;
     }
@@ -759,7 +759,7 @@ protected:
 
 private:
     // Enter invokes the item under the cursor (Element::key_override()).
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return true;
     }
@@ -816,26 +816,26 @@ private:
     }
 
     // ---- derived state ----
-    [[nodiscard]] bool top_mode() const
+    [[nodiscard]] inline bool top_mode() const
     {
         return pane_display_mode_ == NavigationShellPaneDisplayMode::Top;
     }
     [[nodiscard]] NavigationShellDisplayMode resolve_display_mode(float width) const;
     /// Whether an open pane overlays the content (Compact or Minimal) and light-dismisses.
-    [[nodiscard]] bool overlay_mode() const;
-    [[nodiscard]] bool minimal_mode() const;
-    [[nodiscard]] bool compact_strip() const; // a closed pane leaves a strip (Compact or Expanded)
-    [[nodiscard]] bool closed_compact() const;
-    [[nodiscard]] bool light_dismissible() const
+    [[nodiscard]] bool        overlay_mode() const;
+    [[nodiscard]] bool        minimal_mode() const;
+    [[nodiscard]] bool        compact_strip() const; // a closed pane leaves a strip (Compact or Expanded)
+    [[nodiscard]] bool        closed_compact() const;
+    [[nodiscard]] inline bool light_dismissible() const
     {
         return display_mode_known_ && pane_open_ && overlay_mode() && !top_mode();
     }
-    [[nodiscard]] bool  pane_live() const; // any of the pane is showing
-    [[nodiscard]] float pane_progress() const;
-    [[nodiscard]] bool  show_back_button() const;
-    [[nodiscard]] bool  show_close_button() const;
-    [[nodiscard]] bool  show_header() const;
-    [[nodiscard]] bool  settings_row_shown() const
+    [[nodiscard]] bool        pane_live() const; // any of the pane is showing
+    [[nodiscard]] float       pane_progress() const;
+    [[nodiscard]] bool        show_back_button() const;
+    [[nodiscard]] bool        show_close_button() const;
+    [[nodiscard]] bool        show_header() const;
+    [[nodiscard]] inline bool settings_row_shown() const
     {
         return settings_visible_;
     }
@@ -1088,20 +1088,20 @@ protected:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.value = this;
     }
     // The selected item's text ("Settings" for Settings), or empty with nothing selected.
-    [[nodiscard]] std::string text_value() const override
+    [[nodiscard]] inline std::string text_value() const override
     {
         return selected_index_ == detail::NoIndex ? std::string{} : text_at(selected_index_);
     }
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return true;
     }
-    bool set_text_value(std::string_view /*text*/) override
+    inline bool set_text_value(std::string_view /*text*/) override
     {
         return false;
     }

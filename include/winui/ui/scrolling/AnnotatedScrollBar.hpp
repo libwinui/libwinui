@@ -136,7 +136,7 @@ public:
 
     // ---- target: the built-in Scroll adapter ----
     /// The Scroll this bar drives, or null, in which case the manual range values apply.
-    [[nodiscard]] ScrollControl* target() const
+    [[nodiscard]] inline ScrollControl* target() const
     {
         return target_;
     }
@@ -151,7 +151,7 @@ public:
 
     // ---- annotations ----
     /// The annotations, in the order given.
-    [[nodiscard]] const std::vector<AnnotatedScrollBarAnnotation>& annotations() const
+    [[nodiscard]] inline const std::vector<AnnotatedScrollBarAnnotation>& annotations() const
     {
         return annotations_;
     }
@@ -162,12 +162,12 @@ public:
     // ---- small change ----
     /// How far a step button or an arrow key moves value(), in DIPs. 0, the default, means
     /// automatic: an eighth of viewport_size().
-    [[nodiscard]] double small_change() const
+    [[nodiscard]] inline double small_change() const
     {
         return small_change_;
     }
     /// Sets the step size in DIPs; negative values are taken as 0 (auto).
-    void set_small_change(double small_change)
+    inline void set_small_change(double small_change)
     {
         small_change_ = (std::max)(0.0, small_change);
     }
@@ -176,36 +176,36 @@ public:
     // ---- events ----
     /// Raised before every scroll request, whether from a click, a drag, a step button, an arrow
     /// key, or Home or End. Returning ui::Cancel drops the request.
-    void on_scrolling(Callback<Decision(const AnnotatedScrollBarScrollingArgs&)> handler)
+    inline void on_scrolling(Callback<Decision(const AnnotatedScrollBarScrollingArgs&)> handler)
     {
         on_scrolling_ = std::move(handler);
     }
     /// Text for the floating detail tooltip shown while hovering over or dragging the rail, given
     /// the offset under the pointer. No tooltip opens while this is unset.
-    void on_detail_text_requested(Callback<std::string(double offset)> handler)
+    inline void on_detail_text_requested(Callback<std::string(double offset)> handler)
     {
         on_detail_text_requested_ = std::move(handler);
     }
     /// Request to scroll to `offset`, in DIPs. set_target() installs its own handler. Set it
     /// yourself to drive a scrollable that is not a Scroll.
-    void on_scroll_to_requested(Callback<void(double offset)> handler)
+    inline void on_scroll_to_requested(Callback<void(double offset)> handler)
     {
         on_scroll_to_requested_ = std::move(handler);
     }
     /// Low-level request to scroll by `delta` DIPs (step buttons, arrow keys); negative is up.
-    void on_scroll_by_requested(Callback<void(double delta)> handler)
+    inline void on_scroll_by_requested(Callback<void(double delta)> handler)
     {
         on_scroll_by_requested_ = std::move(handler);
     }
 
     // ---- focus ----
     /// Whether the bar has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// Focusable while enabled.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
@@ -213,7 +213,7 @@ public:
     // ---- automation ----
     /// Exposed to accessibility tools as a Slider, with a range value, since it shows and sets a
     /// bounded scroll value.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Slider;
     }
@@ -237,7 +237,7 @@ protected:
 private:
     // Up/Down scroll the target; this bar has no horizontal axis. Claimed so Window's
     // directional focus navigation leaves them alone.
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowUp || key == Key::ArrowDown;
     }
@@ -246,11 +246,11 @@ private:
     void sync_popup();
     friend class AnnotatedScrollBarDetailSurface;
 
-    [[nodiscard]] bool can_step_up() const
+    [[nodiscard]] inline bool can_step_up() const
     {
         return is_enabled() && value() > 0.0;
     }
-    [[nodiscard]] bool can_step_down() const
+    [[nodiscard]] inline bool can_step_down() const
     {
         return is_enabled() && value() < maximum();
     }
@@ -323,32 +323,32 @@ protected:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.range_value = this;
     }
     // value().
-    [[nodiscard]] double range_value() const override
+    [[nodiscard]] inline double range_value() const override
     {
         return value();
     }
     // Always 0.
-    [[nodiscard]] double range_minimum() const override
+    [[nodiscard]] inline double range_minimum() const override
     {
         return 0.0;
     }
     // maximum().
-    [[nodiscard]] double range_maximum() const override
+    [[nodiscard]] inline double range_maximum() const override
     {
         return maximum();
     }
     // The small_change() setting (0 while automatic).
-    [[nodiscard]] double range_small_change() const override
+    [[nodiscard]] inline double range_small_change() const override
     {
         return small_change_;
     }
     // Scrolls to `value` as a Click would (on_scrolling() can cancel); false while disabled.
-    bool set_range_value(double value) override
+    inline bool set_range_value(double value) override
     {
         if (!is_enabled())
         {
@@ -357,7 +357,7 @@ private:
         scroll_to(value, AnnotatedScrollBarScrollingEventKind::Click);
         return true;
     }
-    [[nodiscard]] bool range_read_only() const override
+    [[nodiscard]] inline bool range_read_only() const override
     {
         return false;
     }

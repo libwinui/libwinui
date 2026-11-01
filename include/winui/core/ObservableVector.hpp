@@ -776,22 +776,22 @@ public:
     {
     }
     /// The live form, made by ui::item_count().
-    ItemCount(std::size_t count, Attach attach) : count_(count), attach_(std::move(attach))
+    inline ItemCount(std::size_t count, Attach attach) : count_(count), attach_(std::move(attach))
     {
     }
 
     /// The number of items when the spec is built.
-    [[nodiscard]] std::size_t initial() const noexcept
+    [[nodiscard]] inline std::size_t initial() const noexcept
     {
         return count_;
     }
     /// True when the count follows a collection.
-    [[nodiscard]] bool reactive() const noexcept
+    [[nodiscard]] inline bool reactive() const noexcept
     {
         return static_cast<bool>(attach_);
     }
     /// Starts following the collection; only valid when reactive().
-    [[nodiscard]] Subscription subscribe(Callback<void(const CollectionChange&)> sink)
+    [[nodiscard]] inline Subscription subscribe(Callback<void(const CollectionChange&)> sink)
     {
         assert(attach_ && "ItemCount::subscribe() needs a reactive() count");
         return attach_ ? attach_(std::move(sink)) : Subscription{};

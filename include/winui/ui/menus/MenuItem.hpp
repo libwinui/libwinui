@@ -148,19 +148,19 @@ LIBWINUI_EXPORT struct MenuItem
     [[nodiscard]] std::string display_shortcut_text() const;
     /// The check state: `checked`'s value. In a menu's items() it is the current state, whether
     /// a click or the bound property set it last.
-    [[nodiscard]] bool is_checked() const
+    [[nodiscard]] inline bool is_checked() const
     {
         return checked.initial();
     }
     /// Enabled, and its command (if any) is too.
     [[nodiscard]] bool is_enabled() const;
     /// Can hold focus in a menu: not a separator, and enabled.
-    [[nodiscard]] bool focusable() const
+    [[nodiscard]] inline bool focusable() const
     {
         return kind != MenuItemKind::Separator && is_enabled();
     }
     /// Opens a submenu (a SubItem, or a Split item with items).
-    [[nodiscard]] bool has_submenu() const
+    [[nodiscard]] inline bool has_submenu() const
     {
         return (kind == MenuItemKind::SubItem || kind == MenuItemKind::Split) && !items.empty();
     }
