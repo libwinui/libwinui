@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -20,6 +24,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <functional>
 #include <memory>
@@ -29,17 +34,18 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class FlyoutControl;
-class InkToolbarControl;
-class SliderControl;
-class StackControl;
+LIBWINUI_EXPORT class FlyoutControl;
+LIBWINUI_EXPORT class InkToolbarControl;
+LIBWINUI_EXPORT class SliderControl;
+LIBWINUI_EXPORT class StackControl;
 
 /// A tool on a ui::InkToolbarControl.
-enum class InkToolbarTool
+LIBWINUI_EXPORT enum class InkToolbarTool
 {
     BallpointPen, ///< A round, solid pen.
     Pencil,       ///< Pencil ink.
@@ -68,7 +74,7 @@ enum class InkToolbarTool
 ///                                                              .pen_tip = ui::InkPenTip::Rectangle};
 ///                          }});
 /// @endcode
-struct InkToolbarCustomButton
+LIBWINUI_EXPORT struct InkToolbarCustomButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// Its tool tip and accessible name. Every kind.
@@ -87,7 +93,7 @@ struct InkToolbarCustomButton
 };
 
 /// Which stencil the stencil button shows on the canvas.
-enum class InkToolbarStencilKind
+LIBWINUI_EXPORT enum class InkToolbarStencilKind
 {
     Ruler,      ///< The ruler (InkCanvasControl::set_ruler()).
     Protractor, ///< The protractor (InkCanvasControl::set_protractor()).
@@ -95,14 +101,14 @@ enum class InkToolbarStencilKind
 
 /// What an InkToolbar's `on_stencil_button_checked_changed` gets: whether the stencil button is
 /// on, and the stencil it shows.
-struct InkToolbarStencilChangedArgs
+LIBWINUI_EXPORT struct InkToolbarStencilChangedArgs
 {
     bool                  checked = false;                        ///< The button is on and the stencil shows.
     InkToolbarStencilKind kind    = InkToolbarStencilKind::Ruler; ///< The stencil the button selects.
 };
 
 /// Which side of its button a tool's flyout opens on.
-enum class InkToolbarButtonFlyoutPlacement
+LIBWINUI_EXPORT enum class InkToolbarButtonFlyoutPlacement
 {
     Auto,   ///< Below the button, the same as Bottom.
     Top,    ///< Above the button, left edges lined up.
@@ -126,7 +132,7 @@ enum class InkToolbarButtonFlyoutPlacement
 /// pen->set_selected_brush_index(7);       // red, in the default palette
 /// pen->set_selected_stroke_width(6.0f);   // within min_stroke_width()..max_stroke_width()
 /// @endcode
-class InkToolbarToolButtonControl final : public Element, private SelectionItemProvider, private ExpandCollapseProvider
+LIBWINUI_EXPORT class InkToolbarToolButtonControl final : public Element, private SelectionItemProvider, private ExpandCollapseProvider
 {
 public:
     /// The button for `tool`, with that tool's palette, width range and defaults.
@@ -137,22 +143,22 @@ public:
     ~InkToolbarToolButtonControl() override;
 
     /// Which tool the button is.
-    [[nodiscard]] InkToolbarTool tool() const
+    [[nodiscard]] inline InkToolbarTool tool() const
     {
         return tool_;
     }
     /// True for the ballpoint pen, the pencil, the highlighter and a custom pen.
-    [[nodiscard]] bool is_pen() const
+    [[nodiscard]] inline bool is_pen() const
     {
         return tool_ != InkToolbarTool::Eraser && tool_ != InkToolbarTool::CustomTool;
     }
     /// What a custom button was made with, or nullptr for a built-in tool.
-    [[nodiscard]] const InkToolbarCustomButton* custom() const
+    [[nodiscard]] inline const InkToolbarCustomButton* custom() const
     {
         return custom_ ? &*custom_ : nullptr;
     }
     /// Whether this is the toolbar's active tool.
-    [[nodiscard]] bool checked() const
+    [[nodiscard]] inline bool checked() const
     {
         return checked_;
     }
@@ -160,7 +166,7 @@ public:
     // ---- pen ----
     /// The colors the flyout offers. The ballpoint pen and the pencil share a 30-color palette, and
     /// the highlighter has six colors.
-    [[nodiscard]] const std::vector<Color>& palette() const
+    [[nodiscard]] inline const std::vector<Color>& palette() const
     {
         return palette_;
     }
@@ -168,7 +174,7 @@ public:
     void set_palette(std::vector<Color> palette);
     /// The selected palette index. 0 by default, which is black for the pens and yellow for the
     /// highlighter.
-    [[nodiscard]] std::size_t selected_brush_index() const
+    [[nodiscard]] inline std::size_t selected_brush_index() const
     {
         return selected_index_;
     }
@@ -179,12 +185,12 @@ public:
     [[nodiscard]] Color selected_color() const;
 
     /// The thinnest stroke width: 1 for the pens, 12 for the highlighter.
-    [[nodiscard]] float min_stroke_width() const
+    [[nodiscard]] inline float min_stroke_width() const
     {
         return min_width_;
     }
     /// The thickest stroke width: 24 for the pens, 64 for the highlighter.
-    [[nodiscard]] float max_stroke_width() const
+    [[nodiscard]] inline float max_stroke_width() const
     {
         return max_width_;
     }
@@ -193,7 +199,7 @@ public:
     void set_stroke_width_range(float min, float max);
     /// The selected stroke width: 2 for the ballpoint pen, 4 for the pencil, 16 for the
     /// highlighter.
-    [[nodiscard]] float selected_stroke_width() const
+    [[nodiscard]] inline float selected_stroke_width() const
     {
         return selected_width_;
     }
@@ -210,7 +216,7 @@ public:
     // ---- eraser ----
     /// Whether the eraser's flyout offers "Erase all ink" under its stroke and point erasers. True
     /// by default.
-    [[nodiscard]] bool clear_all_visible() const
+    [[nodiscard]] inline bool clear_all_visible() const
     {
         return clear_all_visible_;
     }
@@ -221,7 +227,7 @@ public:
     /// tool while it has a flyout and that flyout is closed.
     [[nodiscard]] bool extension_glyph_shown() const;
     /// Whether the pointer is over the button.
-    [[nodiscard]] bool hovered() const
+    [[nodiscard]] inline bool hovered() const
     {
         return hovered_;
     }
@@ -230,7 +236,7 @@ public:
 
     // ---- automation ----
     /// Button for the pens, Custom for the eraser and a custom tool.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return is_pen() ? AutomationRole::Button : AutomationRole::Custom;
     }
@@ -270,13 +276,13 @@ private:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.selection_item  = this;
         out.expand_collapse = this;
     }
     // The active tool.
-    [[nodiscard]] bool item_selected() const override
+    [[nodiscard]] inline bool item_selected() const override
     {
         return checked_;
     }
@@ -303,7 +309,7 @@ private:
 ///                                    : ui::PointerDeviceTypes::Pen | ui::PointerDeviceTypes::Mouse);
 /// });
 /// @endcode
-class InkToolbarToggleButtonControl final : public Element, private ToggleProvider
+LIBWINUI_EXPORT class InkToolbarToggleButtonControl final : public Element, private ToggleProvider
 {
 public:
     /// A toggle looking as `look` says, off.
@@ -311,42 +317,42 @@ public:
     ~InkToolbarToggleButtonControl() override;
 
     /// What the toggle was made with.
-    [[nodiscard]] const InkToolbarCustomButton& look() const
+    [[nodiscard]] inline const InkToolbarCustomButton& look() const
     {
         return look_;
     }
     /// Whether the toggle is on.
-    [[nodiscard]] bool checked() const
+    [[nodiscard]] inline bool checked() const
     {
         return checked_;
     }
     /// Turns the toggle on or off, raising on_checked_changed() when the state changes.
     void set_checked(bool checked);
     /// Raised with the new state when the toggle turns on or off, after the look's own handler.
-    void on_checked_changed(Callback<void(bool)> handler)
+    inline void on_checked_changed(Callback<void(bool)> handler)
     {
         on_checked_changed_ = std::move(handler);
     }
     /// Whether the pointer is over the button.
-    [[nodiscard]] bool hovered() const
+    [[nodiscard]] inline bool hovered() const
     {
         return hovered_;
     }
     /// The look's name.
-    [[nodiscard]] std::string tool_tip() const override
+    [[nodiscard]] inline std::string tool_tip() const override
     {
         return look_.name;
     }
 
     // ---- automation ----
     /// A button that toggles.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Button;
     }
 
 protected:
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return look_.name;
     }
@@ -372,11 +378,11 @@ private:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.toggle = this;
     }
-    [[nodiscard]] ToggleState toggle_value() const override
+    [[nodiscard]] inline ToggleState toggle_value() const override
     {
         return checked_ ? ToggleState::On : ToggleState::Off;
     }
@@ -399,33 +405,33 @@ private:
 /// stencils->set_selected_stencil(ui::InkToolbarStencilKind::Protractor);
 /// toolbar->set_stencil_button_checked(true); // the protractor shows on the canvas
 /// @endcode
-class InkToolbarStencilButtonControl final : public Element, private ToggleProvider, private ExpandCollapseProvider
+LIBWINUI_EXPORT class InkToolbarStencilButtonControl final : public Element, private ToggleProvider, private ExpandCollapseProvider
 {
 public:
     InkToolbarStencilButtonControl();
     ~InkToolbarStencilButtonControl() override;
 
     /// The stencil the button shows while it is on. The ruler by default.
-    [[nodiscard]] InkToolbarStencilKind selected_stencil() const
+    [[nodiscard]] inline InkToolbarStencilKind selected_stencil() const
     {
         return selected_;
     }
     /// Picks the stencil, and shows it at once while the button is on.
     void set_selected_stencil(InkToolbarStencilKind kind);
     /// Whether the flyout offers the ruler. True by default.
-    [[nodiscard]] bool ruler_item_visible() const
+    [[nodiscard]] inline bool ruler_item_visible() const
     {
         return ruler_item_;
     }
     void set_ruler_item_visible(bool visible); ///< See ruler_item_visible().
     /// Whether the flyout offers the protractor. True by default.
-    [[nodiscard]] bool protractor_item_visible() const
+    [[nodiscard]] inline bool protractor_item_visible() const
     {
         return protractor_item_;
     }
     void set_protractor_item_visible(bool visible); ///< See protractor_item_visible().
     /// Whether the button is on, with a stencil showing.
-    [[nodiscard]] bool checked() const
+    [[nodiscard]] inline bool checked() const
     {
         return checked_;
     }
@@ -433,7 +439,7 @@ public:
     /// on, offers both stencils and its flyout is closed.
     [[nodiscard]] bool extension_glyph_shown() const;
     /// Whether the pointer is over the button.
-    [[nodiscard]] bool hovered() const
+    [[nodiscard]] inline bool hovered() const
     {
         return hovered_;
     }
@@ -442,13 +448,13 @@ public:
 
     // ---- automation ----
     /// A button that toggles, and expands and collapses its flyout.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Button;
     }
 
 protected:
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return tool_tip();
     }
@@ -465,7 +471,7 @@ protected:
 private:
     friend class InkToolbarControl;
 
-    [[nodiscard]] bool offers_both() const
+    [[nodiscard]] inline bool offers_both() const
     {
         return ruler_item_ && protractor_item_;
     }
@@ -483,12 +489,12 @@ private:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.toggle          = this;
         out.expand_collapse = this;
     }
-    [[nodiscard]] ToggleState toggle_value() const override
+    [[nodiscard]] inline ToggleState toggle_value() const override
     {
         return checked_ ? ToggleState::On : ToggleState::Off;
     }
@@ -532,7 +538,7 @@ private:
 /// stack->add(std::move(canvas));
 /// window.set_content(std::move(stack));
 /// @endcode
-class InkToolbarControl final : public Element
+LIBWINUI_EXPORT class InkToolbarControl final : public Element
 {
 public:
     /// Every built-in tool, in the default order.
@@ -550,7 +556,7 @@ public:
 
     /// The selected tool. CustomPen or CustomTool for a custom button. active_tool_button() tells
     /// custom buttons apart.
-    [[nodiscard]] InkToolbarTool active_tool() const
+    [[nodiscard]] inline InkToolbarTool active_tool() const
     {
         return active_;
     }
@@ -582,12 +588,12 @@ public:
     /// returns the one already there.
     InkToolbarStencilButtonControl* add_stencil_button();
     /// The stencil button, or nullptr when there is none.
-    [[nodiscard]] InkToolbarStencilButtonControl* stencil_button() const
+    [[nodiscard]] inline InkToolbarStencilButtonControl* stencil_button() const
     {
         return stencil_;
     }
     /// Whether a stencil shows on the target canvas.
-    [[nodiscard]] bool stencil_button_checked() const
+    [[nodiscard]] inline bool stencil_button_checked() const
     {
         return stencil_ != nullptr && stencil_->checked_;
     }
@@ -595,7 +601,7 @@ public:
     /// on_stencil_button_checked_changed() on a change. Does nothing without a stencil button.
     void set_stencil_button_checked(bool checked);
     /// Raised when the stencil button turns on or off, with the stencil it shows.
-    void on_stencil_button_checked_changed(Callback<void(const InkToolbarStencilChangedArgs&)> handler)
+    inline void on_stencil_button_checked_changed(Callback<void(const InkToolbarStencilChangedArgs&)> handler)
     {
         on_stencil_checked_changed_ = std::move(handler);
     }
@@ -608,7 +614,7 @@ public:
 
     /// What the last active pen draws with. Until a pen has been active, the ballpoint pen's
     /// attributes.
-    [[nodiscard]] const InkDrawingAttributes& ink_drawing_attributes() const
+    [[nodiscard]] inline const InkDrawingAttributes& ink_drawing_attributes() const
     {
         return attributes_;
     }
@@ -619,7 +625,7 @@ public:
     /// Lays the tools out in a row or a column.
     void set_orientation(Orientation orientation);
     /// Where the tool flyouts open. Auto, which is below, by default.
-    [[nodiscard]] InkToolbarButtonFlyoutPlacement button_flyout_placement() const
+    [[nodiscard]] inline InkToolbarButtonFlyoutPlacement button_flyout_placement() const
     {
         return placement_;
     }
@@ -650,17 +656,17 @@ public:
 
     // ---- events ----
     /// Raised with the new tool.
-    void on_active_tool_changed(Callback<void(InkToolbarTool)> handler)
+    inline void on_active_tool_changed(Callback<void(InkToolbarTool)> handler)
     {
         on_active_tool_changed_ = std::move(handler);
     }
     /// Raised when the active pen's color, width or kind changes.
-    void on_ink_drawing_attributes_changed(Callback<void(const InkDrawingAttributes&)> handler)
+    inline void on_ink_drawing_attributes_changed(Callback<void(const InkDrawingAttributes&)> handler)
     {
         on_attributes_changed_ = std::move(handler);
     }
     /// Raised after "Erase all ink" has cleared the canvas.
-    void on_erase_all_clicked(Callback<void()> handler)
+    inline void on_erase_all_clicked(Callback<void()> handler)
     {
         on_erase_all_clicked_ = std::move(handler);
     }
@@ -668,17 +674,17 @@ public:
 
     // ---- focus ----
     /// Whether the toolbar has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// A tab stop while enabled.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
     /// The toolbar is one tab stop. Its buttons aren't.
-    void collect_focusables(std::vector<Element*>& out) override
+    inline void collect_focusables(std::vector<Element*>& out) override
     {
         if (focusable())
         {
@@ -693,7 +699,7 @@ public:
     /// The visible tool buttons (through their flyouts) and the toggles, not the internal panel.
     void automation_children(std::vector<Element*>& out) const override;
     /// Exposed to UI Automation as a toolbar, like ui::ToolbarControl.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::ToolBar;
     }
@@ -710,7 +716,7 @@ protected:
 
 private:
     // Enter acts on the tool under the cursor.
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return true;
     }
@@ -810,7 +816,7 @@ protected:
 ///                .content    = ui::InkCanvas{.control = canvas}},
 /// }});
 /// @endcode
-struct InkToolbar
+LIBWINUI_EXPORT struct InkToolbar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<InkToolbar>` points at.
@@ -885,3 +891,5 @@ struct InkToolbar
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

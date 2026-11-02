@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -24,6 +28,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -32,12 +37,13 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// What a closed CommandBar shows.
-enum class AppBarClosedDisplayMode
+LIBWINUI_EXPORT enum class AppBarClosedDisplayMode
 {
     Compact, ///< the icons, 48 tall
     Minimal, ///< the More button only, 24 tall
@@ -79,7 +85,7 @@ enum class AppBarClosedDisplayMode
 ///     .secondary = {ui::AppBarButton{.text = "Settings", .icon = ui::Symbol::Setting}},
 /// });
 /// @endcode
-class CommandBarControl final : public Element, public AppBarCommandHost
+LIBWINUI_EXPORT class CommandBarControl final : public Element, public AppBarCommandHost
 {
     /// Forwards composition sync to the content and every primary.
     void sync_composition_override(detail::Compositor& compositor, const Theme& theme) override;
@@ -123,22 +129,22 @@ public:
     void remove_secondary(std::size_t index);
 
     /// The number of primary commands, including any moved into the overflow.
-    [[nodiscard]] std::size_t primary_count() const
+    [[nodiscard]] inline std::size_t primary_count() const
     {
         return primary_.size();
     }
     /// The number of secondary commands.
-    [[nodiscard]] std::size_t secondary_count() const
+    [[nodiscard]] inline std::size_t secondary_count() const
     {
         return secondary_.size();
     }
     /// The primary command at `index` as a non-owning observer, or nullptr when out of range.
-    [[nodiscard]] Element* primary(std::size_t index) const
+    [[nodiscard]] inline Element* primary(std::size_t index) const
     {
         return index < primary_.size() ? primary_[index].get() : nullptr;
     }
     /// The secondary command at `index` as a non-owning observer, or nullptr when out of range.
-    [[nodiscard]] Element* secondary(std::size_t index) const
+    [[nodiscard]] inline Element* secondary(std::size_t index) const
     {
         return index < secondary_.size() ? secondary_[index].get() : nullptr;
     }
@@ -155,7 +161,7 @@ public:
         return observer;
     }
     /// The content as a non-owning observer, or nullptr.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
@@ -163,7 +169,7 @@ public:
     // ---- properties ----
     /// Where every command puts its text. Bottom (the default) shows the text only
     /// while the bar is open, Right always beside the icon, Collapsed never.
-    [[nodiscard]] CommandBarDefaultTextPosition default_text_position() const
+    [[nodiscard]] inline CommandBarDefaultTextPosition default_text_position() const
     {
         return text_position_;
     }
@@ -172,7 +178,7 @@ public:
 
     /// Whether the bar is lifted over its surroundings, with the text and the overflow showing.
     /// False by default.
-    [[nodiscard]] bool is_open() const
+    [[nodiscard]] inline bool is_open() const
     {
         return open_;
     }
@@ -182,13 +188,13 @@ public:
 
 
     /// What the closed bar shows; Compact by default.
-    [[nodiscard]] AppBarClosedDisplayMode closed_display_mode() const
+    [[nodiscard]] inline AppBarClosedDisplayMode closed_display_mode() const
     {
         return closed_mode_;
     }
     /// Sets what the closed bar shows and updates the layout. The closed height is 48, 24 or
     /// 0 DIPs.
-    void set_closed_display_mode(AppBarClosedDisplayMode mode)
+    inline void set_closed_display_mode(AppBarClosedDisplayMode mode)
     {
         closed_mode_ = mode;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -196,7 +202,7 @@ public:
 
     /// The fill behind the bar, closed and open: a fixed color or a theme resource. Empty, the
     /// default, is transparent. In Compact mode the open bar draws its acrylic over this fill.
-    void set_background(Paint color)
+    inline void set_background(Paint color)
     {
         background_ = color;
         mark_dirty(DirtyFlags::Visual);
@@ -205,23 +211,23 @@ public:
     /// Where the open bar is drawn: over the closed bar and whatever lies below it, or above it
     /// when it opens upward. It takes no room in the layout, and the bar's bounds() stay those of
     /// the closed bar.
-    [[nodiscard]] Rect open_rect() const
+    [[nodiscard]] inline Rect open_rect() const
     {
         return open_rect_;
     }
     /// Whether the open bar went up because there was not enough room below for it and its overflow.
-    [[nodiscard]] bool opens_up() const
+    [[nodiscard]] inline bool opens_up() const
     {
         return opens_up_;
     }
 
     /// Whether light dismiss is off, so an outside click or Escape leaves the bar open.
-    [[nodiscard]] bool is_sticky() const
+    [[nodiscard]] inline bool is_sticky() const
     {
         return sticky_;
     }
     /// False by default. A click on a command still closes a sticky bar.
-    void set_sticky(bool sticky)
+    inline void set_sticky(bool sticky)
     {
         sticky_ = sticky;
         sync_popup();
@@ -230,12 +236,12 @@ public:
     /// When the More button shows. Auto, the default, shows it only when there is something to
     /// reveal: overflow entries or hidden text. With Collapsed, the pointer cannot reach the
     /// secondary commands.
-    [[nodiscard]] AutoVisibility overflow_button_visibility() const
+    [[nodiscard]] inline AutoVisibility overflow_button_visibility() const
     {
         return more_visibility_;
     }
     /// Updates the layout.
-    void set_overflow_button_visibility(AutoVisibility visibility)
+    inline void set_overflow_button_visibility(AutoVisibility visibility)
     {
         more_visibility_ = visibility;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -244,19 +250,19 @@ public:
     /// Whether dynamic overflow is on; true by default. When the bar is narrower than its
     /// commands, primary commands move into the overflow and move back when there is room. The
     /// group with the lowest dynamic_overflow_order() moves first, then the rest from the right.
-    [[nodiscard]] bool is_dynamic_overflow_enabled() const
+    [[nodiscard]] inline bool is_dynamic_overflow_enabled() const
     {
         return dynamic_overflow_;
     }
     /// Updates the layout.
-    void set_dynamic_overflow_enabled(bool enabled)
+    inline void set_dynamic_overflow_enabled(bool enabled)
     {
         dynamic_overflow_ = enabled;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// Whether the primary command at `index` has been moved into the overflow by dynamic overflow.
-    [[nodiscard]] bool is_primary_in_overflow(std::size_t index) const
+    [[nodiscard]] inline bool is_primary_in_overflow(std::size_t index) const
     {
         return index < moved_.size() && moved_[index];
     }
@@ -266,25 +272,25 @@ public:
 
     /// Fired as is_open() turns true, before the transition. Replaces any previous
     /// handler.
-    void on_opening(Callback<void()> handler)
+    inline void on_opening(Callback<void()> handler)
     {
         on_opening_ = std::move(handler);
     }
     /// Fired once the opening transition has run.
-    void on_opened(Callback<void()> handler)
+    inline void on_opened(Callback<void()> handler)
     {
         on_opened_ = std::move(handler);
     }
     /// Fired before is_open() turns false, with why: Programmatic for set_open(false),
     /// LightDismiss for a click outside or Escape, Invoked for a command click, CloseButton for
     /// the More button. Return ui::Cancel to keep the bar open.
-    void on_closing(Callback<Decision(const PopupClosingArgs&)> handler)
+    inline void on_closing(Callback<Decision(const PopupClosingArgs&)> handler)
     {
         on_closing_ = std::move(handler);
     }
     /// Fired once the closing transition has run, with the reason on_closing() saw. This is
     /// where a bound `is_open` learns about a light dismiss.
-    void on_closed(Callback<void(PopupCloseReason)> handler)
+    inline void on_closed(Callback<void(PopupCloseReason)> handler)
     {
         on_closed_ = std::move(handler);
     }
@@ -305,7 +311,7 @@ public:
 
     // ---- automation ----
     /// Always AutomationRole::ToolBar.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::ToolBar;
     }
@@ -400,17 +406,17 @@ private:
     [[nodiscard]] float                 overflow_slide() const; // 0 open, 1 fully tucked away
 
     /// Open, or still animating closed: the bar is drawn by the lift, over the tree.
-    [[nodiscard]] bool lifted() const
+    [[nodiscard]] inline bool lifted() const
     {
         return phase_ != Phase::Closed;
     }
     /// Whether the content and the primaries show and take input: always while lifted, closed
     /// only in Compact.
-    [[nodiscard]] bool shows_commands() const
+    [[nodiscard]] inline bool shows_commands() const
     {
         return lifted() || closed_mode_ == AppBarClosedDisplayMode::Compact;
     }
-    [[nodiscard]] bool shows_more_button() const
+    [[nodiscard]] inline bool shows_more_button() const
     {
         return more_button_visible() && (lifted() || closed_mode_ != AppBarClosedDisplayMode::Hidden);
     }
@@ -446,7 +452,7 @@ protected:
 ///     .secondary = { ui::AppBarButton{ .text = "Settings", .icon = ui::Symbol::Setting } },
 /// });
 /// @endcode
-struct CommandBar
+LIBWINUI_EXPORT struct CommandBar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<CommandBar>` points at.
@@ -527,3 +533,5 @@ struct CommandBar
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

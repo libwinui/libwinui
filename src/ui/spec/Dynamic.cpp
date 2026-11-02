@@ -8,8 +8,10 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/spec/Spec.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <utility>
+#endif
 
 namespace ui
 {

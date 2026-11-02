@@ -3,9 +3,6 @@
 // each run took, what the library counted (winui/testing/PerfCounters.hpp) and what it allocated.
 #pragma once
 
-#include "../tests/support/AllocationCounter.hpp"
-#include "winui/testing/PerfCounters.hpp"
-
 #include <chrono>
 #include <functional>
 #include <string>
@@ -15,6 +12,10 @@
 
 #include <cstddef>
 #include <cstdint>
+
+import winui.testing;
+
+#include "../tests/support/AllocationCounter.hpp"
 
 namespace bench
 {

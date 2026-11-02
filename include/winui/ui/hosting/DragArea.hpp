@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Property.hpp"
@@ -12,9 +16,11 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/spec/Spec.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -44,11 +50,11 @@ namespace ui
 /// // window.hit_region_at(label->bounds().center())  == ui::HitRegion::Caption
 /// // window.hit_region_at(cancel->bounds().center()) == ui::HitRegion::Client
 /// @endcode
-class DragAreaControl final : public ContentHost
+LIBWINUI_EXPORT class DragAreaControl final : public ContentHost
 {
 public:
     /// False: the whole area takes the pointer, empty parts included, since they drag the window.
-    [[nodiscard]] bool hit_test_transparent() const override
+    [[nodiscard]] inline bool hit_test_transparent() const override
     {
         return false;
     }
@@ -57,7 +63,7 @@ public:
 
     /// Caption everywhere inside the area, except Client along the path under `p` from the first
     /// focusable element down (that element takes the press).
-    [[nodiscard]] HitRegion hit_region(Point p) const override
+    [[nodiscard]] inline HitRegion hit_region(Point p) const override
     {
         // Down the path under the pointer: the first focusable element on it takes the press.
         const Element* node = child();
@@ -99,7 +105,7 @@ public:
 ///     }},
 /// });
 /// @endcode
-struct DragArea
+LIBWINUI_EXPORT struct DragArea
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<DragArea>` points at.
@@ -149,3 +155,5 @@ struct DragArea
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

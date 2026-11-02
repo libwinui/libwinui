@@ -21,6 +21,7 @@
 #include "winui/ui/text/TextBox.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <charconv>
 #include <format>
@@ -37,6 +38,7 @@
 #include <cmath>
 #include <compare>
 #include <cstddef>
+#endif
 
 namespace ui
 {

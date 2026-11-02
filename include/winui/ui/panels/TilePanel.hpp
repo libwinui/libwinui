@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,6 +22,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <memory>
 #include <optional>
@@ -28,6 +33,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -66,7 +72,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-class TilePanelControl final : public Panel
+LIBWINUI_EXPORT class TilePanelControl final : public Panel
 {
 public:
     /// An empty grid: Vertical, cells sized from the first child, no line cap, Leading alignment.
@@ -106,12 +112,12 @@ public:
     [[nodiscard]] int column_span(const Element* child) const;
 
     /// Orientation: Vertical (the default) fills a column top to bottom before moving right.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
     /// Changes the fill direction and updates the layout.
-    void set_orientation(Orientation orientation)
+    inline void set_orientation(Orientation orientation)
     {
         orientation_ = orientation;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -119,35 +125,35 @@ public:
 
     /// The cell width in DIPs; nullopt (the default) takes the first child's desired size on
     /// that axis.
-    [[nodiscard]] std::optional<float> item_width() const
+    [[nodiscard]] inline std::optional<float> item_width() const
     {
         return item_width_;
     }
     /// Sets or clears the cell width and updates the layout.
-    void set_item_width(OptionalFloat width)
+    inline void set_item_width(OptionalFloat width)
     {
         item_width_ = width;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The cell height in DIPs; see item_width().
-    [[nodiscard]] std::optional<float> item_height() const
+    [[nodiscard]] inline std::optional<float> item_height() const
     {
         return item_height_;
     }
     /// Sets or clears the cell height and updates the layout.
-    void set_item_height(OptionalFloat height)
+    inline void set_item_height(OptionalFloat height)
     {
         item_height_ = height;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The most cells in a line; 0 (the default) is no cap.
-    [[nodiscard]] std::size_t maximum_rows_or_columns() const
+    [[nodiscard]] inline std::size_t maximum_rows_or_columns() const
     {
         return maximum_rows_or_columns_;
     }
     /// Caps the cells per line and updates the layout.
-    void set_maximum_rows_or_columns(std::size_t maximum)
+    inline void set_maximum_rows_or_columns(std::size_t maximum)
     {
         maximum_rows_or_columns_ = maximum;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -156,45 +162,45 @@ public:
     /// Where the block of cells sits horizontally; Leading (Left/Top) by default.
     /// In a panel larger than the used cells, Center and Trailing offset the whole block and
     /// Stretch spreads the lines apart.
-    [[nodiscard]] Alignment horizontal_children_alignment() const
+    [[nodiscard]] inline Alignment horizontal_children_alignment() const
     {
         return horizontal_children_alignment_;
     }
     /// Changes the horizontal alignment and updates the layout.
-    void set_horizontal_children_alignment(Alignment alignment)
+    inline void set_horizontal_children_alignment(Alignment alignment)
     {
         horizontal_children_alignment_ = alignment;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The vertical alignment of the cell block; see horizontal_children_alignment().
-    [[nodiscard]] Alignment vertical_children_alignment() const
+    [[nodiscard]] inline Alignment vertical_children_alignment() const
     {
         return vertical_children_alignment_;
     }
     /// Changes the vertical alignment and updates the layout.
-    void set_vertical_children_alignment(Alignment alignment)
+    inline void set_vertical_children_alignment(Alignment alignment)
     {
         vertical_children_alignment_ = alignment;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// The size of one cell from the last measure.
-    [[nodiscard]] Size cell_size() const
+    [[nodiscard]] inline Size cell_size() const
     {
         return item_size_;
     }
     /// Cells per line from the last measure.
-    [[nodiscard]] std::size_t items_per_line() const
+    [[nodiscard]] inline std::size_t items_per_line() const
     {
         return items_per_line_;
     }
     /// Lines used by the last measure.
-    [[nodiscard]] std::size_t line_count() const
+    [[nodiscard]] inline std::size_t line_count() const
     {
         return line_count_;
     }
     /// True: measuring touches only the panel and its children.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
@@ -228,11 +234,11 @@ private:
         std::size_t           current_row   = 0;
         std::size_t           current_col   = 0;
 
-        [[nodiscard]] std::uint32_t at(std::size_t row, std::size_t col) const
+        [[nodiscard]] inline std::uint32_t at(std::size_t row, std::size_t col) const
         {
             return cells[row * max_col + col];
         }
-        void set(std::size_t row, std::size_t col, std::uint32_t value)
+        inline void set(std::size_t row, std::size_t col, std::uint32_t value)
         {
             cells[row * max_col + col] = value;
         }
@@ -262,7 +268,7 @@ private:
 
 /// One child of a TilePanel with the cell rows and columns it spans.
 /// Written inline in the grid's `.content`; see ui::TilePanel for an example.
-struct TilePanelItem
+LIBWINUI_EXPORT struct TilePanelItem
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     int                                               row_span    = 1; ///< Cells covered along the column axis.
@@ -272,7 +278,7 @@ struct TilePanelItem
 
 /// A TilePanel's children, built, in the same shape as CellList. Callers write it as a braced list of
 /// `ui::TilePanelItem{...}`.
-class TilePanelItemList
+LIBWINUI_EXPORT class TilePanelItemList
 {
 public:
     /// One built child with its spans; the node is already owned by the list.
@@ -302,7 +308,7 @@ public:
     std::vector<Placed> items_;
 
     /// Builds `item`'s content and appends it, as one more entry of the braced list would.
-    void add(TilePanelItem item)
+    inline void add(TilePanelItem item)
     {
         items_.push_back(Placed{item.row_span, item.column_span, item.content.take()});
     }
@@ -326,7 +332,7 @@ public:
 ///     },
 /// });
 /// @endcode
-struct TilePanel
+LIBWINUI_EXPORT struct TilePanel
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<TilePanel>` points at.
@@ -393,3 +399,5 @@ struct TilePanel
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

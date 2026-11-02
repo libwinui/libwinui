@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/OptionalFloat.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <array>
 #include <initializer_list>
@@ -14,6 +19,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -27,14 +33,14 @@ namespace ui
 /// const ui::GradientStop top{0.0f, ui::Color::from_rgba(255, 255, 255)};
 /// const ui::GradientStop bottom{1.0f, ui::Color::from_rgba(200, 200, 200)};
 /// @endcode
-struct GradientStop
+LIBWINUI_EXPORT struct GradientStop
 {
     /// Position along the gradient axis (or out along the radius), 0..1.
     float offset = 0.0f;
     /// The color at `offset`, alpha included.
     Color color;
 
-    friend bool operator==(const GradientStop&, const GradientStop&) = default;
+    friend inline bool operator==(const GradientStop&, const GradientStop&) = default;
 };
 
 /// The stops of a gradient brush, in order: a list kept inside the brush up to four stops, so
@@ -48,7 +54,7 @@ struct GradientStop
 /// stops.push_back({0.5f, ui::Color::from_rgba(128, 128, 128)});
 /// for (const ui::GradientStop& stop : stops) { (void)stop.offset; }
 /// @endcode
-class GradientStops
+LIBWINUI_EXPORT class GradientStops
 {
 public:
     /// How many stops fit without allocating.
@@ -56,20 +62,20 @@ public:
 
     GradientStops() = default;
     /// The stops in `stops`, in order.
-    GradientStops(std::initializer_list<GradientStop> stops) // NOLINT(google-explicit-constructor): a list of stops is stops
+    inline GradientStops(std::initializer_list<GradientStop> stops) // NOLINT(google-explicit-constructor): a list of stops is stops
     {
         assign(stops.begin(), stops.size());
     }
     /// The stops in `stops`, in order.
-    GradientStops(const std::vector<GradientStop>& stops) // NOLINT(google-explicit-constructor)
+    inline GradientStops(const std::vector<GradientStop>& stops) // NOLINT(google-explicit-constructor)
     {
         assign(stops.data(), stops.size());
     }
-    GradientStops(const GradientStops& other)
+    inline GradientStops(const GradientStops& other)
     {
         assign(other.data(), other.size_);
     }
-    GradientStops(GradientStops&& other) noexcept :
+    inline GradientStops(GradientStops&& other) noexcept :
         inline_(other.inline_),
         heap_(std::move(other.heap_)),
         capacity_(other.capacity_),
@@ -78,7 +84,7 @@ public:
         other.capacity_ = 0;
         other.size_     = 0;
     }
-    GradientStops& operator=(const GradientStops& other)
+    inline GradientStops& operator=(const GradientStops& other)
     {
         if (this != &other)
         {
@@ -86,7 +92,7 @@ public:
         }
         return *this;
     }
-    GradientStops& operator=(GradientStops&& other) noexcept
+    inline GradientStops& operator=(GradientStops&& other) noexcept
     {
         inline_         = other.inline_;
         heap_           = std::move(other.heap_);
@@ -99,101 +105,101 @@ public:
     ~GradientStops() = default;
 
     /// How many stops there are.
-    [[nodiscard]] std::size_t size() const noexcept
+    [[nodiscard]] inline std::size_t size() const noexcept
     {
         return size_;
     }
     /// Whether there are none, which paints nothing.
-    [[nodiscard]] bool empty() const noexcept
+    [[nodiscard]] inline bool empty() const noexcept
     {
         return size_ == 0;
     }
     /// The first stop.
-    [[nodiscard]] const GradientStop* begin() const noexcept
+    [[nodiscard]] inline const GradientStop* begin() const noexcept
     {
         return data();
     }
     /// One past the last stop.
-    [[nodiscard]] const GradientStop* end() const noexcept
+    [[nodiscard]] inline const GradientStop* end() const noexcept
     {
         return data() + size_;
     }
     /// The first stop.
-    [[nodiscard]] GradientStop* begin() noexcept
+    [[nodiscard]] inline GradientStop* begin() noexcept
     {
         return data();
     }
     /// One past the last stop.
-    [[nodiscard]] GradientStop* end() noexcept
+    [[nodiscard]] inline GradientStop* end() noexcept
     {
         return data() + size_;
     }
     /// The stops as one array of size() elements.
-    [[nodiscard]] const GradientStop* data() const noexcept
+    [[nodiscard]] inline const GradientStop* data() const noexcept
     {
         return heap_ ? heap_.get() : inline_.data();
     }
     /// The stops as one array of size() elements.
-    [[nodiscard]] GradientStop* data() noexcept
+    [[nodiscard]] inline GradientStop* data() noexcept
     {
         return heap_ ? heap_.get() : inline_.data();
     }
     /// Stop `i`, below size().
-    [[nodiscard]] const GradientStop& operator[](std::size_t i) const noexcept
+    [[nodiscard]] inline const GradientStop& operator[](std::size_t i) const noexcept
     {
         return data()[i];
     }
     /// Stop `i`, below size().
-    [[nodiscard]] GradientStop& operator[](std::size_t i) noexcept
+    [[nodiscard]] inline GradientStop& operator[](std::size_t i) noexcept
     {
         return data()[i];
     }
     /// The first stop; there must be one.
-    [[nodiscard]] const GradientStop& front() const noexcept
+    [[nodiscard]] inline const GradientStop& front() const noexcept
     {
         return data()[0];
     }
     /// The last stop; there must be one.
-    [[nodiscard]] const GradientStop& back() const noexcept
+    [[nodiscard]] inline const GradientStop& back() const noexcept
     {
         return data()[size_ - 1];
     }
     /// The first stop; there must be one.
-    [[nodiscard]] GradientStop& front() noexcept
+    [[nodiscard]] inline GradientStop& front() noexcept
     {
         return data()[0];
     }
     /// The last stop; there must be one.
-    [[nodiscard]] GradientStop& back() noexcept
+    [[nodiscard]] inline GradientStop& back() noexcept
     {
         return data()[size_ - 1];
     }
     /// Adds `stop` after the last one.
-    void push_back(const GradientStop& stop)
+    inline void push_back(const GradientStop& stop)
     {
         reserve(size_ + 1);
         data()[size_++] = stop;
     }
     /// Removes every stop.
-    void clear() noexcept
+    inline void clear() noexcept
     {
         size_ = 0;
     }
     /// The stops as a vector.
-    [[nodiscard]] std::vector<GradientStop> to_vector() const
+    [[nodiscard]] inline std::vector<GradientStop> to_vector() const
     {
         return {begin(), end()};
     }
 
     /// The same stops in the same order.
-    friend bool operator==(const GradientStops& a, const GradientStops& b) noexcept
+    friend inline bool operator==(const GradientStops& a, const GradientStops& b) noexcept
     {
         return std::equal(a.begin(), a.end(), b.begin(), b.end());
     }
 
 private:
     // Room for `count` stops, keeping the ones there are.
-    void reserve(std::size_t count)
+    inline void reserve(std::size_t count)
     {
         const std::size_t room = heap_ ? capacity_ : InlineCapacity;
         if (count <= room)
@@ -206,7 +212,7 @@ private:
         heap_     = std::move(bigger);
         capacity_ = grown;
     }
-    void assign(const GradientStop* first, std::size_t count)
+    inline void assign(const GradientStop* first, std::size_t count)
     {
         size_ = 0;
         reserve(count);
@@ -226,7 +232,7 @@ private:
 ///
 /// FillRoundedRectGradient honors all three. StrokeRoundedRectGradient, Fluent's elevation
 /// border, always runs vertically.
-enum class GradientAxis
+LIBWINUI_EXPORT enum class GradientAxis
 {
     Vertical,   ///< Top to bottom, as in Luna and Aero button chrome.
     Horizontal, ///< Left to right, as in 98 and XP caption bars and toolbar backgrounds.
@@ -250,7 +256,7 @@ enum class GradientAxis
 /// auto rect = std::make_unique<ui::RectangleControl>();
 /// rect->set_fill(ui::LinearGradientBrush{.stops = luna.stops, .axis = ui::GradientAxis::Horizontal});
 /// @endcode
-struct LinearGradientBrush
+LIBWINUI_EXPORT struct LinearGradientBrush
 {
     /// The color stops, in increasing `offset` order. Empty paints nothing.
     GradientStops stops;
@@ -262,7 +268,7 @@ struct LinearGradientBrush
 
 /// Whether a gradient's points are fractions of the painted
 /// shape's bounding box (0,0 its top-left, 1,1 its bottom-right) or DIPs from its top-left.
-enum class BrushMappingMode
+LIBWINUI_EXPORT enum class BrushMappingMode
 {
     RelativeToBoundingBox, ///< 0..1 fractions of the bounding box (the default).
     Absolute,              ///< DIPs from the bounding box's top-left.
@@ -270,7 +276,7 @@ enum class BrushMappingMode
 
 /// What a gradient paints past its last stop: the end colors held
 /// (`Pad`), the gradient mirrored (`Reflect`) or started over (`Repeat`).
-enum class GradientSpreadMethod
+LIBWINUI_EXPORT enum class GradientSpreadMethod
 {
     Pad,     ///< The end colors extend outwards (the default).
     Reflect, ///< The gradient repeats mirrored.
@@ -289,7 +295,7 @@ enum class GradientSpreadMethod
 ///     .center = ui::Point{0.25f, 0.25f},
 /// });
 /// @endcode
-struct RadialGradientBrush
+LIBWINUI_EXPORT struct RadialGradientBrush
 {
     /// The color stops, from `gradient_origin` (offset 0) out to the ellipse's edge (offset 1).
     GradientStops stops;
@@ -329,7 +335,7 @@ struct RadialGradientBrush
 ///     .fallback_color = ui::Color::from_rgba(0, 90, 160),
 /// });
 /// @endcode
-struct AcrylicBrush
+LIBWINUI_EXPORT struct AcrylicBrush
 {
     /// The tint laid over the blurred backdrop; its alpha counts.
     Color tint_color = Color::from_argb(0xCCFFFFFF);
@@ -356,6 +362,8 @@ struct AcrylicBrush
 
 /// Any paint a Shape's fill or stroke accepts: a solid `Color` or one
 /// of the brush structs. Renderer::draw_geometry() takes it; control chrome keeps plain `Color`.
-using Brush = std::variant<Color, LinearGradientBrush, RadialGradientBrush, AcrylicBrush>;
+LIBWINUI_EXPORT using Brush = std::variant<Color, LinearGradientBrush, RadialGradientBrush, AcrylicBrush>;
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

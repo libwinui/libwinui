@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 namespace ui
 {
 
@@ -16,7 +20,7 @@ namespace ui
 /// const ui::CubicBezier ease_out{0.1f, 0.9f, 0.2f, 1.0f};
 /// const float halfway = ui::easing::evaluate(ease_out, 0.5); // progress at half the time
 /// @endcode
-struct CubicBezier
+LIBWINUI_EXPORT struct CubicBezier
 {
     /// The two interior control points, (x1,y1) and (x2,y2), each coordinate 0..1 (x is time,
     /// y is progress). The default is the linear ramp.
@@ -29,9 +33,9 @@ struct CubicBezier
 namespace easing
 {
 /// A straight ramp: progress equals elapsed-time fraction.
-inline constexpr CubicBezier Linear{0.0f, 0.0f, 1.0f, 1.0f};
+LIBWINUI_EXPORT inline constexpr CubicBezier Linear{0.0f, 0.0f, 1.0f, 1.0f};
 /// A pure decelerate, fast at the start and slow at the end, used by most themed motion.
-inline constexpr CubicBezier ControlFastOutSlowIn{0.0f, 0.0f, 0.0f, 1.0f};
+LIBWINUI_EXPORT inline constexpr CubicBezier ControlFastOutSlowIn{0.0f, 0.0f, 0.0f, 1.0f};
 
 /// Evaluates `c` at elapsed-time fraction `x`, returning the progress fraction (the
 /// curve's y at the t where its x equals `x`), for a control that eases a value itself, such
@@ -39,7 +43,7 @@ inline constexpr CubicBezier ControlFastOutSlowIn{0.0f, 0.0f, 0.0f, 1.0f};
 ///
 /// x(t) is inverted by 24 steps of bisection, which puts t within 2^-24, far finer than any
 /// frame can show.
-[[nodiscard]] inline float evaluate(const CubicBezier& c, double x)
+LIBWINUI_EXPORT [[nodiscard]] inline float evaluate(const CubicBezier& c, double x)
 {
     const auto axis = [](float p1, float p2, double t)
     {
@@ -66,3 +70,5 @@ inline constexpr CubicBezier ControlFastOutSlowIn{0.0f, 0.0f, 0.0f, 1.0f};
 } // namespace easing
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

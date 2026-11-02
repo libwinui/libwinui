@@ -12,10 +12,12 @@
 
 #include "winui/core/Input.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <optional>
 
 #include <cstdint>
+#endif
 
 #ifndef NOMINMAX
 #define NOMINMAX

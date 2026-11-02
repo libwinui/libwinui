@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -21,6 +25,7 @@
 #include "winui/ui/spec/LayoutSpec.hpp"
 #include "winui/ui/spec/Spec.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <map>
 #include <memory>
@@ -33,19 +38,20 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
 /// What `on_element_prepared` gets: an element about to show item `index`.
-struct ElementPreparedArgs
+LIBWINUI_EXPORT struct ElementPreparedArgs
 {
     Element&    element; ///< The realized element.
     std::size_t index;   ///< The item it shows.
 };
 
 /// What `on_element_index_changed` gets: an element whose item moved.
-struct ElementIndexChangedArgs
+LIBWINUI_EXPORT struct ElementIndexChangedArgs
 {
     Element&    element;   ///< The realized element.
     std::size_t old_index; ///< Where its item was.
@@ -91,7 +97,7 @@ struct ElementIndexChangedArgs
 /// rows.insert(rows.begin(), "New first row");
 /// repeater->notify_inserted(0);
 /// @endcode
-class ForEachControl final : public Element, private LayoutOwner
+LIBWINUI_EXPORT class ForEachControl final : public Element, private LayoutOwner
 {
 public:
     /// Makes the element for item `index` and may choose a different look per item. Called when the
@@ -109,12 +115,12 @@ public:
     /// Replaces the template. Every realized element is cleared and made again.
     void set_item_template(ItemTemplate item_template);
     /// Whether an item template is set. Without one nothing is realized.
-    [[nodiscard]] bool has_item_template() const
+    [[nodiscard]] inline bool has_item_template() const
     {
         return static_cast<bool>(item_template_);
     }
     /// How many items the collection holds.
-    [[nodiscard]] std::size_t item_count() const
+    [[nodiscard]] inline std::size_t item_count() const
     {
         return item_count_;
     }
@@ -146,20 +152,20 @@ public:
         return observer;
     }
     /// The current layout, non-owning and never nullptr.
-    [[nodiscard]] Layout* layout() const
+    [[nodiscard]] inline Layout* layout() const
     {
         return layout_.get();
     }
 
     // ---- appearance ----
     /// Background behind the items, as a fixed color; nullopt (the default) draws none. Redraws.
-    void set_background(std::optional<Color> color)
+    inline void set_background(std::optional<Color> color)
     {
         background_.set(color);
         mark_dirty(DirtyFlags::Visual);
     }
     /// Background as a theme color, read again when the theme changes. Redraws.
-    void set_background(ThemeColor resource)
+    inline void set_background(ThemeColor resource)
     {
         background_.set(resource);
         mark_dirty(DirtyFlags::Visual);
@@ -168,14 +174,14 @@ public:
     // ---- virtualization ----
     /// How many viewports' worth of items to keep realized beyond the one in view, split evenly
     /// before and after it. 2 by default, one on each side. 0 realizes only what shows.
-    [[nodiscard]] float horizontal_cache_length() const
+    [[nodiscard]] inline float horizontal_cache_length() const
     {
         return horizontal_cache_length_;
     }
     /// Sets the horizontal cache length and lays the repeater out again.
     void set_horizontal_cache_length(float length);
     /// The vertical counterpart of horizontal_cache_length().
-    [[nodiscard]] float vertical_cache_length() const
+    [[nodiscard]] inline float vertical_cache_length() const
     {
         return vertical_cache_length_;
     }
@@ -192,7 +198,7 @@ public:
     /// Returns nullptr only for an index out of range or a repeater with no template.
     Element* get_or_create_element(std::size_t index);
     /// How many items are realized.
-    [[nodiscard]] std::size_t realized_count() const
+    [[nodiscard]] inline std::size_t realized_count() const
     {
         return realized_.size();
     }
@@ -201,29 +207,29 @@ public:
 
     // ---- events ----
     /// An element was made for item `index`, before it is measured.
-    void on_element_prepared(Callback<void(const ElementPreparedArgs&)> handler)
+    inline void on_element_prepared(Callback<void(const ElementPreparedArgs&)> handler)
     {
         on_element_prepared_ = std::move(handler);
     }
     /// An element is about to be destroyed because it scrolled out, its item was removed, or the
     /// collection was reset.
-    void on_element_clearing(Callback<void(Element&)> handler)
+    inline void on_element_clearing(Callback<void(Element&)> handler)
     {
         on_element_clearing_ = std::move(handler);
     }
     /// A collection change moved an element's item, with the old and the new index.
-    void on_element_index_changed(Callback<void(const ElementIndexChangedArgs&)> handler)
+    inline void on_element_index_changed(Callback<void(const ElementIndexChangedArgs&)> handler)
     {
         on_element_index_changed_ = std::move(handler);
     }
 
     /// The layout's extent in layout coordinates, covering every item, realized or estimated.
-    [[nodiscard]] Rect layout_extent() const
+    [[nodiscard]] inline Rect layout_extent() const
     {
         return extent_;
     }
     /// The realization rect of the last layout pass, in layout coordinates.
-    [[nodiscard]] Rect realization_rect() const
+    [[nodiscard]] inline Rect realization_rect() const
     {
         return realization_;
     }
@@ -232,8 +238,8 @@ public:
     void for_each_child(ChildVisitor visit) const override;
     /// Only the realized elements that have been arranged. One realized but not yet placed has no
     /// usable bounds.
-    void                         automation_children(std::vector<Element*>& out) const override;
-    [[nodiscard]] AutomationRole automation_role() const override
+    void                                automation_children(std::vector<Element*>& out) const override;
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Group;
     }
@@ -264,7 +270,7 @@ private:
         bool                     arranged         = false; // placed by the layout in this pass
     };
 
-    void layout_invalidated(bool measure) override
+    inline void layout_invalidated(bool measure) override
     {
         (void)measure;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -403,7 +409,7 @@ void apply_collection_change(ForEachControl& control, const CollectionChange& ch
 /// std::ranges::sort(sorted, {}, &Photo::title);
 /// photos = sorted; // the rows move, none is built again
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 struct ForEach
 {
     /// The control this spec builds; what `ui::Control<ForEach>` points at.
@@ -611,3 +617,5 @@ struct ForEach
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

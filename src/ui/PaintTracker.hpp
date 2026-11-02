@@ -28,11 +28,13 @@
 #include "winui/render/RenderRecording.hpp"
 #include "winui/render/Renderer.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <vector>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -146,15 +148,15 @@ public:
     // The tracker `renderer` is, if it is the one active on this thread.
     [[nodiscard]] static PaintTracker* active(const Renderer& renderer) noexcept;
 
-    [[nodiscard]] bool culling() const
+    [[nodiscard]] inline bool culling() const
     {
         return inner_ != nullptr;
     }
-    [[nodiscard]] std::uint32_t frame() const
+    [[nodiscard]] inline std::uint32_t frame() const
     {
         return frame_;
     }
-    [[nodiscard]] const Rect& clip() const
+    [[nodiscard]] inline const Rect& clip() const
     {
         return clip_;
     }
@@ -171,24 +173,24 @@ public:
     void probe_visuals(const Element& e, const Matrix& own, float own_opacity);
     // Whether drawing covers the probes. Off while the window draws the focus rings, which go
     // around an element and over its edge without hiding it.
-    void set_covering(bool covering)
+    inline void set_covering(bool covering)
     {
         covering_ = covering;
     }
 
     // What was drawn outside every element (popup shadows, the modal's scrim, a drag visual):
     // its hash and area, for Window to compare with the last frame's.
-    [[nodiscard]] std::uint64_t window_hash() const
+    [[nodiscard]] inline std::uint64_t window_hash() const
     {
         return s_->stack.front().own;
     }
-    [[nodiscard]] const Rect& window_area() const
+    [[nodiscard]] inline const Rect& window_area() const
     {
         return s_->stack.front().own_area;
     }
     // Where in-app acrylic draws, grown by how far its blur reads: a change anywhere in one of
     // these changes the acrylic over it.
-    [[nodiscard]] const std::vector<Rect>& acrylic_areas() const
+    [[nodiscard]] inline const std::vector<Rect>& acrylic_areas() const
     {
         return s_->acrylic;
     }

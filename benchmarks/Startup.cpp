@@ -8,17 +8,23 @@
 //
 // Run it twice: the first run after a reboot (or after the binaries were rebuilt) is the cold
 // start, the second the warm one.
-#include "gallery.hpp"
 
-#include <winui/testing.hpp>
-#include <winui/winui.hpp>
-
+#include <concepts>
 #include <format>
+#include <functional>
+#include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <string_view>
+#include <vector>
 
+#include <cstddef>
 #include <cstdio>
+
+import winui.testing;
+
+#include "gallery.hpp"
 
 namespace
 {
@@ -79,7 +85,7 @@ int minimal()
 int gallery_page()
 {
     ui::Window                window{{.title    = "libwinui Control Gallery",
-                                      .size    = {1180, 820},
+                                      .size     = {1180, 820},
                                       .backdrop = ui::Backdrop::Mica,
                                       .style    = {.frame = ui::Frame::Themed}}};
     ui::Property<std::string> status{""};

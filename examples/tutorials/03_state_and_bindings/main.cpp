@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 // libwinui tutorial: state and bindings.
-#include <winui/winui.hpp>
 
 #include <format>
 #include <string>
+
+import winui;
 
 int main()
 {

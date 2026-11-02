@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
@@ -21,6 +25,7 @@
 #include "winui/ui/spec/LayoutSpec.hpp"
 #include "winui/ui/spec/Spec.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <memory>
 #include <optional>
@@ -30,11 +35,12 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class TileLayoutEngine;
+LIBWINUI_EXPORT class TileLayoutEngine;
 
 /// Templated items in wrapping rows of equal cells, virtualized and selectable.
 ///
@@ -68,7 +74,7 @@ class TileLayoutEngine;
 /// grid->set_selection_mode(ui::SelectionMode::Multiple);
 /// stack->add(std::move(grid));
 /// @endcode
-class TileViewControl final : public ListViewBase
+LIBWINUI_EXPORT class TileViewControl final : public ListViewBase
 {
 public:
     /// An empty grid in Single selection mode, horizontal orientation.
@@ -93,7 +99,7 @@ public:
     /// Caps the cells per row (per column when Vertical) and lays the view out again.
     void set_maximum_rows_or_columns(std::size_t max);
     /// The fill direction; Horizontal by default.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
@@ -264,7 +270,7 @@ struct TileViewSpec
 ///     { return ui::Border{.background = color, .width = 40.0f, .height = 40.0f}; },
 /// });
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 struct TileView
 {
     /// The control this spec builds; what `ui::Control<TileView>` points at.
@@ -477,3 +483,5 @@ struct TileView
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

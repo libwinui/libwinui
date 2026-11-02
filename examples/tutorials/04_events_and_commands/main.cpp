@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 // libwinui tutorial: events and commands.
-#include <winui/winui.hpp>
 
 #include <format>
 #include <memory>
 #include <string>
 #include <vector>
+
+import winui;
 
 int main()
 {

@@ -9,17 +9,15 @@
 #include "winui/render/Renderer.hpp"
 #include "winui/render/SvgImage.hpp"
 #include "winui/render/Text.hpp"
+#include "winui/ui/Window.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
 #include <vector>
 
 #include <cstddef>
-
-namespace ui
-{
-class Window;
-}
+#endif
 
 namespace ui::testing
 {

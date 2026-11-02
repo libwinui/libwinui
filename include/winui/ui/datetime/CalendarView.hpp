@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Input.hpp"
@@ -10,6 +14,7 @@
 #include "winui/ui/spec/Common.hpp"
 #include "winui/ui/spec/Control.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <chrono>
 #include <memory>
@@ -18,14 +23,15 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-struct Theme;
+LIBWINUI_EXPORT struct Theme;
 
-class MenuFlyoutControl;
-class ComboBoxControl;
+LIBWINUI_EXPORT class MenuFlyoutControl;
+LIBWINUI_EXPORT class ComboBoxControl;
 
 namespace detail
 {
@@ -36,7 +42,7 @@ class PickerEngine;
 } // namespace detail
 
 /// How many dates a CalendarView lets the user select.
-enum class CalendarViewSelectionMode
+LIBWINUI_EXPORT enum class CalendarViewSelectionMode
 {
     None,     ///< Days can't be selected; the calendar only shows dates.
     Single,   ///< One date at a time: a click replaces the selection (the default).
@@ -44,7 +50,7 @@ enum class CalendarViewSelectionMode
 };
 
 /// What a CalendarView shows.
-enum class CalendarViewDisplayMode
+LIBWINUI_EXPORT enum class CalendarViewDisplayMode
 {
     Month,  ///< The days of one month, six weeks at a time (the default).
     Year,   ///< The months of one year.
@@ -76,7 +82,7 @@ enum class CalendarViewDisplayMode
 /// calendar.on_selected_dates_changed([](const std::vector<std::chrono::year_month_day>& dates)
 ///                                    { std::printf("%zu days picked\n", dates.size()); });
 /// @endcode
-class CalendarViewControl final :
+LIBWINUI_EXPORT class CalendarViewControl final :
     public Element,
     private GridProvider,
     private TableProvider,
@@ -93,7 +99,7 @@ public:
 
     // ---- selection ----
     /// The selected dates, in the order they were selected.
-    [[nodiscard]] const std::vector<std::chrono::year_month_day>& selected_dates() const
+    [[nodiscard]] inline const std::vector<std::chrono::year_month_day>& selected_dates() const
     {
         return selected_;
     }
@@ -102,13 +108,13 @@ public:
     /// the selection differs.
     void set_selected_dates(std::vector<std::chrono::year_month_day> dates);
     /// Called after the selection changed, from input or a setter, with the new selection.
-    void on_selected_dates_changed(Callback<void(const std::vector<std::chrono::year_month_day>&)> handler)
+    inline void on_selected_dates_changed(Callback<void(const std::vector<std::chrono::year_month_day>&)> handler)
     {
         on_selected_dates_changed_ = std::move(handler);
     }
     /// How many dates can be selected. Switching to None clears the selection and to Single
     /// keeps the first date.
-    [[nodiscard]] CalendarViewSelectionMode selection_mode() const
+    [[nodiscard]] inline CalendarViewSelectionMode selection_mode() const
     {
         return selection_mode_;
     }
@@ -125,19 +131,19 @@ public:
 
     // ---- what is shown ----
     /// Month, Year or Decade.
-    [[nodiscard]] CalendarViewDisplayMode display_mode() const
+    [[nodiscard]] inline CalendarViewDisplayMode display_mode() const
     {
         return display_mode_;
     }
     /// Zooms to `mode`, animated where the theme animates.
     void set_display_mode(CalendarViewDisplayMode mode);
     /// Called after the display mode changed, from input or a setter.
-    void on_display_mode_changed(Callback<void(CalendarViewDisplayMode)> handler)
+    inline void on_display_mode_changed(Callback<void(CalendarViewDisplayMode)> handler)
     {
         on_display_mode_changed_ = std::move(handler);
     }
     /// A date in the month (or year, or decade) the calendar shows.
-    [[nodiscard]] std::chrono::year_month_day display_date() const
+    [[nodiscard]] inline std::chrono::year_month_day display_date() const
     {
         return display_;
     }
@@ -149,14 +155,14 @@ public:
     /// See first_day_of_week().
     void set_first_day_of_week(std::optional<std::chrono::weekday> day);
     /// Whether today is drawn as a filled circle. True by default.
-    [[nodiscard]] bool today_highlighted() const
+    [[nodiscard]] inline bool today_highlighted() const
     {
         return today_highlighted_;
     }
     /// See today_highlighted().
     void set_today_highlighted(bool highlighted);
     /// Whether the days of the neighboring months are dimmed. True by default.
-    [[nodiscard]] bool out_of_scope_enabled() const
+    [[nodiscard]] inline bool out_of_scope_enabled() const
     {
         return out_of_scope_enabled_;
     }
@@ -164,7 +170,7 @@ public:
     void set_out_of_scope_enabled(bool enabled);
     /// Whether the first day of each month carries the month's abbreviated name above its number
     /// (and January, in the year view, the year). False by default.
-    [[nodiscard]] bool group_label_visible() const
+    [[nodiscard]] inline bool group_label_visible() const
     {
         return group_label_visible_;
     }
@@ -183,23 +189,23 @@ public:
 
     /// The day the keyboard is on in the month view: the selected day, or today, until an arrow
     /// key moves it.
-    [[nodiscard]] std::chrono::year_month_day focused_date() const
+    [[nodiscard]] inline std::chrono::year_month_day focused_date() const
     {
         return focus_date_;
     }
 
     // ---- Element ----
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Calendar;
     }
-    [[nodiscard]] Rect  focus_ring_rect(const Theme& theme) const override;
-    [[nodiscard]] float focus_ring_corner_radius(const Theme& theme) const override;
-    [[nodiscard]] bool  focus_ring_inside() const override
+    [[nodiscard]] Rect        focus_ring_rect(const Theme& theme) const override;
+    [[nodiscard]] float       focus_ring_corner_radius(const Theme& theme) const override;
+    [[nodiscard]] inline bool focus_ring_inside() const override
     {
         return true;
     }
@@ -333,7 +339,7 @@ private:
     std::chrono::year_month_day from_scope_{};
 
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.grid      = this;
         out.table     = this;
@@ -345,20 +351,20 @@ private:
     [[nodiscard]] Element*    grid_item(std::size_t row, std::size_t column) const override;
     void                      table_column_headers(std::vector<Element*>& out) const override;
     void                      selected_items(std::vector<Element*>& out) const override;
-    [[nodiscard]] bool        can_select_multiple() const override
+    [[nodiscard]] inline bool can_select_multiple() const override
     {
         return selection_mode_ == CalendarViewSelectionMode::Multiple;
     }
-    [[nodiscard]] bool selection_required() const override
+    [[nodiscard]] inline bool selection_required() const override
     {
         return false;
     }
     [[nodiscard]] std::string text_value() const override;
-    [[nodiscard]] bool        text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return true;
     }
-    bool set_text_value(std::string_view) override
+    inline bool set_text_value(std::string_view) override
     {
         return false;
     }
@@ -380,7 +386,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct CalendarView
+LIBWINUI_EXPORT struct CalendarView
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<CalendarView>` points at.
@@ -456,3 +462,5 @@ struct CalendarView
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

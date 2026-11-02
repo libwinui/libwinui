@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -16,6 +20,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <type_traits>
@@ -23,6 +28,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -62,7 +68,7 @@ namespace ui
 ///     .secondary = {ui::AppBarButton{.text = "Resize"}},
 /// });
 /// @endcode
-class CommandBarFlyoutControl final : public FlyoutBase, public AppBarCommandHost
+LIBWINUI_EXPORT class CommandBarFlyoutControl final : public FlyoutBase, public AppBarCommandHost
 {
 public:
     /// An empty flyout with no anchor.
@@ -91,41 +97,41 @@ public:
         return observer;
     }
     /// The number of primary commands.
-    [[nodiscard]] std::size_t primary_count() const
+    [[nodiscard]] inline std::size_t primary_count() const
     {
         return primary_.size();
     }
     /// The number of secondary commands.
-    [[nodiscard]] std::size_t secondary_count() const
+    [[nodiscard]] inline std::size_t secondary_count() const
     {
         return secondary_.size();
     }
     /// The primary command at `index` as a non-owning observer, or nullptr when out of range.
-    [[nodiscard]] Element* primary(std::size_t index) const
+    [[nodiscard]] inline Element* primary(std::size_t index) const
     {
         return index < primary_.size() ? primary_[index].get() : nullptr;
     }
     /// The secondary command at `index` as a non-owning observer, or nullptr when out of range.
-    [[nodiscard]] Element* secondary(std::size_t index) const
+    [[nodiscard]] inline Element* secondary(std::size_t index) const
     {
         return index < secondary_.size() ? secondary_[index].get() : nullptr;
     }
 
     /// Whether the menu of secondary commands stays open, with no More button.
     /// False by default.
-    [[nodiscard]] bool always_expanded() const
+    [[nodiscard]] inline bool always_expanded() const
     {
         return always_expanded_;
     }
     /// Takes effect the next time the flyout opens.
-    void set_always_expanded(bool always_expanded)
+    inline void set_always_expanded(bool always_expanded)
     {
         always_expanded_ = always_expanded;
     }
 
     /// Whether the secondary menu shows. Every open resets it from the show mode: expanded for
     /// Standard when there are secondary commands, collapsed for Transient.
-    [[nodiscard]] bool is_expanded() const
+    [[nodiscard]] inline bool is_expanded() const
     {
         return expanded_;
     }
@@ -188,7 +194,7 @@ private:
 ///     .secondary = { ui::AppBarButton{ .text = "Resize" } },
 /// });
 /// @endcode
-struct CommandBarFlyout
+LIBWINUI_EXPORT struct CommandBarFlyout
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<CommandBarFlyout>` points at.
@@ -267,3 +273,5 @@ struct CommandBarFlyout
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

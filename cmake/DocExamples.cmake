@@ -26,7 +26,7 @@ add_custom_command(
     VERBATIM)
 
 add_library(winui_doc_example_check OBJECT ${doc_example_sources})
-target_link_libraries(winui_doc_example_check PRIVATE winui::testing)
+target_link_libraries(winui_doc_example_check PRIVATE winui::testing_headers)
 target_include_directories(winui_doc_example_check PRIVATE "${PROJECT_SOURCE_DIR}/tools/doc_examples")
 target_precompile_headers(winui_doc_example_check PRIVATE "${PROJECT_SOURCE_DIR}/tools/doc_examples/placeholders.hpp")
 set_target_properties(winui_doc_example_check PROPERTIES

@@ -1,14 +1,20 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Utf8.hpp"
 #include "winui/render/Renderer.hpp"
 #include "winui/render/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
+#endif
 
 namespace ui
 {
@@ -29,7 +35,7 @@ namespace ui
 /// ui::draw_icon(renderer, ui::glyphs::ChevronDown, chevron_rect, theme.colors().text, 0.0f,
 ///               theme.icon_font_family); // the era's symbol font
 /// @endcode
-struct IconGlyph
+LIBWINUI_EXPORT struct IconGlyph
 {
     /// A Segoe Fluent Icons codepoint, zero in a default-constructed glyph. Every glyph in
     /// `glyphs::` sits in the Private Use Area (U+E000-U+F8FF) and fits one UTF-16 code unit.
@@ -57,48 +63,48 @@ struct IconGlyph
 /// @endcode
 namespace glyphs
 {
-inline constexpr IconGlyph Accept{0xE73E};      ///< Checkmark (CheckBox).
-inline constexpr IconGlyph ChevronDown{0xE70D}; ///< ComboBox's expand indicator.
-inline constexpr IconGlyph ChevronUp{0xE70E};   ///< Expander's collapse indicator.
+LIBWINUI_EXPORT inline constexpr IconGlyph Accept{0xE73E};      ///< Checkmark (CheckBox).
+LIBWINUI_EXPORT inline constexpr IconGlyph ChevronDown{0xE70D}; ///< ComboBox's expand indicator.
+LIBWINUI_EXPORT inline constexpr IconGlyph ChevronUp{0xE70E};   ///< Expander's collapse indicator.
 /// The chevron Breadcrumb draws between its items. Layout is left-to-right only, so there is no
 /// constant for the mirrored chevron (0xE973).
-inline constexpr IconGlyph ChevronRight{0xE974};
-inline constexpr IconGlyph More{0xE712}; ///< Overflow "...".
+LIBWINUI_EXPORT inline constexpr IconGlyph ChevronRight{0xE974};
+LIBWINUI_EXPORT inline constexpr IconGlyph More{0xE712}; ///< Overflow "...".
 
 /// The older Segoe MDL2 Assets "X" (0xE10A, distinct from the newer 0xE711): InfoBar's close
 /// button, and InfoBadge's critical icon.
-inline constexpr IconGlyph Cancel{0xE10A};
+LIBWINUI_EXPORT inline constexpr IconGlyph Cancel{0xE10A};
 /// The exclamation mark (0xE171): InfoBadge's caution icon.
-inline constexpr IconGlyph Important{0xE171};
+LIBWINUI_EXPORT inline constexpr IconGlyph Important{0xE171};
 /// The older Segoe MDL2 Assets check (0xE10B, distinct from `Accept`'s 0xE73E):
 /// InfoBadge's success icon.
-inline constexpr IconGlyph AcceptSymbol{0xE10B};
+LIBWINUI_EXPORT inline constexpr IconGlyph AcceptSymbol{0xE10B};
 
 /// InfoBar's icon is two overlaid glyphs, a filled circle and a small symbol on top of it, both
 /// drawn at 16 DIPs through draw_icon()'s `size_override`. This is the circle.
-inline constexpr IconGlyph CircleFill{0xF136};
+LIBWINUI_EXPORT inline constexpr IconGlyph CircleFill{0xF136};
 
 /// TitleBar's back button.
-inline constexpr IconGlyph Back{0xE72B};
+LIBWINUI_EXPORT inline constexpr IconGlyph Back{0xE72B};
 /// TitleBar's pane-toggle ("hamburger") button.
-inline constexpr IconGlyph GlobalNavigationButton{0xE700};
+LIBWINUI_EXPORT inline constexpr IconGlyph GlobalNavigationButton{0xE700};
 
 /// PersonPicture's placeholder when it has neither a photo nor initials.
-inline constexpr IconGlyph Contact{0xE77B};
+LIBWINUI_EXPORT inline constexpr IconGlyph Contact{0xE77B};
 /// PersonPicture's group placeholder, shown for a group whatever its photo or initials.
-inline constexpr IconGlyph People{0xE716};
+LIBWINUI_EXPORT inline constexpr IconGlyph People{0xE716};
 
 /// AnnotatedScrollBar's step-button glyphs at 8 DIPs, named by the direction each button
 /// scrolls. This one scrolls up.
-inline constexpr IconGlyph ScrollUp{0xEDDB, "Segoe Fluent Icons", 8.0f};
+LIBWINUI_EXPORT inline constexpr IconGlyph ScrollUp{0xEDDB, "Segoe Fluent Icons", 8.0f};
 /// The down-scrolling step glyph (see ScrollUp).
-inline constexpr IconGlyph ScrollDown{0xEDDC, "Segoe Fluent Icons", 8.0f};
+LIBWINUI_EXPORT inline constexpr IconGlyph ScrollDown{0xEDDC, "Segoe Fluent Icons", 8.0f};
 /// The horizontal pair, also the scroll bar's right arrow (0xEDDA) and Carousel's previous and next
 /// arrows (0xEDD9, 0xEDDA). PipsPager's horizontal navigation buttons rotate ScrollUp and
 /// ScrollDown by -90 degrees, which draws these two. This one points left.
-inline constexpr IconGlyph ScrollLeft{0xEDD9, "Segoe Fluent Icons", 8.0f};
+LIBWINUI_EXPORT inline constexpr IconGlyph ScrollLeft{0xEDD9, "Segoe Fluent Icons", 8.0f};
 /// The right-pointing arrow (see ScrollLeft).
-inline constexpr IconGlyph ScrollRight{0xEDDA, "Segoe Fluent Icons", 8.0f};
+LIBWINUI_EXPORT inline constexpr IconGlyph ScrollRight{0xEDDA, "Segoe Fluent Icons", 8.0f};
 } // namespace glyphs
 
 /// Draws `glyph` centered in `bounds` through Renderer::draw_text(), in `color` at
@@ -116,12 +122,13 @@ inline constexpr IconGlyph ScrollRight{0xEDDA, "Segoe Fluent Icons", 8.0f};
 /// ui::draw_icon(renderer, ui::glyphs::CircleFill, icon_rect, severity_color, 16.0f, theme.icon_font_family);
 /// ui::draw_icon(renderer, ui::glyphs::Important, icon_rect, ui::colors::White, 16.0f, theme.icon_font_family);
 /// @endcode
-inline void draw_icon(Renderer&        renderer,
-                      const IconGlyph& glyph,
-                      const Rect&      bounds,
-                      const Color&     color,
-                      float            size_override = 0.0f,
-                      std::string_view font_family   = {})
+LIBWINUI_EXPORT inline void draw_icon(
+    Renderer&        renderer,
+    const IconGlyph& glyph,
+    const Rect&      bounds,
+    const Color&     color,
+    float            size_override = 0.0f,
+    std::string_view font_family   = {})
 {
     const std::string text = encode_utf8(glyph.codepoint);
     TextStyle         style;
@@ -131,3 +138,5 @@ inline void draw_icon(Renderer&        renderer,
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -34,12 +34,12 @@ class Win32ContextMenuHost final : public ContextMenuHost
 {
 public:
     /// A host for menus over `hwnd` (non-owning), whose current DPI is `dpi`.
-    Win32ContextMenuHost(NativeHandle hwnd, unsigned dpi) : hwnd_(hwnd), dpi_(dpi)
+    inline Win32ContextMenuHost(NativeHandle hwnd, unsigned dpi) : hwnd_(hwnd), dpi_(dpi)
     {
     }
 
     /// WM_DPICHANGED — show()'s DIP→pixel conversion must track the window's current DPI.
-    void set_dpi(unsigned dpi)
+    inline void set_dpi(unsigned dpi)
     {
         dpi_ = dpi;
     }
@@ -47,7 +47,7 @@ public:
     /// Whether the *next* menu should be drawn dark. Cheap to set repeatedly (see
     /// set_app_dark_mode()); the caller re-pushes the window's current theme before every
     /// show(), since Window::pin_theme() can flip it at any time.
-    void set_dark(bool dark)
+    inline void set_dark(bool dark)
     {
         dark_ = dark;
     }

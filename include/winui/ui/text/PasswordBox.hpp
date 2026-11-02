@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -22,6 +26,7 @@
 #include "winui/ui/text/TextBox.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -29,12 +34,13 @@
 #include <utility>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// How a ui::PasswordBox shows its password.
-enum class PasswordBoxRevealMode
+LIBWINUI_EXPORT enum class PasswordBoxRevealMode
 {
     /// Masked, with a reveal button that shows the password while held down (the default). The
     /// button appears only while the box is focused, for a password typed since the box was last
@@ -74,7 +80,7 @@ enum class PasswordBoxRevealMode
 /// pin->set_reveal_mode(ui::PasswordBoxRevealMode::Hidden);
 /// pin->on_password_changed([](const std::string& p) { /* validate p */ });
 /// @endcode
-class PasswordBoxControl final : public Element, private ValueProvider
+LIBWINUI_EXPORT class PasswordBoxControl final : public Element, private ValueProvider
 {
 public:
     /// An empty, enabled box in Peek mode, masking with U+25CF.
@@ -83,7 +89,7 @@ public:
 
     // ---- content ----
     /// The password in clear text (UTF-8), whatever the reveal mode.
-    [[nodiscard]] const std::string& password() const
+    [[nodiscard]] inline const std::string& password() const
     {
         return box_->text();
     }
@@ -92,7 +98,7 @@ public:
     void set_password(std::string password);
 
     /// The code point drawn once per hidden character; U+25CF (a black circle) by default.
-    [[nodiscard]] char32_t password_char() const
+    [[nodiscard]] inline char32_t password_char() const
     {
         return password_char_;
     }
@@ -100,7 +106,7 @@ public:
     void set_password_char(char32_t mask);
 
     /// When the password can be revealed; Peek by default.
-    [[nodiscard]] PasswordBoxRevealMode reveal_mode() const
+    [[nodiscard]] inline PasswordBoxRevealMode reveal_mode() const
     {
         return reveal_mode_;
     }
@@ -109,7 +115,7 @@ public:
     void set_reveal_mode(PasswordBoxRevealMode mode);
 
     /// Whether the password shows right now: in Visible mode, or while the reveal button is held.
-    [[nodiscard]] bool password_revealed() const
+    [[nodiscard]] inline bool password_revealed() const
     {
         return revealed_;
     }
@@ -121,97 +127,97 @@ public:
 
     /// The label drawn above the field; empty (the default) draws none. Screen readers also use
     /// it as the name when none is set.
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return box_->header();
     }
     /// Sets the header.
-    void set_header(std::string header)
+    inline void set_header(std::string header)
     {
         box_->set_header(std::move(header));
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The secondary text under the field; empty (the default) draws none. Screen readers also
     /// offer it as help text when no description is set.
-    [[nodiscard]] const std::string& description() const
+    [[nodiscard]] inline const std::string& description() const
     {
         return box_->description();
     }
     /// Sets the description. Empty draws none and takes no room.
-    void set_description(std::string description)
+    inline void set_description(std::string description)
     {
         box_->set_description(std::move(description));
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// What is wrong with the value, shown in the description's place in the critical color,
     /// with the border in the same color; empty (the default) shows the description.
-    [[nodiscard]] const std::string& error() const
+    [[nodiscard]] inline const std::string& error() const
     {
         return box_->error();
     }
     /// Sets the error. Empty shows the description again.
-    void set_error(std::string error)
+    inline void set_error(std::string error)
     {
         box_->set_error(std::move(error));
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The description, or the error while one is set, when accessibility().description is empty.
-    [[nodiscard]] std::string automation_help_text_fallback() const override
+    [[nodiscard]] inline std::string automation_help_text_fallback() const override
     {
         return box_->automation_help_text_fallback();
     }
     /// Invalid while an error is set.
-    [[nodiscard]] bool automation_invalid() const override
+    [[nodiscard]] inline bool automation_invalid() const override
     {
         return box_->automation_invalid();
     }
     /// The hint shown while the password is empty.
-    [[nodiscard]] const std::string& placeholder_text() const
+    [[nodiscard]] inline const std::string& placeholder_text() const
     {
         return box_->placeholder_text();
     }
     /// Sets the hint shown while the password is empty.
-    void set_placeholder_text(std::string text)
+    inline void set_placeholder_text(std::string text)
     {
         box_->set_placeholder_text(std::move(text));
         mark_dirty(DirtyFlags::Visual);
     }
     /// The character limit set by `set_max_length()`; 0 is no limit.
-    [[nodiscard]] std::size_t max_length() const
+    [[nodiscard]] inline std::size_t max_length() const
     {
         return box_->max_length();
     }
     /// The most characters the user can type or paste; 0 (the default) is no limit.
-    void set_max_length(std::size_t length)
+    inline void set_max_length(std::size_t length)
     {
         box_->set_max_length(length);
     }
 
     /// Whether the box accepts input and focus; true by default.
-    [[nodiscard]] bool enabled() const
+    [[nodiscard]] inline bool enabled() const
     {
         return box_->is_enabled();
     }
 
     /// Fired after the user changes the password, with the new one.
-    void on_password_changed(Callback<void(const std::string&)> handler)
+    inline void on_password_changed(Callback<void(const std::string&)> handler)
     {
         on_password_changed_ = std::move(handler);
     }
     /// Fired when the user presses Enter in the box. Without a handler Enter is left to the
     /// window, which clicks its default button.
-    void on_submit(Callback<void()> handler)
+    inline void on_submit(Callback<void()> handler)
     {
         box_->on_submit(std::move(handler));
     }
 
     /// Focusable while enabled.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return box_->is_enabled();
     }
     /// Whether the box currently has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
@@ -224,22 +230,22 @@ protected:
 public:
     // ---- automation ----
     /// The text field's cursor over the text field: an I-beam, or an arrow over its buttons.
-    [[nodiscard]] std::optional<CursorShape> cursor_at(Point p) const override
+    [[nodiscard]] inline std::optional<CursorShape> cursor_at(Point p) const override
     {
         return box_->bounds().contains(p) ? box_->cursor_at(p) : std::nullopt;
     }
     /// Always AutomationRole::Edit.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Edit;
     }
     /// The header, when no `Accessibility::name` is set.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return box_->header();
     }
     /// The inner text box's caret.
-    [[nodiscard]] std::optional<Rect> caret_bounds() const override
+    [[nodiscard]] inline std::optional<Rect> caret_bounds() const override
     {
         return box_->caret_bounds();
     }
@@ -258,15 +264,15 @@ protected:
 
 
 private:
-    [[nodiscard]] bool takes_shortcut(const KeyEvent& e) const
+    [[nodiscard]] inline bool takes_shortcut(const KeyEvent& e) const
     {
         return box_->takes_shortcut(e);
     }
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return box_->takes_enter_key();
     }
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return box_->takes_arrow_key(key);
     }
@@ -299,19 +305,19 @@ protected:
 
 protected:
     /// None: the field shows focus with its accent border.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return false;
     }
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.value = this;
     }
     // One `password_char()` per code point of the password.
-    [[nodiscard]] std::string text_value() const override
+    [[nodiscard]] inline std::string text_value() const override
     {
         const std::string one = encode_utf8(password_char_);
         std::string       out;
@@ -322,7 +328,7 @@ private:
         return out;
     }
     // Read-only while disabled.
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return !box_->is_enabled();
     }
@@ -347,7 +353,7 @@ private:
 ///     .on_submit           = [&] { sign_in(secret); },
 /// });
 /// @endcode
-struct PasswordBox
+LIBWINUI_EXPORT struct PasswordBox
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<PasswordBox>` points at.
@@ -420,3 +426,5 @@ struct PasswordBox
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -16,10 +20,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -49,7 +55,7 @@ namespace ui
 ///     .on_checked_changed = [&](std::optional<bool> v) { remember_me = v.value_or(false); },
 /// });
 /// @endcode
-class CheckBoxControl final : public Element, private ToggleProvider
+LIBWINUI_EXPORT class CheckBoxControl final : public Element, private ToggleProvider
 {
 
     // ---- composition ----
@@ -66,12 +72,12 @@ public:
     // ---- content ----
     /// The label right of the box (UTF-8); empty draws the box alone. Also the automation name
     /// fallback.
-    [[nodiscard]] const std::string& text() const
+    [[nodiscard]] inline const std::string& text() const
     {
         return text_;
     }
     /// Sets the label (UTF-8). The box is measured again and redrawn.
-    void set_text(std::string text)
+    inline void set_text(std::string text)
     {
         text_ = std::move(text);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -79,7 +85,7 @@ public:
 
     /// True, false, or nullopt for indeterminate; false by default. Compare against a value
     /// (`== true`) instead of testing the optional for truth.
-    [[nodiscard]] std::optional<bool> checked() const
+    [[nodiscard]] inline std::optional<bool> checked() const
     {
         return checked_;
     }
@@ -90,12 +96,12 @@ public:
     /// Whether clicking (or Space, or UI Automation's Toggle) cycles through indeterminate:
     /// unchecked -> checked -> indeterminate -> unchecked. Off, the cycle is unchecked <-> checked,
     /// and an indeterminate box set in code clicks to unchecked. Off by default.
-    [[nodiscard]] bool three_state() const
+    [[nodiscard]] inline bool three_state() const
     {
         return three_state_;
     }
     /// Affects only the next click; the current state is left as it is.
-    void set_three_state(bool three_state)
+    inline void set_three_state(bool three_state)
     {
         three_state_ = three_state;
     }
@@ -103,26 +109,26 @@ public:
 
     /// Invoked whenever `checked` changes (click, Space, or set_checked()), including into
     /// and out of indeterminate. Receives the new state. Replaces any previous handler.
-    void on_checked_changed(Callback<void(std::optional<bool>)> handler)
+    inline void on_checked_changed(Callback<void(std::optional<bool>)> handler)
     {
         on_checked_changed_ = std::move(handler);
     }
 
     // ---- layout ----
     /// True: measuring reads only the box's own state, the measurer and the theme.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
 
     // ---- focus ----
     /// Whether the box holds keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// A disabled box is skipped in the tab order.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
@@ -158,12 +164,12 @@ public:
 
     // ---- automation ----
     /// Always AutomationRole::CheckBox.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::CheckBox;
     }
     /// text(), used when Accessibility::name is not set.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return text_;
     }
@@ -206,12 +212,12 @@ protected:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.toggle = this;
     }
     // On, Off, or Indeterminate for a nullopt checked().
-    [[nodiscard]] ToggleState toggle_value() const override
+    [[nodiscard]] inline ToggleState toggle_value() const override
     {
         if (!checked_)
         {
@@ -221,7 +227,7 @@ private:
     }
     // Advances the state as a click does (honoring three_state()) when enabled; false and
     // nothing happens when disabled.
-    bool toggle_next() override
+    inline bool toggle_next() override
     {
         if (!is_enabled())
         {
@@ -252,7 +258,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct CheckBox
+LIBWINUI_EXPORT struct CheckBox
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<CheckBox>` points at.
@@ -314,3 +320,5 @@ struct CheckBox
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -5,12 +5,14 @@
 #include "winui/ui/Automation.hpp"
 #include "winui/ui/Element.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <string>
 #include <string_view>
 #include <vector>
 
 #include <cstdio>
+#endif
 
 namespace ui
 {

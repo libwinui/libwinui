@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,10 +22,12 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -58,7 +64,7 @@ namespace ui
 ///     .content       = ui::Text{.text = "Simple Popup"},
 /// }); // add `node` to any panel
 /// @endcode
-class PopupControl final : public Element
+LIBWINUI_EXPORT class PopupControl final : public Element
 {
 public:
     /// A closed popup with no child, zero offsets and light dismiss off. Not hit-test visible: it
@@ -79,14 +85,14 @@ public:
         return observer;
     }
     /// The floated child (non-owning), or nullptr.
-    [[nodiscard]] Element* child() const
+    [[nodiscard]] inline Element* child() const
     {
         return child_.get();
     }
 
     /// Whether the popup is open. Opening raises on_opened. Closing raises on_closed, whether by
     /// set_open(), a click outside or Escape. Setting the value it already has raises nothing.
-    [[nodiscard]] bool is_open() const
+    [[nodiscard]] inline bool is_open() const
     {
         return open_;
     }
@@ -95,23 +101,23 @@ public:
     void set_open(bool open);
 
     /// The child's offset from the Popup's own position, in DIPs. 0 by default.
-    [[nodiscard]] float horizontal_offset() const
+    [[nodiscard]] inline float horizontal_offset() const
     {
         return horizontal_offset_;
     }
     /// Sets the horizontal offset. The child moves on the next layout.
-    void set_horizontal_offset(float offset)
+    inline void set_horizontal_offset(float offset)
     {
         horizontal_offset_ = offset;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The child's vertical offset from the Popup's position, in DIPs; 0 by default.
-    [[nodiscard]] float vertical_offset() const
+    [[nodiscard]] inline float vertical_offset() const
     {
         return vertical_offset_;
     }
     /// Sets the vertical offset. The child moves on the next layout.
-    void set_vertical_offset(float offset)
+    inline void set_vertical_offset(float offset)
     {
         vertical_offset_ = offset;
         mark_dirty(DirtyFlags::Visual);
@@ -119,25 +125,25 @@ public:
 
     /// Whether light dismiss is on; false by default. On, a click outside the child or Escape
     /// closes the popup, and it holds keyboard focus while open.
-    [[nodiscard]] bool light_dismiss() const
+    [[nodiscard]] inline bool light_dismiss() const
     {
         return light_dismiss_;
     }
     /// Turns light dismiss on or off. Takes effect at once, on an open popup too.
-    void set_light_dismiss(bool enabled)
+    inline void set_light_dismiss(bool enabled)
     {
         light_dismiss_ = enabled;
         sync_popup();
     }
 
     /// Fired after the popup opens. Replaces any previous handler.
-    void on_opened(Callback<void()> handler)
+    inline void on_opened(Callback<void()> handler)
     {
         on_opened_ = std::move(handler);
     }
     /// Fired after the popup closes, whether by `set_open(false)`, a click outside or Escape.
     /// Reset state bound to `is_open()` here. Replaces any previous handler.
-    void on_closed(Callback<void()> handler)
+    inline void on_closed(Callback<void()> handler)
     {
         on_closed_ = std::move(handler);
     }
@@ -145,17 +151,17 @@ public:
     /// The transitions the child plays; empty by default. A PopupTransition slides the child
     /// in from its offset and fades it in on open, and fades it out on close. A
     /// ContentTransition also plays both ways, and an EntranceTransition on open only.
-    [[nodiscard]] const TransitionList& child_transitions() const
+    [[nodiscard]] inline const TransitionList& child_transitions() const
     {
         return child_transitions_;
     }
     /// Sets the child's transitions. Applies from the next open or close.
-    void set_child_transitions(TransitionList transitions)
+    inline void set_child_transitions(TransitionList transitions)
     {
         child_transitions_ = std::move(transitions);
     }
     /// Whether the child is still on screen after closing, playing its close transition.
-    [[nodiscard]] bool closing() const
+    [[nodiscard]] inline bool closing() const
     {
         return closing_;
     }
@@ -163,7 +169,7 @@ public:
     // ---- automation ----
     /// Screen readers see the Popup as an empty group where it sits. They see the child only
     /// while the popup is open.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Group;
     }
@@ -208,7 +214,7 @@ private:
 ///                .content           = ui::Text{ .text = "Simple Popup" } },
 /// }});
 /// @endcode
-struct Popup
+LIBWINUI_EXPORT struct Popup
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Popup>` points at.
@@ -276,3 +282,5 @@ struct Popup
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

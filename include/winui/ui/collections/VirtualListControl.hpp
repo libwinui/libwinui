@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -12,6 +16,7 @@
 #include "winui/ui/scrolling/ScrollBarOverlay.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -19,6 +24,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -48,7 +54,7 @@ namespace ui
 /// auto top_button = std::make_unique<ui::ButtonControl>("Top");
 /// top_button->on_click([observer] { observer->set_scroll_offset(0.0f); }); // back to the top
 /// @endcode
-class VirtualListControl final : public Element, private ScrollProvider
+LIBWINUI_EXPORT class VirtualListControl final : public Element, private ScrollProvider
 {
 public:
     /// Builds the row for item `index`. The list takes ownership and destroys the row once it
@@ -63,20 +69,20 @@ public:
     /// ends the realized rows there, for a source that shrank before set_item_count() caught up.
     /// That row and the ones after it stay empty. Replacing the factory rebuilds the rows on the
     /// next layout.
-    void set_item_factory(ItemFactory factory)
+    inline void set_item_factory(ItemFactory factory)
     {
         item_factory_ = std::move(factory);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// How many items the list scrolls over; 0 by default.
-    [[nodiscard]] std::size_t item_count() const
+    [[nodiscard]] inline std::size_t item_count() const
     {
         return item_count_;
     }
     /// Changes the item count and lays the list out again. The scroll offset is clamped again on
     /// the next arrange. Forgets the heights the rows measured.
-    void set_item_count(std::size_t count)
+    inline void set_item_count(std::size_t count)
     {
         item_count_ = count;
         forget_item_heights();
@@ -85,12 +91,12 @@ public:
     /// Every row's height in DIPs; 32 by default. Each row is arranged to exactly this height,
     /// whatever it measures. When the rows size to their content, it is the least height of a row
     /// and the estimate for a row not yet seen.
-    [[nodiscard]] float item_height() const
+    [[nodiscard]] inline float item_height() const
     {
         return item_height_;
     }
     /// Changes the row height, lays the list out again and forgets the heights the rows measured.
-    void set_item_height(float height)
+    inline void set_item_height(float height)
     {
         item_height_ = height;
         forget_item_heights();
@@ -99,12 +105,12 @@ public:
     /// Whether each row is measured with unbounded height and is as tall as it asks for, at least
     /// item_height(). Off by default. A row keeps the height it measured while it is out of view,
     /// so scrolling back finds it where it was. Rows never seen count as item_height().
-    [[nodiscard]] bool size_items_to_content() const
+    [[nodiscard]] inline bool size_items_to_content() const
     {
         return size_to_content_;
     }
     /// Turns content-sized rows on or off and lays the list out again.
-    void set_size_items_to_content(bool on)
+    inline void set_size_items_to_content(bool on)
     {
         if (on != size_to_content_)
         {
@@ -115,7 +121,7 @@ public:
     /// Forgets every height the rows measured and lays the list out again. Call it after a change
     /// that reflows the rows' content, such as a new column width. The list tracks its own width
     /// changes.
-    void forget_item_heights()
+    inline void forget_item_heights()
     {
         heights_.clear();
         offsets_dirty_ = true;
@@ -133,12 +139,12 @@ public:
 
     /// Room before the first item that scrolls with the content, where a ListView puts its header.
     /// The items start this far down the content, and the content is this much taller.
-    [[nodiscard]] float leading_space() const
+    [[nodiscard]] inline float leading_space() const
     {
         return leading_space_;
     }
     /// Sets the leading space in DIPs, clamped to >= 0. Lays the list out again only on a change.
-    void set_leading_space(float space)
+    inline void set_leading_space(float space)
     {
         space = (std::max)(0.0f, space);
         if (space != leading_space_)
@@ -148,13 +154,13 @@ public:
         }
     }
     /// The content's height: the leading space and every item.
-    [[nodiscard]] float content_height() const
+    [[nodiscard]] inline float content_height() const
     {
         return item_top(item_count_);
     }
 
     /// How far the content is scrolled, in DIPs from the top (0 is the top).
-    [[nodiscard]] float scroll_offset() const
+    [[nodiscard]] inline float scroll_offset() const
     {
         return scroll_offset_;
     }
@@ -165,19 +171,19 @@ public:
     /// The width the vertical bar takes from the rows, decided by measure(). It is the bar's
     /// gutter under a theme whose bar takes room of its own, while the content overflows. It is 0
     /// for the overlay bar, which draws over the rows.
-    [[nodiscard]] float right_gutter() const
+    [[nodiscard]] inline float right_gutter() const
     {
         return right_gutter_;
     }
     /// Where the rows are shown: the bounds minus the right gutter.
-    [[nodiscard]] Rect viewport_rect() const
+    [[nodiscard]] inline Rect viewport_rect() const
     {
         return Rect{bounds().x, bounds().y, (std::max)(0.0f, bounds().width - right_gutter_), bounds().height};
     }
 
     /// Element::scroll_info(), the same as a Scroll's. It can be pulled a tenth of its viewport
     /// past either end.
-    [[nodiscard]] std::optional<ScrollInfo> scroll_info() const override
+    [[nodiscard]] inline std::optional<ScrollInfo> scroll_info() const override
     {
         const Size viewport = viewport_rect().size();
         return ScrollInfo{Point{0.0f, scroll_offset_},
@@ -191,18 +197,18 @@ public:
     /// The item index of the first realized row. The realized items are [first_visible_index(),
     /// first_visible_index() + visible_count()). visible_item() takes an offset into that range.
     /// Meant for inspection and testing, not for driving the list from outside.
-    [[nodiscard]] std::size_t first_visible_index() const
+    [[nodiscard]] inline std::size_t first_visible_index() const
     {
         return first_visible_index_;
     }
     /// How many rows are realized right now: the rows at least partly in view.
-    [[nodiscard]] std::size_t visible_count() const
+    [[nodiscard]] inline std::size_t visible_count() const
     {
         return items_.size();
     }
     /// The `i`th realized row; 0 is the row of first_visible_index(). Throws std::out_of_range
     /// past visible_count(). The list owns the row and destroys it when it scrolls out of view.
-    [[nodiscard]] Element* visible_item(std::size_t i) const
+    [[nodiscard]] inline Element* visible_item(std::size_t i) const
     {
         return items_.at(i).get();
     }
@@ -213,11 +219,11 @@ public:
     // ---- automation ----
     /// Reported to screen readers as a scrollable List without children, because only the
     /// visible rows exist as Elements.
-    void automation_children(std::vector<Element*>& out) const override
+    inline void automation_children(std::vector<Element*>& out) const override
     {
         (void)out;
     }
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::List;
     }
@@ -278,24 +284,24 @@ private:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.scroll = this;
     }
     // -1: the list does not scroll horizontally.
-    [[nodiscard]] float scroll_horizontal_percent() const override
+    [[nodiscard]] inline float scroll_horizontal_percent() const override
     {
         return -1.0f;
     }
     // The scroll position as 0..100 of the scrollable range; 0 when nothing scrolls.
-    [[nodiscard]] float scroll_vertical_percent() const override
+    [[nodiscard]] inline float scroll_vertical_percent() const override
     {
         const float max_offset = (std::max)(0.0f, content_height() - viewport_rect().height);
         return max_offset > 0.0f ? (scroll_offset_ / max_offset) * 100.0f : 0.0f;
     }
     // Scrolls to `vertical` percent (0..100) of the range; a negative value leaves it alone.
     // The horizontal value is ignored.
-    bool set_scroll_percent(float /*horizontal*/, float vertical) override
+    inline bool set_scroll_percent(float /*horizontal*/, float vertical) override
     {
         if (vertical < 0.0f)
         {
@@ -308,3 +314,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

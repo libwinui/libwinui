@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 #include "winui/ui/layouts/Layout.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <memory>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -37,7 +43,7 @@ class FlowLayoutAlgorithm;
 /// repeater->set_item_count(rows.size());
 /// window.set_content(std::move(scroll));
 /// @endcode
-class StackLayoutEngine final : public VirtualizingLayout
+LIBWINUI_EXPORT class StackLayoutEngine final : public VirtualizingLayout
 {
 public:
     /// A vertical stack with no spacing and virtualization on.
@@ -45,14 +51,14 @@ public:
     ~StackLayoutEngine() override;
 
     /// The stacking direction; Vertical by default.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
     /// Changes the direction and invalidates the host's measure.
     void set_orientation(Orientation orientation);
     /// The gap between neighboring items along the stack, in DIPs; 0 by default.
-    [[nodiscard]] float spacing() const
+    [[nodiscard]] inline float spacing() const
     {
         return spacing_;
     }
@@ -61,7 +67,7 @@ public:
 
     /// Whether only the items in or near the viewport are realized. When off, every item is
     /// realized, however few of them show.
-    [[nodiscard]] bool is_virtualization_enabled() const
+    [[nodiscard]] inline bool is_virtualization_enabled() const
     {
         return virtualize_;
     }
@@ -111,13 +117,13 @@ private:
 ///     .item   = [](const std::string& text) -> ui::Spec { return ui::Text{.text = text}; },
 /// });
 /// @endcode
-struct StackLayout
+LIBWINUI_EXPORT struct StackLayout
 {
     Orientation orientation = Orientation::Vertical; ///< The direction items follow each other in.
     float       spacing     = 0.0f;                  ///< Gap between adjacent items, DIPs.
 
     /// Consumes the value and returns the layout object.
-    [[nodiscard]] std::unique_ptr<Layout> build() &&
+    [[nodiscard]] inline std::unique_ptr<Layout> build() &&
     {
         auto layout = std::make_unique<StackLayoutEngine>();
         layout->set_orientation(orientation);
@@ -127,3 +133,5 @@ struct StackLayout
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

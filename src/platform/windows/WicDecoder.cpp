@@ -13,19 +13,22 @@
 #include "winui/core/Utf8Path.hpp"
 #include "winui/render/Bitmap.hpp"
 
+#include <objbase.h>
+#include <wincodec.h>
+#include <windows.h>
+#include <wrl/client.h>
+
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <format>
-#include <objbase.h>
 #include <span>
 #include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
-#include <wincodec.h>
-#include <windows.h>
-#include <wrl/client.h>
 
 #include <cstdint>
+#endif
 
 namespace ui::win32
 {

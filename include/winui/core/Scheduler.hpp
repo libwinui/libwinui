@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <condition_variable>
 #include <functional>
 #include <future>
@@ -13,11 +18,12 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class Scheduler;
+LIBWINUI_EXPORT class Scheduler;
 
 namespace detail
 {
@@ -32,7 +38,7 @@ public:
 
     // Blocks until the job has run (it already has in Scheduler::Inline mode). No-op on an empty
     // or moved-from Job.
-    void wait()
+    inline void wait()
     {
         if (future_.valid())
         {
@@ -42,7 +48,7 @@ public:
 
 private:
     friend Job submit(Scheduler& scheduler, Callback<void()> work);
-    explicit Job(std::future<void> future) : future_(std::move(future))
+    inline explicit Job(std::future<void> future) : future_(std::move(future))
     {
     }
     std::future<void> future_;
@@ -76,7 +82,7 @@ private:
 ///     status = std::format("{} files", files);
 /// }
 /// @endcode
-class Scheduler
+LIBWINUI_EXPORT class Scheduler
 {
 public:
     /// Tag selecting the deterministic mode for tests: work runs synchronously, in the order it
@@ -99,13 +105,13 @@ public:
     Scheduler& operator=(const Scheduler&) = delete;
 
     /// Real worker thread count (0 in inline mode).
-    [[nodiscard]] std::size_t thread_count() const
+    [[nodiscard]] inline std::size_t thread_count() const
     {
         return threads_.size();
     }
     /// How many jobs can run at once: thread_count(), and 1 in inline mode. Parallel layout
     /// splits its measuring into this many chunks.
-    [[nodiscard]] std::size_t worker_count() const
+    [[nodiscard]] inline std::size_t worker_count() const
     {
         return threads_.empty() ? 1 : threads_.size();
     }
@@ -124,3 +130,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

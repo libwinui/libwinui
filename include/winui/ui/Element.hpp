@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Duration.hpp"
@@ -22,6 +26,7 @@
 #include "winui/ui/VisualTree.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <limits>
 #include <memory>
@@ -39,27 +44,28 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
 namespace testing
 {
-struct VisualStates;
-struct ElementAccess;
+extern "C++" struct VisualStates;
+extern "C++" struct ElementAccess;
 } // namespace testing
-class Clipboard;
-class Window;
-class ContextMenuHost;
-class NativeHost;
-class SpellChecker;
-struct DragEventArgs;
-struct DragResponse;
-enum class DataPackageOperation : unsigned;
+LIBWINUI_EXPORT class Clipboard;
+LIBWINUI_EXPORT class Window;
+LIBWINUI_EXPORT class ContextMenuHost;
+LIBWINUI_EXPORT class NativeHost;
+LIBWINUI_EXPORT class SpellChecker;
+LIBWINUI_EXPORT struct DragEventArgs;
+LIBWINUI_EXPORT struct DragResponse;
+LIBWINUI_EXPORT enum class DataPackageOperation : unsigned;
 
 /// Whether an element is shown. A Collapsed element takes no room in layout, draws nothing, takes no
 /// input and leaves the tab ring, along with everything under it.
-enum class Visibility
+LIBWINUI_EXPORT enum class Visibility
 {
     Visible,   ///< laid out, drawn and hit-tested (the default)
     Collapsed, ///< zero size, not drawn, no input, out of the tab ring
@@ -67,7 +73,7 @@ enum class Visibility
 
 /// The theme an element (and everything under it) uses: light or dark whatever the window's is, or
 /// following it (Default).
-enum class ElementTheme
+LIBWINUI_EXPORT enum class ElementTheme
 {
     Default, ///< whatever theme the parent hands down (the default)
     Light,   ///< the light version of that theme
@@ -88,18 +94,18 @@ struct PointerRouteDeleter
 };
 } // namespace detail
 
-struct ElementMotionDeleter
+LIBWINUI_EXPORT struct ElementMotionDeleter
 {
     void operator()(ElementMotion* motion) const;
 };
 
-class Element;
+LIBWINUI_EXPORT class Element;
 
 /// What Element::for_each_child() calls once per child: a non-owning reference to any callable
 /// taking an `Element&`, two pointers wide, so walking the tree allocates nothing. It refers to
 /// the callable it was made from and must not outlive it, which a lambda passed straight to
 /// for_each_child() never does.
-class ChildVisitor
+LIBWINUI_EXPORT class ChildVisitor
 {
 public:
     template <typename F>
@@ -111,7 +117,7 @@ public:
     {
     }
 
-    void operator()(Element& child) const
+    inline void operator()(Element& child) const
     {
         call_(object_, child);
     }
@@ -125,7 +131,7 @@ namespace detail
 {
 class PaintTracker;
 // The backend's compositor seam, private to libwinui (src/render/Compositor.hpp).
-class Compositor;
+LIBWINUI_EXPORT class Compositor;
 struct LayerPlacement;
 // Element::request_tick()'s note, and Window::tick()'s read of it (which clears it), per thread.
 void               note_tick_request() noexcept;
@@ -147,7 +153,7 @@ void note_dirty_mark() noexcept;
 
 // Collects, while it lives on this thread, the focused and focus-visible elements drawn, so their
 // focus rings can be drawn over everything once a root is done (render_focus_rings()).
-class FocusRingPass
+LIBWINUI_EXPORT class FocusRingPass
 {
 public:
     FocusRingPass() noexcept;
@@ -167,7 +173,7 @@ private:
 // Draws the focus ring of each element `pass` found under `root` (drawn with `theme`), through
 // the visual transforms and child mappings of the elements above it and clipped to their
 // viewports (Element::children_hit_clip()).
-void render_focus_rings(Renderer& renderer, const Element& root, const Theme& theme, const FocusRingPass& pass);
+LIBWINUI_EXPORT void render_focus_rings(Renderer& renderer, const Element& root, const Theme& theme, const FocusRingPass& pass);
 struct LayoutAccess;
 struct TreeAccess;
 
@@ -194,14 +200,14 @@ private:
 // assert. Kept out of Element so its layout is the same with and without NDEBUG.
 struct RenderGuard
 {
-    explicit RenderGuard(const Element* element) : outer_(current())
+    inline explicit RenderGuard(const Element* element) : outer_(current())
     {
         assert(outer_ != element &&
                "Element::render() re-entered from its own render_override(): an override "
                "must call its base class's render_override(), not render()");
         current() = element;
     }
-    ~RenderGuard()
+    inline ~RenderGuard()
     {
         current() = outer_;
     }
@@ -209,7 +215,7 @@ struct RenderGuard
     RenderGuard& operator=(const RenderGuard&) = delete;
 
 private:
-    static const Element*& current()
+    static inline const Element*& current()
     {
         thread_local const Element* element = nullptr;
         return element;
@@ -251,18 +257,18 @@ private:
 ///     ui::ElementWatch target_;
 /// };
 /// @endcode
-class ElementWatch
+LIBWINUI_EXPORT class ElementWatch
 {
 public:
     /// Watches nothing.
     ElementWatch() = default;
     /// Watches `element` (nullptr: nothing).
-    explicit ElementWatch(Element* element)
+    inline explicit ElementWatch(Element* element)
     {
         reset(element);
     }
     /// Unhooks from the watched element, if it is still alive.
-    ~ElementWatch()
+    inline ~ElementWatch()
     {
         reset(nullptr);
     }
@@ -270,12 +276,12 @@ public:
     ElementWatch& operator=(const ElementWatch&) = delete;
 
     /// The watched element, or nullptr once it has been destroyed (or when nothing is watched).
-    [[nodiscard]] Element* get() const
+    [[nodiscard]] inline Element* get() const
     {
         return target_;
     }
     /// Whether the watched element is still alive.
-    explicit operator bool() const
+    inline explicit operator bool() const
     {
         return target_ != nullptr;
     }
@@ -293,7 +299,7 @@ private:
 /// `Stretch`, the default, hands the element the whole rect. The other three shrink the element
 /// to its own desired extent and position it within the rect. A stack's `child_alignment` uses the
 /// same values for all of its children at once, on the axis across the stack (see Stack.hpp).
-enum class Alignment
+LIBWINUI_EXPORT enum class Alignment
 {
     Leading,  ///< left / top
     Center,   ///< centered in the slot
@@ -304,7 +310,7 @@ enum class Alignment
 /// Whether a part a control can show is shown: decided by the control (`Auto`, the default),
 /// always, or never. A TeachingTip's tail, a CommandBar's More button and a NavigationShell's back
 /// button take it; each field's comment says what `Auto` decides there.
-enum class AutoVisibility
+LIBWINUI_EXPORT enum class AutoVisibility
 {
     Auto,      ///< The control decides.
     Visible,   ///< Always shown.
@@ -313,7 +319,7 @@ enum class AutoVisibility
 
 /// How many items a collection lets the user select, and with which gestures (ListView, TileView,
 /// TableView).
-enum class SelectionMode
+LIBWINUI_EXPORT enum class SelectionMode
 {
     /// Nothing is selectable; a click only invokes or moves the focus cue.
     None,
@@ -338,7 +344,7 @@ enum class SelectionMode
 /// auto row = std::make_unique<ui::TextControl>("Row 42");
 /// row->start_bring_into_view({.vertical_alignment_ratio = 0.5f, .animation_desired = true});
 /// @endcode
-struct BringIntoViewOptions
+LIBWINUI_EXPORT struct BringIntoViewOptions
 {
     /// Where across the viewport's width the element lands, 0..1; unset scrolls as little as it can.
     OptionalFloat horizontal_alignment_ratio{};
@@ -365,7 +371,7 @@ struct BringIntoViewOptions
 /// editor->add_shortcut({.keys = ui::Ctrl + ui::Key::S, .on_pressed = [] { save_document(); }});
 /// // Ctrl+S now saves whenever focus is anywhere inside `editor`.
 /// @endcode
-struct Shortcut
+LIBWINUI_EXPORT struct Shortcut
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The key and exactly the modifiers that fire it; an empty key combination never matches.
@@ -377,7 +383,7 @@ struct Shortcut
 /// Which side of its anchor a popup (ComboBox/Menu/Flyout/ToolTip/TeachingTip, see
 /// PopupRequest::placement) hangs from. When there isn't room, every popup flips to the opposite
 /// side of the same axis instead of covering the anchor. A TeachingTip also tries the other axis.
-enum class PopupPlacement
+LIBWINUI_EXPORT enum class PopupPlacement
 {
     Below, ///< under the anchor (the default)
     Above, ///< over the anchor
@@ -389,7 +395,7 @@ enum class PopupPlacement
 /// the left (top) edges or the right (bottom) edges lined up. A TeachingTip keeps its tail on
 /// the target's center, so Leading lets the card run right (or down) from the tail and Trailing
 /// left (or up).
-enum class PopupPlacementAlignment
+LIBWINUI_EXPORT enum class PopupPlacementAlignment
 {
     Center,   ///< centered on the anchor
     Leading,  ///< left (or top) edges lined up
@@ -397,7 +403,7 @@ enum class PopupPlacementAlignment
 };
 
 /// Why a popup (Flyout, MenuFlyout, CommandBarFlyout, TeachingTip) closed.
-enum class PopupCloseReason
+LIBWINUI_EXPORT enum class PopupCloseReason
 {
     Programmatic, ///< hide(), `.is_open` set to false, or a TeachingTip that fit nowhere.
     LightDismiss, ///< A click outside it or Escape, with `light_dismiss` on.
@@ -407,16 +413,16 @@ enum class PopupCloseReason
 
 /// What a popup's `on_closing` gets: why it is closing. The handler returns ui::Cancel to keep it
 /// open.
-struct PopupClosingArgs
+LIBWINUI_EXPORT struct PopupClosingArgs
 {
     PopupCloseReason reason = PopupCloseReason::Programmatic; ///< Why it is closing.
 };
 
-class Element;
+LIBWINUI_EXPORT class Element;
 
 /// How the window draws around a popup's content: the shadow behind it, and the corners and
 /// elevation that shadow is cast at.
-struct PopupChrome
+LIBWINUI_EXPORT struct PopupChrome
 {
     /// Whether the window casts the theme's popup shadow behind the content. Off for content that
     /// draws all of its own chrome, as a bare Popup's child does.
@@ -460,7 +466,7 @@ struct PopupChrome
 ///     std::unique_ptr<ui::StackControl> list_ = std::make_unique<ui::StackControl>(ui::Orientation::Vertical);
 /// };
 /// @endcode
-struct PopupRequest
+LIBWINUI_EXPORT struct PopupRequest
 {
     /// The element shown in the popup. The control that opens the popup owns it and keeps it alive
     /// while the popup is open; the window lays it out and draws it, and never owns it.
@@ -501,7 +507,7 @@ struct PopupRequest
 /// the title bar. Resize edges depend on DPI frame metrics, so the host classifies those itself
 /// before asking the tree. The caption-button values are for a caption the app draws itself:
 /// the press still reaches the element under it, and the host tells the OS what is there.
-enum class HitRegion
+LIBWINUI_EXPORT enum class HitRegion
 {
     Client,  ///< an ordinary click, delivered to the element
     Caption, ///< the window's caption: drag to move, double-click to maximize, right-click for the system menu
@@ -519,7 +525,7 @@ enum class HitRegion
 
 /// What an element asks Window to do with keyboard focus, once, polled on every layout pass
 /// through take_focus_request() below.
-enum class FocusRequest
+LIBWINUI_EXPORT enum class FocusRequest
 {
     /// Nothing to do.
     None,
@@ -622,7 +628,7 @@ enum class FocusRequest
 /// swatch->set_tool_tip("Accent blue");
 /// swatch->on_click([] { /* ... */ });
 /// @endcode
-class Element
+LIBWINUI_EXPORT class Element
 {
 public:
     /// Leaves keyboard focus bookkeeping consistent (has_focus_within()) when the focused element
@@ -639,7 +645,7 @@ public:
     // ---- visual identity ----
     /// Assigned once at construction and never reused; the stable key other systems
     /// (VisualTree) use instead of this object's address.
-    [[nodiscard]] VisualId visual_id() const
+    [[nodiscard]] inline VisualId visual_id() const
     {
         return visual_id_;
     }
@@ -647,12 +653,12 @@ public:
     // ---- sizing ----
     /// DIPs of empty space kept outside the element on each side, taken
     /// from the rect the parent offers before measuring and arranging. Zero by default.
-    [[nodiscard]] const Thickness& margin() const
+    [[nodiscard]] inline const Thickness& margin() const
     {
         return margin_;
     }
     /// Changes the margin; invalidates layout.
-    void set_margin(const Thickness& margin)
+    inline void set_margin(const Thickness& margin)
     {
         const auto next = margin;
         if (margin_ == next)
@@ -666,12 +672,12 @@ public:
     /// The explicit width, nullopt for Auto. Measure and arrange both fold it into the min/max range.
     /// The size wins over the content and min_width() wins over the size. A Stretch-aligned element
     /// that ends up narrower than its slot is centered in it.
-    [[nodiscard]] std::optional<float> width() const
+    [[nodiscard]] inline std::optional<float> width() const
     {
         return width_;
     }
     /// Sets the explicit width in DIPs (negative clamps to 0), or nullopt for Auto; invalidates layout.
-    void set_width(OptionalFloat value)
+    inline void set_width(OptionalFloat value)
     {
         const auto next = value ? std::optional<float>{(std::max)(0.0f, *value)} : std::nullopt;
         if (width_ == next)
@@ -682,13 +688,13 @@ public:
         mark_dirty(DirtyFlags::Layout);
     }
     /// The explicit height, as width() is the explicit width; nullopt for Auto.
-    [[nodiscard]] std::optional<float> height() const
+    [[nodiscard]] inline std::optional<float> height() const
     {
         return height_;
     }
     /// Sets the explicit height in DIPs (negative clamps to 0), or nullopt for Auto; invalidates
     /// layout.
-    void set_height(OptionalFloat value)
+    inline void set_height(OptionalFloat value)
     {
         const auto next = value ? std::optional<float>{(std::max)(0.0f, *value)} : std::nullopt;
         if (height_ == next)
@@ -700,13 +706,13 @@ public:
     }
 
     /// The maximum width in DIPs; infinity (the default) is no limit. min_width() wins over it.
-    [[nodiscard]] float max_width() const
+    [[nodiscard]] inline float max_width() const
     {
         return max_width_;
     }
     /// Sets the maximum width in DIPs (negative clamps to 0), or nullopt for no limit; invalidates
     /// layout.
-    void set_max_width(OptionalFloat value)
+    inline void set_max_width(OptionalFloat value)
     {
         const auto next = value ? (std::max)(0.0f, *value) : std::numeric_limits<float>::infinity();
         if (max_width_ == next)
@@ -717,13 +723,13 @@ public:
         mark_dirty(DirtyFlags::Layout);
     }
     /// The maximum height, as max_width() is the maximum width; infinity for no limit.
-    [[nodiscard]] float max_height() const
+    [[nodiscard]] inline float max_height() const
     {
         return max_height_;
     }
     /// Sets the maximum height in DIPs (negative clamps to 0), or nullopt for no limit; invalidates
     /// layout.
-    void set_max_height(OptionalFloat value)
+    inline void set_max_height(OptionalFloat value)
     {
         const auto next = value ? (std::max)(0.0f, *value) : std::numeric_limits<float>::infinity();
         if (max_height_ == next)
@@ -735,13 +741,13 @@ public:
     }
 
     /// The minimum width in DIPs; 0 (the default) is none. Wins over width() and max_width().
-    [[nodiscard]] float min_width() const
+    [[nodiscard]] inline float min_width() const
     {
         return min_width_;
     }
     /// Sets the minimum width in DIPs (negative clamps to 0), or nullopt for none; invalidates
     /// layout.
-    void set_min_width(OptionalFloat value)
+    inline void set_min_width(OptionalFloat value)
     {
         const auto next = value ? (std::max)(0.0f, *value) : 0.0f;
         if (min_width_ == next)
@@ -754,13 +760,13 @@ public:
 
     /// The minimum height in DIPs; 0 (the default) is none. Wins over height() and
     /// max_height().
-    [[nodiscard]] float min_height() const
+    [[nodiscard]] inline float min_height() const
     {
         return min_height_;
     }
     /// Sets the minimum height in DIPs (negative clamps to 0), or nullopt for none; invalidates
     /// layout.
-    void set_min_height(OptionalFloat value)
+    inline void set_min_height(OptionalFloat value)
     {
         const auto next = value ? (std::max)(0.0f, *value) : 0.0f;
         if (min_height_ == next)
@@ -773,12 +779,12 @@ public:
 
     /// Where the element sits across its slot's width;
     /// Alignment::Stretch by default.
-    [[nodiscard]] Alignment horizontal_alignment() const
+    [[nodiscard]] inline Alignment horizontal_alignment() const
     {
         return h_align_;
     }
     /// Changes the horizontal alignment; invalidates layout.
-    void set_horizontal_alignment(Alignment alignment)
+    inline void set_horizontal_alignment(Alignment alignment)
     {
         const auto next = alignment;
         if (h_align_ == next)
@@ -791,12 +797,12 @@ public:
 
     /// Where the element sits down its slot's height;
     /// Alignment::Stretch by default.
-    [[nodiscard]] Alignment vertical_alignment() const
+    [[nodiscard]] inline Alignment vertical_alignment() const
     {
         return v_align_;
     }
     /// Changes the vertical alignment; invalidates layout.
-    void set_vertical_alignment(Alignment alignment)
+    inline void set_vertical_alignment(Alignment alignment)
     {
         const auto next = alignment;
         if (v_align_ == next)
@@ -810,12 +816,12 @@ public:
     // ---- visual layer (visibility, opacity, translation, rotation, scale) ----
 
     /// Whether the element is shown. Collapsing marks layout dirty; see Visibility.
-    [[nodiscard]] Visibility visibility() const
+    [[nodiscard]] inline Visibility visibility() const
     {
         return visibility_;
     }
     /// Shows or collapses the element and its subtree; invalidates layout when it changes.
-    void set_visibility(Visibility visibility)
+    inline void set_visibility(Visibility visibility)
     {
         if (visibility_ != visibility)
         {
@@ -825,7 +831,7 @@ public:
     }
     /// Whether this element and every ancestor is Visible. The tab ring and the popup layer
     /// check this, since a Collapsed container's descendants still answer collect_focusables().
-    [[nodiscard]] bool is_effectively_visible() const
+    [[nodiscard]] inline bool is_effectively_visible() const
     {
         for (const Element* e = this; e != nullptr; e = e->parent_)
         {
@@ -840,7 +846,7 @@ public:
     // ---- enabled ----
     /// This element's own enabled state, as set_enabled() left it; true by default. Whether it
     /// takes input also depends on its ancestors: see is_enabled().
-    [[nodiscard]] bool enabled() const
+    [[nodiscard]] inline bool enabled() const
     {
         return enabled_;
     }
@@ -850,7 +856,7 @@ public:
     void set_enabled(bool enabled);
     /// Whether the element takes input right now: its own enabled(), a control's own condition
     /// (a Button's command), and every ancestor's. What a control reads to draw its disabled look.
-    [[nodiscard]] bool is_enabled() const
+    [[nodiscard]] inline bool is_enabled() const
     {
         for (const Element* e = this; e != nullptr; e = e->parent_)
         {
@@ -878,7 +884,7 @@ public:
     // ---- window ----
     /// The window whose tree this element is in, or nullptr while it is in none (built but not
     /// yet placed, or taken out).
-    [[nodiscard]] Window* window() const
+    [[nodiscard]] inline Window* window() const
     {
         const Element* e = this;
         while (e->parent_ != nullptr)
@@ -895,12 +901,12 @@ public:
     /// on the handed theme that are not colors (corner radii, type, motion, focus-ring widths)
     /// stay as edited; colors are the other mode's. A popup opened from inside is drawn by the
     /// window in the window's theme.
-    [[nodiscard]] ElementTheme requested_theme() const
+    [[nodiscard]] inline ElementTheme requested_theme() const
     {
         return requested_theme_;
     }
     /// Changes the requested theme; invalidates layout and redraws the subtree.
-    void set_requested_theme(ElementTheme theme)
+    inline void set_requested_theme(ElementTheme theme)
     {
         if (requested_theme_ != theme)
         {
@@ -912,12 +918,12 @@ public:
     /// Whether the element takes pointer input. False keeps pointer input from reaching this element
     /// and everything under it. It still draws and still takes keyboard focus. Frame turns it off on
     /// pages while a navigation transition plays.
-    [[nodiscard]] bool is_hit_test_visible() const
+    [[nodiscard]] inline bool is_hit_test_visible() const
     {
         return hit_test_visible_;
     }
     /// Turns pointer input to this subtree on or off; takes effect with the next event.
-    void set_hit_test_visible(bool visible)
+    inline void set_hit_test_visible(bool visible)
     {
         hit_test_visible_ = visible;
     }
@@ -1010,13 +1016,13 @@ public:
     [[nodiscard]] bool transition_running() const;
 
     /// The size from the last arrange pass.
-    [[nodiscard]] Size actual_size() const
+    [[nodiscard]] inline Size actual_size() const
     {
         return bounds_.size();
     }
     /// The layout position relative to the parent's (bounds() are
     /// window-absolute here).
-    [[nodiscard]] Point actual_offset() const
+    [[nodiscard]] inline Point actual_offset() const
     {
         return parent_ != nullptr ? Point{bounds_.x - parent_->bounds_.x, bounds_.y - parent_->bounds_.y}
                                   : Point{bounds_.x, bounds_.y};
@@ -1035,20 +1041,20 @@ public:
     ///
     /// Called by the spec layer's build() for every reactive field; an app writing
     /// imperatively may call it directly to tie a hand-made observer to a node's lifetime.
-    void add_subscription(Subscription subscription)
+    inline void add_subscription(Subscription subscription)
     {
         check_thread();
         subscriptions_.push_back(std::move(subscription));
     }
     /// How many bindings this node holds: a spec that binds N fields produces N subscriptions.
     /// Nothing in the framework branches on it.
-    [[nodiscard]] std::size_t subscription_count() const
+    [[nodiscard]] inline std::size_t subscription_count() const
     {
         return subscriptions_.size();
     }
     /// Drop every binding on this node, leaving whatever values were last written in place. Call it
     /// to stop tracking the bound properties and drive the control by hand from then on.
-    void clear_subscriptions()
+    inline void clear_subscriptions()
     {
         subscriptions_.clear();
     }
@@ -1058,14 +1064,14 @@ public:
     /// shortcuts of the focused element and then of each of its ancestors, innermost first,
     /// before the focused element's own handle_key() sees it, so a Tabs control's Ctrl+T works wherever
     /// focus is inside it. A shortcut added here only fires while focus is in its element.
-    void add_shortcut(Shortcut shortcut)
+    inline void add_shortcut(Shortcut shortcut)
     {
         extras().shortcuts.push_back(std::move(shortcut));
     }
     /// Offers `e` to this element's shortcuts; true when one handled it. Controls with keys
     /// of their own that must work from anywhere inside them (Tabs control's Ctrl+Tab) override this,
     /// calling the base first.
-    virtual bool handle_shortcut(const KeyEvent& e)
+    inline virtual bool handle_shortcut(const KeyEvent& e)
     {
         if (!extras_)
         {
@@ -1086,7 +1092,7 @@ public:
     /// offers a key that no scoped shortcut took to every element in the window, in tree order,
     /// when the focused element and its parents did not handle the key themselves
     /// (key_override()). Default: none.
-    virtual bool handle_global_shortcut(const KeyEvent& e)
+    inline virtual bool handle_global_shortcut(const KeyEvent& e)
     {
         (void)e;
         return false;
@@ -1097,7 +1103,7 @@ public:
     /// the pointer has rested on the element for 800 ms, and hides it on a click, a key or the
     /// pointer moving off. ToolTip (ui/dialogs/ToolTip.hpp) stays the way to give a tip arbitrary
     /// content or its own placement.
-    void set_tool_tip(std::string text)
+    inline void set_tool_tip(std::string text)
     {
         check_thread();
         if (text.empty() && !extras_)
@@ -1109,14 +1115,14 @@ public:
     /// The tip for window point `p`, which Window asks for as the pointer moves: tool_tip() unless
     /// the control shows a different tip per part (a TableView cell). A change of text while the
     /// pointer stays on the control closes the open tip and starts the wait again.
-    [[nodiscard]] virtual std::string tool_tip_at(Point p) const
+    [[nodiscard]] inline virtual std::string tool_tip_at(Point p) const
     {
         (void)p;
         return tool_tip();
     }
     /// The text Window shows; a control whose tip is derived (an AppBarButton's "Save (Ctrl+S)")
     /// overrides this.
-    [[nodiscard]] virtual std::string tool_tip() const
+    [[nodiscard]] inline virtual std::string tool_tip() const
     {
         return extras_ ? extras_->tool_tip : std::string{};
     }
@@ -1125,12 +1131,12 @@ public:
     /// The cursor shown while the pointer is over this element (or over a descendant that asks for
     /// none). nullopt, the default, asks for nothing, so an ancestor's cursor or the control's own
     /// cursor_at() decides, and failing everything the pointer is an arrow.
-    [[nodiscard]] std::optional<CursorShape> cursor() const
+    [[nodiscard]] inline std::optional<CursorShape> cursor() const
     {
         return extras_ ? extras_->cursor : std::nullopt;
     }
     /// Sets or clears (nullopt) the cursor; Window picks it up the next time the pointer moves.
-    void set_cursor(std::optional<CursorShape> shape)
+    inline void set_cursor(std::optional<CursorShape> shape)
     {
         if (!shape && !extras_)
         {
@@ -1143,7 +1149,7 @@ public:
     /// a resize arrow over a splitter. nullopt (the default) leaves it to the ancestors. Window
     /// asks the innermost element under the pointer first, then each parent in turn, and the first
     /// answer wins.
-    [[nodiscard]] virtual std::optional<CursorShape> cursor_at(Point /*p*/) const
+    [[nodiscard]] inline virtual std::optional<CursorShape> cursor_at(Point /*p*/) const
     {
         return std::nullopt;
     }
@@ -1152,12 +1158,12 @@ public:
     /// The caller-supplied accessible name, description and decorative flag (a spec's
     /// `.accessibility`). automation_name() prefers its name over the control's own text; empty
     /// by default, which is right for any control with visible text.
-    [[nodiscard]] const Accessibility& accessibility() const
+    [[nodiscard]] inline const Accessibility& accessibility() const
     {
         return extras_ ? extras_->accessibility : no_accessibility();
     }
     /// Replaces the accessibility information; read by the next automation query.
-    void set_accessibility(Accessibility accessibility)
+    inline void set_accessibility(Accessibility accessibility)
     {
         check_thread();
         extras().accessibility = std::move(accessibility);
@@ -1169,7 +1175,7 @@ public:
     /// automation_providers() lists (ui/Automation.hpp).
     ///
     /// automation_role() is the role this node reports; Group by default.
-    [[nodiscard]] virtual AutomationRole automation_role() const
+    [[nodiscard]] inline virtual AutomationRole automation_role() const
     {
         return AutomationRole::Group;
     }
@@ -1177,21 +1183,21 @@ public:
     /// The accessible name: accessibility().name when the caller set one, otherwise the control's
     /// own visible text. Not virtual, like measure(). A control overrides
     /// automation_name_fallback() instead.
-    [[nodiscard]] std::string automation_name() const
+    [[nodiscard]] inline std::string automation_name() const
     {
         const Accessibility& a = accessibility();
         return a.name.empty() ? automation_name_fallback() : a.name;
     }
     /// The accessible help text a screen reader offers after the name: accessibility().description
     /// when the caller set one, otherwise automation_help_text_fallback().
-    [[nodiscard]] std::string automation_help_text() const
+    [[nodiscard]] inline std::string automation_help_text() const
     {
         const Accessibility& a = accessibility();
         return a.description.empty() ? automation_help_text_fallback() : a.description;
     }
     /// Whether screen readers hear the value as valid: false while automation_invalid() says
     /// the control holds input it reports as wrong.
-    [[nodiscard]] bool automation_valid() const
+    [[nodiscard]] inline bool automation_valid() const
     {
         return !automation_invalid();
     }
@@ -1205,7 +1211,7 @@ public:
     /// While this element has keyboard focus, the node inside it that has it as automation sees
     /// it: the row, tab or menu item a control moves its own cursor over with the arrow keys.
     /// Screen readers announce that node. nullptr (the default) is this element itself.
-    [[nodiscard]] virtual Element* automation_focus() const
+    [[nodiscard]] inline virtual Element* automation_focus() const
     {
         return nullptr;
     }
@@ -1213,7 +1219,7 @@ public:
     /// True only for NativeControl (ui/hosting/NativeControl.hpp). Its child HWND answers
     /// automation clients itself, so the automation tree (ui/AutomationTree.hpp) leaves it out and
     /// treats it as childless, which keeps it from being described twice.
-    [[nodiscard]] virtual bool automation_is_native_host() const
+    [[nodiscard]] inline virtual bool automation_is_native_host() const
     {
         return false;
     }
@@ -1221,7 +1227,7 @@ public:
     /// The automation node between this element and its child `child`, for a container whose
     /// automation tree has a level its element tree lacks (a table's cell around a template cell
     /// the table owns). nullptr, the default, makes this element the child's automation parent.
-    [[nodiscard]] virtual Element* automation_parent_of(const Element& child) const
+    [[nodiscard]] inline virtual Element* automation_parent_of(const Element& child) const
     {
         (void)child;
         return nullptr;
@@ -1238,7 +1244,7 @@ public:
     /// whenever that something changes.
     /// The context's measurer and theme must outlive the next measure(): a virtualizing container
     /// re-measures from arrange() and render() with the ones it was last measured with.
-    [[nodiscard]] Size measure(Size available, const MeasureContext& context) const
+    [[nodiscard]] inline Size measure(Size available, const MeasureContext& context) const
     {
         const TextMeasurer& measurer = context.measurer;
         const Theme&        handed   = context.theme;
@@ -1289,7 +1295,9 @@ public:
 
     /// measure() with a context of `measurer` and `theme`, for measuring a control on its own.
     /// The theme defaults to Theme::default_light(), as render()'s does.
-    [[nodiscard]] Size measure(Size available, const TextMeasurer& measurer, const Theme& theme = Theme::default_light()) const
+    [[nodiscard]] inline Size measure(Size                available,
+                                      const TextMeasurer& measurer,
+                                      const Theme&        theme = Theme::default_light()) const
     {
         return measure(available, MeasureContext{measurer, theme});
     }
@@ -1304,7 +1312,7 @@ public:
     /// nothing, invalidates nothing, and uses no cache or static shared with other elements. A
     /// part it measures without listing it in for_each_child() makes the answer false. The
     /// answer is inherited, so a subclass whose measure_override() does more overrides it back.
-    [[nodiscard]] virtual bool parallel_measure_safe() const
+    [[nodiscard]] inline virtual bool parallel_measure_safe() const
     {
         return false;
     }
@@ -1314,7 +1322,7 @@ public:
     /// arrange_override() does nothing, since most leaves need only `bounds()`. measure() is always
     /// called before arrange(). Given the rect it was last given,
     /// with nothing at or below it measured or marked DirtyFlags::Arrange since, it does nothing.
-    void arrange(const Rect& final_rect)
+    inline void arrange(const Rect& final_rect)
     {
         if (visibility_ == Visibility::Collapsed)
         {
@@ -1376,7 +1384,7 @@ public:
     /// The rect the last arrange() gave this element, in window-client DIPs (not relative to the
     /// parent), after margin and alignment; excludes the margin. Empty
     /// before the first layout, and zero-sized while Collapsed.
-    [[nodiscard]] const Rect& bounds() const
+    [[nodiscard]] inline const Rect& bounds() const
     {
         return bounds_;
     }
@@ -1388,7 +1396,7 @@ public:
     /// none, so an ordinary tree is Client everywhere and only a subtree that opts in drags the
     /// window. TitleBarControl answers Caption for its own background. DragAreaControl answers
     /// Caption for everything but the focusable controls inside it.
-    [[nodiscard]] virtual HitRegion hit_region(Point p) const
+    [[nodiscard]] inline virtual HitRegion hit_region(Point p) const
     {
         const Element* topmost = nullptr;
         for_each_child(
@@ -1407,12 +1415,12 @@ public:
     /// anything else drags. true drags even over a control (and, on a container, lets its controls
     /// drag too unless they say false). false never drags, over this element or anything inside
     /// it. Read on every hit test, so a change takes effect at once.
-    [[nodiscard]] std::optional<bool> title_bar_drag_region() const
+    [[nodiscard]] inline std::optional<bool> title_bar_drag_region() const
     {
         return extras_ ? extras_->title_bar_drag_region : std::nullopt;
     }
     /// Sets or clears (nullopt) the drag-region override; read by the next hit test.
-    void set_title_bar_drag_region(std::optional<bool> value)
+    inline void set_title_bar_drag_region(std::optional<bool> value)
     {
         if (!value && !extras_)
         {
@@ -1427,7 +1435,7 @@ public:
     /// transition target's). Emits no extra command for an element whose visual layer is at rest,
     /// so a still tree renders exactly what render_override() alone would. A container draws each
     /// child through this, handing on the context it got.
-    void render(Renderer& renderer, const RenderContext& context) const
+    inline void render(Renderer& renderer, const RenderContext& context) const
     {
         if (visibility_ == Visibility::Collapsed)
         {
@@ -1455,7 +1463,7 @@ public:
     }
     /// Draw this element under `theme` (Theme::default_light() by default): a control drawn on
     /// its own, or the root of a tree.
-    void render(Renderer& renderer, const Theme& theme = Theme::default_light()) const
+    inline void render(Renderer& renderer, const Theme& theme = Theme::default_light()) const
     {
         render(renderer, RenderContext{theme});
     }
@@ -1496,7 +1504,7 @@ public:
     /// parent in turn until one handles it; what nothing handles goes on to the shortcuts, a
     /// dialog's default button and arrow-key focus moves. Offers a press to on_key_down() first,
     /// then calls key_override(); true when either took it.
-    bool handle_key(const KeyEvent& e)
+    inline bool handle_key(const KeyEvent& e)
     {
         if (e.action == KeyAction::Down && extras_ && extras_->key_down && detail::handled(extras_->key_down(e), false))
         {
@@ -1521,7 +1529,7 @@ public:
     ///     return ui::Handled;
     /// });
     /// @endcode
-    void on_key_down(Callback<Handling(const KeyEvent&)> handler)
+    inline void on_key_down(Callback<Handling(const KeyEvent&)> handler)
     {
         check_thread();
         extras().key_down = std::move(handler);
@@ -1543,14 +1551,14 @@ public:
     ///     return ui::Handled;
     /// });
     /// @endcode
-    void on_wheel(Callback<Handling(const PointerEvent&)> handler)
+    inline void on_wheel(Callback<Handling(const PointerEvent&)> handler)
     {
         check_thread();
         extras().wheel = std::move(handler);
     }
     /// Offers a wheel turn to on_wheel(), then to wheel_override(); true when either took it.
     /// What the wheel dispatch calls for each element under the pointer.
-    bool raise_wheel(const PointerEvent& e)
+    inline bool raise_wheel(const PointerEvent& e)
     {
         if (extras_ && extras_->wheel && detail::handled(extras_->wheel(e), false))
         {
@@ -1560,25 +1568,25 @@ public:
     }
     /// Typed text, routed like a key (focused element first, then its parents). Calls
     /// text_override() and returns its answer.
-    bool handle_text(const TextInputEvent& e)
+    inline bool handle_text(const TextInputEvent& e)
     {
         return text_override(e);
     }
     /// handle_text() with the text alone.
-    bool handle_text(std::string_view text)
+    inline bool handle_text(std::string_view text)
     {
         return handle_text(TextInputEvent{std::string(text)});
     }
 
     // ---- focus ----
     /// Whether this element can take keyboard focus (a leaf control opts in).
-    [[nodiscard]] virtual bool focusable() const
+    [[nodiscard]] inline virtual bool focusable() const
     {
         return false;
     }
     /// Whether Tab and Shift+Tab reach this element while it has focus, instead of moving focus
     /// (a text box that indents). Ctrl+Tab never moves focus either way. Default: false.
-    [[nodiscard]] virtual bool takes_tab_key() const
+    [[nodiscard]] inline virtual bool takes_tab_key() const
     {
         return false;
     }
@@ -1586,14 +1594,14 @@ public:
     /// The window offers it to each visible, enabled element in tree order until one takes it: a
     /// menu bar takes keyboard focus (and opens the menu whose header starts with `letter`) and
     /// returns true. Default: false.
-    virtual bool take_menu_access(char32_t letter)
+    inline virtual bool take_menu_access(char32_t letter)
     {
         (void)letter;
         return false;
     }
     /// Whether this element has keyboard focus: the window's focused element, or a part a composite
     /// control draws as focused on its behalf (a ComboBox's text field). Kept by the window.
-    [[nodiscard]] bool is_focused() const
+    [[nodiscard]] inline bool is_focused() const
     {
         return focused_;
     }
@@ -1602,7 +1610,7 @@ public:
     /// wins. The default is the whole of bounds(); a control that is one stop for only part of
     /// what it covers answers for that part, or a press on non-focusable space inside the rest
     /// would focus it (NavigationShell: its menu, not the page it hosts).
-    [[nodiscard]] virtual bool takes_focus_at(Point p) const
+    [[nodiscard]] inline virtual bool takes_focus_at(Point p) const
     {
         return bounds().contains(p);
     }
@@ -1611,7 +1619,7 @@ public:
     /// after a click gave it. Window writes it; a control checks it next to its own focused
     /// state when it renders. True by default, so a control focused without a Window draws its
     /// ring.
-    [[nodiscard]] bool focus_visible() const
+    [[nodiscard]] inline bool focus_visible() const
     {
         return focus_visible_;
     }
@@ -1619,7 +1627,7 @@ public:
     /// Whether keyboard focus is on this element or on one inside it. A repeater checks it before
     /// clearing an element (a focused element stays realized). Kept by Window through
     /// note_keyboard_focus(); an element destroyed while focused takes its part of the count with it.
-    [[nodiscard]] bool has_focus_within() const
+    [[nodiscard]] inline bool has_focus_within() const
     {
         return focus_within_ > 0;
     }
@@ -1640,14 +1648,14 @@ public:
     /// (SelectionItemProvider::select_item()). Ctrl+arrow only moves. Automation clients see each
     /// member's position in the set. A RadioButton bound with ui::selects() returns the property it
     /// was bound to.
-    [[nodiscard]] virtual const void* selection_group() const
+    [[nodiscard]] inline virtual const void* selection_group() const
     {
         return nullptr;
     }
     /// The element Window focuses when this becomes the open modal, or nullptr for the first
     /// stop in its tab ring. DialogControl picks something in its content first, else its default
     /// button.
-    [[nodiscard]] virtual Element* default_focus()
+    [[nodiscard]] inline virtual Element* default_focus()
     {
         return nullptr;
     }
@@ -1665,12 +1673,12 @@ public:
     /// overrides collect_scope_focusables() (and scope_step() for scopes that navigate items).
     /// Setting the flag on a control that overrides neither has no effect, since Window doesn't
     /// enter a scope with an empty inner ring.
-    [[nodiscard]] bool focus_scope() const
+    [[nodiscard]] inline bool focus_scope() const
     {
         return focus_scope_;
     }
     /// Makes this element a focus scope (or an ordinary, transparent container again); redraws.
-    void set_focus_scope(bool scope)
+    inline void set_focus_scope(bool scope)
     {
         focus_scope_ = scope;
         mark_dirty(DirtyFlags::Visual);
@@ -1681,7 +1689,7 @@ public:
     /// Ask every scrolling ancestor to reveal this element, innermost first. Window calls
     /// it whenever focus lands somewhere, because a tab ring that walks into a scrolled-off
     /// region would otherwise park focus on something the user cannot see.
-    void bring_into_view()
+    inline void bring_into_view()
     {
         const std::optional<Rect> requested = bring_into_view_area();
         if (!requested)
@@ -1698,7 +1706,7 @@ public:
     /// Ask every scrolling ancestor to reveal this element (or
     /// `options.target_rect` of it), placed as the options say. Unlike bring_into_view() the whole
     /// element is revealed, focus ring or not, and whatever bring_into_view_area() says.
-    void start_bring_into_view(const BringIntoViewOptions& options = {})
+    inline void start_bring_into_view(const BringIntoViewOptions& options = {})
     {
         Rect area = bounds_;
         if (options.target_rect)
@@ -1736,7 +1744,7 @@ public:
     /// coordinates, or nullopt when it takes no text. The platform puts an input method's
     /// candidate window and the emoji panel there (Window::caret_bounds()). A control that hands
     /// its typing to an inner text box answers with that box's.
-    [[nodiscard]] virtual std::optional<Rect> caret_bounds() const
+    [[nodiscard]] inline virtual std::optional<Rect> caret_bounds() const
     {
         return std::nullopt;
     }
@@ -1748,7 +1756,7 @@ public:
     /// draws all its cards itself has bounds as tall as its content, so revealing them jumps
     /// the viewport to the top on every focus gain; it answers with the current card's rect
     /// instead, or nullopt when there is none.
-    [[nodiscard]] virtual std::optional<Rect> bring_into_view_area() const
+    [[nodiscard]] inline virtual std::optional<Rect> bring_into_view_area() const
     {
         return bounds_;
     }
@@ -1758,7 +1766,7 @@ public:
     /// without a layout pass in between. `options` places it
     /// (start_bring_into_view()); bring_into_view() passes the defaults, the smallest scroll.
     /// Default: nothing to reveal, geometry unchanged. Scroll is the only override.
-    virtual Rect reveal_child(const Rect& area, const BringIntoViewOptions& options)
+    inline virtual Rect reveal_child(const Rect& area, const BringIntoViewOptions& options)
     {
         (void)options;
         return area;
@@ -1782,7 +1790,7 @@ public:
     };
     /// This element's scrolling, or nullopt for one that does not scroll (the default). Scroll,
     /// VirtualList and ListView answer.
-    [[nodiscard]] virtual std::optional<ScrollInfo> scroll_info() const
+    [[nodiscard]] inline virtual std::optional<ScrollInfo> scroll_info() const
     {
         return std::nullopt;
     }
@@ -1790,7 +1798,7 @@ public:
     // ---- tree linkage ----
     /// The container this element sits in (non-owning), or nullptr for a root or an element not
     /// yet added anywhere.
-    [[nodiscard]] Element* parent() const
+    [[nodiscard]] inline Element* parent() const
     {
         return parent_;
     }
@@ -1829,7 +1837,7 @@ public:
     ///     std::vector<std::unique_ptr<ui::Element>> children_;
     /// };
     /// @endcode
-    virtual void for_each_child(ChildVisitor visit) const
+    inline virtual void for_each_child(ChildVisitor visit) const
     {
         (void)visit;
     }
@@ -1837,12 +1845,12 @@ public:
     // ---- invalidation ----
     /// Whether any of `flags` is set on this node, for this node or, since flags bubble up,
     /// for something below it. A new element starts fully dirty.
-    [[nodiscard]] bool is_dirty(DirtyFlags flags = DirtyFlags::All) const
+    [[nodiscard]] inline bool is_dirty(DirtyFlags flags = DirtyFlags::All) const
     {
         return any(dirty_ & flags);
     }
     /// Every dirty flag currently set on this node.
-    [[nodiscard]] DirtyFlags dirty_flags() const
+    [[nodiscard]] inline DirtyFlags dirty_flags() const
     {
         return dirty_;
     }
@@ -1853,7 +1861,7 @@ public:
     /// area: false once it is scrolled out of view, clipped away, collapsed, fully transparent or
     /// no longer drawn at all. Only an element that called set_screen_tracking() is told; for any
     /// other element, and for one no frame has measured yet, this is true.
-    [[nodiscard]] bool on_screen() const
+    [[nodiscard]] inline bool on_screen() const
     {
         return on_screen_;
     }
@@ -1861,7 +1869,7 @@ public:
     /// set_screen_tracking(). The frame that brings an element back into view calls it with
     /// true, so a control that paused its clock off screen restarts it here (request_tick_in()
     /// works from it). The default does nothing.
-    virtual void on_screen_changed(bool on_screen)
+    inline virtual void on_screen_changed(bool on_screen)
     {
         (void)on_screen;
     }
@@ -1888,7 +1896,7 @@ public:
     /// on). A field that was never focused is never checked. TextBox overrides it. Composites
     /// with an internal TextBox (ComboBox/NumberBox/AutoSuggestBox) do not forward it, since
     /// none of them hold prose.
-    virtual void sync_spell_checker(SpellChecker&)
+    inline virtual void sync_spell_checker(SpellChecker&)
     {
     }
 
@@ -1899,7 +1907,7 @@ public:
     /// (window-client DIPs), or nullopt for a keyboard request, where the element picks its own
     /// anchor (TextBox: its caret). `host` is only valid for this call, so show a menu through
     /// it here or not at all. Returns whether a menu was shown; default: none.
-    virtual bool handle_context_menu(std::optional<Point> /*position*/, ContextMenuHost& /*host*/)
+    inline virtual bool handle_context_menu(std::optional<Point> /*position*/, ContextMenuHost& /*host*/)
     {
         return false;
     }
@@ -1910,14 +1918,14 @@ public:
     /// to act: unless it returns ui::NotHandled it has shown something (a MenuFlyout's show_at(), a
     /// CommandBarFlyout) and the request goes no further. `position` is as handle_context_menu()'s.
     /// One handler per element; setting another replaces it.
-    void on_context_requested(Callback<Handling(std::optional<Point>)> handler)
+    inline void on_context_requested(Callback<Handling(std::optional<Point>)> handler)
     {
         check_thread();
         extras().context_requested = std::move(handler);
     }
     /// Runs the handler set above, if any; whether it took the request. A wrapper that stands in
     /// for the element it wraps in the tab ring (a flyout around its anchor) asks that element too.
-    virtual bool raise_context_requested(std::optional<Point> position)
+    inline virtual bool raise_context_requested(std::optional<Point> position)
     {
         return extras_ && extras_->context_requested && detail::handled(extras_->context_requested(position), true);
     }
@@ -1925,12 +1933,12 @@ public:
     // ---- drag and drop (ui/DragDrop.hpp) ----
     /// Whether this element is a drop target, getting drag_enter()/drag_over()/drag_leave()/drop()
     /// while a drag (DragDrop::start()) is over it.
-    [[nodiscard]] bool allow_drop() const
+    [[nodiscard]] inline bool allow_drop() const
     {
         return allow_drop_;
     }
     /// Makes the element a drop target (or not); takes effect for the next drag movement.
-    void set_allow_drop(bool allow)
+    inline void set_allow_drop(bool allow)
     {
         allow_drop_ = allow;
     }
@@ -1966,7 +1974,7 @@ public:
 
     /// A drag this element started has ended. `result` is what the target did
     /// (None when the drag was canceled or dropped nowhere).
-    virtual void drag_completed(DataPackageOperation result)
+    inline virtual void drag_completed(DataPackageOperation result)
     {
         (void)result;
     }
@@ -1976,7 +1984,7 @@ public:
     /// in tick_override(). The window draws everything the element shows at this opacity: a popup
     /// owner's floating content, or a modal's scrim together with its content, so one fade covers
     /// both. Default 1: fully visible, no fade running.
-    [[nodiscard]] virtual float transition_opacity() const
+    [[nodiscard]] inline virtual float transition_opacity() const
     {
         return 1.0f;
     }
@@ -2017,7 +2025,7 @@ protected:
     ///     ui::Callback<void()> on_click_;
     /// };
     /// @endcode
-    virtual void automation_providers(AutomationProviders& out)
+    inline virtual void automation_providers(AutomationProviders& out)
     {
         (void)out;
     }
@@ -2035,7 +2043,7 @@ protected:
     /// Closes the popup open_popup() opened. Nothing when none is open.
     void close_popup();
     /// Whether this element has a popup open.
-    [[nodiscard]] bool popup_open() const noexcept
+    [[nodiscard]] inline bool popup_open() const noexcept
     {
         return extras_ && extras_->popup;
     }
@@ -2058,7 +2066,7 @@ protected:
     [[nodiscard]] virtual Size measure_override(Size available, const MeasureContext& context) const = 0;
     /// Position children within the rect arrange() settled on (also in bounds(), window DIPs).
     /// Default: nothing, for a leaf.
-    virtual void arrange_override(const Rect&, const ArrangeContext&)
+    inline virtual void arrange_override(const Rect&, const ArrangeContext&)
     {
     }
 
@@ -2073,7 +2081,7 @@ protected:
     /// acts on a press (a click, a toggle, a caret placed, a drag started) returns true for the
     /// press and its release, so a list row or a card around it does not act on the same click.
     /// Default: false.
-    virtual bool pointer_override(const PointerEvent& e)
+    inline virtual bool pointer_override(const PointerEvent& e)
     {
         (void)e;
         return false;
@@ -2084,7 +2092,7 @@ protected:
     /// coordinates. A container that has to see every press inside it, handled or not, overrides
     /// it: a swipe that may turn a press on a button into a drag, a table that commits an open
     /// edit when a check box in another row is pressed. Default: nothing.
-    virtual void handled_pointer_override(const PointerEvent& e)
+    inline virtual void handled_pointer_override(const PointerEvent& e)
     {
         (void)e;
     }
@@ -2102,27 +2110,27 @@ protected:
     /// A point in this element's layout coordinates, mapped into its children's: a control that
     /// scrolls, zooms or scales its content maps it the way the content is drawn. Default: the
     /// point unchanged.
-    [[nodiscard]] virtual Point map_to_children(Point p) const
+    [[nodiscard]] inline virtual Point map_to_children(Point p) const
     {
         return p;
     }
     /// Where the children can be hit, in this element's layout coordinates, or nullopt for
     /// anywhere (the default): a scrolling control returns its viewport, so content scrolled out
     /// of view is not hit.
-    [[nodiscard]] virtual std::optional<Rect> children_hit_clip() const
+    [[nodiscard]] inline virtual std::optional<Rect> children_hit_clip() const
     {
         return std::nullopt;
     }
     /// Whether the pointer passes through this element and everything in it to what is behind,
     /// as if it were not there: a wrapper with nothing visible in it (ContentHost while its child
     /// is missing or collapsed). Default: false, so an element is hit anywhere in its bounds.
-    [[nodiscard]] virtual bool hit_test_transparent() const
+    [[nodiscard]] inline virtual bool hit_test_transparent() const
     {
         return false;
     }
     /// Whether a part of this element drawn over its children is at `p` (a scroll bar over the
     /// content), so the element is hit there instead of a child. Default: false.
-    [[nodiscard]] virtual bool covers_children_at(Point p) const
+    [[nodiscard]] inline virtual bool covers_children_at(Point p) const
     {
         (void)p;
         return false;
@@ -2139,20 +2147,20 @@ protected:
     /// animation's phase, a caret blink). Runs after the visual layer has advanced and before the
     /// children are ticked, which tick() does by itself. Tick only parts that for_each_child()
     /// does not list here. Default: nothing.
-    virtual void tick_override(Duration delta)
+    inline virtual void tick_override(Duration delta)
     {
         (void)delta;
     }
     /// This element's own part of clear_dirty(): clear any part it owns but leaves out of
     /// for_each_child() (a parked page, a hidden button), through that part's clear_dirty().
     /// Default: nothing.
-    virtual void clear_dirty_override(DirtyFlags flags)
+    inline virtual void clear_dirty_override(DirtyFlags flags)
     {
         (void)flags;
     }
     /// This element's own part of build_visual_tree(): add any part it owns but leaves out of
     /// for_each_child() through that part's build_visual_tree(tree, visual_id()). Default: nothing.
-    virtual void build_visual_tree_override(VisualTree& tree) const
+    inline virtual void build_visual_tree_override(VisualTree& tree) const
     {
         (void)tree;
     }
@@ -2174,7 +2182,7 @@ protected:
     /// The one walk that does not default to recursing through for_each_child(): being a scope
     /// is something a control opts into, and a default inner ring would make every container
     /// enterable while its children still sat in the outer ring too.
-    virtual void collect_scope_focusables(std::vector<Element*>&)
+    inline virtual void collect_scope_focusables(std::vector<Element*>&)
     {
     }
 
@@ -2183,7 +2191,7 @@ protected:
     /// way out, as for an ordinary container scope). Return false to let the step fall out,
     /// popping the scope and leaving focus on this control. Never called for a scope whose inner
     /// ring is real elements, since Window walks that ring itself.
-    virtual bool scope_step(int)
+    inline virtual bool scope_step(int)
     {
         return false;
     }
@@ -2192,7 +2200,7 @@ protected:
     /// again as it is left, so a control can show and hide whatever inner cursor it draws.
     /// A container scope whose inner ring is real Elements usually needs nothing here, since the
     /// focused child draws its own focus ring, as it would anywhere else.
-    virtual void set_scope_entered(bool)
+    inline virtual void set_scope_entered(bool)
     {
     }
 
@@ -2202,12 +2210,12 @@ protected:
     /// collect_focusables() with the pane alone) and hands focus back when it closes.
     /// Returning a request consumes it; the default never asks.
     /// Escape reaches it like any key the focused element inside it leaves alone (key_override()).
-    [[nodiscard]] virtual FocusRequest take_focus_request()
+    [[nodiscard]] inline virtual FocusRequest take_focus_request()
     {
         return FocusRequest::None;
     }
     /// The subtree an Enter request focuses into; `this` by default.
-    [[nodiscard]] virtual Element* focus_request_root()
+    [[nodiscard]] inline virtual Element* focus_request_root()
     {
         return this;
     }
@@ -2219,25 +2227,25 @@ protected:
     /// one lets go of the focus, so a container that adopts a dirty part is laid out again
     /// without marking itself. Not an ownership transfer: the container already holds the
     /// part's unique_ptr.
-    static void set_parent_of(Element& part, Element* parent)
+    static inline void set_parent_of(Element& part, Element* parent)
     {
         part.set_parent(parent);
     }
     /// Clear `flags` on `part` and its subtree, for a clear_dirty_override() clearing a part
     /// this element leaves out of for_each_child().
-    static void clear_dirty_of(Element& part, DirtyFlags flags = DirtyFlags::All)
+    static inline void clear_dirty_of(Element& part, DirtyFlags flags = DirtyFlags::All)
     {
         part.clear_dirty(flags);
     }
     /// Show `part` focused or not, for a composite that draws one of its parts as focused while
     /// it holds the focus itself (a ComboBox's text field). Hand focus_visible() on with
     /// set_focus_visible_of() too, or the part keeps drawing its ring after a click.
-    static void set_focused_of(Element& part, bool focused)
+    static inline void set_focused_of(Element& part, bool focused)
     {
         part.set_focused(focused);
     }
     /// Hand the focus-visible state on to a part; see set_focused_of().
-    static void set_focus_visible_of(Element& part, bool visible)
+    static inline void set_focus_visible_of(Element& part, bool visible)
     {
         part.set_focus_visible(visible);
     }
@@ -2251,14 +2259,14 @@ protected:
     /// just inside focus_ring_rect().
     /// Return false only for a control that shows focus in a shape of its own (a text field's
     /// accent border) or not at all.
-    [[nodiscard]] virtual bool draws_focus_ring() const
+    [[nodiscard]] inline virtual bool draws_focus_ring() const
     {
         return true;
     }
     /// What the ring goes around, in window DIPs: bounds() by default. A control whose ring goes
     /// around one part of it (a slider's thumb, a list's current row) returns that part. `theme`
     /// is the one the element is drawn with, for a ring placed differently per theme.
-    [[nodiscard]] virtual Rect focus_ring_rect(const Theme& theme) const
+    [[nodiscard]] inline virtual Rect focus_ring_rect(const Theme& theme) const
     {
         (void)theme;
         return bounds();
@@ -2267,12 +2275,12 @@ protected:
     /// False by default, which leaves it to the theme. An item inside a viewport (a list row, a
     /// tab, a menu item) returns true, as does a control in a tight spot, so a neighbor or the
     /// viewport edge never cuts its ring.
-    [[nodiscard]] virtual bool focus_ring_inside() const
+    [[nodiscard]] inline virtual bool focus_ring_inside() const
     {
         return false;
     }
     /// The ring's corner radius: the theme's control radius by default.
-    [[nodiscard]] virtual float focus_ring_corner_radius(const Theme& theme) const
+    [[nodiscard]] inline virtual float focus_ring_corner_radius(const Theme& theme) const
     {
         return theme.corner_radius;
     }
@@ -2282,13 +2290,13 @@ protected:
     /// true when the key did something here, and it goes no further; false lets it bubble on to
     /// the parent and then to the shortcuts, a dialog's default button and arrow-key focus
     /// moves. Default: false.
-    virtual bool key_override(const KeyEvent& e)
+    inline virtual bool key_override(const KeyEvent& e)
     {
         (void)e;
         return false;
     }
     /// Typed text for this element, routed like key_override(). Default: false.
-    virtual bool text_override(const TextInputEvent& e)
+    inline virtual bool text_override(const TextInputEvent& e)
     {
         (void)e;
         return false;
@@ -2302,18 +2310,18 @@ protected:
     // ---- state hooks ----
     /// Keyboard focus arrived (true) or left (false); is_focused() already says so. The element
     /// is redrawn either way. No-op by default.
-    virtual void focus_changed(bool focused)
+    inline virtual void focus_changed(bool focused)
     {
         (void)focused;
     }
     /// focus_visible() changed; the element is redrawn either way. No-op by default.
-    virtual void focus_visible_changed(bool visible)
+    inline virtual void focus_visible_changed(bool visible)
     {
         (void)visible;
     }
     /// is_enabled() flipped, through set_enabled() here or on an ancestor, or a move to another
     /// parent. Drop any press or hover state. The element is redrawn either way. No-op by default.
-    virtual void enabled_changed()
+    inline virtual void enabled_changed()
     {
     }
     /// A condition of the control's own that is ANDed into is_enabled() (a Button whose command
@@ -2322,11 +2330,11 @@ protected:
     /// The element joined a window's tree: window() is now that window. Called for the root a
     /// window takes and for everything inside it, and for a subtree added to a tree already in a
     /// window. No-op by default.
-    virtual void attached()
+    inline virtual void attached()
     {
     }
     /// The element left a window's tree (moved out of it). No-op by default.
-    virtual void detached()
+    inline virtual void detached()
     {
     }
 
@@ -2336,19 +2344,19 @@ protected:
     /// need an explicit accessibility().name from the caller. A control
     /// with its own visible text (Button, CheckBox, TextControl, ...) overrides this to return
     /// it.
-    [[nodiscard]] virtual std::string automation_name_fallback() const
+    [[nodiscard]] inline virtual std::string automation_name_fallback() const
     {
         return {};
     }
     /// automation_help_text()'s fallback when accessibility().description is empty. Default:
     /// none. An input with a `description` under it returns that text, or its `error` while set.
-    [[nodiscard]] virtual std::string automation_help_text_fallback() const
+    [[nodiscard]] inline virtual std::string automation_help_text_fallback() const
     {
         return {};
     }
     /// True while the control holds input it reports as wrong (an input's `error` is set); screen
     /// readers say so. Default: false.
-    [[nodiscard]] virtual bool automation_invalid() const
+    [[nodiscard]] inline virtual bool automation_invalid() const
     {
         return false;
     }
@@ -2361,7 +2369,7 @@ protected:
     /// Every setter goes through here, so this is where a build with thread checks catches a
     /// setter called on an element under a Window from another thread than the window's. Leave
     /// `where` defaulted: it names the setter that called this.
-    void mark_dirty(DirtyFlags flags, std::source_location where = std::source_location::current())
+    inline void mark_dirty(DirtyFlags flags, std::source_location where = std::source_location::current())
     {
 #if LIBWINUI_THREAD_CHECKS
         check_tree_thread(where);
@@ -2391,7 +2399,7 @@ protected:
 
     /// This element's size has to be measured again (and it arranged again): mark_dirty() with
     /// DirtyFlags::Layout. For a setter whose value changes the element's desired size.
-    void invalidate_measure(std::source_location where = std::source_location::current())
+    inline void invalidate_measure(std::source_location where = std::source_location::current())
     {
         mark_dirty(DirtyFlags::Layout, where);
     }
@@ -2399,7 +2407,7 @@ protected:
     /// This element has to be arranged again, its size has not changed: mark_dirty() with
     /// DirtyFlags::Arrange. For a setter that only moves the element or its children within the
     /// space they already have (an alignment, a scroll position that is laid out).
-    void invalidate_arrange(std::source_location where = std::source_location::current())
+    inline void invalidate_arrange(std::source_location where = std::source_location::current())
     {
         mark_dirty(DirtyFlags::Arrange, where);
     }
@@ -2409,7 +2417,7 @@ protected:
     /// window stops ticking a few seconds after its last tick that changed something, so a
     /// longer quiet wait calls this from tick_override() for as long as it lasts. A wait of known
     /// length is cheaper with request_tick_in().
-    void request_tick()
+    inline void request_tick()
     {
         detail::note_tick_request();
     }
@@ -2425,7 +2433,7 @@ protected:
     /// an image's next frame): it is drawn, and it does not make the window busy either. A
     /// tick_override() that also animates something calls request_tick() as well, or the window
     /// waits for the requested time before its next tick.
-    void request_tick_in(Duration delay)
+    inline void request_tick_in(Duration delay)
     {
         detail::note_wake_request(delay.count());
     }
@@ -2439,7 +2447,7 @@ protected:
     /// mark_dirty()'s thread check without the dirtying, for a setter that changes nothing drawn
     /// (an event handler, a tip): reports a call from another thread than the one of the Window
     /// this element is under. Leave `where` defaulted: it names the setter that called this.
-    void check_thread(std::source_location where = std::source_location::current()) const
+    inline void check_thread(std::source_location where = std::source_location::current()) const
     {
 #if LIBWINUI_THREAD_CHECKS
         check_tree_thread(where);
@@ -2476,7 +2484,7 @@ private:
     [[nodiscard]] bool has_focus_handler() const noexcept;
     void               raise_focus_event(bool got);
     // Window's side of the popup: the open request, and a dismissal (light dismiss, Escape).
-    [[nodiscard]] PopupRequest* popup_request() const noexcept
+    [[nodiscard]] inline PopupRequest* popup_request() const noexcept
     {
         return extras_ ? extras_->popup.get() : nullptr;
     }
@@ -2511,7 +2519,7 @@ private:
     /// layers_composed() is true and render_override() leaves out what they show. They sit above the
     /// element's own drawing and its children, and the Window removes them when the element
     /// leaves the frame or this count drops to 0.
-    [[nodiscard]] virtual std::size_t layer_count() const
+    [[nodiscard]] inline virtual std::size_t layer_count() const
     {
         return 0;
     }
@@ -2520,7 +2528,7 @@ private:
     [[nodiscard]] virtual detail::LayerPlacement layer_placement(std::size_t index) const;
     /// Draws layer `index`'s content at rest, in this element's coordinates, with primitives only.
     /// The Window records it every frame and repaints the layer only when it changes.
-    virtual void render_layer(std::size_t index, Renderer& renderer, const Theme& theme) const
+    inline virtual void render_layer(std::size_t index, Renderer& renderer, const Theme& theme) const
     {
         (void)index;
         (void)renderer;
@@ -2529,7 +2537,7 @@ private:
     /// Starts the layers' animations (Compositor::animate_layer()), one id per layer in index
     /// order. Called when the layers start running and whenever one changes size. `elapsed` is
     /// how long they have run so far, so a cycle continues where it was.
-    virtual void animate_layers(detail::Compositor& compositor, std::span<const VisualId> layers, Duration elapsed)
+    inline virtual void animate_layers(detail::Compositor& compositor, std::span<const VisualId> layers, Duration elapsed)
     {
         (void)compositor;
         (void)layers;
@@ -2537,14 +2545,14 @@ private:
     }
     /// The layers stopped after running `elapsed` on the compositor. A control with its own
     /// phase clock adds the time to it, so its own drawing picks up where the compositor was.
-    virtual void layers_stopped(Duration elapsed)
+    inline virtual void layers_stopped(Duration elapsed)
     {
         (void)elapsed;
     }
     /// Whether the compositor shows this element's layers: render_override() leaves out what they
     /// show, and tick_override() has nothing to redraw for them. Meaningful while layer_count() is
     /// above 0.
-    [[nodiscard]] bool layers_composed() const
+    [[nodiscard]] inline bool layers_composed() const
     {
         return layers_composed_;
     }
@@ -2552,7 +2560,7 @@ private:
     /// This element's own part of sync_composition(): drive its compositor-owned state
     /// transitions (Button's hover and press). Sync only parts that for_each_child() does not
     /// list here. Default: nothing.
-    virtual void sync_composition_override(detail::Compositor& compositor, const Theme& theme)
+    inline virtual void sync_composition_override(detail::Compositor& compositor, const Theme& theme)
     {
         (void)compositor;
         (void)theme;
@@ -2633,23 +2641,23 @@ private:
         float min;
         float max;
     };
-    [[nodiscard]] static Range size_range(std::optional<float> size, float min_size, float max_size)
+    [[nodiscard]] static inline Range size_range(std::optional<float> size, float min_size, float max_size)
     {
         const float max = (std::max)((std::min)(size.value_or(std::numeric_limits<float>::infinity()), max_size), min_size);
         const float min = (std::max)((std::min)(size.value_or(0.0f), max), min_size);
         return {min, max};
     }
-    [[nodiscard]] Range width_range() const
+    [[nodiscard]] inline Range width_range() const
     {
         return size_range(width_, min_width_, max_width_);
     }
-    [[nodiscard]] Range height_range() const
+    [[nodiscard]] inline Range height_range() const
     {
         return size_range(height_, min_height_, max_height_);
     }
     // One axis of the offer: pulled into the range. An unbounded offer with a finite max is
     // offered the max, which the clamp does on its own.
-    [[nodiscard]] static float constrain_offer(float offered, const Range& range)
+    [[nodiscard]] static inline float constrain_offer(float offered, const Range& range)
     {
         return (std::max)(range.min, (std::min)(offered, range.max));
     }
@@ -2690,7 +2698,7 @@ private:
 protected:
     /// What the last measure asked for, without the margin: how large the content is, where
     /// bounds() may be the larger slot a stretching parent gave it.
-    [[nodiscard]] Size desired_content_size() const
+    [[nodiscard]] inline Size desired_content_size() const
     {
         return desired_;
     }
@@ -2724,7 +2732,7 @@ private:
         bool                   scoped_dark       = false;
     };
     mutable std::unique_ptr<Extras> extras_;
-    Extras&                         extras() const
+    inline Extras&                  extras() const
     {
         if (!extras_)
         {
@@ -2751,47 +2759,47 @@ void retire(std::unique_ptr<Element> element);
 // The tree linkage for library code that is not an Element: retire(), the window's frame.
 struct TreeAccess
 {
-    [[nodiscard]] static AutomationProviders automation_providers(Element& element)
+    [[nodiscard]] static inline AutomationProviders automation_providers(Element& element)
     {
         AutomationProviders out;
         element.automation_providers(out);
         return out;
     }
-    static void collect_live(Element& element, std::vector<Element*>& out)
+    static inline void collect_live(Element& element, std::vector<Element*>& out)
     {
         element.collect_live(out);
     }
-    [[nodiscard]] static PopupRequest* popup_request(const Element& element) noexcept
+    [[nodiscard]] static inline PopupRequest* popup_request(const Element& element) noexcept
     {
         return element.popup_request();
     }
-    static void dismiss_popup(Element& element, PopupCloseReason reason)
+    static inline void dismiss_popup(Element& element, PopupCloseReason reason)
     {
         element.dismiss_popup(reason);
     }
-    static void set_parent(Element& element, Element* parent)
+    static inline void set_parent(Element& element, Element* parent)
     {
         element.set_parent(parent);
     }
-    static void unlink_subscriptions(Element& element) noexcept
+    static inline void unlink_subscriptions(Element& element) noexcept
     {
         element.unlink_subscriptions();
     }
-    static void clear_dirty(Element& element, DirtyFlags flags = DirtyFlags::All)
+    static inline void clear_dirty(Element& element, DirtyFlags flags = DirtyFlags::All)
     {
         element.clear_dirty(flags);
     }
-    static void sync_composition(Element& element, Compositor& compositor, const Theme& theme)
+    static inline void sync_composition(Element& element, Compositor& compositor, const Theme& theme)
     {
         element.sync_composition(compositor, theme);
     }
-    [[nodiscard]] static bool layers_composed(const Element& element)
+    [[nodiscard]] static inline bool layers_composed(const Element& element)
     {
         return element.layers_composed();
     }
     // Marks an element whose sync_composition_override() keeps compositor visuals over its own
     // drawing, so the Window checks each frame whether anything covers them.
-    static void set_composes_visuals(Element& element)
+    static inline void set_composes_visuals(Element& element)
     {
         element.composes_visuals_ = true;
     }
@@ -2799,7 +2807,7 @@ struct TreeAccess
     // the frame (a popup, a dialog), a clip that cuts them, a transform or an opacity. The visuals
     // sit above the whole frame, so the element removes them and draws what they showed itself.
     // Also true while the element is not drawn at all (collapsed, or left out by its parent).
-    [[nodiscard]] static bool visuals_covered(const Element& element)
+    [[nodiscard]] static inline bool visuals_covered(const Element& element)
     {
         return element.visuals_covered_;
     }
@@ -2810,21 +2818,21 @@ struct LayoutAccess
 {
     // Place an element that is never measured or arranged (an automation-only node standing for
     // part of its owner) at `rect`.
-    static void set_bounds(Element& e, const Rect& rect)
+    static inline void set_bounds(Element& e, const Rect& rect)
     {
         e.bounds_ = rect;
     }
-    [[nodiscard]] static bool own_layout_invalid(const Element& e)
+    [[nodiscard]] static inline bool own_layout_invalid(const Element& e)
     {
         return !e.measure_valid_ || !e.arrange_valid_;
     }
-    [[nodiscard]] static bool measure_invalid(const Element& e)
+    [[nodiscard]] static inline bool measure_invalid(const Element& e)
     {
         return !e.measure_valid_;
     }
     // The theme `e`'s parent hands it, worked out from the window's `root` theme down through the
     // ancestors' requested themes.
-    [[nodiscard]] static const Theme& handed_theme(const Element& e, const Theme& root)
+    [[nodiscard]] static inline const Theme& handed_theme(const Element& e, const Theme& root)
     {
         if (e.parent_ == nullptr)
         {
@@ -2836,27 +2844,27 @@ struct LayoutAccess
     }
     // Whether `e` was last measured with `measurer` and `handed`, so it can be measured again in
     // its old space. A container that hands its children a theme of its own fails this.
-    [[nodiscard]] static bool measured_with(const Element& e, const TextMeasurer& measurer, const Theme& handed)
+    [[nodiscard]] static inline bool measured_with(const Element& e, const TextMeasurer& measurer, const Theme& handed)
     {
         return e.measured_with_ == &measurer && e.measured_theme_ == &handed &&
                e.measured_theme_generation_ == handed.generation();
     }
     // Measures `e` again with what it was last offered; true when its size came out the same and
     // no other offer in its last pass hangs on it.
-    static bool remeasure(Element& e, const TextMeasurer& measurer, const Theme& handed)
+    static inline bool remeasure(Element& e, const TextMeasurer& measurer, const Theme& handed)
     {
         const Size before = e.measured_result_;
         const bool twice  = e.measured_twice_;
         const Size after  = e.measure(e.measured_available_, measurer, handed);
         return after == before && !twice;
     }
-    static void invalidate_own_measure(Element& e)
+    static inline void invalidate_own_measure(Element& e)
     {
         e.measure_valid_ = false;
         e.arrange_valid_ = false;
     }
     // Arranges `e` again in the rect it was last given.
-    static void rearrange(Element& e)
+    static inline void rearrange(Element& e)
     {
         e.arrange_valid_ = false;
         e.arrange(e.arranged_rect_);
@@ -2890,3 +2898,5 @@ using ExitGhostsPtr = std::unique_ptr<ExitGhosts, ExitGhostsDelete>;
 } // namespace detail
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

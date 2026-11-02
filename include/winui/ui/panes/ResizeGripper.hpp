@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -17,10 +21,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -48,19 +54,19 @@ namespace ui
 /// });
 /// window.set_content(std::move(stack));
 /// @endcode
-class ResizeGripperControl final : public Element
+LIBWINUI_EXPORT class ResizeGripperControl final : public Element
 {
 public:
     /// A 16 DIP gripper.
     ResizeGripperControl() = default;
 
     /// The square's edge length in DIPs; 16 by default.
-    [[nodiscard]] float size() const
+    [[nodiscard]] inline float size() const
     {
         return size_;
     }
     /// Sets the edge length in DIPs and lays the gripper out again.
-    void set_size(float size)
+    inline void set_size(float size)
     {
         size_ = size;
         mark_dirty(DirtyFlags::Layout);
@@ -68,26 +74,26 @@ public:
 
     /// Fired while the pointer drags, with the (dx, dy) movement since the previous call. Works
     /// like SplitterControl::on_drag_delta, on both axes at once.
-    void on_drag_delta(Callback<void(Point delta)> handler)
+    inline void on_drag_delta(Callback<void(Point delta)> handler)
     {
         on_drag_delta_ = std::move(handler);
     }
 
 
     /// Whether a left-button drag is in progress. The dots draw at hover strength meanwhile.
-    [[nodiscard]] bool dragging() const
+    [[nodiscard]] inline bool dragging() const
     {
         return dragging_;
     }
     /// Whether the pointer is over the gripper.
-    [[nodiscard]] bool hovered() const
+    [[nodiscard]] inline bool hovered() const
     {
         return hovered_;
     }
 
     // ---- automation ----
     /// The diagonal resize arrow, or none while disabled.
-    [[nodiscard]] std::optional<CursorShape> cursor_at(Point) const override
+    [[nodiscard]] inline std::optional<CursorShape> cursor_at(Point) const override
     {
         if (!is_enabled())
         {
@@ -96,7 +102,7 @@ public:
         return CursorShape::SizeNorthwestSoutheast;
     }
     /// Reported to screen readers as a Thumb.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Thumb;
     }
@@ -153,7 +159,7 @@ protected:
 ///     },
 /// });
 /// @endcode
-struct ResizeGripper
+LIBWINUI_EXPORT struct ResizeGripper
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ResizeGripper>` points at.
@@ -206,3 +212,5 @@ struct ResizeGripper
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

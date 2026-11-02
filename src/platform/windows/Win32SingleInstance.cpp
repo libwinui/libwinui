@@ -7,6 +7,7 @@
 #include "Win32String.hpp"
 #include "winui/core/CommandLine.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <chrono>
 #include <filesystem>
 #include <optional>
@@ -17,6 +18,7 @@
 #include <utility>
 
 #include <cstdint>
+#endif
 
 namespace ui::win32
 {

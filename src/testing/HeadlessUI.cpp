@@ -10,6 +10,7 @@
 #include "winui/ui/input/ToggleSwitch.hpp"
 #include "winui/ui/text/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -18,6 +19,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui::detail
 {

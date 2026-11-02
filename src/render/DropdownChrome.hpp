@@ -9,11 +9,13 @@
 #include "winui/render/Renderer.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {

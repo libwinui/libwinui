@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Duration.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Renderer.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <unordered_map>
+#endif
 
 namespace ui
 {
@@ -43,7 +49,7 @@ namespace ui
 /// static const Pulse pulse; // must outlive the player
 /// window.set_content(ui::AnimatedVisualPlayer{.source = &pulse, .width = 96, .height = 96});
 /// @endcode
-class AnimatedVisualSource
+LIBWINUI_EXPORT class AnimatedVisualSource
 {
 public:
     virtual ~AnimatedVisualSource() = default;
@@ -65,7 +71,7 @@ public:
 
     /// Whether this source can be shown at all. A source that depends on something the running
     /// system lacks returns false, and AnimatedVisualPlayer shows its fallback content instead.
-    [[nodiscard]] virtual bool available() const
+    [[nodiscard]] inline virtual bool available() const
     {
         return true;
     }
@@ -116,7 +122,7 @@ public:
 /// icon->set_source(&pulse);
 /// icon->set_state("PointerOver"); // animates from 0 toward 0.5
 /// @endcode
-class AnimatedIconSource : public AnimatedVisualSource
+LIBWINUI_EXPORT class AnimatedIconSource : public AnimatedVisualSource
 {
 public:
     /// State name to the normalized progress (0..1) its pose sits at. Transition segments such
@@ -126,10 +132,12 @@ public:
     /// render_frame() in the icon's foreground color, which AnimatedIcon passes with every draw.
     /// The source doesn't store the color, because one source object is shared by every icon
     /// showing it. A source with no themable color keeps this default, which ignores `foreground`.
-    virtual void render_icon_frame(Renderer& renderer, const Rect& bounds, double progress, const Color& /*foreground*/) const
+    inline virtual void render_icon_frame(Renderer& renderer, const Rect& bounds, double progress, const Color& /*foreground*/) const
     {
         render_frame(renderer, bounds, progress);
     }
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

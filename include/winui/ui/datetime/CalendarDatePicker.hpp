@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Input.hpp"
@@ -12,10 +16,12 @@
 #include "winui/ui/spec/Common.hpp"
 #include "winui/ui/spec/Control.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <chrono>
 #include <memory>
 #include <optional>
 #include <string>
+#endif
 
 namespace ui
 {
@@ -39,7 +45,7 @@ namespace ui
 /// picker.on_date_changed([](std::optional<std::chrono::year_month_day> date)
 ///                        { std::printf("%s\n", date ? "picked" : "cleared"); });
 /// @endcode
-class CalendarDatePickerControl final : public Element, private InvokeProvider, private ValueProvider
+LIBWINUI_EXPORT class CalendarDatePickerControl final : public Element, private InvokeProvider, private ValueProvider
 {
 public:
     /// An empty picker showing its placeholder.
@@ -49,14 +55,14 @@ public:
     CalendarDatePickerControl& operator=(const CalendarDatePickerControl&) = delete;
 
     /// The picked date; unset until one is picked.
-    [[nodiscard]] std::optional<std::chrono::year_month_day> date() const
+    [[nodiscard]] inline std::optional<std::chrono::year_month_day> date() const
     {
         return date_;
     }
     /// Sets the date, clamped to the calendar's range. Raises the change callback when it differs.
     void set_date(std::optional<std::chrono::year_month_day> date);
     /// Called after the date changed, from the calendar or a setter, with the new date.
-    void on_date_changed(Callback<void(std::optional<std::chrono::year_month_day>)> handler)
+    inline void on_date_changed(Callback<void(std::optional<std::chrono::year_month_day>)> handler)
     {
         on_date_changed_ = std::move(handler);
     }
@@ -73,34 +79,34 @@ public:
     [[nodiscard]] std::string shown_text() const;
 
     /// Whether the calendar is open.
-    [[nodiscard]] bool is_calendar_open() const
+    [[nodiscard]] inline bool is_calendar_open() const
     {
         return open_;
     }
     /// Opens or closes the calendar.
     void set_calendar_open(bool open);
     /// Called after the calendar opened (true) or closed (false).
-    void on_calendar_open_changed(Callback<void(bool)> handler)
+    inline void on_calendar_open_changed(Callback<void(bool)> handler)
     {
         on_open_changed_ = std::move(handler);
     }
 
     /// The calendar the popup shows. It stays a CalendarView in single selection.
-    [[nodiscard]] CalendarViewControl& calendar()
+    [[nodiscard]] inline CalendarViewControl& calendar()
     {
         return *calendar_;
     }
 
     // ---- Element ----
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Button;
     }
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_.text();
     }
@@ -135,12 +141,12 @@ private:
     mutable float                                              glyph_column_ = 32.0f; // set by measure_override()
 
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.invoke = this;
         out.value  = this;
     }
-    bool invoke() override
+    inline bool invoke() override
     {
         if (!is_enabled())
         {
@@ -149,15 +155,15 @@ private:
         set_calendar_open(!open_);
         return true;
     }
-    [[nodiscard]] std::string text_value() const override
+    [[nodiscard]] inline std::string text_value() const override
     {
         return shown_text();
     }
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return true;
     }
-    bool set_text_value(std::string_view) override
+    inline bool set_text_value(std::string_view) override
     {
         return false;
     }
@@ -176,7 +182,7 @@ private:
 ///     .min_date         = ui::today(),
 /// });
 /// @endcode
-struct CalendarDatePicker
+LIBWINUI_EXPORT struct CalendarDatePicker
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<CalendarDatePicker>` points at.
@@ -257,3 +263,5 @@ struct CalendarDatePicker
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

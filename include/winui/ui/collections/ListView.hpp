@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
@@ -18,6 +22,7 @@
 #include "winui/ui/spec/ItemsModel.hpp"
 #include "winui/ui/spec/Spec.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <memory>
 #include <optional>
@@ -26,6 +31,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -62,7 +68,7 @@ namespace ui
 /// names->on_item_click([](std::size_t i) { std::println("clicked {}", i); });
 /// stack->add(std::move(names));
 /// @endcode
-class ListViewControl final : public ListViewBase
+LIBWINUI_EXPORT class ListViewControl final : public ListViewBase
 {
 public:
     /// An empty list in Single selection mode.
@@ -262,7 +268,7 @@ struct ListViewSpec
 /// // Plain text needs no template.
 /// ui::ListView<std::string>{.items = {"Inbox", "Drafts", "Sent"}};
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 struct ListView
 {
     /// The control this spec builds; what `ui::Control<ListView>` points at.
@@ -478,3 +484,5 @@ struct ListView
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

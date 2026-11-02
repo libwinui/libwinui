@@ -8,7 +8,9 @@
 #include "winui/render/Brush.hpp"
 #include "winui/render/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <cstdint>
+#endif
 
 namespace ui::detail
 {

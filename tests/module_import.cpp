@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-// The C++ modules (LIBWINUI_BUILD_MODULES): a headless UI built and driven through
-// `import winui.testing;` alone, which re-exports winui. A program of its own: the files of
-// winui_tests include the headers, and a file uses either the headers or the module.
+// The C++ modules: a headless UI built and driven through `import winui.testing;` alone, which
+// re-exports winui. A program of its own: winui_tests includes the headers, and a program uses
+// either the headers or the module.
 #include <string>
 #include <vector>
 

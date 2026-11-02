@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Property.hpp"
@@ -12,10 +16,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/spec/Spec.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -36,7 +42,7 @@ namespace ui
 ///     {.text = "Save as...", .on_click = [] { save(); }},
 /// });
 /// @endcode
-class ContextMenuControl final : public ContentHost
+LIBWINUI_EXPORT class ContextMenuControl final : public ContentHost
 {
 public:
     /// No child and no items yet.
@@ -55,7 +61,7 @@ public:
     /// Closes the menu.
     void hide();
     /// The flyout that shows the menu, for its placement and its opened and closed events.
-    [[nodiscard]] MenuFlyoutControl& menu() const
+    [[nodiscard]] inline MenuFlyoutControl& menu() const
     {
         return *menu_;
     }
@@ -96,7 +102,7 @@ private:
 ///     .content = ui::Text{.text = note},
 /// });
 /// @endcode
-struct ContextMenu
+LIBWINUI_EXPORT struct ContextMenu
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ContextMenu>` points at.
@@ -150,3 +156,5 @@ struct ContextMenu
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

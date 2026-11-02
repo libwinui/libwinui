@@ -21,6 +21,7 @@
 #include "winui/render/Text.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <memory>
 #include <optional>
@@ -28,6 +29,7 @@
 #include <vector>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -69,7 +71,7 @@ struct ToggleVisuals
     ToggleVisual normal, hover, pressed, disabled;
 
     // The `ButtonState` selection every other visual set uses, then the checked or unchecked half.
-    [[nodiscard]] const ButtonVisual& for_state(ButtonState s, bool checked) const
+    [[nodiscard]] inline const ButtonVisual& for_state(ButtonState s, bool checked) const
     {
         const ToggleVisual* tv = &normal;
         switch (s)
@@ -90,7 +92,7 @@ struct ToggleVisuals
     }
 
     // All eight halves, for a resolver adjusting a field across every state at once.
-    [[nodiscard]] std::array<ButtonVisual*, 8> all()
+    [[nodiscard]] inline std::array<ButtonVisual*, 8> all()
     {
         return {&normal.off, &normal.on, &hover.off, &hover.on, &pressed.off, &pressed.on, &disabled.off, &disabled.on};
     }
@@ -148,7 +150,7 @@ struct IndeterminateVisuals
     float square_size = 0.0f;
 
     // The visual for an interaction state.
-    [[nodiscard]] const IndeterminateVisual& for_state(ButtonState s) const
+    [[nodiscard]] inline const IndeterminateVisual& for_state(ButtonState s) const
     {
         switch (s)
         {
@@ -165,7 +167,7 @@ struct IndeterminateVisuals
     }
 
     // All four states, for a resolver adjusting a field across every state at once.
-    [[nodiscard]] std::array<IndeterminateVisual*, 4> all()
+    [[nodiscard]] inline std::array<IndeterminateVisual*, 4> all()
     {
         return {&normal, &hover, &pressed, &disabled};
     }
@@ -173,10 +175,11 @@ struct IndeterminateVisuals
     // The box's four *checked* halves, marked differently: what an era states whose indeterminate
     // box repeats its checked one state for state (Windows 11's indeterminate box fills are the
     // checked ones exactly).
-    [[nodiscard]] static IndeterminateVisuals like_checked(const ToggleVisuals& box,
-                                                           IndeterminateMark    kind,
-                                                           IconGlyph            glyph = glyphs::CheckBoxIndeterminate,
-                                                           float                square_size = 0.0f)
+    [[nodiscard]] static inline IndeterminateVisuals like_checked(
+        const ToggleVisuals& box,
+        IndeterminateMark    kind,
+        IconGlyph            glyph       = glyphs::CheckBoxIndeterminate,
+        float                square_size = 0.0f)
     {
         return IndeterminateVisuals{IndeterminateVisual{box.normal.on},
                                     IndeterminateVisual{box.hover.on},
@@ -624,7 +627,7 @@ struct ControlChrome
         friend bool operator==(const GutterScrollBar&, const GutterScrollBar&) = default;
 
         // The thumb's or an arrow's look in an interaction state; Normal and Disabled are `rest`.
-        [[nodiscard]] const Part& part_for_state(ButtonState s) const
+        [[nodiscard]] inline const Part& part_for_state(ButtonState s) const
         {
             return s == ButtonState::Pressed ? pressed : s == ButtonState::Hover ? hover : rest;
         }
@@ -959,7 +962,7 @@ struct ControlChrome
     float radio_box_size = -1.0f;
 
     // `radio_box_size` if set, `toggle_box_size` otherwise.
-    [[nodiscard]] float resolved_radio_box_size() const
+    [[nodiscard]] inline float resolved_radio_box_size() const
     {
         return radio_box_size >= 0.0f ? radio_box_size : toggle_box_size;
     }
@@ -1125,7 +1128,7 @@ struct ControlChrome
         friend bool operator==(const SliderChrome&, const SliderChrome&) = default;
 
         // The band pair for an interaction state.
-        [[nodiscard]] const Bands& bands_for_state(ButtonState s) const
+        [[nodiscard]] inline const Bands& bands_for_state(ButtonState s) const
         {
             switch (s)
             {
@@ -1174,7 +1177,7 @@ struct ControlChrome
         friend bool operator==(const SliderBlock&, const SliderBlock&) = default;
 
         // The thumb visual for an interaction state.
-        [[nodiscard]] const ButtonVisual& thumb_for_state(ButtonState s) const
+        [[nodiscard]] inline const ButtonVisual& thumb_for_state(ButtonState s) const
         {
             switch (s)
             {
@@ -1333,12 +1336,12 @@ struct ControlChrome
     IndeterminateVisuals check_box_indeterminate;
 
     // States the same set for all three controls — what a resolver whose era draws them alike does.
-    void set_toggle_visuals(const ToggleVisuals& v)
+    inline void set_toggle_visuals(const ToggleVisuals& v)
     {
         check_box_box = radio_ring = toggle_track = v;
     }
     // All three, for a resolver adjusting one field on every control at once.
-    [[nodiscard]] std::array<ToggleVisuals*, 3> toggles()
+    [[nodiscard]] inline std::array<ToggleVisuals*, 3> toggles()
     {
         return {&check_box_box, &radio_ring, &toggle_track};
     }
@@ -1412,7 +1415,7 @@ struct ControlChrome
             int                width = 0;
             std::vector<Color> pixels;
 
-            friend bool operator==(const CornerArt&, const CornerArt&) = default;
+            friend inline bool operator==(const CornerArt&, const CornerArt&) = default;
         };
         CornerArt active_top_left, active_top_right;
         CornerArt inactive_top_left, inactive_top_right;
@@ -1424,7 +1427,7 @@ struct ControlChrome
             std::array<std::vector<Color>, 2> columns;
             std::vector<float>                fade;
 
-            friend bool operator==(const CaptionEdge&, const CaptionEdge&) = default;
+            friend inline bool operator==(const CaptionEdge&, const CaptionEdge&) = default;
         };
         CaptionEdge active_caption_left, active_caption_right;
         CaptionEdge inactive_caption_left, inactive_caption_right;
@@ -1475,7 +1478,7 @@ struct ControlChrome
             // The column just inside the outline on either side (Aero Basic).
             Color inner{};
 
-            friend bool operator==(const Face&, const Face&) = default;
+            friend inline bool operator==(const Face&, const Face&) = default;
         };
         // Normal, hot, pressed and disabled, on an active window and then on an inactive one.
         std::array<Face, 8> caption_faces{};
@@ -1508,11 +1511,11 @@ struct ControlChrome
             // The reflection streaks' white, at its peak alpha.
             Color streak;
 
-            friend bool operator==(const Glass&, const Glass&) = default;
+            friend inline bool operator==(const Glass&, const Glass&) = default;
         };
         std::optional<Glass> glass{};
 
-        friend bool operator==(const WindowFrame&, const WindowFrame&) = default;
+        friend inline bool operator==(const WindowFrame&, const WindowFrame&) = default;
     };
     std::optional<WindowFrame> window_frame{};
 };
@@ -1528,15 +1531,15 @@ struct ControlChrome
 // The one door into Theme's private pointer.
 struct ControlChromeAccess
 {
-    [[nodiscard]] static const std::shared_ptr<const ControlChrome>& get(const Theme& theme)
+    [[nodiscard]] static inline const std::shared_ptr<const ControlChrome>& get(const Theme& theme)
     {
         return theme.control_chrome_;
     }
-    [[nodiscard]] static std::shared_ptr<const ControlChrome>& get(Theme& theme)
+    [[nodiscard]] static inline std::shared_ptr<const ControlChrome>& get(Theme& theme)
     {
         return theme.control_chrome_;
     }
-    [[nodiscard]] static ThemeColors& colors(Theme& theme)
+    [[nodiscard]] static inline ThemeColors& colors(Theme& theme)
     {
         return theme.colors_;
     }

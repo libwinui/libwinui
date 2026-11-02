@@ -1,20 +1,26 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Version.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <limits>
 #include <optional>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// Where the items of a line go in the room left over along it (a LinedFlowLayout's or
 /// TileLayout's ItemsJustification, a WrapLayout's line alignment).
-enum class ItemsJustification
+LIBWINUI_EXPORT enum class ItemsJustification
 {
     Start,        ///< Packed at the start (the default).
     Center,       ///< Packed in the middle.
@@ -24,7 +30,7 @@ enum class ItemsJustification
     SpaceEvenly,  ///< Equal gaps between the items and at both ends.
 };
 
-class Element;
+LIBWINUI_EXPORT class Element;
 
 /// What a layout's host does when the layout asks to be redone.
 ///
@@ -51,7 +57,7 @@ class Element;
 ///     float gap_ = 0.0f;
 /// };
 /// @endcode
-class LayoutOwner
+LIBWINUI_EXPORT class LayoutOwner
 {
 public:
     LayoutOwner()                              = default;
@@ -67,7 +73,7 @@ protected:
 };
 
 /// What kind of change it was.
-enum class ItemsChangeAction
+LIBWINUI_EXPORT enum class ItemsChangeAction
 {
     Add,     ///< `new_count` items inserted at `new_index`
     Remove,  ///< `old_count` items removed from `old_index`
@@ -106,7 +112,7 @@ enum class ItemsChangeAction
 ///     std::vector<float> heights_;
 /// };
 /// @endcode
-struct ItemsChange
+LIBWINUI_EXPORT struct ItemsChange
 {
     /// The kind of change. The ItemsChangeAction says which index and count fields apply.
     ItemsChangeAction action = ItemsChangeAction::Reset;
@@ -133,7 +139,7 @@ struct ItemsChange
 /// auto* layout = panel->set_layout(std::make_unique<ui::StackLayoutEngine>());
 /// layout->set_spacing(8.0f); // the layout invalidates the panel
 /// @endcode
-class Layout
+LIBWINUI_EXPORT class Layout
 {
 public:
     virtual ~Layout();
@@ -142,7 +148,7 @@ public:
     Layout& operator=(const Layout&) = delete;
 
     /// The host this layout is attached to (non-owning), or nullptr.
-    [[nodiscard]] LayoutOwner* owner() const
+    [[nodiscard]] inline LayoutOwner* owner() const
     {
         return owner_;
     }
@@ -151,7 +157,7 @@ public:
     /// layout. Return true only when measure() touches nothing but the layout's own state and
     /// the context it is given. It must not realize or recycle an element, read the viewport or
     /// invalidate anything. False by default. The built-in layouts virtualize and return false.
-    [[nodiscard]] virtual bool parallel_measure_safe() const
+    [[nodiscard]] inline virtual bool parallel_measure_safe() const
     {
         return false;
     }
@@ -171,7 +177,7 @@ private:
     friend class VirtualizingLayout;
 
     // Attach to / detach from a host, as the two hosts take and give up a layout.
-    void set_owner(LayoutOwner* owner)
+    inline void set_owner(LayoutOwner* owner)
     {
         owner_ = owner;
     }
@@ -204,7 +210,7 @@ private:
 ///     }
 /// };
 /// @endcode
-class NonVirtualizingLayoutContext
+LIBWINUI_EXPORT class NonVirtualizingLayoutContext
 {
 public:
     virtual ~NonVirtualizingLayoutContext() = default;
@@ -263,7 +269,7 @@ public:
 ///     .content  = {ui::Text{.text = "One"}, ui::Text{.text = "Two"}},
 /// });
 /// @endcode
-class NonVirtualizingLayout : public Layout
+LIBWINUI_EXPORT class NonVirtualizingLayout : public Layout
 {
 public:
     /// Returns the size the children need within `available` (infinity on an unbounded axis). It
@@ -275,7 +281,7 @@ public:
 
 /// How get_or_create_element_at() hands an element out.
 /// Combine with `|`, test with has_flag().
-enum class ElementRealizationOptions : unsigned
+LIBWINUI_EXPORT enum class ElementRealizationOptions : unsigned
 {
     /// Realize it normally; the host recycles it after a pass that did not ask for it.
     None = 0,
@@ -287,12 +293,13 @@ enum class ElementRealizationOptions : unsigned
     SuppressAutoRecycle = 2,
 };
 /// Whether `set` contains `flag`.
-[[nodiscard]] constexpr bool has_flag(ElementRealizationOptions set, ElementRealizationOptions flag)
+LIBWINUI_EXPORT [[nodiscard]] constexpr bool has_flag(ElementRealizationOptions set, ElementRealizationOptions flag)
 {
     return (static_cast<unsigned>(set) & static_cast<unsigned>(flag)) != 0;
 }
 /// The union of two option sets.
-[[nodiscard]] constexpr ElementRealizationOptions operator|(ElementRealizationOptions a, ElementRealizationOptions b)
+LIBWINUI_EXPORT [[nodiscard]] constexpr ElementRealizationOptions operator|(ElementRealizationOptions a,
+                                                                            ElementRealizationOptions b)
 {
     return static_cast<ElementRealizationOptions>(static_cast<unsigned>(a) | static_cast<unsigned>(b));
 }
@@ -318,7 +325,7 @@ enum class ElementRealizationOptions : unsigned
 ///     }
 /// }
 /// @endcode
-class VirtualizingLayoutContext
+LIBWINUI_EXPORT class VirtualizingLayoutContext
 {
 public:
     virtual ~VirtualizingLayoutContext() = default;
@@ -330,7 +337,7 @@ public:
     /// Asking for it keeps it realized through this measure pass. The host owns the element.
     virtual Element& get_or_create_element_at(std::size_t index, ElementRealizationOptions options) = 0;
     /// get_or_create_element_at() with ElementRealizationOptions::None.
-    Element& get_or_create_element_at(std::size_t index)
+    inline Element& get_or_create_element_at(std::size_t index)
     {
         return get_or_create_element_at(index, ElementRealizationOptions::None);
     }
@@ -345,7 +352,7 @@ public:
     /// The viewport alone.
     [[nodiscard]] virtual Rect visible_rect() const = 0;
     /// The item to lay out first after a long scroll jump, such as a bring-into-view target, if any.
-    [[nodiscard]] virtual std::optional<std::size_t> recommended_anchor_index() const
+    [[nodiscard]] inline virtual std::optional<std::size_t> recommended_anchor_index() const
     {
         return std::nullopt;
     }
@@ -409,17 +416,17 @@ public:
 /// auto repeater = std::make_unique<ui::ForEachControl>();
 /// repeater->set_layout(std::make_unique<RowLayout>());
 /// @endcode
-class VirtualizingLayout : public Layout
+LIBWINUI_EXPORT class VirtualizingLayout : public Layout
 {
 public:
     /// Called when a host starts using this layout. uninitialize_for_context() is called when it
     /// stops. The default does nothing.
-    virtual void initialize_for_context(VirtualizingLayoutContext& context)
+    inline virtual void initialize_for_context(VirtualizingLayoutContext& context)
     {
         (void)context;
     }
     /// Called when the host stops using this layout. Drop per-host state here.
-    virtual void uninitialize_for_context(VirtualizingLayoutContext& context)
+    inline virtual void uninitialize_for_context(VirtualizingLayoutContext& context)
     {
         (void)context;
     }
@@ -432,7 +439,7 @@ public:
 
     /// Called when the collection changed. The default calls invalidate_measure(), which lays out
     /// everything again.
-    virtual void on_items_changed(VirtualizingLayoutContext& context, const ItemsChange& change)
+    inline virtual void on_items_changed(VirtualizingLayoutContext& context, const ItemsChange& change)
     {
         (void)context;
         (void)change;
@@ -442,16 +449,18 @@ public:
 
 /// A rect that stands for no limit. A host with nothing to scroll it reports it as its realization
 /// rect. It is huge but finite, because infinite bounds would make its right edge NaN.
-[[nodiscard]] inline Rect unbounded_rect()
+LIBWINUI_EXPORT [[nodiscard]] inline Rect unbounded_rect()
 {
     constexpr float Huge = (std::numeric_limits<float>::max)() / 4.0f;
     return Rect{-Huge, -Huge, 2.0f * Huge, 2.0f * Huge};
 }
 /// Whether a realization rect is unbounded along either axis, as in a non-virtualizing context.
-[[nodiscard]] inline bool is_unbounded(const Rect& rect)
+LIBWINUI_EXPORT [[nodiscard]] inline bool is_unbounded(const Rect& rect)
 {
     constexpr float Limit = (std::numeric_limits<float>::max)() / 16.0f;
     return rect.width >= Limit || rect.height >= Limit;
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

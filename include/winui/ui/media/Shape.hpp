@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -17,6 +21,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -24,6 +29,7 @@
 #include <vector>
 
 #include <cstdlib>
+#endif
 
 namespace ui
 {
@@ -45,16 +51,16 @@ namespace ui
 /// shape->set_height(60.0f);
 /// window.set_content(std::move(shape)); // drawn as one geometry: fill and stroke together
 /// @endcode
-class Shape : public Element
+LIBWINUI_EXPORT class Shape : public Element
 {
 public:
     /// The interior paint. Empty, the default, paints no interior.
-    [[nodiscard]] const Paint& fill() const
+    [[nodiscard]] inline const Paint& fill() const
     {
         return fill_;
     }
     /// Sets the interior paint: a Color, a gradient, an AcrylicBrush or a ThemeColor. Redraws.
-    void set_fill(Paint paint)
+    inline void set_fill(Paint paint)
     {
         fill_ = std::move(paint);
         mark_dirty(DirtyFlags::Visual);
@@ -62,13 +68,13 @@ public:
 
     /// The outline paint. Empty, the default, draws no outline and makes `stroke_thickness()`
     /// count as zero for layout.
-    [[nodiscard]] const Paint& stroke() const
+    [[nodiscard]] inline const Paint& stroke() const
     {
         return stroke_;
     }
     /// Sets the outline paint. Updates layout and redraws, since whether there is a stroke changes
     /// how much room the shape takes.
-    void set_stroke(Paint paint)
+    inline void set_stroke(Paint paint)
     {
         stroke_ = std::move(paint);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -76,24 +82,24 @@ public:
 
     /// The outline width, 1 by default. This is the `thickness` of stroke_style(). The other
     /// stroke settings, such as caps, join, miter limit and dashes, are in that StrokeStyle.
-    [[nodiscard]] float stroke_thickness() const
+    [[nodiscard]] inline float stroke_thickness() const
     {
         return style_.thickness;
     }
     /// Sets the outline width in DIPs. Updates layout and redraws, since the room the stroke takes
     /// changes with it.
-    void set_stroke_thickness(float thickness)
+    inline void set_stroke_thickness(float thickness)
     {
         style_.thickness = thickness;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The whole pen, stroke_thickness() included.
-    [[nodiscard]] const StrokeStyle& stroke_style() const
+    [[nodiscard]] inline const StrokeStyle& stroke_style() const
     {
         return style_;
     }
     /// Sets everything but the thickness, which set_stroke_thickness() sets. Redraws.
-    void set_stroke_style(const StrokeStyle& style)
+    inline void set_stroke_style(const StrokeStyle& style)
     {
         const float thickness = style_.thickness;
         style_                = style;
@@ -105,12 +111,12 @@ public:
     /// the rest. For Rectangle and Ellipse, Uniform and UniformToFill make the outline square and
     /// None collapses it. For the other shapes it scales the geometry's bounds into the rect, less
     /// the stroke.
-    [[nodiscard]] Stretch stretch() const
+    [[nodiscard]] inline Stretch stretch() const
     {
         return stretch_;
     }
     /// Sets the stretch. Updates layout and redraws.
-    void set_stretch(Stretch stretch)
+    inline void set_stretch(Stretch stretch)
     {
         stretch_ = stretch;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -122,33 +128,33 @@ public:
 
 protected:
     /// For the concrete shapes. `stretch` is their default Stretch.
-    explicit Shape(Stretch stretch) : stretch_(stretch)
+    inline explicit Shape(Stretch stretch) : stretch_(stretch)
     {
     }
 
     /// The thickness layout reserves: the absolute stroke thickness with a stroke, 0 without.
-    [[nodiscard]] float effective_stroke_thickness() const
+    [[nodiscard]] inline float effective_stroke_thickness() const
     {
         return !stroke_.empty() ? std::abs(style_.thickness) : 0.0f;
     }
 
     /// For Line, Polyline, Polygon and Path: the geometry in local coordinates, before any stretch.
     /// Rectangle and Ellipse override outline_geometry() instead and never call this.
-    [[nodiscard]] virtual PathGeometry natural_geometry() const
+    [[nodiscard]] inline virtual PathGeometry natural_geometry() const
     {
         return {};
     }
 
     /// Whether stretch() scales the geometry. False for Rectangle and Ellipse, which build their
     /// geometry at the layout size themselves.
-    [[nodiscard]] virtual bool stretches_geometry() const
+    [[nodiscard]] inline virtual bool stretches_geometry() const
     {
         return true;
     }
 
     /// For Rectangle and Ellipse: the geometry, in local coordinates, for an element laid out at
     /// `size`.
-    [[nodiscard]] virtual PathGeometry outline_geometry(Size /*size*/) const
+    [[nodiscard]] inline virtual PathGeometry outline_geometry(Size /*size*/) const
     {
         return {};
     }
@@ -192,39 +198,39 @@ private:
 /// card->set_height(80.0f);
 /// window.set_content(std::move(panel));
 /// @endcode
-class RectangleControl final : public Shape
+LIBWINUI_EXPORT class RectangleControl final : public Shape
 {
 public:
     /// A rectangle with Stretch::Fill and no fill or stroke. Set a fill() or stroke() to see it.
-    RectangleControl() : Shape(Stretch::Fill)
+    inline RectangleControl() : Shape(Stretch::Fill)
     {
     }
 
     /// The corners' horizontal radius in DIPs. 0, the default, gives square corners.
-    [[nodiscard]] float radius_x() const
+    [[nodiscard]] inline float radius_x() const
     {
         return radius_x_;
     }
     /// Sets the horizontal corner radius. Redraws.
-    void set_radius_x(float radius)
+    inline void set_radius_x(float radius)
     {
         radius_x_ = radius;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The corners' vertical radius in DIPs. 0, the default, gives square corners.
-    [[nodiscard]] float radius_y() const
+    [[nodiscard]] inline float radius_y() const
     {
         return radius_y_;
     }
     /// Sets the vertical corner radius. Redraws.
-    void set_radius_y(float radius)
+    inline void set_radius_y(float radius)
     {
         radius_y_ = radius;
         mark_dirty(DirtyFlags::Visual);
     }
 
 protected:
-    [[nodiscard]] bool stretches_geometry() const override
+    [[nodiscard]] inline bool stretches_geometry() const override
     {
         return false;
     }
@@ -256,16 +262,16 @@ private:
 /// dot->set_height(48.0f);
 /// window.set_content(std::move(panel));
 /// @endcode
-class EllipseControl final : public Shape
+LIBWINUI_EXPORT class EllipseControl final : public Shape
 {
 public:
     /// An ellipse with Stretch::Fill and no fill or stroke.
-    EllipseControl() : Shape(Stretch::Fill)
+    inline EllipseControl() : Shape(Stretch::Fill)
     {
     }
 
 protected:
-    [[nodiscard]] bool stretches_geometry() const override
+    [[nodiscard]] inline bool stretches_geometry() const override
     {
         return false;
     }
@@ -290,25 +296,25 @@ protected:
 /// rule->set_x2(300.0f); // stretch it later
 /// window.set_content(std::move(panel));
 /// @endcode
-class LineControl final : public Shape
+LIBWINUI_EXPORT class LineControl final : public Shape
 {
 public:
     /// A line from (0, 0) to (0, 0). Invisible until its ends and a stroke are set.
-    LineControl() : Shape(Stretch::None)
+    inline LineControl() : Shape(Stretch::None)
     {
     }
     /// A line from `from` to `to`, in DIPs of local coordinates.
-    LineControl(Point from, Point to) : Shape(Stretch::None), from_(from), to_(to)
+    inline LineControl(Point from, Point to) : Shape(Stretch::None), from_(from), to_(to)
     {
     }
 
     /// The start point, (x1, y1).
-    [[nodiscard]] Point from() const
+    [[nodiscard]] inline Point from() const
     {
         return from_;
     }
     /// The end point, (x2, y2).
-    [[nodiscard]] Point to() const
+    [[nodiscard]] inline Point to() const
     {
         return to_;
     }
@@ -322,7 +328,7 @@ public:
     void set_y2(float v);
 
 protected:
-    [[nodiscard]] PathGeometry natural_geometry() const override
+    [[nodiscard]] inline PathGeometry natural_geometry() const override
     {
         return PathGeometry::line(from_, to_);
     }
@@ -347,36 +353,36 @@ private:
 /// zigzag->set_stroke_thickness(4.0f);
 /// window.set_content(std::move(panel));
 /// @endcode
-class PolylineControl : public Shape
+LIBWINUI_EXPORT class PolylineControl : public Shape
 {
 public:
     /// An empty polyline: draws nothing until it has points.
-    PolylineControl() : Shape(Stretch::None)
+    inline PolylineControl() : Shape(Stretch::None)
     {
     }
     /// A polyline through `points`, in local DIPs.
-    explicit PolylineControl(std::vector<Point> points) : Shape(Stretch::None), points_(std::move(points))
+    inline explicit PolylineControl(std::vector<Point> points) : Shape(Stretch::None), points_(std::move(points))
     {
     }
 
     /// The points, in local coordinates.
-    [[nodiscard]] const std::vector<Point>& points() const
+    [[nodiscard]] inline const std::vector<Point>& points() const
     {
         return points_;
     }
     /// Replaces every point. Updates layout and redraws.
-    void set_points(std::vector<Point> points)
+    inline void set_points(std::vector<Point> points)
     {
         points_ = std::move(points);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// Which enclosed areas the fill paints where segments cross.
-    [[nodiscard]] FillRule fill_rule() const
+    [[nodiscard]] inline FillRule fill_rule() const
     {
         return fill_rule_;
     }
     /// Sets the fill rule. Redraws.
-    void set_fill_rule(FillRule rule)
+    inline void set_fill_rule(FillRule rule)
     {
         fill_rule_ = rule;
         mark_dirty(DirtyFlags::Visual);
@@ -384,11 +390,11 @@ public:
 
 protected:
     /// Whether the figure closes back to its first point. False here, true for Polygon.
-    [[nodiscard]] virtual bool closed() const
+    [[nodiscard]] inline virtual bool closed() const
     {
         return false;
     }
-    [[nodiscard]] PathGeometry natural_geometry() const override
+    [[nodiscard]] inline PathGeometry natural_geometry() const override
     {
         return PathGeometry::polyline(points_, closed(), fill_rule_);
     }
@@ -411,18 +417,18 @@ private:
 /// triangle->set_fill_rule(ui::FillRule::Nonzero);
 /// window.set_content(std::move(panel));
 /// @endcode
-class PolygonControl final : public PolylineControl
+LIBWINUI_EXPORT class PolygonControl final : public PolylineControl
 {
 public:
     /// An empty polygon: draws nothing until it has points.
     PolygonControl() = default;
     /// A polygon through `points`, in local DIPs, closed back to the first.
-    explicit PolygonControl(std::vector<Point> points) : PolylineControl(std::move(points))
+    inline explicit PolygonControl(std::vector<Point> points) : PolylineControl(std::move(points))
     {
     }
 
 protected:
-    [[nodiscard]] bool closed() const override
+    [[nodiscard]] inline bool closed() const override
     {
         return true;
     }
@@ -447,32 +453,32 @@ protected:
 /// }
 /// window.set_content(std::move(panel));
 /// @endcode
-class PathControl final : public Shape
+LIBWINUI_EXPORT class PathControl final : public Shape
 {
 public:
     /// An empty path: draws nothing until it has data().
-    PathControl() : Shape(Stretch::None)
+    inline PathControl() : Shape(Stretch::None)
     {
     }
     /// A path drawing `data`, in local coordinates.
-    explicit PathControl(PathGeometry data) : Shape(Stretch::None), data_(std::move(data))
+    inline explicit PathControl(PathGeometry data) : Shape(Stretch::None), data_(std::move(data))
     {
     }
 
     /// The geometry, in local coordinates before any stretch.
-    [[nodiscard]] const PathGeometry& data() const
+    [[nodiscard]] inline const PathGeometry& data() const
     {
         return data_;
     }
     /// Replaces the geometry. Updates layout and redraws.
-    void set_data(PathGeometry data)
+    inline void set_data(PathGeometry data)
     {
         data_ = std::move(data);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
 protected:
-    [[nodiscard]] PathGeometry natural_geometry() const override
+    [[nodiscard]] inline PathGeometry natural_geometry() const override
     {
         return data_;
     }
@@ -503,7 +509,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Rectangle
+LIBWINUI_EXPORT struct Rectangle
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Rectangle>` points at.
@@ -578,7 +584,7 @@ struct Rectangle
 ///     .vertical_alignment   = ui::Alignment::Center,
 /// });
 /// @endcode
-struct Ellipse
+LIBWINUI_EXPORT struct Ellipse
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Ellipse>` points at.
@@ -653,7 +659,7 @@ struct Ellipse
 /// });
 /// end_x = 300.0f; // the line follows
 /// @endcode
-struct Line
+LIBWINUI_EXPORT struct Line
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Line>` points at.
@@ -726,7 +732,7 @@ struct Line
 ///     .stroke_thickness = 4.0f,
 /// });
 /// @endcode
-struct Polyline
+LIBWINUI_EXPORT struct Polyline
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Polyline>` points at.
@@ -799,7 +805,7 @@ struct Polyline
 ///     .stroke_thickness = 2.0f,
 /// });
 /// @endcode
-struct Polygon
+LIBWINUI_EXPORT struct Polygon
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Polygon>` points at.
@@ -874,7 +880,7 @@ struct Polygon
 ///     .stroke_thickness = 3.0f,
 /// });
 /// @endcode
-struct Path
+LIBWINUI_EXPORT struct Path
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Path>` points at.
@@ -934,3 +940,5 @@ struct Path
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

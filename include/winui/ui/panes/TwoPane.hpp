@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -17,17 +21,19 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
 
 /// Which pane wins when the available space fits neither Wide nor Tall.
-enum class TwoPanePriority
+LIBWINUI_EXPORT enum class TwoPanePriority
 {
     Pane1, ///< Show pane 1 alone (the default).
     Pane2, ///< Show pane 2 alone.
@@ -36,7 +42,7 @@ enum class TwoPanePriority
 /// Which axis, if either, the two panes are split along, as mode() reports it. The order of the
 /// panes on that axis comes from TwoPaneWideModeConfiguration or TwoPaneTallModeConfiguration, so
 /// mode() does not tell LeftRight from RightLeft.
-enum class TwoPaneMode
+LIBWINUI_EXPORT enum class TwoPaneMode
 {
     SinglePane, ///< Only the pane_priority() pane is shown.
     Wide,       ///< Both panes, side by side.
@@ -44,7 +50,7 @@ enum class TwoPaneMode
 };
 
 /// How the panes are arranged once the width qualifies for Wide.
-enum class TwoPaneWideModeConfiguration
+LIBWINUI_EXPORT enum class TwoPaneWideModeConfiguration
 {
     SinglePane, ///< Never split horizontally; fall through to the Tall test.
     LeftRight,  ///< Pane 1 on the left (the default).
@@ -52,7 +58,7 @@ enum class TwoPaneWideModeConfiguration
 };
 
 /// How the panes are arranged once the height qualifies for Tall.
-enum class TwoPaneTallModeConfiguration
+LIBWINUI_EXPORT enum class TwoPaneTallModeConfiguration
 {
     SinglePane, ///< Never stack; show a single pane instead.
     TopBottom,  ///< Pane 1 on top (the default).
@@ -88,7 +94,7 @@ enum class TwoPaneTallModeConfiguration
 ///     .pane2               = ui::Text{.text = "Detail"},
 /// });
 /// @endcode
-class TwoPaneControl final : public Element
+LIBWINUI_EXPORT class TwoPaneControl final : public Element
 {
 public:
     /// An empty view: no panes, pane 1 Auto, pane 2 one fraction, both thresholds 641 DIPs.
@@ -126,12 +132,12 @@ public:
         return observer;
     }
     /// Pane 1, or null before set_pane1(). Owned by the view.
-    [[nodiscard]] Element* pane1() const
+    [[nodiscard]] inline Element* pane1() const
     {
         return pane1_.get();
     }
     /// Pane 2, or null before set_pane2(). Owned by the view.
-    [[nodiscard]] Element* pane2() const
+    [[nodiscard]] inline Element* pane2() const
     {
         return pane2_.get();
     }
@@ -139,23 +145,23 @@ public:
     // ---- pane sizing ----
     /// Pane 1's track along the split axis, a GridLength as in a Grid track (DIPs, Auto or a
     /// fraction); Auto by default.
-    [[nodiscard]] GridLength pane1_length() const
+    [[nodiscard]] inline GridLength pane1_length() const
     {
         return pane1_length_;
     }
     /// Changes pane 1's track and lays the view out again. Only used while both panes are shown.
-    void set_pane1_length(GridLength length)
+    inline void set_pane1_length(GridLength length)
     {
         pane1_length_ = length;
         mark_dirty(DirtyFlags::Layout);
     }
     /// Pane 2's track along the split axis; one fraction by default, so it takes the rest.
-    [[nodiscard]] GridLength pane2_length() const
+    [[nodiscard]] inline GridLength pane2_length() const
     {
         return pane2_length_;
     }
     /// Changes pane 2's track and lays the view out again.
-    void set_pane2_length(GridLength length)
+    inline void set_pane2_length(GridLength length)
     {
         pane2_length_ = length;
         mark_dirty(DirtyFlags::Layout);
@@ -163,36 +169,36 @@ public:
 
     // ---- mode inputs ----
     /// The pane shown in SinglePane mode; Pane1 by default.
-    [[nodiscard]] TwoPanePriority pane_priority() const
+    [[nodiscard]] inline TwoPanePriority pane_priority() const
     {
         return pane_priority_;
     }
     /// Changes the single-pane choice and lays the view out again.
-    void set_pane_priority(TwoPanePriority priority)
+    inline void set_pane_priority(TwoPanePriority priority)
     {
         pane_priority_ = priority;
         mark_dirty(DirtyFlags::Layout);
     }
 
     /// How the panes are arranged in Wide mode; LeftRight by default.
-    [[nodiscard]] TwoPaneWideModeConfiguration wide_mode_configuration() const
+    [[nodiscard]] inline TwoPaneWideModeConfiguration wide_mode_configuration() const
     {
         return wide_mode_configuration_;
     }
     /// Changes the Wide arrangement and lays the view out again.
-    void set_wide_mode_configuration(TwoPaneWideModeConfiguration configuration)
+    inline void set_wide_mode_configuration(TwoPaneWideModeConfiguration configuration)
     {
         wide_mode_configuration_ = configuration;
         mark_dirty(DirtyFlags::Layout);
     }
 
     /// How the panes are arranged in Tall mode; TopBottom by default.
-    [[nodiscard]] TwoPaneTallModeConfiguration tall_mode_configuration() const
+    [[nodiscard]] inline TwoPaneTallModeConfiguration tall_mode_configuration() const
     {
         return tall_mode_configuration_;
     }
     /// Changes the Tall arrangement and lays the view out again.
-    void set_tall_mode_configuration(TwoPaneTallModeConfiguration configuration)
+    inline void set_tall_mode_configuration(TwoPaneTallModeConfiguration configuration)
     {
         tall_mode_configuration_ = configuration;
         mark_dirty(DirtyFlags::Layout);
@@ -200,24 +206,24 @@ public:
 
     /// The width threshold in DIPs; 641 by default. Wide needs more available width than this.
     /// An unbounded width never qualifies.
-    [[nodiscard]] float min_wide_mode_width() const
+    [[nodiscard]] inline float min_wide_mode_width() const
     {
         return min_wide_mode_width_;
     }
     /// Sets the Wide threshold, clamped to >= 0, and lays the view out again.
-    void set_min_wide_mode_width(float width)
+    inline void set_min_wide_mode_width(float width)
     {
         min_wide_mode_width_ = (std::max)(0.0f, width);
         mark_dirty(DirtyFlags::Layout);
     }
     /// The height threshold in DIPs; 641 by default. Tall needs more available height than this.
     /// Only tested when Wide did not apply.
-    [[nodiscard]] float min_tall_mode_height() const
+    [[nodiscard]] inline float min_tall_mode_height() const
     {
         return min_tall_mode_height_;
     }
     /// Sets the Tall threshold, clamped to >= 0, and lays the view out again.
-    void set_min_tall_mode_height(float height)
+    inline void set_min_tall_mode_height(float height)
     {
         min_tall_mode_height_ = (std::max)(0.0f, height);
         mark_dirty(DirtyFlags::Layout);
@@ -230,7 +236,7 @@ public:
     [[nodiscard]] TwoPaneMode mode() const;
     /// Only the panes the mode shows. A hidden pane takes no part in any walk over the tree, such
     /// as layout and rendering.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (pane1_visible() && pane1_)
         {
@@ -300,7 +306,7 @@ private:
 ///     .pane2               = ui::Text{.text = "Select an item"},
 /// });
 /// @endcode
-struct TwoPane
+LIBWINUI_EXPORT struct TwoPane
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<TwoPane>` points at.
@@ -369,3 +375,5 @@ struct TwoPane
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

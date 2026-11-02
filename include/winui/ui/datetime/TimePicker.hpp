@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Input.hpp"
@@ -11,10 +15,12 @@
 #include "winui/ui/spec/Common.hpp"
 #include "winui/ui/spec/Control.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <chrono>
 #include <memory>
 #include <optional>
 #include <string>
+#endif
 
 namespace ui
 {
@@ -25,7 +31,7 @@ class PickerEngine;
 } // namespace detail
 
 /// Which clock a TimePicker shows.
-enum class TimePickerClock
+LIBWINUI_EXPORT enum class TimePickerClock
 {
     TwelveHour,     ///< 12 hours and an AM/PM column.
     TwentyFourHour, ///< 0 to 23 hours.
@@ -48,7 +54,7 @@ enum class TimePickerClock
 /// picker.set_minute_increment(5);
 /// picker.set_selected_time(std::chrono::hours{7} + std::chrono::minutes{30});
 /// @endcode
-class TimePickerControl final : public Element, private InvokeProvider, private ValueProvider
+LIBWINUI_EXPORT class TimePickerControl final : public Element, private InvokeProvider, private ValueProvider
 {
 public:
     /// A picker with no time, on the regional clock, offering every minute.
@@ -58,7 +64,7 @@ public:
     TimePickerControl& operator=(const TimePickerControl&) = delete;
 
     /// The picked time of day, from midnight; unset until one is picked.
-    [[nodiscard]] std::optional<std::chrono::minutes> selected_time() const
+    [[nodiscard]] inline std::optional<std::chrono::minutes> selected_time() const
     {
         return time_;
     }
@@ -66,7 +72,7 @@ public:
     /// Raises the change callback when it differs.
     void set_selected_time(std::optional<std::chrono::minutes> time);
     /// Called after the time changed, from the flyout or a setter, with the new time.
-    void on_selected_time_changed(Callback<void(std::optional<std::chrono::minutes>)> handler)
+    inline void on_selected_time_changed(Callback<void(std::optional<std::chrono::minutes>)> handler)
     {
         on_selected_time_changed_ = std::move(handler);
     }
@@ -76,7 +82,7 @@ public:
     /// See clock().
     void set_clock(std::optional<TimePickerClock> clock);
     /// The minutes offered step by this many, 1 to 59; 0 offers only the full hour.
-    [[nodiscard]] int minute_increment() const
+    [[nodiscard]] inline int minute_increment() const
     {
         return increment_;
     }
@@ -91,15 +97,15 @@ public:
     void set_open(bool open);
 
     // ---- Element ----
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Button;
     }
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_.text();
     }
@@ -136,12 +142,12 @@ private:
     Subscription                                        strings_changed_;
 
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.invoke = this;
         out.value  = this;
     }
-    bool invoke() override
+    inline bool invoke() override
     {
         if (!is_enabled())
         {
@@ -151,11 +157,11 @@ private:
         return true;
     }
     [[nodiscard]] std::string text_value() const override;
-    [[nodiscard]] bool        text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return true;
     }
-    bool set_text_value(std::string_view) override
+    inline bool set_text_value(std::string_view) override
     {
         return false;
     }
@@ -173,7 +179,7 @@ private:
 ///     .minute_increment = 15,
 /// });
 /// @endcode
-struct TimePicker
+LIBWINUI_EXPORT struct TimePicker
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<TimePicker>` points at.
@@ -230,3 +236,5 @@ struct TimePicker
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

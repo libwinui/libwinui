@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -12,9 +16,11 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/spec/Spec.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <string>
+#endif
 
 namespace ui
 {
@@ -36,7 +42,7 @@ namespace ui
 /// fill->set_child(std::make_unique<ui::ScrollControl>());
 /// page->add(std::make_unique<ui::TextControl>("3 unread"));
 /// @endcode
-class FillControl final : public ContentHost
+LIBWINUI_EXPORT class FillControl final : public ContentHost
 {
 public:
     /// An empty fill of weight 1.
@@ -44,12 +50,12 @@ public:
 
     /// This fill's share of the leftover room, relative to the other fills and spacers in the
     /// same stack.
-    [[nodiscard]] float weight() const
+    [[nodiscard]] inline float weight() const
     {
         return weight_;
     }
     /// Sets the share; negative is treated as 0. Updates the layout.
-    void set_weight(float weight)
+    inline void set_weight(float weight)
     {
         weight_ = (std::max)(0.0f, weight);
         mark_dirty(DirtyFlags::Layout);
@@ -85,7 +91,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Fill
+LIBWINUI_EXPORT struct Fill
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ui::Fill>` points at.
@@ -140,3 +146,5 @@ struct Fill
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

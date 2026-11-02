@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -21,18 +25,20 @@
 #include "winui/ui/text/TextBox.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <memory>
 #include <string>
 #include <utility>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class TextControl;
-class IconControl;
+LIBWINUI_EXPORT class TextControl;
+LIBWINUI_EXPORT class IconControl;
 
 /// A hue/saturation/value/alpha color editor with channel, alpha and hex text entry and a
 /// preview swatch.
@@ -78,7 +84,7 @@ class IconControl;
 ///     },
 /// });
 /// @endcode
-class ColorPickerControl final : public Element
+LIBWINUI_EXPORT class ColorPickerControl final : public Element
 {
 public:
     /// A picker showing `color`; its alpha is kept only when `alpha_enabled`.
@@ -96,7 +102,7 @@ public:
 
     /// Whether the alpha channel is shown and honored; false by default. While false, the alpha
     /// slider and box are hidden regardless of their own switches and the color is opaque.
-    [[nodiscard]] bool alpha_enabled() const
+    [[nodiscard]] inline bool alpha_enabled() const
     {
         return alpha_enabled_;
     }
@@ -107,7 +113,7 @@ public:
 
     // ---- visibility ----
     /// Whether the hue and saturation sliders show; true by default.
-    [[nodiscard]] bool spectrum_visible() const
+    [[nodiscard]] inline bool spectrum_visible() const
     {
         return spectrum_visible_;
     }
@@ -116,7 +122,7 @@ public:
     void set_spectrum_visible(bool visible);
 
     /// Whether the preview swatch shows; true by default.
-    [[nodiscard]] bool preview_visible() const
+    [[nodiscard]] inline bool preview_visible() const
     {
         return preview_visible_;
     }
@@ -124,7 +130,7 @@ public:
     void set_preview_visible(bool visible);
 
     /// Whether the value slider shows; true by default.
-    [[nodiscard]] bool color_slider_visible() const
+    [[nodiscard]] inline bool color_slider_visible() const
     {
         return color_slider_visible_;
     }
@@ -132,7 +138,7 @@ public:
     void set_color_slider_visible(bool visible);
 
     /// Whether the alpha slider shows; true by default, but shown only while alpha_enabled() too.
-    [[nodiscard]] bool alpha_slider_visible() const
+    [[nodiscard]] inline bool alpha_slider_visible() const
     {
         return alpha_slider_visible_;
     }
@@ -140,7 +146,7 @@ public:
     void set_alpha_slider_visible(bool visible);
 
     /// Whether the More button shows; false by default.
-    [[nodiscard]] bool more_button_visible() const
+    [[nodiscard]] inline bool more_button_visible() const
     {
         return more_button_visible_;
     }
@@ -149,7 +155,7 @@ public:
     void set_more_button_visible(bool visible);
 
     /// Whether the channel inputs show; true by default.
-    [[nodiscard]] bool color_channel_text_input_visible() const
+    [[nodiscard]] inline bool color_channel_text_input_visible() const
     {
         return channel_input_visible_;
     }
@@ -158,7 +164,7 @@ public:
     void set_color_channel_text_input_visible(bool visible);
 
     /// Whether the Opacity box shows; true by default, but shown only while alpha_enabled() too.
-    [[nodiscard]] bool alpha_text_input_visible() const
+    [[nodiscard]] inline bool alpha_text_input_visible() const
     {
         return alpha_input_visible_;
     }
@@ -167,7 +173,7 @@ public:
     void set_alpha_text_input_visible(bool visible);
 
     /// Whether the `#RRGGBB` box shows; true by default.
-    [[nodiscard]] bool hex_input_visible() const
+    [[nodiscard]] inline bool hex_input_visible() const
     {
         return hex_input_visible_;
     }
@@ -176,7 +182,7 @@ public:
 
     /// Whether the text entry section is expanded behind the More button. Meaningless while the
     /// button is hidden, when the section is always shown.
-    [[nodiscard]] bool more_expanded() const
+    [[nodiscard]] inline bool more_expanded() const
     {
         return more_expanded_;
     }
@@ -184,7 +190,7 @@ public:
     /// Fired with the new color whenever `color` changes, from a slider drag, a
     /// click-to-jump on any channel's track, a keyboard step, a typed channel value, a committed
     /// hex edit or set_color() alike. Replaces any previous handler.
-    void on_color_changed(Callback<void(Color)> handler)
+    inline void on_color_changed(Callback<void(Color)> handler)
     {
         on_color_changed_ = std::move(handler);
     }
@@ -322,7 +328,7 @@ protected:
 ///                .height     = 100.0f},
 /// }});
 /// @endcode
-struct ColorPicker
+LIBWINUI_EXPORT struct ColorPicker
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ColorPicker>` points at.
@@ -386,3 +392,5 @@ struct ColorPicker
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

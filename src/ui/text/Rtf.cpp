@@ -5,6 +5,7 @@
 #include "winui/core/Utf8.hpp"
 #include "winui/ui/text/RichEditBox.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <array>
 #include <format>
@@ -18,6 +19,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
+#endif
 
 namespace ui::detail
 {

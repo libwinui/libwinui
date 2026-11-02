@@ -24,6 +24,11 @@
 #include <shobjidl.h>
 // clang-format on
 
+#include <winrt/Windows.Data.Xml.Dom.h>
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.UI.Notifications.h>
+
+#ifndef LIBWINUI_MODULE
 #include <exception>
 #include <filesystem>
 #include <format>
@@ -33,11 +38,9 @@
 #include <system_error>
 #include <utility>
 #include <vector>
-#include <winrt/Windows.Data.Xml.Dom.h>
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.Notifications.h>
 
 #include <cstdint>
+#endif
 
 namespace ui::win32
 {

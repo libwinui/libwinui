@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Renderer.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 
 #include <cmath>
+#endif
 
 namespace ui
 {
@@ -17,12 +23,12 @@ namespace ui
 /// a raw float instead.
 namespace elevation_z
 {
-inline constexpr float Layer   = 1.0f;   ///< A layer surface; casts no shadow.
-inline constexpr float Control = 2.0f;   ///< A control at rest/hover (pressed drops to 1); casts none.
-inline constexpr float Card    = 8.0f;   ///< A card.
-inline constexpr float ToolTip = 16.0f;  ///< A tooltip.
-inline constexpr float Flyout  = 32.0f;  ///< A flyout, menu or other light-dismiss popup.
-inline constexpr float Dialog  = 128.0f; ///< A dialog (and a window); the recipe clamps here.
+LIBWINUI_EXPORT inline constexpr float Layer   = 1.0f;   ///< A layer surface; casts no shadow.
+LIBWINUI_EXPORT inline constexpr float Control = 2.0f;   ///< A control at rest/hover (pressed drops to 1); casts none.
+LIBWINUI_EXPORT inline constexpr float Card    = 8.0f;   ///< A card.
+LIBWINUI_EXPORT inline constexpr float ToolTip = 16.0f;  ///< A tooltip.
+LIBWINUI_EXPORT inline constexpr float Flyout  = 32.0f;  ///< A flyout, menu or other light-dismiss popup.
+LIBWINUI_EXPORT inline constexpr float Dialog  = 128.0f; ///< A dialog (and a window); the recipe clamps here.
 } // namespace elevation_z
 
 /// The two superimposed black shadows that make up a drop shadow: an omnidirectional `ambient`
@@ -42,7 +48,7 @@ inline constexpr float Dialog  = 128.0f; ///< A dialog (and a window); the recip
 /// }
 /// renderer.fill_rounded_rect(bounds, 8.0f, card_background);
 /// @endcode
-struct ShadowRecipe
+LIBWINUI_EXPORT struct ShadowRecipe
 {
     float ambient_blur      = 0.0f; ///< Blur radius of the ambient shadow.
     float ambient_y         = 0.0f; ///< Downward offset of the ambient shadow.
@@ -62,7 +68,7 @@ struct ShadowRecipe
     /// shadow. In a light theme the directional alpha stops growing at Z 16, so a ToolTip and a
     /// Flyout have the same opacity and differ only in blur and offset. A dark theme uses a flat
     /// 0.26 up to Z 32.
-    [[nodiscard]] static ShadowRecipe for_elevation(float elevation, bool dark)
+    [[nodiscard]] static inline ShadowRecipe for_elevation(float elevation, bool dark)
     {
         const float e = (std::min)(64.0f, elevation * 0.5f);
         if (e < 2.0f)
@@ -163,7 +169,7 @@ inline void draw_blurred_rect(Renderer& renderer, const Rect& bounds, float radi
 /// ui::draw_drop_shadow(renderer, bounds, theme.overlay_corner_radius,
 ///                      ui::ShadowRecipe::for_elevation(ui::elevation_z::ToolTip, theme.dark));
 /// @endcode
-inline void draw_drop_shadow(Renderer& renderer, const Rect& bounds, float radius, const ShadowRecipe& recipe)
+LIBWINUI_EXPORT inline void draw_drop_shadow(Renderer& renderer, const Rect& bounds, float radius, const ShadowRecipe& recipe)
 {
     detail::draw_blurred_rect(renderer, bounds, radius, recipe.ambient_blur, recipe.ambient_y, recipe.ambient_alpha);
     detail::draw_blurred_rect(renderer, bounds, radius, recipe.directional_blur, recipe.directional_y, recipe.directional_alpha);
@@ -187,7 +193,7 @@ inline void draw_drop_shadow(Renderer& renderer, const Rect& bounds, float radiu
 /// ui::draw_aero_popup_shadow(renderer, popup_bounds, 0.0f);
 /// renderer.fill_rounded_rect(popup_bounds, 0.0f, theme.surfaces.menu);
 /// @endcode
-inline void draw_aero_popup_shadow(Renderer& renderer, const Rect& bounds, float radius)
+LIBWINUI_EXPORT inline void draw_aero_popup_shadow(Renderer& renderer, const Rect& bounds, float radius)
 {
     constexpr float Depth     = 5.0f;
     constexpr float BaseAlpha = 0x71 / 255.0f;
@@ -231,9 +237,16 @@ inline void draw_aero_popup_shadow(Renderer& renderer, const Rect& bounds, float
 /// ui::draw_overlay_shadow(renderer, flyout_bounds, theme.overlay_corner_radius, theme.dark);
 /// renderer.fill_rounded_rect(flyout_bounds, theme.overlay_corner_radius, theme.surfaces.menu);
 /// @endcode
-inline void draw_overlay_shadow(Renderer& renderer, const Rect& bounds, float radius, bool dark, float z = elevation_z::Flyout)
+LIBWINUI_EXPORT inline void draw_overlay_shadow(
+    Renderer&   renderer,
+    const Rect& bounds,
+    float       radius,
+    bool        dark,
+    float       z = elevation_z::Flyout)
 {
     draw_drop_shadow(renderer, bounds, radius, ShadowRecipe::for_elevation(z, dark));
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

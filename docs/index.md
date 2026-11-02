@@ -24,9 +24,9 @@ At about 1.2 MB for the counter app from the [first tutorial](tutorials/basics/0
 The whole API is C++23. There's no XAML, no code generation, no IDL, no markup compiler and no separate build step. You describe the UI with aggregates and designated initializers, write the state down once, and every display of it is derived from there:
 
 ```cpp
-#include <winui/winui.hpp>
-
 #include <format>
+
+import winui;
 
 int main()
 {

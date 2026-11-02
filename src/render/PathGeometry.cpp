@@ -3,6 +3,7 @@
 
 #include "winui/core/Geometry.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <array>
 #include <charconv>
@@ -16,6 +17,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#endif
 
 namespace ui
 {

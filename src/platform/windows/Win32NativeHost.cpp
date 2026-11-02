@@ -16,10 +16,13 @@
 #include "winui/render/NativeHost.hpp"
 #include "winui/ui/hosting/NativeControl.hpp"
 
-#include <optional>
 #include <windows.h>
 
+#ifndef LIBWINUI_MODULE
+#include <optional>
+
 #include <cmath>
+#endif
 
 namespace ui::win32
 {

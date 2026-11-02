@@ -5,10 +5,12 @@
 #include "winui/render/IconSource.hpp"
 #include "winui/ui/Command.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <functional>
 #include <string>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {

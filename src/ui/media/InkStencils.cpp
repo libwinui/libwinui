@@ -9,12 +9,14 @@
 #include "winui/ui/media/InkCanvas.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <format>
 #include <numbers>
 #include <string>
 
 #include <cmath>
+#endif
 
 namespace ui::detail
 {

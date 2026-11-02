@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <span>
 #include <string_view>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -14,7 +20,7 @@ namespace ui
 /// Which parts of a self-intersecting or multi-figure geometry are inside.
 /// `EvenOdd` (the default, markup `F0`) alternates at every crossing; `Nonzero` (`F1`) counts
 /// winding direction.
-enum class FillRule
+LIBWINUI_EXPORT enum class FillRule
 {
     EvenOdd, ///< Inside when a ray crosses the outline an odd number of times.
     Nonzero, ///< Inside when the outline winds around the point at all.
@@ -36,7 +42,7 @@ enum class FillRule
 /// // ... draw ...
 /// renderer.pop_transform();
 /// @endcode
-struct Matrix
+LIBWINUI_EXPORT struct Matrix
 {
     float m11 = 1.0f; ///< x scale (and rotation cosine).
     float m12 = 0.0f; ///< How much x feeds y' (rotation / skew).
@@ -97,7 +103,7 @@ struct Matrix
 };
 
 /// Which curve this segment is, and so which of the points it uses.
-enum class PathSegmentKind
+LIBWINUI_EXPORT enum class PathSegmentKind
 {
     Line,      ///< Straight to `p1`.
     Quadratic, ///< Control point `p1`, end `p2`.
@@ -118,7 +124,7 @@ enum class PathSegmentKind
 ///                            .p1   = ui::Point{15, 5},
 ///                            .p2   = ui::Point{10, 10}});
 /// @endcode
-struct PathSegment
+LIBWINUI_EXPORT struct PathSegment
 {
     PathSegmentKind kind = PathSegmentKind::Line; ///< The segment type; decides which points are read.
     Point           p1{};                         ///< The end point of a Line, else the first control point.
@@ -126,12 +132,12 @@ struct PathSegment
     Point           p3{};                         ///< The end of a Cubic; unused otherwise.
 
     /// The point the segment ends at, whichever member that is for its `kind`.
-    [[nodiscard]] Point end() const
+    [[nodiscard]] inline Point end() const
     {
         return kind == PathSegmentKind::Line ? p1 : kind == PathSegmentKind::Quadratic ? p2 : p3;
     }
 
-    friend bool operator==(const PathSegment&, const PathSegment&) = default;
+    friend inline bool operator==(const PathSegment&, const PathSegment&) = default;
 };
 
 /// One figure of a geometry: a start point, its segments, whether the last point joins the first
@@ -146,14 +152,14 @@ struct PathSegment
 ///     .closed   = true,
 /// });
 /// @endcode
-struct PathFigure
+LIBWINUI_EXPORT struct PathFigure
 {
     Point                    start{};        ///< Where the first segment begins, in DIPs.
     std::vector<PathSegment> segments{};     ///< Each segment continues from the previous end point.
     bool                     closed = false; ///< Join the last point back to `start` when stroking.
     bool                     filled = true;  ///< Whether the figure's inside is painted by a fill.
 
-    friend bool operator==(const PathFigure&, const PathFigure&) = default;
+    friend inline bool operator==(const PathFigure&, const PathFigure&) = default;
 };
 
 /// A set of figures and the fill rule between them: what a Path, a path icon or any other Shape draws.
@@ -175,7 +181,7 @@ struct PathFigure
 ///     .stroke = ui::Color::from_rgba(0, 120, 215),
 /// });
 /// @endcode
-class PathGeometry
+LIBWINUI_EXPORT class PathGeometry
 {
 public:
     /// The figures, drawn in order; all share `fill_rule`.
@@ -201,7 +207,7 @@ public:
     [[nodiscard]] static std::optional<PathGeometry> parse(std::string_view markup);
 
     /// True when there are no figures (the geometry draws nothing).
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return figures.empty();
     }
@@ -218,7 +224,9 @@ public:
     /// enough for hit testing.
     [[nodiscard]] bool fill_contains(Point p) const;
 
-    friend bool operator==(const PathGeometry&, const PathGeometry&) = default;
+    friend inline bool operator==(const PathGeometry&, const PathGeometry&) = default;
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

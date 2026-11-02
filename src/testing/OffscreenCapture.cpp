@@ -20,18 +20,21 @@
 #include "winui/render/Text.hpp"
 #include "winui/ui/Window.hpp"
 
-#include <algorithm>
 #include <d2d1.h>
 #include <dwrite.h>
-#include <memory>
-#include <vector>
 #include <wincodec.h>
 #include <windows.h>
 #include <wrl/client.h>
 
+#ifndef LIBWINUI_MODULE
+#include <algorithm>
+#include <memory>
+#include <vector>
+
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui::win32
 {
@@ -283,7 +286,9 @@ Bitmap OffscreenCapture::draw(const Window& window, Size client, const Color& ba
 #include "winui/testing/OffscreenCapture.hpp"
 #include "winui/ui/Window.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
+#endif
 
 namespace ui::testing
 {

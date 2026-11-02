@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <concepts>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -27,7 +33,7 @@ namespace ui
 ///     .foreground = ui::colors::White,
 /// });
 /// @endcode
-struct Color
+LIBWINUI_EXPORT struct Color
 {
     float r = 0.0f; ///< Red, 0..1.
     float g = 0.0f; ///< Green, 0..1.
@@ -106,7 +112,7 @@ struct Color
 
 /// Channel-wise linear interpolation from `a` (t = 0) to `b` (t = 1), alpha included. `t` is
 /// clamped to [0, 1]. Interpolates the stored sRGB values directly, not in linear light.
-[[nodiscard]] constexpr Color lerp(const Color& a, const Color& b, float t)
+LIBWINUI_EXPORT [[nodiscard]] constexpr Color lerp(const Color& a, const Color& b, float t)
 {
     t = std::clamp(t, 0.0f, 1.0f);
     return {a.r + (b.r - a.r) * t, a.g + (b.g - a.g) * t, a.b + (b.b - a.b) * t, a.a + (b.a - a.a) * t};
@@ -116,11 +122,13 @@ struct Color
 namespace colors
 {
 /// Fully transparent black (all channels 0); the "no fill" value.
-inline constexpr Color Transparent{0.0f, 0.0f, 0.0f, 0.0f};
+LIBWINUI_EXPORT inline constexpr Color Transparent{0.0f, 0.0f, 0.0f, 0.0f};
 /// Opaque black.
-inline constexpr Color Black{0.0f, 0.0f, 0.0f, 1.0f};
+LIBWINUI_EXPORT inline constexpr Color Black{0.0f, 0.0f, 0.0f, 1.0f};
 /// Opaque white.
-inline constexpr Color White{1.0f, 1.0f, 1.0f, 1.0f};
+LIBWINUI_EXPORT inline constexpr Color White{1.0f, 1.0f, 1.0f, 1.0f};
 } // namespace colors
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -8,13 +8,16 @@
 #include "winui/core/Geometry.hpp"
 #include "winui/render/ContextMenuHost.hpp"
 
+#include <windows.h>
+
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <string>
 #include <vector>
-#include <windows.h>
 
 #include <cmath>
 #include <cstddef>
+#endif
 
 namespace ui::win32
 {

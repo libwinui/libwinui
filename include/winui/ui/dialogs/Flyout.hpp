@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,6 +22,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -25,6 +30,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -32,7 +38,7 @@ namespace ui
 class FlyoutSurface; // defined in Flyout.cpp
 
 /// Whether an open flyout takes keyboard focus.
-enum class FlyoutShowMode
+LIBWINUI_EXPORT enum class FlyoutShowMode
 {
     Standard,  ///< takes keyboard focus while open
     Transient, ///< leaves focus where it is
@@ -40,7 +46,7 @@ enum class FlyoutShowMode
 
 /// Where a flyout is in its open and close cycle (FlyoutBase::phase()). During Closing, is_open()
 /// is already false, but the popup keeps drawing and fades out until the close transition ends.
-enum class FlyoutPhase
+LIBWINUI_EXPORT enum class FlyoutPhase
 {
     Closed,  ///< not shown
     Opening, ///< shown, fading in
@@ -72,7 +78,7 @@ enum class FlyoutPhase
 /// flyout->on_closed([](ui::PopupCloseReason) { std::println("flyout closed"); });
 /// window.set_content(std::move(flyout));
 /// @endcode
-class FlyoutBase : public Element
+LIBWINUI_EXPORT class FlyoutBase : public Element
 {
 public:
     /// Takes ownership of the anchor element, replacing any previous one, and returns a non-owning
@@ -89,7 +95,7 @@ public:
         return observer;
     }
     /// The anchor element (non-owning), or nullptr.
-    [[nodiscard]] Element* anchor() const
+    [[nodiscard]] inline Element* anchor() const
     {
         return anchor_.get();
     }
@@ -97,7 +103,7 @@ public:
     /// True while the flyout is shown or fading in. It turns false as soon as hide(), an outside
     /// click or Escape commits to closing, though the popup keeps drawing while it fades out
     /// (transition_opacity()).
-    [[nodiscard]] bool is_open() const
+    [[nodiscard]] inline bool is_open() const
     {
         return phase_ == FlyoutPhase::Opening || phase_ == FlyoutPhase::Open;
     }
@@ -116,36 +122,36 @@ public:
 
     /// Which side of the anchor the content opens against; PopupPlacement::Below by default. It
     /// flips to the opposite side when there is no room.
-    [[nodiscard]] PopupPlacement placement() const
+    [[nodiscard]] inline PopupPlacement placement() const
     {
         return placement_;
     }
     /// Sets the side; applies the next time the popup is placed.
-    void set_placement(PopupPlacement placement)
+    inline void set_placement(PopupPlacement placement)
     {
         placement_ = placement;
         sync_popup();
     }
 
     /// The alignment across the placement axis; Center by default.
-    [[nodiscard]] PopupPlacementAlignment placement_alignment() const
+    [[nodiscard]] inline PopupPlacementAlignment placement_alignment() const
     {
         return alignment_;
     }
     /// Sets the alignment across the placement axis.
-    void set_placement_alignment(PopupPlacementAlignment alignment)
+    inline void set_placement_alignment(PopupPlacementAlignment alignment)
     {
         alignment_ = alignment;
         sync_popup();
     }
 
     /// Whether an open flyout takes keyboard focus; Standard (it does) by default.
-    [[nodiscard]] FlyoutShowMode show_mode() const
+    [[nodiscard]] inline FlyoutShowMode show_mode() const
     {
         return show_mode_;
     }
     /// Sets whether the next open takes keyboard focus.
-    void set_show_mode(FlyoutShowMode mode)
+    inline void set_show_mode(FlyoutShowMode mode)
     {
         show_mode_ = mode;
         sync_popup();
@@ -153,46 +159,46 @@ public:
 
     /// Whether an outside click or Escape closes the flyout; true by default. Off, it stays open
     /// until hide() or a command in it closes it, and an outside click reaches what is below.
-    [[nodiscard]] bool light_dismiss() const
+    [[nodiscard]] inline bool light_dismiss() const
     {
         return light_dismiss_;
     }
     /// Turns light dismiss on or off.
-    void set_light_dismiss(bool enabled)
+    inline void set_light_dismiss(bool enabled)
     {
         light_dismiss_ = enabled;
         sync_popup();
     }
 
     /// Raised when show() or show_at() opens the flyout.
-    void on_opened(Callback<void()> handler)
+    inline void on_opened(Callback<void()> handler)
     {
         on_opened_ = std::move(handler);
     }
     /// Raised with the reason before an open flyout closes; return ui::Cancel to keep it open.
-    void on_closing(Callback<Decision(const PopupClosingArgs&)> handler)
+    inline void on_closing(Callback<Decision(const PopupClosingArgs&)> handler)
     {
         on_closing_ = std::move(handler);
     }
     /// Raised with the reason once the flyout has closed and its close fade has finished (not
     /// when on_closing() canceled). The handler may destroy the flyout.
-    void on_closed(Callback<void(PopupCloseReason)> handler)
+    inline void on_closed(Callback<void(PopupCloseReason)> handler)
     {
         on_closed_ = std::move(handler);
     }
     [[nodiscard]] bool focusable() const override;
-    bool               handle_global_shortcut(const KeyEvent& e) override
+    inline bool        handle_global_shortcut(const KeyEvent& e) override
     {
         return anchor_ && anchor_->handle_global_shortcut(e);
     }
     /// A right-click lands on the anchor, though the flyout holds its place in the tab order. The
     /// anchor's context request handler runs first, then the flyout's own.
-    bool raise_context_requested(std::optional<Point> position) override
+    inline bool raise_context_requested(std::optional<Point> position) override
     {
         return (anchor_ && anchor_->raise_context_requested(position)) || Element::raise_context_requested(position);
     }
     /// Visits the anchor, if any. The popup is not a child.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (anchor_)
         {
@@ -200,7 +206,7 @@ public:
         }
     }
     /// The flyout stands in for its anchor as one tab stop. Focus itself goes to the anchor.
-    void collect_focusables(std::vector<Element*>& out) override
+    inline void collect_focusables(std::vector<Element*>& out) override
     {
         if (focusable())
         {
@@ -208,7 +214,7 @@ public:
         }
     }
     /// No automation children: the anchor is not listed under the flyout.
-    void automation_children(std::vector<Element*>&) const override
+    inline void automation_children(std::vector<Element*>&) const override
     {
     }
 
@@ -219,11 +225,11 @@ public:
     // ---- automation ----
     /// Passes through to the anchor, like every Element override above. Screen readers see the
     /// anchor, with the open popup's content as its child.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return anchor_ ? anchor_->automation_role() : AutomationRole::Group;
     }
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return anchor_ ? anchor_->automation_name() : std::string{};
     }
@@ -231,7 +237,7 @@ public:
 protected:
     // Automation sees the anchor: its providers are this control's, and with no anchor there
     // are none.
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         if (anchor_)
         {
@@ -242,7 +248,7 @@ protected:
 
     /// The current phase, for a derived flyout's rendering. The popup stays open through
     /// Closing, so it fades out.
-    [[nodiscard]] FlyoutPhase phase() const
+    [[nodiscard]] inline FlyoutPhase phase() const
     {
         return phase_;
     }
@@ -250,13 +256,13 @@ protected:
     [[nodiscard]] float transition_progress() const;
     /// The open and close transitions' lengths; 250 ms each by default. A derived flyout with its
     /// own motion sets them in its constructor.
-    void set_transition_durations(Duration open, Duration close)
+    inline void set_transition_durations(Duration open, Duration close)
     {
         open_ms_  = open.count();
         close_ms_ = close.count();
     }
     /// Whether the current or last open was show_at(), placed at a point, instead of show().
-    [[nodiscard]] bool positioned_at_point() const
+    [[nodiscard]] inline bool positioned_at_point() const
     {
         return point_.has_value();
     }
@@ -267,11 +273,11 @@ protected:
 
     /// Called as show() or show_at() commits to opening, before the Opening transition starts.
     /// Reset the popup's own state here.
-    virtual void opening_override()
+    inline virtual void opening_override()
     {
     }
     /// Called as a close commits, once no on_closing() handler canceled it.
-    virtual void closing_override()
+    inline virtual void closing_override()
     {
     }
     /// The element the flyout floats while it shows: its surface, built on first call. Null
@@ -279,17 +285,17 @@ protected:
     [[nodiscard]] virtual Element* flyout_surface() = 0;
     /// The popup's element, which the flyout ticks and clears of dirty flags itself because it is
     /// not in the window's tree. flyout_surface() by default.
-    [[nodiscard]] virtual Element* popup_element()
+    [[nodiscard]] inline virtual Element* popup_element()
     {
         return flyout_surface();
     }
     /// The shadow the window draws behind the surface; the theme's flyout shadow by default.
-    virtual void flyout_chrome(PopupChrome& chrome)
+    inline virtual void flyout_chrome(PopupChrome& chrome)
     {
         (void)chrome;
     }
     /// An outside click or Escape: closes with PopupCloseReason::LightDismiss by default.
-    virtual void flyout_dismissed()
+    inline virtual void flyout_dismissed()
     {
         close(PopupCloseReason::LightDismiss);
     }
@@ -340,7 +346,7 @@ protected:
 
 protected:
     /// None of its own: the anchor inside it draws its own focus ring.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return false;
     }
@@ -379,7 +385,7 @@ protected:
 /// owned->set_content(std::make_unique<ui::TextControl>("Flyout content"));
 /// stack->add(std::move(owned));
 /// @endcode
-class FlyoutControl final : public FlyoutBase
+LIBWINUI_EXPORT class FlyoutControl final : public FlyoutBase
 {
 public:
     /// A flyout with no anchor and no content.
@@ -399,7 +405,7 @@ public:
         return observer;
     }
     /// The floating content (non-owning), or nullptr.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
@@ -417,7 +423,7 @@ private:
     /// content_ live, so a later set_content() never leaves it dangling.
     std::unique_ptr<Element> surface_;
 
-    [[nodiscard]] Element* popup_element() override
+    [[nodiscard]] inline Element* popup_element() override
     {
         return content_.get();
     }
@@ -446,7 +452,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Flyout
+LIBWINUI_EXPORT struct Flyout
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Flyout>` points at.
@@ -520,3 +526,5 @@ struct Flyout
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

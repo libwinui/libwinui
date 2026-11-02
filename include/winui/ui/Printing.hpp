@@ -1,27 +1,33 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <optional>
 #include <string>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class Element;
-class Renderer;
-class TextMeasurer;
-struct Theme;
-class Window;
+LIBWINUI_EXPORT class Element;
+LIBWINUI_EXPORT class Renderer;
+LIBWINUI_EXPORT class TextMeasurer;
+LIBWINUI_EXPORT struct Theme;
+LIBWINUI_EXPORT class Window;
 
 /// One page of a print job, as its callbacks get it. Sizes are DIPs, 1/96 inch, as on screen.
-struct PrintPage
+LIBWINUI_EXPORT struct PrintPage
 {
     std::size_t index = 0;   ///< 0-based, in the whole document (not just the pages being printed).
     Size        size{};      ///< The sheet, in the orientation the user chose.
@@ -29,7 +35,7 @@ struct PrintPage
 };
 
 /// Which print dialog ui::print() shows.
-enum class PrintDialog
+LIBWINUI_EXPORT enum class PrintDialog
 {
     Preview, ///< The system print dialog with a live preview of the pages. The default.
     Classic, ///< The print dialog without a preview.
@@ -37,7 +43,7 @@ enum class PrintDialog
 
 /// What a print job measures and draws with: a text measurer for the printer and the light
 /// theme, since paper is white. Valid during the call.
-struct PrintContext
+LIBWINUI_EXPORT struct PrintContext
 {
     const TextMeasurer& measurer;
     const Theme&        theme;
@@ -67,7 +73,7 @@ struct PrintContext
 ///     },
 /// });
 /// @endcode
-struct PrintJob
+LIBWINUI_EXPORT struct PrintJob
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The document's name in the print queue.
@@ -91,7 +97,7 @@ struct PrintJob
 };
 
 /// How a print job ended.
-enum class PrintResult
+LIBWINUI_EXPORT enum class PrintResult
 {
     Printed,  ///< Handed to the print spooler.
     Canceled, ///< The user closed the dialog without printing, or the document has no pages.
@@ -103,9 +109,9 @@ enum class PrintResult
 /// to the printer as vector output, so text stays text. Blocks until the job is spooled, which is
 /// quick compared to the printing itself. The app's windows keep handling input and painting
 /// meanwhile.
-PrintResult print(const Window& owner, PrintJob job);
+LIBWINUI_EXPORT PrintResult print(const Window& owner, PrintJob job);
 /// print() with no owner window.
-PrintResult print(PrintJob job);
+LIBWINUI_EXPORT PrintResult print(PrintJob job);
 
 /// Lays `content` out in `area` and draws it: a draw_page that prints controls or a built spec.
 ///
@@ -121,11 +127,11 @@ PrintResult print(PrintJob job);
 ///     },
 /// });
 /// @endcode
-void draw_element(Renderer& renderer, Element& content, const Rect& area, const PrintContext& context);
+LIBWINUI_EXPORT void draw_element(Renderer& renderer, Element& content, const Rect& area, const PrintContext& context);
 
 /// What print() hands the job to: the platform's print dialog and spooler, or a test double
 /// (ui::testing::TestPrintHost).
-class PrintHost
+LIBWINUI_EXPORT class PrintHost
 {
 public:
     virtual ~PrintHost() = default;
@@ -137,8 +143,10 @@ namespace detail
 {
 // The host print() uses in place of the platform's, or nullptr for the platform's own.
 // ui::testing::set_print_host() is the public way to set it.
-void                     install_print_host(PrintHost* host);
-[[nodiscard]] PrintHost* installed_print_host();
+LIBWINUI_EXPORT void                     install_print_host(PrintHost* host);
+LIBWINUI_EXPORT [[nodiscard]] PrintHost* installed_print_host();
 } // namespace detail
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

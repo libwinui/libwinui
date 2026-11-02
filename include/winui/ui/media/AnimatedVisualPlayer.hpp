@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -18,8 +22,10 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
+#endif
 
 namespace ui
 {
@@ -65,14 +71,14 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-class AnimatedVisualPlayerControl final : public Panel
+LIBWINUI_EXPORT class AnimatedVisualPlayerControl final : public Panel
 {
 public:
     /// A player with no source: auto-play on, rate 1, Uniform stretch.
     AnimatedVisualPlayerControl() = default;
 
     /// The source being played, or null.
-    [[nodiscard]] const AnimatedVisualSource* source() const
+    [[nodiscard]] inline const AnimatedVisualSource* source() const
     {
         return source_;
     }
@@ -82,7 +88,7 @@ public:
     void set_source(const AnimatedVisualSource* source);
 
     /// A source is set, available and has a size.
-    [[nodiscard]] bool is_animated_visual_loaded() const
+    [[nodiscard]] inline bool is_animated_visual_loaded() const
     {
         return loaded_;
     }
@@ -91,18 +97,18 @@ public:
     /// non-owning observer and replaces any earlier fallback.
     Element* set_fallback_content(std::unique_ptr<Element> content);
     /// The fallback content (whether or not it is showing), or null if none was set.
-    [[nodiscard]] Element* fallback_content() const
+    [[nodiscard]] inline Element* fallback_content() const
     {
         return fallen_back_ ? (children_.empty() ? nullptr : children_.front().get()) : fallback_.get();
     }
     /// Whether the fallback content is what is showing.
-    [[nodiscard]] bool is_fallen_back() const
+    [[nodiscard]] inline bool is_fallen_back() const
     {
         return fallen_back_;
     }
 
     /// Whether a loaded source starts looping 0..1 on its own. Default true.
-    [[nodiscard]] bool auto_play() const
+    [[nodiscard]] inline bool auto_play() const
     {
         return auto_play_;
     }
@@ -111,40 +117,40 @@ public:
     void set_auto_play(bool auto_play);
 
     /// How fast plays run, 1 by default. A negative rate plays backwards.
-    [[nodiscard]] double playback_rate() const
+    [[nodiscard]] inline double playback_rate() const
     {
         return playback_rate_;
     }
     /// Sets the playback rate. A running play speeds up, slows down or reverses at once.
-    void set_playback_rate(double rate)
+    inline void set_playback_rate(double rate)
     {
         playback_rate_ = rate;
     }
 
     /// How the source's natural size fits the player's bounds. Uniform by default.
-    [[nodiscard]] Stretch stretch() const
+    [[nodiscard]] inline Stretch stretch() const
     {
         return stretch_;
     }
     /// Sets the stretch. Updates layout and redraws.
-    void set_stretch(Stretch stretch)
+    inline void set_stretch(Stretch stretch)
     {
         stretch_ = stretch;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// Whether a play has started and not completed. A paused play counts as playing.
-    [[nodiscard]] bool is_playing() const
+    [[nodiscard]] inline bool is_playing() const
     {
         return playing_;
     }
     /// Whether the current play is paused.
-    [[nodiscard]] bool is_paused() const
+    [[nodiscard]] inline bool is_paused() const
     {
         return playing_ && paused_;
     }
     /// The current position in the animation, from 0 to 1.
-    [[nodiscard]] double progress() const
+    [[nodiscard]] inline double progress() const
     {
         return progress_;
     }
@@ -168,7 +174,7 @@ public:
 
     // ---- automation ----
     /// Exposed to UI Automation as an image.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Image;
     }
@@ -240,7 +246,7 @@ private:
 ///     }},
 /// }});
 /// @endcode
-struct AnimatedVisualPlayer
+LIBWINUI_EXPORT struct AnimatedVisualPlayer
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<AnimatedVisualPlayer>` points at.
@@ -300,3 +306,5 @@ struct AnimatedVisualPlayer
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

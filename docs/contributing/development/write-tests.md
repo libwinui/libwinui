@@ -6,7 +6,7 @@ Every control in libwinui is testable without an `HWND`, a GPU or a Windows sess
 
 ## Catch2 Layout
 
-All tests go into one binary, `winui_tests`, built from `tests/test_<thing>.cpp`. A new file has to be added to the `add_executable(winui_tests ...)` list in `tests/CMakeLists.txt`; it is not globbed. The binary links `winui::testing`, the testing tier's own library (`include/winui/testing/`, `src/testing/`), which brings `winui::winui` along; the library itself never compiles a testing source.
+All tests go into one binary, `winui_tests`, built from `tests/test_<thing>.cpp`. A new file has to be added to the `add_executable(winui_tests ...)` list in `tests/CMakeLists.txt`; it is not globbed. The binary links `winui::testing_headers`, the testing tier's own library (`include/winui/testing/`, `src/testing/`), which brings `winui::headers` along; the library itself never compiles a testing source.
 
 A typical file starts like this:
 

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -19,6 +23,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/text/Inlines.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -26,11 +31,12 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class RichTextOverflowControl;
+LIBWINUI_EXPORT class RichTextOverflowControl;
 
 /// Read-only paragraphs of formatted inlines, wrapping by default, selectable, with links and
 /// highlighters. Content that doesn't fit can flow into RichTextOverflow containers.
@@ -59,7 +65,7 @@ class RichTextOverflowControl;
 /// rich->set_overflow_target(overflow);
 /// window.set_content(std::move(row));
 /// @endcode
-class RichTextControl final : public Element
+LIBWINUI_EXPORT class RichTextControl final : public Element
 {
 public:
     /// An empty block: Wrap, Left alignment, selection enabled.
@@ -71,7 +77,7 @@ public:
 
     // ---- content ----
     /// The paragraphs, as set by set_blocks().
-    [[nodiscard]] const std::vector<Paragraph>& blocks() const
+    [[nodiscard]] inline const std::vector<Paragraph>& blocks() const
     {
         return blocks_;
     }
@@ -84,7 +90,7 @@ public:
 
     // ---- formatting ----
     /// The base style every run derives from (font family, size, weight).
-    [[nodiscard]] const TextStyle& text_style() const
+    [[nodiscard]] inline const TextStyle& text_style() const
     {
         return style_;
     }
@@ -94,19 +100,19 @@ public:
 
     /// The color of runs without a color of their own: a fixed color or a theme resource.
     /// Unset follows the theme's text color.
-    [[nodiscard]] const Paint& foreground() const
+    [[nodiscard]] inline const Paint& foreground() const
     {
         return foreground_;
     }
     /// Sets the color of runs without their own; an empty source follows the theme.
-    void set_foreground(Paint color)
+    inline void set_foreground(Paint color)
     {
         foreground_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// Whether lines break at the width; Wrap by default.
-    [[nodiscard]] TextWrapping wrapping() const
+    [[nodiscard]] inline TextWrapping wrapping() const
     {
         return wrapping_;
     }
@@ -114,7 +120,7 @@ public:
     void set_wrapping(TextWrapping wrapping);
 
     /// The alignment of every paragraph, Justify included; Left by default.
-    [[nodiscard]] TextAlignment text_alignment() const
+    [[nodiscard]] inline TextAlignment text_alignment() const
     {
         return alignment_;
     }
@@ -122,7 +128,7 @@ public:
     void set_text_alignment(TextAlignment alignment);
 
     /// Extra space added after every character, in thousandths of an em; 0 by default.
-    [[nodiscard]] int character_spacing() const
+    [[nodiscard]] inline int character_spacing() const
     {
         return character_spacing_;
     }
@@ -132,7 +138,7 @@ public:
     // ---- selection ----
     /// Whether the user can select and copy the text; true by default. While on, the block is a
     /// tab stop.
-    [[nodiscard]] bool selection_enabled() const
+    [[nodiscard]] inline bool selection_enabled() const
     {
         return selection_enabled_;
     }
@@ -141,38 +147,38 @@ public:
 
     /// The fixed color behind selected text; nullopt (the default) when unset or a theme resource
     /// is set. Unset is the accent.
-    [[nodiscard]] std::optional<Color> selection_highlight_color() const
+    [[nodiscard]] inline std::optional<Color> selection_highlight_color() const
     {
         return selection_color_.color();
     }
     /// The color behind selected text as a theme resource, or nullptr.
-    [[nodiscard]] ThemeColor selection_highlight_resource() const
+    [[nodiscard]] inline ThemeColor selection_highlight_resource() const
     {
         return selection_color_.resource();
     }
     /// Sets the fixed color behind selected text and clears a theme resource; nullopt goes back
     /// to the accent.
-    void set_selection_highlight_color(std::optional<Color> color)
+    inline void set_selection_highlight_color(std::optional<Color> color)
     {
         selection_color_ = color;
         mark_chain_dirty();
     }
     /// Sets the color behind selected text to a theme resource, re-read under every theme, and
     /// clears a fixed one.
-    void set_selection_highlight_color(ThemeColor resource)
+    inline void set_selection_highlight_color(ThemeColor resource)
     {
         selection_color_ = resource;
         mark_chain_dirty();
     }
 
     /// The selection as [start, end) offsets into plain_text(); empty when start == end.
-    [[nodiscard]] std::pair<std::size_t, std::size_t> selection() const
+    [[nodiscard]] inline std::pair<std::size_t, std::size_t> selection() const
     {
         return interaction_.range();
     }
     /// Selects [start, end) of plain_text(). The selection shows only while the block, or one of
     /// its overflow containers, has focus.
-    void select(std::size_t start, std::size_t end)
+    inline void select(std::size_t start, std::size_t end)
     {
         interaction_.select(start, end);
         mark_chain_dirty();
@@ -180,18 +186,18 @@ public:
     /// Selects the whole plain_text() (Ctrl+A).
     void select_all();
     /// The selected text; what Ctrl+C copies.
-    [[nodiscard]] std::string selected_text() const
+    [[nodiscard]] inline std::string selected_text() const
     {
         return interaction_.selected_text(layout_);
     }
 
     /// The highlighters painted over the text.
-    [[nodiscard]] const std::vector<TextHighlighter>& text_highlighters() const
+    [[nodiscard]] inline const std::vector<TextHighlighter>& text_highlighters() const
     {
         return highlighters_;
     }
     /// Replaces every highlighter.
-    void set_text_highlighters(std::vector<TextHighlighter> highlighters)
+    inline void set_text_highlighters(std::vector<TextHighlighter> highlighters)
     {
         highlighters_ = std::move(highlighters);
         mark_chain_dirty();
@@ -199,7 +205,7 @@ public:
 
     // ---- overflow ----
     /// The first overflow container (non-owning), or nullptr.
-    [[nodiscard]] RichTextOverflowControl* overflow_target() const
+    [[nodiscard]] inline RichTextOverflowControl* overflow_target() const
     {
         return overflow_target_;
     }
@@ -208,18 +214,18 @@ public:
     /// unlinks it.
     void set_overflow_target(RichTextOverflowControl* target);
     /// Whether some of the content did not fit and went on to the overflow target.
-    [[nodiscard]] bool has_overflow_content() const
+    [[nodiscard]] inline bool has_overflow_content() const
     {
         return overflow_start_ != ui::detail::NoIndex;
     }
 
     /// A tab stop while text selection is enabled.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return selection_enabled_;
     }
     /// Whether this block itself holds keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
@@ -230,12 +236,12 @@ public:
     /// A hand over a link, an I-beam over selectable text.
     [[nodiscard]] std::optional<CursorShape> cursor_at(Point p) const override;
     /// AutomationRole::Document.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Document;
     }
     /// plain_text().
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return plain_text();
     }
@@ -295,7 +301,7 @@ private:
 
 protected:
     /// Called by Window as focus moves. The selection shows while the chain has focus.
-    void focus_changed(bool /*focused*/) override
+    inline void focus_changed(bool /*focused*/) override
     {
         mark_chain_dirty();
     }
@@ -304,7 +310,7 @@ protected:
 
 protected:
     /// None: selectable text shows focus through its selection.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return false;
     }
@@ -335,7 +341,7 @@ protected:
 /// second->set_overflow_target(third);
 /// window.set_content(std::move(columns));
 /// @endcode
-class RichTextOverflowControl final : public Element
+LIBWINUI_EXPORT class RichTextOverflowControl final : public Element
 {
 public:
     /// An unlinked, empty container.
@@ -346,12 +352,12 @@ public:
     RichTextOverflowControl& operator=(const RichTextOverflowControl&) = delete;
 
     /// The RichText whose content this shows, nullptr while unlinked.
-    [[nodiscard]] RichTextControl* content_source() const
+    [[nodiscard]] inline RichTextControl* content_source() const
     {
         return master_;
     }
     /// The next container in the chain (non-owning), or nullptr.
-    [[nodiscard]] RichTextOverflowControl* overflow_target() const
+    [[nodiscard]] inline RichTextOverflowControl* overflow_target() const
     {
         return next_;
     }
@@ -359,19 +365,19 @@ public:
     /// RichTextControl::set_overflow_target(); nullptr unlinks it.
     void set_overflow_target(RichTextOverflowControl* target);
     /// Whether some content still did not fit here and went on to the next container.
-    [[nodiscard]] bool has_overflow_content() const
+    [[nodiscard]] inline bool has_overflow_content() const
     {
         return overflow_start_ != ui::detail::NoIndex;
     }
     /// The offset into the RichText's plain text this container starts at (npos while it shows
     /// nothing).
-    [[nodiscard]] std::size_t content_start() const
+    [[nodiscard]] inline std::size_t content_start() const
     {
         return start_;
     }
 
     /// A tab stop while linked, showing something, and the RichText allows selection.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return master_ && master_->selection_enabled_ && start_ != ui::detail::NoIndex;
     }
@@ -381,7 +387,7 @@ public:
     /// As the RichText: a hand over a link, an I-beam over selectable text.
     [[nodiscard]] std::optional<CursorShape> cursor_at(Point p) const override;
     /// AutomationRole::Document.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Document;
     }
@@ -417,7 +423,7 @@ private:
 
 protected:
     /// Called by Window as focus moves. The selection shows while the chain has focus.
-    void focus_changed(bool /*focused*/) override
+    inline void focus_changed(bool /*focused*/) override
     {
         if (master_)
         {
@@ -429,13 +435,13 @@ protected:
 
 protected:
     /// None: selectable text shows focus through its selection.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return false;
     }
 };
 
-struct RichTextOverflow;
+LIBWINUI_EXPORT struct RichTextOverflow;
 
 /// Paragraphs of formatted inlines. Builds a ui::RichTextControl.
 ///
@@ -455,7 +461,7 @@ struct RichTextOverflow;
 ///     .max_width = 400,
 /// });
 /// @endcode
-struct RichText
+LIBWINUI_EXPORT struct RichText
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<RichText>` points at.
@@ -544,7 +550,7 @@ struct RichText
 ///     },
 /// });
 /// @endcode
-struct RichTextOverflow
+LIBWINUI_EXPORT struct RichTextOverflow
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<RichTextOverflow>` points at.
@@ -595,3 +601,5 @@ struct RichTextOverflow
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

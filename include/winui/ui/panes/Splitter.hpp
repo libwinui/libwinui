@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -17,10 +21,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -54,27 +60,27 @@ namespace ui
 /// auto splitter = std::make_unique<ui::SplitterControl>(ui::Orientation::Horizontal);
 /// splitter->on_drag_delta([&](float dy) { top_height = std::max(40.0f, top_height.get() + dy); });
 /// @endcode
-class SplitterControl final : public Element
+LIBWINUI_EXPORT class SplitterControl final : public Element
 {
 public:
     /// A 6 DIP bar along `orientation`, focusable.
-    explicit SplitterControl(Orientation orientation = Orientation::Vertical) : orientation_(orientation)
+    inline explicit SplitterControl(Orientation orientation = Orientation::Vertical) : orientation_(orientation)
     {
     }
 
     /// The bar's axis, fixed at construction.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
 
     /// The bar's size across its axis, in DIPs; 6 by default.
-    [[nodiscard]] float thickness() const
+    [[nodiscard]] inline float thickness() const
     {
         return thickness_;
     }
     /// Changes the thickness and lays the bar out again.
-    void set_thickness(float thickness)
+    inline void set_thickness(float thickness)
     {
         thickness_ = thickness;
         mark_dirty(DirtyFlags::Layout);
@@ -83,19 +89,19 @@ public:
     /// Fired while the pointer drags or an arrow key steps, with the movement in DIPs since the
     /// previous call. The axis follows `orientation`: x for Vertical, y for Horizontal. Setting a
     /// handler turns off the resizing of the Grid tracks beside the bar.
-    void on_drag_delta(Callback<void(float)> handler)
+    inline void on_drag_delta(Callback<void(float)> handler)
     {
         on_drag_delta_ = std::move(handler);
     }
 
     /// Whether a pointer drag is in progress: the button went down on the bar and is still held.
-    [[nodiscard]] bool dragging() const
+    [[nodiscard]] inline bool dragging() const
     {
         return dragging_;
     }
     /// Whether the pointer is over the bar. The bar draws the accent separator while hovered or
     /// dragged.
-    [[nodiscard]] bool hovered() const
+    [[nodiscard]] inline bool hovered() const
     {
         return hovered_;
     }
@@ -105,29 +111,29 @@ public:
     /// Whether the bar takes focus; true by default. With focus, ArrowLeft/Right (Vertical) or
     /// ArrowUp/Down (Horizontal) resize by +/- keyboard_increment(), or four times that with
     /// Shift held. False leaves it out of the tab order.
-    void set_focusable(bool focusable)
+    inline void set_focusable(bool focusable)
     {
         focusable_ = focusable;
         mark_dirty(DirtyFlags::Visual);
     }
     /// Whether the bar is a tab stop: set_focusable(), and only while enabled.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return focusable_ && is_enabled();
     }
     /// Whether the bar has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// The arrow-key step, in DIPs; 8 by default. Set a different step, such as one grid unit,
     /// with set_keyboard_increment().
-    [[nodiscard]] float keyboard_increment() const
+    [[nodiscard]] inline float keyboard_increment() const
     {
         return keyboard_increment_;
     }
     /// Sets the arrow-key step, in DIPs.
-    void set_keyboard_increment(float increment)
+    inline void set_keyboard_increment(float increment)
     {
         keyboard_increment_ = increment;
     }
@@ -135,7 +141,7 @@ public:
     // ---- automation ----
     /// The resize arrow along the drag axis: west-east for a vertical bar, north-south for a
     /// horizontal one.
-    [[nodiscard]] std::optional<CursorShape> cursor_at(Point) const override
+    [[nodiscard]] inline std::optional<CursorShape> cursor_at(Point) const override
     {
         if (!is_enabled())
         {
@@ -145,7 +151,7 @@ public:
     }
     /// Reported to screen readers as a Thumb with no value, because the splitter reports relative
     /// movement and has no bounded value of its own.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Thumb;
     }
@@ -162,12 +168,12 @@ protected:
 private:
     // Only the arrows along the splitter's axis; the other two still move focus. Claimed so the
     // Window's directional focus navigation leaves them alone (Element::key_override).
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return vertical() ? (key == Key::ArrowLeft || key == Key::ArrowRight)
                           : (key == Key::ArrowUp || key == Key::ArrowDown);
     }
-    [[nodiscard]] bool vertical() const
+    [[nodiscard]] inline bool vertical() const
     {
         return orientation_ == Orientation::Vertical;
     }
@@ -189,7 +195,7 @@ private:
 protected:
     void enabled_changed() override;
     /// Called by the Window as focus arrives or leaves; redraws.
-    void focus_changed(bool /*focused*/) override
+    inline void focus_changed(bool /*focused*/) override
     {
         mark_dirty(DirtyFlags::Visual);
     }
@@ -219,7 +225,7 @@ protected:
 ///     },
 /// });
 /// @endcode
-struct Splitter
+LIBWINUI_EXPORT struct Splitter
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Splitter>` points at.
@@ -281,3 +287,5 @@ struct Splitter
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

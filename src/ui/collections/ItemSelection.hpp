@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <optional>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui::detail
 {
@@ -13,21 +15,21 @@ namespace ui::detail
 class ItemSelection
 {
 public:
-    void reset(std::size_t count)
+    inline void reset(std::size_t count)
     {
         bits_.assign(count, false);
         anchor_.reset();
     }
-    [[nodiscard]] std::size_t size() const
+    [[nodiscard]] inline std::size_t size() const
     {
         return bits_.size();
     }
-    [[nodiscard]] bool is_selected(std::size_t index) const
+    [[nodiscard]] inline bool is_selected(std::size_t index) const
     {
         return index < bits_.size() && bits_[index];
     }
     /// Returns whether anything changed.
-    bool set(std::size_t index, bool selected)
+    inline bool set(std::size_t index, bool selected)
     {
         if (index >= bits_.size() || bits_[index] == selected)
         {
@@ -36,7 +38,7 @@ public:
         bits_[index] = selected;
         return true;
     }
-    bool clear()
+    inline bool clear()
     {
         bool changed = false;
         for (std::size_t i = 0; i < bits_.size(); ++i)
@@ -45,7 +47,7 @@ public:
         }
         return changed;
     }
-    bool select_all()
+    inline bool select_all()
     {
         bool changed = false;
         for (std::size_t i = 0; i < bits_.size(); ++i)
@@ -54,7 +56,7 @@ public:
         }
         return changed;
     }
-    bool invert()
+    inline bool invert()
     {
         for (std::size_t i = 0; i < bits_.size(); ++i)
         {
@@ -63,7 +65,7 @@ public:
         return !bits_.empty();
     }
     /// Select (or deselect) every item from `a` to `b`, either order.
-    bool set_range(std::size_t a, std::size_t b, bool selected)
+    inline bool set_range(std::size_t a, std::size_t b, bool selected)
     {
         bool changed = false;
         for (std::size_t i = std::min(a, b); i <= std::max(a, b) && i < bits_.size(); ++i)
@@ -72,15 +74,15 @@ public:
         }
         return changed;
     }
-    [[nodiscard]] bool all_selected() const
+    [[nodiscard]] inline bool all_selected() const
     {
         return !bits_.empty() && std::all_of(bits_.begin(), bits_.end(), [](bool b) { return b; });
     }
-    [[nodiscard]] std::size_t selected_count() const
+    [[nodiscard]] inline std::size_t selected_count() const
     {
         return static_cast<std::size_t>(std::count(bits_.begin(), bits_.end(), true));
     }
-    [[nodiscard]] std::vector<std::size_t> selected() const
+    [[nodiscard]] inline std::vector<std::size_t> selected() const
     {
         std::vector<std::size_t> out;
         for (std::size_t i = 0; i < bits_.size(); ++i)
@@ -92,7 +94,7 @@ public:
         }
         return out;
     }
-    [[nodiscard]] std::optional<std::size_t> first_selected() const
+    [[nodiscard]] inline std::optional<std::size_t> first_selected() const
     {
         for (std::size_t i = 0; i < bits_.size(); ++i)
         {
@@ -104,16 +106,16 @@ public:
         return std::nullopt;
     }
 
-    [[nodiscard]] const std::optional<std::size_t>& anchor() const
+    [[nodiscard]] inline const std::optional<std::size_t>& anchor() const
     {
         return anchor_;
     }
-    void set_anchor(std::optional<std::size_t> anchor)
+    inline void set_anchor(std::optional<std::size_t> anchor)
     {
         anchor_ = anchor;
     }
 
-    void on_inserted(std::size_t index, std::size_t count)
+    inline void on_inserted(std::size_t index, std::size_t count)
     {
         index = std::min(index, bits_.size());
         bits_.insert(bits_.begin() + static_cast<std::ptrdiff_t>(index), count, false);
@@ -123,7 +125,7 @@ public:
         }
     }
     /// Returns whether a selected item went.
-    bool on_removed(std::size_t index, std::size_t count)
+    inline bool on_removed(std::size_t index, std::size_t count)
     {
         if (index >= bits_.size())
         {
@@ -148,7 +150,7 @@ public:
         return changed;
     }
     /// One item moved from `from` to `to`; its selection goes with it.
-    void on_moved(std::size_t from, std::size_t to)
+    inline void on_moved(std::size_t from, std::size_t to)
     {
         if (from >= bits_.size() || to >= bits_.size())
         {

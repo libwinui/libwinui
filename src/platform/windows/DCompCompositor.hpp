@@ -6,16 +6,19 @@
 #include "winui/render/RenderRecording.hpp"
 #include "winui/ui/Animation.hpp"
 
-#include <chrono>
 #include <d2d1_1.h>
 #include <d3d11.h>
 #include <dcomp.h>
 #include <dwrite.h>
+#include <windows.h>
+#include <wrl/client.h>
+
+#ifndef LIBWINUI_MODULE
+#include <chrono>
 #include <memory>
 #include <unordered_map>
 #include <vector>
-#include <windows.h>
-#include <wrl/client.h>
+#endif
 
 namespace ui::win32
 {
@@ -32,7 +35,7 @@ public:
     void animate_opacity(VisualId id, float from, float to, Duration duration) override;
     void remove_visual(VisualId id) override;
 
-    [[nodiscard]] bool supports_layers() override
+    [[nodiscard]] inline bool supports_layers() override
     {
         return true;
     }
@@ -51,7 +54,7 @@ public:
     // The visual every layer hangs under: the root's first child, so the overlays (added on top of
     // it later) stay above the layers. Content that belongs under both, such as the window's own
     // frame as a visual, goes below it.
-    [[nodiscard]] IDCompositionVisual2* layers_root() const
+    [[nodiscard]] inline IDCompositionVisual2* layers_root() const
     {
         return layers_root_.Get();
     }
@@ -100,7 +103,7 @@ private:
 
     DCompCompositor() = default;
 
-    [[nodiscard]] float to_px(float dips) const
+    [[nodiscard]] inline float to_px(float dips) const
     {
         return dips * static_cast<float>(dpi_) / 96.0f;
     }
@@ -135,7 +138,7 @@ private:
 class LazyCompositor final : public detail::Compositor
 {
 public:
-    LazyCompositor(HWND hwnd, UINT dpi) : hwnd_(hwnd), dpi_(dpi)
+    inline LazyCompositor(HWND hwnd, UINT dpi) : hwnd_(hwnd), dpi_(dpi)
     {
     }
 
@@ -144,7 +147,7 @@ public:
     void remove_visual(VisualId id) override;
 
     // Makes the device for the first layer, and says no when there is none to make.
-    [[nodiscard]] bool supports_layers() override
+    [[nodiscard]] inline bool supports_layers() override
     {
         return device() != nullptr;
     }
@@ -158,7 +161,7 @@ public:
     void set_dpi(UINT dpi);
 
     // Makes the device now, for an idle moment before the first animation would have to wait for it.
-    void prepare()
+    inline void prepare()
     {
         (void)device();
     }

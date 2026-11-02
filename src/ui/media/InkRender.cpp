@@ -8,6 +8,7 @@
 #include "winui/render/Renderer.hpp"
 #include "winui/ui/media/InkCanvas.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <numbers>
 #include <optional>
@@ -17,6 +18,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui::detail
 {

@@ -21,6 +21,7 @@
 #include "winui/ui/menus/MenuFlyout.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <chrono>
 #include <memory>
@@ -28,6 +29,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui::detail
 {

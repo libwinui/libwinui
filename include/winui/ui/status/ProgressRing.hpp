@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -16,10 +20,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -51,7 +57,7 @@ namespace ui
 /// ring->set_background(ui::Color::from_argb(0x33808080));
 /// ring->set_value(75.0);
 /// @endcode
-class ProgressRingControl final : public Element, private RangeValueProvider
+LIBWINUI_EXPORT class ProgressRingControl final : public Element, private RangeValueProvider
 {
 
     // ---- compositor layers ----
@@ -73,12 +79,12 @@ public:
 
     // ---- range/value ----
     /// The value with no arc; 0 by default.
-    [[nodiscard]] double(min)() const
+    [[nodiscard]] inline double(min)() const
     {
         return min_;
     }
     /// The value drawing the full circle; 100 by default.
-    [[nodiscard]] double(max)() const
+    [[nodiscard]] inline double(max)() const
     {
         return max_;
     }
@@ -87,7 +93,7 @@ public:
     void set_range(double min, double max);
 
     /// The value, always within [`min()`, `max()`]; 0 by default. Drawn only while determinate.
-    [[nodiscard]] double value() const
+    [[nodiscard]] inline double value() const
     {
         return value_;
     }
@@ -97,7 +103,7 @@ public:
 
     // ---- indeterminate / active ----
     /// Whether it spins endlessly instead of showing a share; true by default.
-    [[nodiscard]] bool is_indeterminate() const
+    [[nodiscard]] inline bool is_indeterminate() const
     {
         return indeterminate_;
     }
@@ -105,7 +111,7 @@ public:
     void set_indeterminate(bool indeterminate);
 
     /// Whether the ring shows; true by default. An inactive ring draws nothing but keeps its layout size.
-    [[nodiscard]] bool is_active() const
+    [[nodiscard]] inline bool is_active() const
     {
         return active_;
     }
@@ -114,12 +120,12 @@ public:
 
     /// The fixed fill of the track circle. nullopt (the default) draws no track, unless a theme
     /// resource is set.
-    [[nodiscard]] const std::optional<Color>& background() const
+    [[nodiscard]] inline const std::optional<Color>& background() const
     {
         return background_;
     }
     /// The track fill as a theme resource, or nullptr.
-    [[nodiscard]] ThemeColor background_resource() const
+    [[nodiscard]] inline ThemeColor background_resource() const
     {
         return background_resource_;
     }
@@ -131,21 +137,21 @@ public:
 
     /// Fired with the new, clamped value whenever `value()` changes. Replaces any
     /// previous handler.
-    void on_value_changed(Callback<void(double)> handler)
+    inline void on_value_changed(Callback<void(double)> handler)
     {
         on_value_changed_ = std::move(handler);
     }
 
     // ---- layout ----
     /// True: measuring reads nothing shared.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
 
     // ---- automation ----
     /// ProgressBar, with a range value that UI Automation can read but not set.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::ProgressBar;
     }
@@ -183,31 +189,31 @@ private:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.range_value = this;
     }
-    [[nodiscard]] double range_value() const override
+    [[nodiscard]] inline double range_value() const override
     {
         return value_;
     }
-    [[nodiscard]] double range_minimum() const override
+    [[nodiscard]] inline double range_minimum() const override
     {
         return min_;
     }
-    [[nodiscard]] double range_maximum() const override
+    [[nodiscard]] inline double range_maximum() const override
     {
         return max_;
     }
-    [[nodiscard]] double range_small_change() const override
+    [[nodiscard]] inline double range_small_change() const override
     {
         return 0.0;
     }
-    [[nodiscard]] bool range_read_only() const override
+    [[nodiscard]] inline bool range_read_only() const override
     {
         return false;
     }
-    bool set_range_value(double /*value*/) override
+    inline bool set_range_value(double /*value*/) override
     {
         return false;
     }
@@ -228,7 +234,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct ProgressRing
+LIBWINUI_EXPORT struct ProgressRing
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ProgressRing>` points at.
@@ -290,3 +296,5 @@ struct ProgressRing
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

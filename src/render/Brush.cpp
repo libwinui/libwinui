@@ -3,9 +3,11 @@
 
 #include "winui/core/Color.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 
 #include <cmath>
+#endif
 
 namespace ui
 {

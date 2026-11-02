@@ -13,21 +13,25 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#include "gallery.hpp"
-
-#include <winui/testing.hpp>
-#include <winui/winui.hpp>
 
 #include <chrono>
+#include <concepts>
 #include <format>
+#include <functional>
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
 #include <thread>
 #include <vector>
 #include <windows.h>
 
+#include <cstddef>
 #include <cstdio>
+
+import winui.testing;
+
+#include "gallery.hpp"
 
 namespace
 {
@@ -95,7 +99,7 @@ int main(int argc, char** argv)
     const std::string_view filter = argc > 3 ? argv[3] : "";
 
     ui::Window                window{{.title    = "libwinui Control Gallery",
-                                      .size    = {1180, 820},
+                                      .size     = {1180, 820},
                                       .backdrop = ui::Backdrop::Mica,
                                       .style    = {.frame = ui::Frame::Themed}}};
     ui::Property<std::string> status{""};

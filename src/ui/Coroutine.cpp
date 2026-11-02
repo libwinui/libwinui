@@ -5,8 +5,10 @@
 #include "winui/core/Scheduler.hpp"
 #include "winui/ui/WindowRef.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <coroutine>
 #include <utility>
+#endif
 
 namespace ui
 {

@@ -7,6 +7,7 @@
 #include "Win32String.hpp"
 #include "winui/core/PerfCounters.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <functional>
 #include <mutex>
 #include <string>
@@ -15,6 +16,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui::win32
 {

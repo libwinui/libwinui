@@ -5,6 +5,7 @@
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Renderer.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <optional>
 #include <utility>
@@ -12,6 +13,7 @@
 
 #include <cmath>
 #include <cstddef>
+#endif
 
 namespace ui
 {

@@ -13,12 +13,14 @@
 #include "winui/ui/datetime/CalendarView.hpp"
 #include "winui/ui/input/ComboBox.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include <cmath>
+#endif
 
 namespace ui::detail
 {

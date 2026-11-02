@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -22,6 +26,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <deque>
 #include <functional>
@@ -37,6 +42,7 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -57,7 +63,7 @@ namespace ui
 ///     },
 /// }
 /// @endcode
-struct TreeNode
+LIBWINUI_EXPORT struct TreeNode
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The row's label, and the name screen readers read for the node. Not displayed when an item
@@ -78,7 +84,7 @@ struct TreeNode
 };
 
 /// How many nodes a TreeView lets the user select.
-enum class TreeViewSelectionMode
+LIBWINUI_EXPORT enum class TreeViewSelectionMode
 {
     None,     ///< No selection. Clicks only invoke.
     Single,   ///< One node, selected by a click or the arrow keys. The default.
@@ -87,7 +93,7 @@ enum class TreeViewSelectionMode
 
 /// What a TreeViewControl's `on_drag_items_completed` gets: the node that moved, its new parent
 /// and its position there.
-struct TreeViewDragItemsCompletedArgs
+LIBWINUI_EXPORT struct TreeViewDragItemsCompletedArgs
 {
     const TreeNode& node;                 ///< The moved node, at its new place.
     const TreeNode* new_parent = nullptr; ///< Its new parent; nullptr for a root.
@@ -95,7 +101,7 @@ struct TreeViewDragItemsCompletedArgs
 };
 
 /// A node's selection state in Multiple mode, as its check box shows it.
-enum class TreeNodeSelectionState
+LIBWINUI_EXPORT enum class TreeNodeSelectionState
 {
     Unselected, ///< Neither the node nor any descendant leaf is selected.
     Partial,    ///< Some of the node's descendants are selected, not all. The check box shows indeterminate.
@@ -131,7 +137,7 @@ enum class TreeNodeSelectionState
 /// // Enter or double-click:
 /// tree->on_item_invoked([](const ui::TreeNode& node) { std::println("open {}", node.text); });
 /// @endcode
-class TreeViewControl final : public Element, private ValueProvider
+LIBWINUI_EXPORT class TreeViewControl final : public Element, private ValueProvider
 {
 public:
     /// Makes a row's content for a node and may choose a different look per node. Called during
@@ -149,7 +155,7 @@ public:
     /// every row content the template made, and lays the tree out again.
     void set_roots(std::vector<TreeNode> roots);
     /// The top-level nodes, each owning its subtree, as last set or rearranged by a drag.
-    [[nodiscard]] const std::vector<TreeNode>& roots() const
+    [[nodiscard]] inline const std::vector<TreeNode>& roots() const
     {
         return roots_;
     }
@@ -170,7 +176,7 @@ public:
 
     // ---- selection ----
     /// The selection mode; Single by default.
-    [[nodiscard]] TreeViewSelectionMode selection_mode() const
+    [[nodiscard]] inline TreeViewSelectionMode selection_mode() const
     {
         return selection_mode_;
     }
@@ -192,7 +198,7 @@ public:
     /// Fired whenever the selection changes, by a click, the arrow keys, a check box, or a selected
     /// key gone from set_roots(). Called with selected(): the selected node, the first one in
     /// Multiple mode, or nullptr when nothing is selected. Replaces any previous handler.
-    void on_selection_changed(Callback<void(const TreeNode*)> handler)
+    inline void on_selection_changed(Callback<void(const TreeNode*)> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
@@ -200,26 +206,26 @@ public:
     // ---- events ----
     /// Called with the node on a single click on its row, before the click selects it. Not
     /// fired for a click on the chevron or check box.
-    void on_item_click(Callback<void(const TreeNode&)> handler)
+    inline void on_item_click(Callback<void(const TreeNode&)> handler)
     {
         on_item_click_ = std::move(handler);
     }
     /// Called when a row is opened: Enter or a double-click, and under
     /// TreeViewSelectionMode::None also a single click. Raised after the click selects. Not
     /// fired for a click on the chevron or check box.
-    void on_item_invoked(Callback<void(const TreeNode&)> handler)
+    inline void on_item_invoked(Callback<void(const TreeNode&)> handler)
     {
         on_item_invoked_ = std::move(handler);
     }
     /// A node is opening. Add the children of a node with `has_children` here, by setting a tree
     /// that has them (set_roots()). Fires before the node expands. If the node still has no
     /// children and no `has_children` afterwards, it stays collapsed.
-    void on_expanding(Callback<void(const TreeNode&)> handler)
+    inline void on_expanding(Callback<void(const TreeNode&)> handler)
     {
         on_expanding_ = std::move(handler);
     }
     /// Fired after a node has closed.
-    void on_collapsed(Callback<void(const TreeNode&)> handler)
+    inline void on_collapsed(Callback<void(const TreeNode&)> handler)
     {
         on_collapsed_ = std::move(handler);
     }
@@ -228,30 +234,30 @@ public:
     /// Whether rows can be dragged out to rearrange the tree; false by default. Element's
     /// allow-drop flag, also off by default, decides whether the tree accepts drops. Rearranging
     /// the tree needs both.
-    [[nodiscard]] bool can_drag_items() const
+    [[nodiscard]] inline bool can_drag_items() const
     {
         return can_drag_items_;
     }
     /// Turns dragging rows on or off. Takes effect on the next press.
-    void set_can_drag_items(bool can)
+    inline void set_can_drag_items(bool can)
     {
         can_drag_items_ = can;
     }
     /// Called with the node that moved, at its new place, its new parent (nullptr for a root) and
     /// its position there. roots() already holds the rearranged tree.
-    void on_drag_items_completed(Callback<void(const TreeViewDragItemsCompletedArgs&)> handler)
+    inline void on_drag_items_completed(Callback<void(const TreeViewDragItemsCompletedArgs&)> handler)
     {
         on_drag_items_completed_ = std::move(handler);
     }
 
     /// The row height of the last measure, in DIPs, for callers that compute rows. 0 before the
     /// first measure.
-    [[nodiscard]] float row_height() const
+    [[nodiscard]] inline float row_height() const
     {
         return row_height_;
     }
     /// Indentation per nesting level, in DIPs; 16 by default.
-    [[nodiscard]] float indent_width() const
+    [[nodiscard]] inline float indent_width() const
     {
         return indent_width_;
     }
@@ -266,12 +272,12 @@ public:
 
     // ---- focus ----
     /// Whether the tree holds keyboard focus and draws the focus ring.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// A Tab stop only while enabled and non-empty.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled() && !roots_.empty();
     }
@@ -279,7 +285,7 @@ public:
     /// Shift+F10 or the Menu key while the node is the current one. The node is selected first,
     /// unless it already is or the selection mode is not Single. An empty list opens no menu.
     /// Replaces any previous one.
-    void set_item_context_menu(Callback<std::vector<MenuItem>(const TreeNode&)> menu)
+    inline void set_item_context_menu(Callback<std::vector<MenuItem>(const TreeNode&)> menu)
     {
         item_context_menu_ = std::move(menu);
     }
@@ -287,7 +293,7 @@ public:
     /// the tree's own context flyout, and then opens the node's context menu.
     bool raise_context_requested(std::optional<Point> position) override;
     /// The node context menu while it shows, so the window finds its popup.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (item_menu_ && detail::TreeAccess::popup_request(*item_menu_) != nullptr)
         {
@@ -310,7 +316,7 @@ public:
 
     // ---- automation ----
     /// Reported to screen readers as a Tree.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Tree;
     }
@@ -337,12 +343,12 @@ private:
     // The accessibility item of `node`, made on first use and kept for the tree's life, by key.
     [[nodiscard]] Element* item_automation(const TreeNode& node) const;
     // Enter invokes the current row (on_item_invoked()).
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return true;
     }
     // All four arrows navigate the tree and do not move focus.
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowUp || key == Key::ArrowDown || key == Key::ArrowLeft || key == Key::ArrowRight;
     }
@@ -462,21 +468,21 @@ protected:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.value = this;
     }
     // The selected node's text, or empty.
-    [[nodiscard]] std::string text_value() const override
+    [[nodiscard]] inline std::string text_value() const override
     {
         const TreeNode* node = selected();
         return node != nullptr ? node->text : std::string{};
     }
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return true;
     }
-    bool set_text_value(std::string_view /*text*/) override
+    inline bool set_text_value(std::string_view /*text*/) override
     {
         return false;
     }
@@ -484,7 +490,7 @@ private:
 
 /// What a ui::TreeView's `on_drag_items_completed` gets: the item that moved, its new parent
 /// (nullptr for a root) and its position among the new parent's children. Valid during the call.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 struct TreeViewMovedArgs
 {
     const T&    item;                 ///< The moved item.
@@ -691,7 +697,7 @@ struct TreeMirror
 ///     .item         = [](const Folder& f) -> ui::Spec { return ui::Text{.text = f.name}; },
 /// });
 /// @endcode
-template <typename T = TreeNode>
+LIBWINUI_EXPORT template <typename T = TreeNode>
 struct TreeView
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
@@ -952,3 +958,5 @@ std::unique_ptr<Element> TreeView<T>::build() &&
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

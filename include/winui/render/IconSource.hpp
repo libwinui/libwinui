@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Bitmap.hpp"
@@ -11,6 +15,7 @@
 #include "winui/render/Symbol.hpp"
 #include "winui/render/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <atomic>
 #include <concepts>
 #include <memory>
@@ -19,6 +24,7 @@
 #include <variant>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -53,18 +59,18 @@ namespace ui
 /// share.measure(measurer); // a glyph's box is measured (and cached) before draw()
 /// share.draw(renderer, ui::Rect{0, 0, 20, 20}, theme.palette.text_fill_primary);
 /// @endcode
-class IconSource
+LIBWINUI_EXPORT class IconSource
 {
 public:
     /// No icon (a null IconSource).
     IconSource() = default;
 
     /// One glyph at `glyph.size` in `glyph.font_family`.
-    IconSource(IconGlyph glyph) : content_(glyph) // NOLINT(google-explicit-constructor): a glyph is an icon
+    inline IconSource(IconGlyph glyph) : content_(glyph) // NOLINT(google-explicit-constructor): a glyph is an icon
     {
     }
     /// The symbol's Segoe Fluent Icons glyph at 20px.
-    IconSource(Symbol symbol) : content_(symbol_glyph(symbol)) // NOLINT(google-explicit-constructor)
+    inline IconSource(Symbol symbol) : content_(symbol_glyph(symbol)) // NOLINT(google-explicit-constructor)
     {
     }
 
@@ -86,18 +92,18 @@ public:
     [[nodiscard]] static IconSource image(ImageSource source);
 
     /// True for a null IconSource (nothing to draw).
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return std::holds_alternative<std::monostate>(content_);
     }
     /// True when there is an icon; `!empty()`.
-    [[nodiscard]] explicit operator bool() const
+    [[nodiscard]] inline explicit operator bool() const
     {
         return !empty();
     }
 
     /// The glyph for a font or symbol icon, else null. Points into this IconSource.
-    [[nodiscard]] const IconGlyph* glyph() const
+    [[nodiscard]] inline const IconGlyph* glyph() const
     {
         return std::get_if<IconGlyph>(&content_);
     }
@@ -129,14 +135,14 @@ public:
 
     /// The slot size a control gives this icon: a glyph's own size, or `fallback` for anything
     /// else (a control's icon size, so a picture takes the room a glyph would).
-    [[nodiscard]] float extent(float fallback) const
+    [[nodiscard]] inline float extent(float fallback) const
     {
         const IconGlyph* g = glyph();
         return g != nullptr ? g->size : fallback;
     }
 
     /// The same glyph, path, bitmap or picture.
-    friend bool operator==(const IconSource& a, const IconSource& b)
+    friend inline bool operator==(const IconSource& a, const IconSource& b)
     {
         return a.content_ == b.content_;
     }
@@ -151,7 +157,7 @@ private:
         bool                       monochrome = true;
         std::shared_ptr<TintCache> tint;
 
-        friend bool operator==(const BitmapContent& a, const BitmapContent& b)
+        friend inline bool operator==(const BitmapContent& a, const BitmapContent& b)
         {
             return a.monochrome == b.monochrome && a.image == b.image; // not the cache
         }
@@ -160,7 +166,7 @@ private:
     {
         ImageSource source;
 
-        friend bool operator==(const Picture&, const Picture&) = default;
+        friend inline bool operator==(const Picture&, const Picture&) = default;
     };
 
     [[nodiscard]] Size natural_size() const;
@@ -171,10 +177,10 @@ private:
     {
     public:
         GlyphBox() = default;
-        GlyphBox(const GlyphBox& other) noexcept : bits_(other.bits_.load(std::memory_order_relaxed))
+        inline GlyphBox(const GlyphBox& other) noexcept : bits_(other.bits_.load(std::memory_order_relaxed))
         {
         }
-        GlyphBox& operator=(const GlyphBox& other) noexcept
+        inline GlyphBox& operator=(const GlyphBox& other) noexcept
         {
             bits_.store(other.bits_.load(std::memory_order_relaxed), std::memory_order_relaxed);
             return *this;
@@ -192,3 +198,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

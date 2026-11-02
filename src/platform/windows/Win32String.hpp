@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include <windows.h>
+
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
-#include <windows.h>
+#endif
 
 namespace ui::win32
 {

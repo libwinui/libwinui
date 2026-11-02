@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -20,6 +24,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <limits>
 #include <memory>
@@ -30,6 +35,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -76,7 +82,7 @@ namespace ui
 /// flip->on_selection_changed([&page](std::size_t i) { page = i; });
 /// flip->set_selected_index(1); // slides once laid out; fires the handler
 /// @endcode
-class CarouselControl final : public Element, private SelectionProvider
+LIBWINUI_EXPORT class CarouselControl final : public Element, private SelectionProvider
 {
 public:
     /// An empty view: no items, nothing selected, not focusable.
@@ -101,18 +107,18 @@ public:
         return observer;
     }
     /// How many items the view holds.
-    [[nodiscard]] std::size_t item_count() const
+    [[nodiscard]] inline std::size_t item_count() const
     {
         return items_.size();
     }
     /// The item at `index` (owned by the view), or nullptr past the end.
-    [[nodiscard]] Element* item(std::size_t index) const
+    [[nodiscard]] inline Element* item(std::size_t index) const
     {
         return index < items_.size() ? items_[index].get() : nullptr;
     }
 
     /// The index of the item in view; unset with no items.
-    [[nodiscard]] std::optional<std::size_t> selected_index() const
+    [[nodiscard]] inline std::optional<std::size_t> selected_index() const
     {
         if (selected_index_ < 0)
         {
@@ -123,13 +129,13 @@ public:
     /// Selects the item at `index`, clamped to the items there are. A change fires
     /// on_selection_changed. A step to a neighbor slides (use_animations()), and anything else
     /// lands at once. Ignored with no items, since a carousel with items always shows one.
-    void set_selected_index(std::size_t index)
+    inline void set_selected_index(std::size_t index)
     {
         select_clamped(static_cast<int>((std::min<std::size_t>)(index, (std::numeric_limits<int>::max)())));
     }
 
     /// The flip axis; Horizontal by default.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
@@ -137,32 +143,32 @@ public:
     void set_orientation(Orientation orientation);
 
     /// Whether a one-item flip slides. On by default.
-    [[nodiscard]] bool use_animations() const
+    [[nodiscard]] inline bool use_animations() const
     {
         return use_animations_;
     }
     /// Turns the one-item slide on or off for later flips.
-    void set_use_animations(bool animate)
+    inline void set_use_animations(bool animate)
     {
         use_animations_ = animate;
     }
 
     /// The fill behind the items: a fixed color or a theme resource. Empty, the default, is the
     /// window's background color.
-    void set_background(Paint color)
+    inline void set_background(Paint color)
     {
         background_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The border color around the items (none by default), drawn over their edges.
-    void set_border_brush(Paint color)
+    inline void set_border_brush(Paint color)
     {
         border_brush_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The border's thickness per side, DIPs (0 by default). Drawn over the items, so it does not
     /// shrink them; redraws only.
-    void set_border_thickness(const Thickness& thickness)
+    inline void set_border_thickness(const Thickness& thickness)
     {
         border_thickness_ = thickness;
         mark_dirty(DirtyFlags::Visual);
@@ -171,7 +177,7 @@ public:
 
     /// Called with the new index whenever the selected item changes, by a button, the wheel, a key
     /// or set_selected_index(). One handler; setting another replaces it.
-    void on_selection_changed(Callback<void(std::size_t)> handler)
+    inline void on_selection_changed(Callback<void(std::size_t)> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
@@ -186,17 +192,17 @@ public:
     /// As previous_button_bounds(), at the right (or bottom) edge.
     [[nodiscard]] Rect next_button_bounds() const;
     /// Focusable while enabled and holding at least one item.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled() && !items_.empty();
     }
     /// Whether the view itself holds keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// Every item, in order.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         for (const auto& item : items_)
         {
@@ -209,7 +215,7 @@ public:
 
     // ---- automation ----
     /// A List.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::List;
     }
@@ -230,10 +236,10 @@ protected:
     /// An item in view that scrolls gets the turn first. Otherwise each turn flips one item, and a
     /// repeat in the same direction within 200 ms is ignored. Returns false (not handled) at the
     /// first or last item and for Ctrl+wheel, so an outer scroller can react.
-    bool                              wheel_override(const PointerEvent& e) override;
-    void                              hit_test_children(Point p, std::vector<Element*>& out) const override;
-    [[nodiscard]] bool                covers_children_at(Point p) const override;
-    [[nodiscard]] std::optional<Rect> children_hit_clip() const override
+    bool                                     wheel_override(const PointerEvent& e) override;
+    void                                     hit_test_children(Point p, std::vector<Element*>& out) const override;
+    [[nodiscard]] bool                       covers_children_at(Point p) const override;
+    [[nodiscard]] inline std::optional<Rect> children_hit_clip() const override
     {
         return bounds();
     }
@@ -246,13 +252,13 @@ private:
     [[nodiscard]] bool takes_arrow_key(Key key) const;
     // The selected item's live elements only, unlike for_each_child(): an item out of view must
     // not open a popup.
-    void               collect_live(std::vector<Element*>& out) override;
-    void               select_clamped(int index);
-    [[nodiscard]] bool horizontal() const
+    void                      collect_live(std::vector<Element*>& out) override;
+    void                      select_clamped(int index);
+    [[nodiscard]] inline bool horizontal() const
     {
         return orientation_ == Orientation::Horizontal;
     }
-    [[nodiscard]] float extent() const // one item's length along the flip axis
+    [[nodiscard]] inline float extent() const // one item's length along the flip axis
     {
         return horizontal() ? bounds().width : bounds().height;
     }
@@ -295,19 +301,19 @@ protected:
 
 protected:
     /// Inside the view, which fills its slot edge to edge.
-    [[nodiscard]] bool focus_ring_inside() const override
+    [[nodiscard]] inline bool focus_ring_inside() const override
     {
         return true;
     }
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.selection = this;
     }
     // The selected item.
-    void selected_items(std::vector<Element*>& out) const override
+    inline void selected_items(std::vector<Element*>& out) const override
     {
         if (selected_index_ >= 0 && static_cast<std::size_t>(selected_index_) < items_.size())
         {
@@ -315,11 +321,11 @@ private:
         }
     }
     // True: a flip view with items always shows one of them.
-    [[nodiscard]] bool selection_required() const override
+    [[nodiscard]] inline bool selection_required() const override
     {
         return true;
     }
-    [[nodiscard]] bool can_select_multiple() const override
+    [[nodiscard]] inline bool can_select_multiple() const override
     {
         return false;
     }
@@ -343,7 +349,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Carousel
+LIBWINUI_EXPORT struct Carousel
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Carousel>` points at.
@@ -409,3 +415,5 @@ struct Carousel
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Input.hpp"
@@ -17,11 +21,13 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -53,7 +59,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-class ToolbarControl final : public Element
+LIBWINUI_EXPORT class ToolbarControl final : public Element
 {
 public:
     /// An empty toolbar with 4 DIPs between items.
@@ -77,17 +83,17 @@ public:
     [[nodiscard]] static std::unique_ptr<Element> make_separator();
 
     /// The gap between adjacent items in DIPs, 4 by default.
-    [[nodiscard]] float spacing() const
+    [[nodiscard]] inline float spacing() const
     {
         return panel_->spacing();
     }
     /// Changes the gap. Updates layout.
-    void set_spacing(float spacing)
+    inline void set_spacing(float spacing)
     {
         panel_->set_spacing(spacing);
     }
     /// Visits the internal StackControl that lays the items out.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         visit(*panel_);
     }
@@ -95,7 +101,7 @@ public:
     // ---- automation ----
     /// Reports the toolbar's items and separators as its direct children. The internal
     /// StackControl that for_each_child() visits never appears in the automation tree.
-    void automation_children(std::vector<Element*>& out) const override
+    inline void automation_children(std::vector<Element*>& out) const override
     {
         for (const auto& child : panel_->children())
         {
@@ -103,7 +109,7 @@ public:
         }
     }
     /// Exposed to UI Automation as a toolbar.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::ToolBar;
     }
@@ -128,7 +134,7 @@ private:
 ///     ui::Button{.text = "Save", .on_click = [&] { save_document(); }},
 /// }});
 /// @endcode
-struct Toolbar
+LIBWINUI_EXPORT struct Toolbar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Toolbar>` points at.
@@ -185,14 +191,14 @@ struct Toolbar
 /// and a control's height. It draws an etched groove, a dark line beside a light one, or a 1 px
 /// flat line where the theme draws dividers flat. ui::Separator builds it and
 /// ui::ToolbarControl::add_separator() adds it.
-class SeparatorControl final : public Element
+LIBWINUI_EXPORT class SeparatorControl final : public Element
 {
 public:
     /// A separator. It has no state.
     SeparatorControl() = default;
 
     /// Exposed to UI Automation as a separator.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Separator;
     }
@@ -211,7 +217,7 @@ protected:
 /// @code
 /// ui::Toolbar{.content = {ui::Button{.text = "Cut"}, ui::Separator{}, ui::Button{.text = "Undo"}}}
 /// @endcode
-struct Separator
+LIBWINUI_EXPORT struct Separator
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Separator>` points at.
@@ -257,3 +263,5 @@ struct Separator
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

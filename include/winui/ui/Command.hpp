@@ -1,12 +1,17 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Input.hpp"
 #include "winui/core/Property.hpp"
 #include "winui/core/Version.hpp"
 #include "winui/render/IconSource.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <string>
 #include <string_view>
@@ -14,6 +19,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -44,7 +50,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-class CommandHandler
+LIBWINUI_EXPORT class CommandHandler
 {
 public:
     /// An empty handler: calling it does nothing and it converts to false.
@@ -66,7 +72,7 @@ public:
     }
 
     /// Runs the handler with `parameter`; a no-op when empty.
-    void operator()(std::string_view parameter = {}) const
+    inline void operator()(std::string_view parameter = {}) const
     {
         if (fn_)
         {
@@ -74,7 +80,7 @@ public:
         }
     }
     /// True when a handler was given.
-    [[nodiscard]] explicit operator bool() const
+    [[nodiscard]] inline explicit operator bool() const
     {
         return static_cast<bool>(fn_);
     }
@@ -85,7 +91,7 @@ private:
 
 /// What a Command's fields hold right now (Command::current()). A bound field holds its latest
 /// value, a plain field its fixed value.
-struct CommandValues
+LIBWINUI_EXPORT struct CommandValues
 {
     /// The command's text.
     std::string text{};
@@ -99,8 +105,8 @@ struct CommandValues
     bool enabled = true;
 };
 
-struct Command;
-class CommandRef;
+LIBWINUI_EXPORT struct Command;
+LIBWINUI_EXPORT class CommandRef;
 
 namespace detail
 {
@@ -112,12 +118,12 @@ class CommandLive
 {
 public:
     CommandLive() = default;
-    CommandLive(const CommandLive&) noexcept
+    inline CommandLive(const CommandLive&) noexcept
     {
     }
     // The command's fields may have changed with the assignment: read them again on the next use
     // and tell whoever watches this command. Its refs stay: they point at this object.
-    CommandLive& operator=(const CommandLive&) noexcept
+    inline CommandLive& operator=(const CommandLive&) noexcept
     {
         subscriptions_.clear();
         connected_ = false;
@@ -144,13 +150,13 @@ private:
 ///
 /// It follows the Command object it was given. A copy of the command, or one it was moved into,
 /// starts with no refs.
-class CommandRef
+LIBWINUI_EXPORT class CommandRef
 {
 public:
     /// No command.
     CommandRef() noexcept = default;
     /// No command.
-    CommandRef(std::nullptr_t) noexcept // NOLINT(google-explicit-constructor)
+    inline CommandRef(std::nullptr_t) noexcept // NOLINT(google-explicit-constructor)
     {
     }
     /// A reference to `command`; implicit, so a field takes `.command = save`.
@@ -162,17 +168,17 @@ public:
     ~CommandRef();
 
     /// The command, or nullptr when there is none or it was destroyed.
-    [[nodiscard]] const Command* get() const noexcept
+    [[nodiscard]] inline const Command* get() const noexcept
     {
         return command_;
     }
     /// The command, or nullptr: a CommandRef reads like the pointer it replaces.
-    operator const Command*() const noexcept // NOLINT(google-explicit-constructor)
+    inline operator const Command*() const noexcept // NOLINT(google-explicit-constructor)
     {
         return command_;
     }
     /// The command. Only use it while there is one.
-    const Command* operator->() const noexcept
+    inline const Command* operator->() const noexcept
     {
         return command_;
     }
@@ -228,7 +234,7 @@ private:
 /// });
 /// has_item = false; // the button disables itself, and Ctrl+D does nothing
 /// @endcode
-struct Command
+LIBWINUI_EXPORT struct Command
 {
     /// UTF-8 text, used by an app-bar button, a menu item or a swipe item that has no text of its
     /// own.
@@ -266,7 +272,7 @@ struct Command
 };
 
 /// The sixteen common commands standard_command() can pre-fill, plus None.
-enum class StandardCommand
+LIBWINUI_EXPORT enum class StandardCommand
 {
     None,      ///< No standard command: an empty Command.
     Cut,       ///< "Cut", Ctrl+X.
@@ -306,6 +312,10 @@ enum class StandardCommand
 ///     .primary = {ui::AppBarButton{.command = del, .command_parameter = "List item 3"}},
 /// });
 /// @endcode
-[[nodiscard]] Command standard_command(StandardCommand kind, CommandHandler execute = {}, Binding<bool> enabled = true);
+LIBWINUI_EXPORT [[nodiscard]] Command standard_command(StandardCommand kind,
+                                                       CommandHandler  execute = {},
+                                                       Binding<bool>   enabled = true);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

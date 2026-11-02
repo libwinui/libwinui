@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,17 +22,19 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// How serious an InfoBar's message is; picks the bar's background color and its status icon.
-enum class InfoBarSeverity
+LIBWINUI_EXPORT enum class InfoBarSeverity
 {
     Informational, ///< neutral background, info icon (the default)
     Success,       ///< success background, check-mark icon
@@ -71,7 +77,7 @@ enum class InfoBarSeverity
 /// });
 /// bar->set_action_button_content(std::make_unique<ui::ButtonControl>("Retry"))->on_click([] { save(); });
 /// @endcode
-class InfoBarControl final : public Element
+LIBWINUI_EXPORT class InfoBarControl final : public Element
 {
 public:
     /// A closed bar, which takes no room and draws nothing until opened.
@@ -84,14 +90,14 @@ public:
 
     // ---- content ----
     /// The bold title, first on the line; empty by default.
-    [[nodiscard]] const std::string& title() const
+    [[nodiscard]] inline const std::string& title() const
     {
         return title_;
     }
     /// Sets the title (UTF-8). Updates the layout.
     void set_title(std::string title);
     /// The message after the title, wrapped at whole words when the bar stacks.
-    [[nodiscard]] const std::string& message() const
+    [[nodiscard]] inline const std::string& message() const
     {
         return message_;
     }
@@ -99,7 +105,7 @@ public:
     void set_message(std::string message);
 
     /// The severity; Informational by default.
-    [[nodiscard]] InfoBarSeverity severity() const
+    [[nodiscard]] inline InfoBarSeverity severity() const
     {
         return severity_;
     }
@@ -107,7 +113,7 @@ public:
     void set_severity(InfoBarSeverity severity);
 
     /// Whether the severity icon shows at the left; true by default.
-    [[nodiscard]] bool is_icon_visible() const
+    [[nodiscard]] inline bool is_icon_visible() const
     {
         return is_icon_visible_;
     }
@@ -116,7 +122,7 @@ public:
 
     // ---- open/close ----
     /// Whether the bar shows; false by default.
-    [[nodiscard]] bool is_open() const
+    [[nodiscard]] inline bool is_open() const
     {
         return is_open_;
     }
@@ -126,7 +132,7 @@ public:
     void set_open(bool is_open);
 
     /// Whether the close button shows; true by default.
-    [[nodiscard]] bool is_closable() const
+    [[nodiscard]] inline bool is_closable() const
     {
         return is_closable_;
     }
@@ -135,7 +141,7 @@ public:
 
     /// A disabled bar grays out its close button, which then takes no input. The
     /// action button and the content keep their own state.
-    [[nodiscard]] bool enabled() const
+    [[nodiscard]] inline bool enabled() const
     {
         return close_button_->is_enabled();
     }
@@ -157,7 +163,7 @@ public:
         return observer;
     }
     /// The action element (non-owning), or nullptr.
-    [[nodiscard]] Element* action_button_content() const
+    [[nodiscard]] inline Element* action_button_content() const
     {
         return action_.get();
     }
@@ -185,7 +191,7 @@ public:
         return observer;
     }
     /// The custom content (non-owning), or nullptr.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
@@ -194,47 +200,47 @@ public:
 
     /// Fired on every close-button click, before on_closing(), whether or not the close is then
     /// canceled.
-    void on_close_button_click(Callback<void()> handler)
+    inline void on_close_button_click(Callback<void()> handler)
     {
         on_close_button_click_ = std::move(handler);
     }
     /// Runs before is_open() flips to false. Returning ui::Cancel keeps the bar open, and
     /// is_open() stays true throughout.
-    void on_closing(Callback<Decision(const PopupClosingArgs&)> handler)
+    inline void on_closing(Callback<Decision(const PopupClosingArgs&)> handler)
     {
         on_closing_ = std::move(handler);
     }
     /// Fired once a close goes ahead, that is when on_closing() did not cancel it.
-    void on_closed(Callback<void(PopupCloseReason)> handler)
+    inline void on_closed(Callback<void(PopupCloseReason)> handler)
     {
         on_closed_ = std::move(handler);
     }
 
     /// The close button's own rect from the most recent arrange(), for hit-testing. Empty while
     /// the close button is hidden.
-    [[nodiscard]] const Rect& close_button_bounds() const
+    [[nodiscard]] inline const Rect& close_button_bounds() const
     {
         return close_button_rect_;
     }
     /// The title's rect from the most recent arrange().
-    [[nodiscard]] const Rect& title_bounds() const
+    [[nodiscard]] inline const Rect& title_bounds() const
     {
         return title_rect_;
     }
     /// The message's rect from the most recent arrange().
-    [[nodiscard]] const Rect& message_bounds() const
+    [[nodiscard]] inline const Rect& message_bounds() const
     {
         return message_rect_;
     }
     /// The slot the custom content was last arranged into (before its own margin and alignment):
     /// below the title row, or the title row itself when the bar has no title, message or action.
     /// Empty without content.
-    [[nodiscard]] const Rect& content_bounds() const
+    [[nodiscard]] inline const Rect& content_bounds() const
     {
         return content_rect_;
     }
     /// Whether the last measure() stacked title, message and action.
-    [[nodiscard]] bool is_vertical() const
+    [[nodiscard]] inline bool is_vertical() const
     {
         return vertical_;
     }
@@ -243,7 +249,7 @@ public:
     /// Every owned child that currently takes part in input, focus and rendering, in tab order:
     /// the action, then the custom content, while open; the close button while open and
     /// closable.
-    void for_each_child(ChildVisitor visit) const override
+    inline void for_each_child(ChildVisitor visit) const override
     {
         if (action_active())
         {
@@ -260,11 +266,11 @@ public:
     }
 
     // ---- automation ----
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Pane;
     }
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return title_;
     }
@@ -289,7 +295,7 @@ protected:
 private:
     // Itself, then the custom content's live elements while open; the action and close button
     // are not offered (an action that opens a flyout of its own would need them to be).
-    void collect_live(std::vector<Element*>& out) override
+    inline void collect_live(std::vector<Element*>& out) override
     {
         out.push_back(this);
         if (content_active())
@@ -297,15 +303,15 @@ private:
             detail::TreeAccess::collect_live(*content_, out);
         }
     }
-    [[nodiscard]] bool close_button_active() const
+    [[nodiscard]] inline bool close_button_active() const
     {
         return is_open_ && is_closable_;
     }
-    [[nodiscard]] bool action_active() const
+    [[nodiscard]] inline bool action_active() const
     {
         return is_open_ && action_ != nullptr;
     }
-    [[nodiscard]] bool content_active() const
+    [[nodiscard]] inline bool content_active() const
     {
         return is_open_ && content_ != nullptr;
     }
@@ -367,7 +373,7 @@ protected:
 ///     .action_button_content = ui::Button{.text = "Restart", .on_click = [&] { restart_app(); }},
 /// });
 /// @endcode
-struct InfoBar
+LIBWINUI_EXPORT struct InfoBar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<InfoBar>` points at.
@@ -443,3 +449,5 @@ struct InfoBar
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,20 +1,26 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Renderer.hpp"
 #include "winui/render/Text.hpp"
 #include "winui/ui/LayoutContext.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
 
-class Element;
+LIBWINUI_EXPORT class Element;
 
 /// The `Header` label an input control (Slider, ComboBox, ToggleSwitch, TextBox, NumberBox, ...)
 /// carries above itself. It draws wrapping text in the primary text color, or in the disabled
@@ -62,23 +68,23 @@ class Element;
 ///     ui::ControlHeader header_{4.0f}; // gap below the header, DIPs
 /// };
 /// @endcode
-class ControlHeader
+LIBWINUI_EXPORT class ControlHeader
 {
 public:
     /// `gap` is the space in DIPs between the header and the control below it (4 for a Slider).
     /// It applies only while the header has text.
-    explicit ControlHeader(float gap) : gap_(gap)
+    inline explicit ControlHeader(float gap) : gap_(gap)
     {
     }
 
     /// The header text; empty (the default) collapses the header entirely.
-    [[nodiscard]] const std::string& text() const
+    [[nodiscard]] inline const std::string& text() const
     {
         return text_;
     }
     /// Returns whether the text changed, so the caller knows to mark itself dirty for layout and
     /// visuals, since the header's height depends on its text.
-    bool set_text(std::string text)
+    inline bool set_text(std::string text)
     {
         if (text == text_)
         {
@@ -88,7 +94,7 @@ public:
         return true;
     }
     /// True while there is no text. The header then takes no room and draws nothing.
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return text_.empty();
     }
@@ -100,13 +106,13 @@ public:
 
     /// `available` with the header's height taken out, for measuring the control below it. An
     /// unbounded height stays unbounded.
-    [[nodiscard]] static Size below(Size available, Size header)
+    [[nodiscard]] static inline Size below(Size available, Size header)
     {
         return Size{available.width, (std::max)(0.0f, available.height - header.height)};
     }
     /// The control's own desired size with the header stacked on top of it: the wider of the
     /// two, and the heights summed.
-    [[nodiscard]] static Size above(Size control, Size header)
+    [[nodiscard]] static inline Size above(Size control, Size header)
     {
         return Size{(std::max)(control.width, header.width), control.height + header.height};
     }
@@ -162,17 +168,17 @@ private:
 ///     ui::ControlDescription description_;
 /// };
 /// @endcode
-class ControlDescription
+LIBWINUI_EXPORT class ControlDescription
 {
 public:
     /// The description text; empty (the default) collapses it entirely.
-    [[nodiscard]] const std::string& text() const
+    [[nodiscard]] inline const std::string& text() const
     {
         return text_;
     }
     /// Returns whether the text changed, so the caller knows to mark itself dirty for layout and
     /// visuals.
-    bool set_text(std::string text)
+    inline bool set_text(std::string text)
     {
         if (text == text_)
         {
@@ -182,12 +188,12 @@ public:
         return true;
     }
     /// The error text; empty (the default) shows the description.
-    [[nodiscard]] const std::string& error() const
+    [[nodiscard]] inline const std::string& error() const
     {
         return error_;
     }
     /// Returns whether the error changed, so the caller knows to mark itself dirty.
-    bool set_error(std::string error)
+    inline bool set_error(std::string error)
     {
         if (error == error_)
         {
@@ -197,17 +203,17 @@ public:
         return true;
     }
     /// True while an error is set.
-    [[nodiscard]] bool has_error() const
+    [[nodiscard]] inline bool has_error() const
     {
         return !error_.empty();
     }
     /// What shows under the control: the error while one is set, else the description.
-    [[nodiscard]] const std::string& shown() const
+    [[nodiscard]] inline const std::string& shown() const
     {
         return error_.empty() ? text_ : error_;
     }
     /// True while there is nothing to show: it takes no room and draws nothing.
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return shown().empty();
     }
@@ -231,3 +237,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -7,7 +7,9 @@
 #include "winui/render/FocusRing.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
+#endif
 
 namespace ui::detail
 {

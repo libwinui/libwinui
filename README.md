@@ -77,13 +77,14 @@ ctest --test-dir build -C Release --output-on-failure
 | Option                 | Default | Effect                                                   |
 | ---------------------- | ------- | -------------------------------------------------------- |
 | `LIBWINUI_BUILD_TESTS`    | `ON`    | Builds `winui_tests` and registers it with CTest, when libwinui is the top-level project |
-| `LIBWINUI_BUILD_EXAMPLES` | `ON`    | Builds the example apps and one project per tutorial, when libwinui is the top-level project |
+| `LIBWINUI_BUILD_EXAMPLES` | `ON`    | Builds the example apps and one project per tutorial, when libwinui is the top-level project and builds the modules |
 | `LIBWINUI_BUILD_SHARED`   | `OFF`   | Also builds a shared library next to the static one, with no ABI promise: it only works with the headers, compiler and options it was built with |
 
 ## Using it in your project
 
-Add the repository with `add_subdirectory()` (or `FetchContent`) and link `winui::main`.
-`winui::main` lets a `WIN32` executable use a plain `int main()`:
+Add the repository with `add_subdirectory()` (or `FetchContent`) and link `winui::main`. It brings the module
+for `import winui;` and lets a `WIN32` executable use a plain `int main()`. `winui::headers_main` is the same
+for `#include <winui/winui.hpp>`:
 
 ```cmake
 add_subdirectory(libwinui)
@@ -92,8 +93,9 @@ add_executable(my_app WIN32 main.cpp)
 target_link_libraries(my_app PRIVATE winui::main)
 ```
 
-Tests of your UI link `winui::testing` instead, the opt-in testing tier (`<winui/testing.hpp>`:
-the headless host, `TestRenderer` and the test doubles):
+Tests of your UI link `winui::testing` instead, the opt-in testing tier (`import winui.testing;`:
+the headless host, `TestRenderer` and the test doubles). `winui::testing_headers` is the same for
+`#include <winui/testing.hpp>`:
 
 ```cmake
 add_executable(my_app_tests tests.cpp)

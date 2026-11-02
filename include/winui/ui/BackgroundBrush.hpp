@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/ui/Animation.hpp"
 #include "winui/ui/Paint.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <optional>
 #include <type_traits>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -64,52 +70,52 @@ namespace ui
 ///     ui::BackgroundBrush background_;
 /// };
 /// @endcode
-class BackgroundBrush
+LIBWINUI_EXPORT class BackgroundBrush
 {
 public:
     /// The fixed color; nullopt (a null brush) when there is none or a resource is set.
-    [[nodiscard]] const std::optional<Color>& color() const
+    [[nodiscard]] inline const std::optional<Color>& color() const
     {
         return color_;
     }
     /// The theme resource, or nullptr when a fixed color (or nothing) is set.
-    [[nodiscard]] ThemeColor resource() const
+    [[nodiscard]] inline ThemeColor resource() const
     {
         return resource_;
     }
     /// Switches to a fixed color (nullopt: draw nothing) and clears any theme resource. The
     /// transition, if any, starts at the next resolve().
-    void set(std::optional<Color> color)
+    inline void set(std::optional<Color> color)
     {
         color_    = color;
         resource_ = nullptr;
     }
     /// Switches to a fixed color and clears any theme resource.
-    void set(Color color)
+    inline void set(Color color)
     {
         set(std::optional<Color>{color});
     }
     /// Switches to a theme resource, re-read on every resolve(), and clears any fixed color.
-    void set(ThemeColor theme_color)
+    inline void set(ThemeColor theme_color)
     {
         color_    = std::nullopt;
         resource_ = theme_color;
     }
     /// Switches to what `paint` holds: its color (a brush's flat color, see Paint), its
     /// resource, or nothing.
-    void set(const Paint& paint)
+    inline void set(const Paint& paint)
     {
         color_    = paint.color();
         resource_ = paint.resource();
     }
 
     /// The blend between colors; nullopt (the default) makes every change immediate.
-    [[nodiscard]] const std::optional<BrushTransition>& transition() const
+    [[nodiscard]] inline const std::optional<BrushTransition>& transition() const
     {
         return transition_;
     }
     /// Takes effect from the next change; a blend already running keeps going.
-    void set_transition(std::optional<BrushTransition> transition)
+    inline void set_transition(std::optional<BrushTransition> transition)
     {
         transition_ = transition;
     }
@@ -117,7 +123,7 @@ public:
     /// What to draw under `theme` now; nullopt draws nothing. A change since the last call starts
     /// the transition from the color that was on screen. Only color-to-color changes animate:
     /// a background appearing or disappearing is immediate.
-    [[nodiscard]] std::optional<Color> resolve(const Theme& theme) const
+    [[nodiscard]] inline std::optional<Color> resolve(const Theme& theme) const
     {
         const std::optional<Color> target = resource_ != nullptr ? std::optional<Color>{resource_(theme)} : color_;
         if (drawn_ && target != shown_)
@@ -130,7 +136,7 @@ public:
     }
     /// Advances a running transition by `delta`; true while it runs, so the owner
     /// keeps marking itself DirtyFlags::Visual. Call from the owner's tick_override().
-    bool advance(Duration delta)
+    inline bool advance(Duration delta)
     {
         return animator_.advance(delta);
     }
@@ -145,3 +151,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

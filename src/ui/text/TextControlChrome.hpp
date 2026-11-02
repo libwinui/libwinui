@@ -9,7 +9,9 @@
 #include "winui/render/TextLayout.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <cstddef>
+#endif
 
 namespace ui::detail
 {

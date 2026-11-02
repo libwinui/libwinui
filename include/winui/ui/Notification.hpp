@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
+#endif
 
 namespace ui
 {
 
 /// The picture a notification carries (Notification::icon).
-enum class NotificationIcon
+LIBWINUI_EXPORT enum class NotificationIcon
 {
     None,    ///< No picture.
     Info,    ///< The system information icon.
@@ -21,7 +27,7 @@ enum class NotificationIcon
 
 /// A desktop notification: what ui::notify() and TrayIcon::notify() show. Fill it with
 /// designated initializers.
-struct Notification
+LIBWINUI_EXPORT struct Notification
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The first line, in bold.
@@ -50,14 +56,14 @@ struct Notification
 ///             .text     = "report.pdf was saved to Documents.",
 ///             .on_click = [&] { window.activate(); }});
 /// @endcode
-void notify(Notification notification);
+LIBWINUI_EXPORT void notify(Notification notification);
 
 /// What shows the notifications ui::notify() asks for.
 ///
 /// There is one for the whole process: the platform's, or a double a test installs with
 /// `ui::testing::set_notifier()`. App code calls ui::notify() and never needs the class. It is
 /// public so a test double can derive from it.
-class Notifier
+LIBWINUI_EXPORT class Notifier
 {
 public:
     virtual ~Notifier() = default;
@@ -70,8 +76,10 @@ namespace detail
 {
 // The notifier notify() uses in place of the platform's, or nullptr for the platform's own.
 // ui::testing::set_notifier() is the public way to set it.
-void                    install_notifier(Notifier* notifier);
-[[nodiscard]] Notifier* installed_notifier();
+LIBWINUI_EXPORT void                    install_notifier(Notifier* notifier);
+LIBWINUI_EXPORT [[nodiscard]] Notifier* installed_notifier();
 } // namespace detail
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

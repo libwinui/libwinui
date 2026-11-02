@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/render/Renderer.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -40,6 +46,8 @@ namespace ui
 ///     std::vector<ui::RenderCommand> frame_;
 /// };
 /// @endcode
-[[nodiscard]] std::string describe(const std::vector<RenderCommand>& commands);
+LIBWINUI_EXPORT [[nodiscard]] std::string describe(const std::vector<RenderCommand>& commands);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

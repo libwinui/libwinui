@@ -15,6 +15,9 @@
 #include "winui/core/Utf8.hpp"
 #include "winui/render/TextAnalyzer.hpp"
 
+#include <windows.h>
+
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <limits>
 #include <memory>
@@ -24,10 +27,10 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
-#include <windows.h>
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui::win32
 {

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -14,11 +18,13 @@
 #include "winui/ui/menus/MenuFlyout.hpp"
 #include "winui/ui/themes/ThemeSource.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -36,7 +42,7 @@ namespace ui
 ///     .menu     = {{.text = "Quit", .on_click = [] { ui::quit(); }}},
 /// }};
 /// @endcode
-struct TrayIconOptions
+LIBWINUI_EXPORT struct TrayIconOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The icon's hover text. The shell cuts it at 127 characters.
@@ -111,7 +117,7 @@ struct TrayIconOptions
 ///     return ui::run(); // until ui::quit(); closing the flyout only hides it
 /// }
 /// @endcode
-class TrayIcon
+LIBWINUI_EXPORT class TrayIcon
 {
 public:
     /// Adds the icon. When there is no taskbar yet, the icon is added as soon as the taskbar
@@ -157,7 +163,7 @@ private:
 };
 
 /// What tray_flyout_options() takes: the few things an app chooses about a tray flyout.
-struct TrayFlyoutOptions
+LIBWINUI_EXPORT struct TrayFlyoutOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The window's title. No caption shows it, but screen readers read it.
@@ -183,7 +189,7 @@ struct TrayFlyoutOptions
 /// @code
 /// ui::Window flyout{ui::tray_flyout_options({.title = "Timer", .width = 320.0f})};
 /// @endcode
-[[nodiscard]] WindowOptions tray_flyout_options(TrayFlyoutOptions options = {});
+LIBWINUI_EXPORT [[nodiscard]] WindowOptions tray_flyout_options(TrayFlyoutOptions options = {});
 
 /// Where a flyout of `size` goes, beside a tray icon at `anchor` on a monitor whose work area is
 /// `work_area`, in any unit as long as all four agree. Returns the top-left. The taskbar is on
@@ -209,6 +215,8 @@ struct TrayFlyoutOptions
 /// // With the icon at {1000, 1040, 32, 32} and a 1920x1032 work area above a bottom taskbar, the
 /// // window goes to {836, 620}: centered on the icon, 12 DIPs above the taskbar.
 /// @endcode
-[[nodiscard]] Point place_tray_flyout(const Rect& anchor, const Rect& work_area, Size size, float margin);
+LIBWINUI_EXPORT [[nodiscard]] Point place_tray_flyout(const Rect& anchor, const Rect& work_area, Size size, float margin);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -19,11 +23,13 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -35,7 +41,7 @@ enum class TeachingTipSpot : unsigned char;
 } // namespace detail
 
 /// Which edge of the card the hero content sits at: Auto puts it at the edge away from the tail.
-enum class TeachingTipHeroPlacement
+LIBWINUI_EXPORT enum class TeachingTipHeroPlacement
 {
     Auto,   ///< The edge away from the tail; the top when there is no tail at the top.
     Top,    ///< Always across the top of the card.
@@ -87,7 +93,7 @@ class TeachingTipSurface; // defined in TeachingTip.cpp
 ///     t->set_open(true);
 /// });
 /// @endcode
-class TeachingTipControl final : public Element
+LIBWINUI_EXPORT class TeachingTipControl final : public Element
 {
 public:
     /// A closed, untargeted tip with no text, no content and no buttons (only the corner "X"). Not
@@ -100,14 +106,14 @@ public:
     void set_title(std::string title);
     /// The semibold first line of the card, wrapping at whole words; hidden when empty. Screen
     /// readers also use it as the name when none is set.
-    [[nodiscard]] const std::string& title() const
+    [[nodiscard]] inline const std::string& title() const
     {
         return title_;
     }
     /// Sets the subtitle.
     void set_subtitle(std::string subtitle);
     /// The line under the title, wrapping at whole words; hidden when empty.
-    [[nodiscard]] const std::string& subtitle() const
+    [[nodiscard]] inline const std::string& subtitle() const
     {
         return subtitle_;
     }
@@ -115,7 +121,7 @@ public:
     /// is 20 DIPs for a Symbol. Anything else fills a 20 DIP square.
     void set_icon(IconSource icon);
     /// The icon left of the titles; empty (the default) drops the icon column.
-    [[nodiscard]] const IconSource& icon() const
+    [[nodiscard]] inline const IconSource& icon() const
     {
         return icon_;
     }
@@ -131,7 +137,7 @@ public:
         return observer;
     }
     /// The content under the titles, owned by the tip; nullptr when none.
-    [[nodiscard]] Element* content() const
+    [[nodiscard]] inline Element* content() const
     {
         return content_.get();
     }
@@ -147,14 +153,14 @@ public:
         return observer;
     }
     /// The hero content, owned by the tip; nullptr when none.
-    [[nodiscard]] Element* hero_content() const
+    [[nodiscard]] inline Element* hero_content() const
     {
         return hero_.get();
     }
     /// Sets which edge the hero sits at.
     void set_hero_content_placement(TeachingTipHeroPlacement placement);
     /// Which edge the hero sits at; Auto (the default) puts the hero away from the tail.
-    [[nodiscard]] TeachingTipHeroPlacement hero_content_placement() const
+    [[nodiscard]] inline TeachingTipHeroPlacement hero_content_placement() const
     {
         return hero_placement_;
     }
@@ -164,43 +170,43 @@ public:
     /// closes the tip.
     void set_action_button_text(std::string text);
     /// The action button's text; empty (the default) hides it.
-    [[nodiscard]] const std::string& action_button_text() const
+    [[nodiscard]] inline const std::string& action_button_text() const
     {
         return action_text_;
     }
     /// Sets the close button's text; a non-empty one also hides the corner "X".
     void set_close_button_text(std::string text);
     /// The close button's text; empty (the default) hides it.
-    [[nodiscard]] const std::string& close_button_text() const
+    [[nodiscard]] inline const std::string& close_button_text() const
     {
         return close_text_;
     }
     /// The action button, owned by the tip (for styling); shown only when
     /// action_button_text() is non-empty.
-    [[nodiscard]] ButtonControl* action_button() const
+    [[nodiscard]] inline ButtonControl* action_button() const
     {
         return action_button_.get();
     }
     /// The close button, owned by the tip; shown only when close_button_text() is non-empty.
-    [[nodiscard]] ButtonControl* close_button() const
+    [[nodiscard]] inline ButtonControl* close_button() const
     {
         return close_button_.get();
     }
     /// The corner "X". It shows only when there is no close button text and light dismiss is off
     /// (alternate_close_visible()).
-    [[nodiscard]] ButtonControl* alternate_close_button() const
+    [[nodiscard]] inline ButtonControl* alternate_close_button() const
     {
         return alternate_close_.get();
     }
     /// Whether the corner "X" is on screen: no close button text and light dismiss off.
-    [[nodiscard]] bool alternate_close_visible() const
+    [[nodiscard]] inline bool alternate_close_visible() const
     {
         return close_text_.empty() && !light_dismiss_;
     }
 
     /// A disabled tip grays out its action, close and corner buttons, which then take
     /// no input. Its content keeps its own state, and light dismiss and Escape still close it.
-    [[nodiscard]] bool enabled() const
+    [[nodiscard]] inline bool enabled() const
     {
         return close_button_->is_enabled();
     }
@@ -211,7 +217,7 @@ public:
     /// next layout re-decide the placement.
     void set_target(Element* target);
     /// The current target (non-owning); nullptr (the default) for an untargeted tip.
-    [[nodiscard]] Element* target() const
+    [[nodiscard]] inline Element* target() const
     {
         return target_.get();
     }
@@ -220,7 +226,7 @@ public:
     void set_placement(std::optional<PopupPlacement> placement);
     /// The side tried first, before the other sides; nullopt by default. For an untargeted tip,
     /// the window edge the card sits against.
-    [[nodiscard]] std::optional<PopupPlacement> placement() const
+    [[nodiscard]] inline std::optional<PopupPlacement> placement() const
     {
         return placement_;
     }
@@ -229,7 +235,7 @@ public:
     /// How the card lines up with the tail on its side; Center by default. Leading runs the card
     /// right (or down) from the tail, Trailing left (or up). For an untargeted tip, which end of
     /// the window edge the card sits at.
-    [[nodiscard]] PopupPlacementAlignment placement_alignment() const
+    [[nodiscard]] inline PopupPlacementAlignment placement_alignment() const
     {
         return alignment_;
     }
@@ -240,14 +246,14 @@ public:
     /// above the target or `left` for one to its left. For an untargeted tip, it is the gap from
     /// the window's edges, added to the fixed edge inset. A card centered on an axis moves by
     /// `left - right` or `top - bottom`.
-    [[nodiscard]] Thickness placement_margin() const
+    [[nodiscard]] inline Thickness placement_margin() const
     {
         return placement_margin_;
     }
     /// Sets when the tail is drawn.
     void set_tail_visibility(AutoVisibility visibility);
     /// When the tail is drawn; Auto (the default) draws the tail only for a targeted tip.
-    [[nodiscard]] AutoVisibility tail_visibility() const
+    [[nodiscard]] inline AutoVisibility tail_visibility() const
     {
         return tail_visibility_;
     }
@@ -265,14 +271,14 @@ public:
     /// solid background. The tip also takes keyboard focus while open, and the corner "X" is hidden.
     void set_light_dismiss(bool enabled);
     /// Whether light dismiss is on; see set_light_dismiss().
-    [[nodiscard]] bool light_dismiss() const
+    [[nodiscard]] inline bool light_dismiss() const
     {
         return light_dismiss_;
     }
 
     // ---- open / close ----
     /// Whether the tip is open; false by default. Stays true when an on_closing() handler cancels.
-    [[nodiscard]] bool is_open() const
+    [[nodiscard]] inline bool is_open() const
     {
         return open_;
     }
@@ -282,28 +288,28 @@ public:
     void set_open(bool open);
 
     /// Fires when the action button is clicked; the tip stays open.
-    void on_action_button_click(Callback<void()> handler)
+    inline void on_action_button_click(Callback<void()> handler)
     {
         on_action_button_click_ = std::move(handler);
     }
     /// Fires when the close button or the corner "X" is clicked, before the tip closes with
     /// CloseButton.
-    void on_close_button_click(Callback<void()> handler)
+    inline void on_close_button_click(Callback<void()> handler)
     {
         on_close_button_click_ = std::move(handler);
     }
     /// Fires with the reason before an open tip closes; return ui::Cancel to keep the tip open.
-    void on_closing(Callback<Decision(const PopupClosingArgs&)> handler)
+    inline void on_closing(Callback<Decision(const PopupClosingArgs&)> handler)
     {
         on_closing_ = std::move(handler);
     }
     /// Fires with the reason once the tip has closed (not when canceled).
-    void on_closed(Callback<void(PopupCloseReason)> handler)
+    inline void on_closed(Callback<void(PopupCloseReason)> handler)
     {
         on_closed_ = std::move(handler);
     }
     /// Fires from set_open(true) as the tip opens. There is no opening animation to wait for.
-    void on_opened(Callback<void()> handler)
+    inline void on_opened(Callback<void()> handler)
     {
         on_opened_ = std::move(handler);
     }
@@ -311,12 +317,12 @@ public:
     // ---- automation ----
     /// Always AutomationRole::Pane. Screen readers reach the floating card the way they reach any
     /// popup's content.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Pane;
     }
     /// The title, when no accessibility name is set.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return title_;
     }
@@ -412,7 +418,7 @@ protected:
 /// tip->set_target(save_button);
 /// tip->set_open(true);
 /// @endcode
-struct TeachingTip
+LIBWINUI_EXPORT struct TeachingTip
 {
     /// The control this spec builds; what `ui::Control<TeachingTip>` points at.
     using control_type = TeachingTipControl;
@@ -508,3 +514,5 @@ struct TeachingTip
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

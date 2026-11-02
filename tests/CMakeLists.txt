@@ -151,7 +151,7 @@ add_executable(winui_tests
     test_spec.cpp
     test_windows_h_first.cpp)
 
-target_link_libraries(winui_tests PRIVATE winui::testing Catch2::Catch2WithMain)
+target_link_libraries(winui_tests PRIVATE winui::testing_headers Catch2::Catch2WithMain)
 set_target_properties(winui_tests PROPERTIES CXX_EXTENSIONS OFF)
 if(MSVC)
     # /bigobj: test_spec.cpp builds every spec, more sections than the default object format holds.
@@ -160,9 +160,9 @@ endif()
 # The backend's own classes (Win32Clipboard, Win32SpellChecker, ...) are private headers under
 # src/; the tests of the backend include them from there.
 target_include_directories(winui_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
-if(TARGET example_native_controls)
+if(TARGET example_native_controls_headers)
     # ui::NativeControl is tested through the example controls that host EDIT and RICHEDIT.
-    target_link_libraries(winui_tests PRIVATE example_native_controls)
+    target_link_libraries(winui_tests PRIVATE example_native_controls_headers)
 endif()
 target_compile_definitions(winui_tests PRIVATE
     LIBWINUI_GOLDEN_DIR="${CMAKE_CURRENT_SOURCE_DIR}/golden")
@@ -193,10 +193,13 @@ winui_set_warnings(winui_thread_checks_off)
 add_test(NAME thread_checks_off COMMAND winui_thread_checks_off)
 
 # The C++ modules: a headless UI built through `import winui.testing;` alone. See the file.
-if(TARGET winui::testing_module)
+if(TARGET winui::testing)
     add_executable(winui_module_import module_import.cpp)
-    target_link_libraries(winui_module_import PRIVATE winui::testing_module)
-    set_target_properties(winui_module_import PROPERTIES CXX_SCAN_FOR_MODULES ON CXX_EXTENSIONS OFF)
+    target_link_libraries(winui_module_import PRIVATE winui::testing)
+    set_target_properties(winui_module_import PROPERTIES
+        CXX_SCAN_FOR_MODULES ON
+        CXX_MODULE_STD ${winui_import_std}
+        CXX_EXTENSIONS OFF)
     winui_set_warnings(winui_module_import)
     add_test(NAME module_import COMMAND winui_module_import)
 endif()

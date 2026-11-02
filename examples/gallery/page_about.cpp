@@ -2,11 +2,21 @@
 // The paragraph under each page's description: what else is worth knowing about the control, and
 // what to try on the page.
 
-#include "gallery.hpp"
-
 #include <algorithm>
 #include <array>
+#include <concepts>
+#include <functional>
+#include <memory>
+#include <span>
+#include <string>
 #include <string_view>
+#include <vector>
+
+#include <cstddef>
+
+import winui;
+
+#include "gallery.hpp"
 
 namespace gallery
 {

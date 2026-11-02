@@ -16,7 +16,9 @@
 #include <shobjidl.h>
 // clang-format on
 
+#ifndef LIBWINUI_MODULE
 #include <system_error>
+#endif
 
 namespace ui::win32
 {

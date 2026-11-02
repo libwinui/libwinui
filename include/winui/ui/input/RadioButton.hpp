@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,15 +22,17 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
 
-class RadioGroup;
-class RadioButtonsControl;
+LIBWINUI_EXPORT class RadioGroup;
+LIBWINUI_EXPORT class RadioButtonsControl;
 
 /// A round option button with a label, one of a set of mutually exclusive choices.
 ///
@@ -49,7 +55,7 @@ class RadioButtonsControl;
 /// large->on_checked_changed([](bool checked) { /* fires for checks and unchecks */ });
 /// window.set_content(std::move(stack));
 /// @endcode
-class RadioButtonControl final : public Element, private SelectionItemProvider
+LIBWINUI_EXPORT class RadioButtonControl final : public Element, private SelectionItemProvider
 {
 
     // ---- composition ----
@@ -67,19 +73,19 @@ public:
 
     // ---- content ----
     /// The label right of the dot; also the automation name when none is set.
-    [[nodiscard]] const std::string& text() const
+    [[nodiscard]] inline const std::string& text() const
     {
         return text_;
     }
     /// Sets the label. The button is measured again and redrawn.
-    void set_text(std::string text)
+    inline void set_text(std::string text)
     {
         text_ = std::move(text);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// Whether the button is selected; false by default.
-    [[nodiscard]] bool checked() const
+    [[nodiscard]] inline bool checked() const
     {
         return checked_;
     }
@@ -90,25 +96,25 @@ public:
 
 
     /// Invoked with the new state whenever `checked` changes. Replaces any previous handler.
-    void on_checked_changed(Callback<void(bool)> handler)
+    inline void on_checked_changed(Callback<void(bool)> handler)
     {
         on_checked_changed_ = std::move(handler);
     }
 
     // ---- layout ----
     /// True: measuring reads only the button's own state, the measurer and the theme.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
 
     // ---- focus ----
     /// Whether the button has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
@@ -137,24 +143,24 @@ public:
 
     // ---- automation ----
     /// Exposed to UI Automation as a RadioButton with a SelectionItem pattern.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::RadioButton;
     }
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return text_;
     }
     /// The property this button was bound to with ui::selects(), which groups it with the other
     /// buttons bound to it (Element::selection_group()); nullptr otherwise.
-    [[nodiscard]] const void* selection_group() const override
+    [[nodiscard]] inline const void* selection_group() const override
     {
         return selection_group_;
     }
 
 private:
     friend class RadioGroup;
-    void set_group(RadioGroup* group)
+    inline void set_group(RadioGroup* group)
     {
         group_.group  = group;
         group_.member = this;
@@ -169,10 +175,10 @@ private:
         RadioButtonControl* member = nullptr;
 
         GroupLink() = default;
-        GroupLink(GroupLink&&) noexcept
+        inline GroupLink(GroupLink&&) noexcept
         {
         }
-        GroupLink& operator=(GroupLink&&) noexcept
+        inline GroupLink& operator=(GroupLink&&) noexcept
         {
             return *this;
         }
@@ -181,7 +187,7 @@ private:
 
     // RadioButtons selects through activate(), and rings the focused item itself.
     friend class RadioButtonsControl;
-    void set_owner(RadioButtonsControl* owner)
+    inline void set_owner(RadioButtonsControl* owner)
     {
         owner_ = owner;
     }
@@ -221,7 +227,7 @@ protected:
 
 protected:
     /// Not while a RadioButtons owns it: the group rings it.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return owner_ == nullptr;
     }
@@ -231,16 +237,16 @@ protected:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.selection_item = this;
     }
-    [[nodiscard]] bool item_selected() const override
+    [[nodiscard]] inline bool item_selected() const override
     {
         return checked_;
     }
     // Checks the button as a click would; false while disabled.
-    bool select_item() override
+    inline bool select_item() override
     {
         if (!is_enabled())
         {
@@ -267,7 +273,7 @@ private:
 ///     ui::RadioButton{.text = "Large", .checked = ui::selects(size, Size::Large)},
 /// }});
 /// @endcode
-struct RadioButton
+LIBWINUI_EXPORT struct RadioButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<RadioButton>` points at.
@@ -324,3 +330,5 @@ struct RadioButton
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

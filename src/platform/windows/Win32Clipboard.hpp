@@ -4,10 +4,12 @@
 
 #include "winui/ui/Clipboard.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <span>
 #include <vector>
 
 #include <cstdint>
+#endif
 
 namespace ui::win32
 {

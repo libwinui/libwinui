@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -16,6 +20,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -25,6 +30,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -37,7 +43,7 @@ namespace ui
 /// ui::InkStroke line;
 /// line.points = {{.position = {10, 10}}, {.position = {90, 40}, .pressure = 0.9f}};
 /// @endcode
-struct InkPoint
+LIBWINUI_EXPORT struct InkPoint
 {
     Point position{};      ///< Canvas DIPs.
     float pressure = 0.5f; ///< 0 to 1, the pen's PointerEvent::pressure. A mouse always reports 0.5.
@@ -46,14 +52,14 @@ struct InkPoint
 };
 
 /// The shape of the nib a stroke is drawn with.
-enum class InkPenTip
+LIBWINUI_EXPORT enum class InkPenTip
 {
     Circle,    ///< A round nib, elliptical when its width and height differ. Draws smooth, even lines.
     Rectangle, ///< A flat, axis-aligned nib, like a highlighter's chisel tip.
 };
 
 /// Which family of ink a stroke's attributes describe.
-enum class InkDrawingAttributesKind
+LIBWINUI_EXPORT enum class InkDrawingAttributesKind
 {
     Default, ///< Pen and highlighter ink.
     Pencil,  ///< Pencil ink: lighter, with a grain of specks, at `pencil_opacity`.
@@ -77,7 +83,7 @@ enum class InkDrawingAttributesKind
 /// };
 /// canvas->set_drawing_attributes(marker);
 /// @endcode
-struct InkDrawingAttributes
+LIBWINUI_EXPORT struct InkDrawingAttributes
 {
     Color                    color               = colors::Black;     ///< The ink's color.
     Size                     size                = {2.0f, 2.0f};      ///< The nib's width and height, DIPs.
@@ -89,7 +95,7 @@ struct InkDrawingAttributes
     float                    pencil_opacity      = 1.0f; ///< Opacity from 0 to 1, for pencil ink only.
 
     /// The defaults with `kind` set to Pencil.
-    [[nodiscard]] static InkDrawingAttributes for_pencil()
+    [[nodiscard]] static inline InkDrawingAttributes for_pencil()
     {
         return InkDrawingAttributes{.kind = InkDrawingAttributesKind::Pencil};
     }
@@ -108,7 +114,7 @@ struct InkDrawingAttributes
 /// tick.attributes.color = ui::Color::from_rgba(0, 128, 85);
 /// canvas->strokes().add_stroke(std::move(tick));
 /// @endcode
-struct InkStroke
+LIBWINUI_EXPORT struct InkStroke
 {
     std::vector<InkPoint> points{};     ///< The sampled points, in canvas DIPs.
     InkDrawingAttributes  attributes{}; ///< Color, size, nib and the rest.
@@ -124,7 +130,7 @@ struct InkStroke
     friend bool operator==(const InkStroke&, const InkStroke&) = default;
 };
 
-class InkCanvasControl;
+LIBWINUI_EXPORT class InkCanvasControl;
 
 /// The strokes on a ui::InkCanvasControl. Read them, add, remove, clear or replace them all, and
 /// select, move and delete some of them.
@@ -146,7 +152,7 @@ class InkCanvasControl;
 /// canvas->strokes().clear();
 /// canvas->strokes().replace(std::move(saved));
 /// @endcode
-class InkStrokeContainer
+LIBWINUI_EXPORT class InkStrokeContainer
 {
 public:
     InkStrokeContainer()                                     = default;
@@ -154,17 +160,17 @@ public:
     InkStrokeContainer& operator=(const InkStrokeContainer&) = delete;
 
     /// Every stroke, oldest first.
-    [[nodiscard]] std::span<const InkStroke> strokes() const
+    [[nodiscard]] inline std::span<const InkStroke> strokes() const
     {
         return strokes_;
     }
     /// The number of strokes.
-    [[nodiscard]] std::size_t size() const
+    [[nodiscard]] inline std::size_t size() const
     {
         return strokes_.size();
     }
     /// True when there are no strokes.
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return strokes_.empty();
     }
@@ -222,7 +228,7 @@ private:
 };
 
 /// What pointer input on a ui::InkCanvasControl does.
-enum class InkCanvasInputMode
+LIBWINUI_EXPORT enum class InkCanvasInputMode
 {
     None,    ///< Draws and erases nothing. Pointer input goes to on_unprocessed_input().
     Inking,  ///< The default. A drag draws a stroke with drawing_attributes(), and a pen's eraser erases.
@@ -231,7 +237,7 @@ enum class InkCanvasInputMode
 
 /// What a right-button drag on a ui::InkCanvasControl does. A pen pressed with its barrel button
 /// held counts as the right button.
-enum class InkCanvasRightDragAction
+LIBWINUI_EXPORT enum class InkCanvasRightDragAction
 {
     LeaveUnprocessed, ///< The default. The drag isn't inked and goes to on_unprocessed_input().
     AllowProcessing,  ///< Inks or erases as a left-button drag does.
@@ -248,7 +254,7 @@ enum class InkCanvasRightDragAction
 /// auto canvas = std::make_unique<ui::InkCanvasControl>();
 /// canvas->set_ruler({.visible = true, .angle = 30.0f}); // centered on the canvas, turned 30 degrees
 /// @endcode
-struct InkRuler
+LIBWINUI_EXPORT struct InkRuler
 {
     bool                 visible = false;     ///< Shown on the canvas.
     std::optional<Point> center{};            ///< Its middle, canvas DIPs. nullopt is the canvas's center.
@@ -270,7 +276,7 @@ struct InkRuler
 /// auto canvas = std::make_unique<ui::InkCanvasControl>();
 /// canvas->set_protractor({.visible = true, .center = ui::Point{200, 150}, .radius = 120.0f});
 /// @endcode
-struct InkProtractor
+LIBWINUI_EXPORT struct InkProtractor
 {
     bool                 visible = false;        ///< Shown on the canvas.
     std::optional<Point> center{};               ///< Its center, canvas DIPs. nullopt is the canvas's center.
@@ -284,7 +290,7 @@ struct InkProtractor
 };
 
 /// What the eraser removes.
-enum class InkCanvasEraseMode
+LIBWINUI_EXPORT enum class InkCanvasEraseMode
 {
     Stroke, ///< The default. Every whole stroke the eraser touches.
     Point,  ///< Only the ink under the eraser. A stroke it crosses splits in two.
@@ -324,7 +330,7 @@ enum class InkCanvasEraseMode
 /// canvas->set_input_mode(ui::InkCanvasInputMode::Erasing); // the next drag erases
 /// canvas->strokes().clear();                                // or wipe it all
 /// @endcode
-class InkCanvasControl final : public Element
+LIBWINUI_EXPORT class InkCanvasControl final : public Element
 {
 public:
     /// An empty canvas in Inking mode with the default drawing attributes.
@@ -333,24 +339,24 @@ public:
 
     // ---- strokes ----
     /// The committed strokes.
-    [[nodiscard]] InkStrokeContainer& strokes()
+    [[nodiscard]] inline InkStrokeContainer& strokes()
     {
         return strokes_;
     }
     /// The committed strokes, read-only.
-    [[nodiscard]] const InkStrokeContainer& strokes() const
+    [[nodiscard]] inline const InkStrokeContainer& strokes() const
     {
         return strokes_;
     }
     /// The stroke being drawn right now, or nullptr between strokes. Not yet in strokes().
-    [[nodiscard]] const InkStroke* wet_stroke() const
+    [[nodiscard]] inline const InkStroke* wet_stroke() const
     {
         return wet_ ? &*wet_ : nullptr;
     }
 
     // ---- input ----
     /// What the next stroke is drawn with.
-    [[nodiscard]] const InkDrawingAttributes& drawing_attributes() const
+    [[nodiscard]] inline const InkDrawingAttributes& drawing_attributes() const
     {
         return attributes_;
     }
@@ -358,7 +364,7 @@ public:
     void set_drawing_attributes(const InkDrawingAttributes& attributes);
 
     /// What pointer input does. Inking by default.
-    [[nodiscard]] InkCanvasInputMode input_mode() const
+    [[nodiscard]] inline InkCanvasInputMode input_mode() const
     {
         return mode_;
     }
@@ -366,86 +372,86 @@ public:
     void set_input_mode(InkCanvasInputMode mode);
 
     /// The devices whose presses draw or erase. Pen | Mouse by default.
-    [[nodiscard]] PointerDeviceTypes input_device_types() const
+    [[nodiscard]] inline PointerDeviceTypes input_device_types() const
     {
         return devices_;
     }
     /// Sets the devices that draw or erase. Takes effect from the next press. A stroke in progress
     /// is finished with the device that started it.
-    void set_input_device_types(PointerDeviceTypes devices)
+    inline void set_input_device_types(PointerDeviceTypes devices)
     {
         devices_ = devices;
     }
 
     /// Whether a pen's eraser erases in Inking mode. True by default. When off, the eraser end
     /// draws nothing.
-    [[nodiscard]] bool eraser_input_enabled() const
+    [[nodiscard]] inline bool eraser_input_enabled() const
     {
         return eraser_input_;
     }
     /// Turns the pen's eraser on or off. Takes effect from the next press.
-    void set_eraser_input_enabled(bool enabled)
+    inline void set_eraser_input_enabled(bool enabled)
     {
         eraser_input_ = enabled;
     }
 
     /// What the eraser removes: whole strokes, the default, or only the ink under it.
-    [[nodiscard]] InkCanvasEraseMode erase_mode() const
+    [[nodiscard]] inline InkCanvasEraseMode erase_mode() const
     {
         return erase_mode_;
     }
     /// Sets what the eraser removes. Takes effect from the next eraser move.
-    void set_erase_mode(InkCanvasEraseMode mode)
+    inline void set_erase_mode(InkCanvasEraseMode mode)
     {
         erase_mode_ = mode;
     }
     /// The point eraser's width in DIPs, 8 by default.
-    [[nodiscard]] float eraser_size() const
+    [[nodiscard]] inline float eraser_size() const
     {
         return eraser_size_;
     }
     /// Sets the point eraser's width, at least 1 DIP.
-    void set_eraser_size(float size)
+    inline void set_eraser_size(float size)
     {
         eraser_size_ = (std::max)(1.0f, size);
     }
 
     /// Whether a right-button drag inks or goes to on_unprocessed_input(). LeaveUnprocessed by
     /// default.
-    [[nodiscard]] InkCanvasRightDragAction right_drag_action() const
+    [[nodiscard]] inline InkCanvasRightDragAction right_drag_action() const
     {
         return right_drag_;
     }
     /// Sets what a right-button drag does. Takes effect from the next press.
-    void set_right_drag_action(InkCanvasRightDragAction action)
+    inline void set_right_drag_action(InkCanvasRightDragAction action)
     {
         right_drag_ = action;
     }
 
     // ---- stencils ----
     /// The ruler. Hidden by default.
-    [[nodiscard]] const InkRuler& ruler() const
+    [[nodiscard]] inline const InkRuler& ruler() const
     {
         return ruler_;
     }
     /// Shows, hides, moves or turns the ruler. Redraws.
     void set_ruler(const InkRuler& ruler);
     /// The protractor. Hidden by default.
-    [[nodiscard]] const InkProtractor& protractor() const
+    [[nodiscard]] inline const InkProtractor& protractor() const
     {
         return protractor_;
     }
     /// Shows, hides, moves or turns the protractor. Redraws.
     void set_protractor(const InkProtractor& protractor);
     /// Raised when the user drags or turns the ruler or the protractor.
-    void on_stencils_changed(Callback<void()> handler)
+    inline void on_stencils_changed(Callback<void()> handler)
     {
         on_stencils_changed_ = std::move(handler);
     }
 
     // ---- lasso ----
     /// The outline set_lasso_outline() draws. Empty by default.
-    [[nodiscard]] std::span<const Point> lasso_outline() const
+    [[nodiscard]] inline std::span<const Point> lasso_outline() const
     {
         return lasso_;
     }
@@ -456,18 +462,18 @@ public:
 
 
     /// Raised with the stroke the user drew, when it is committed to strokes().
-    void on_strokes_collected(Callback<void(std::span<const InkStroke>)> handler)
+    inline void on_strokes_collected(Callback<void(std::span<const InkStroke>)> handler)
     {
         on_strokes_collected_ = std::move(handler);
     }
     /// Raised with the strokes the eraser removed, after they are gone. The point eraser reports
     /// the strokes it cut, and what is left of them stays as new strokes.
-    void on_strokes_erased(Callback<void(std::span<const InkStroke>)> handler)
+    inline void on_strokes_erased(Callback<void(std::span<const InkStroke>)> handler)
     {
         on_strokes_erased_ = std::move(handler);
     }
     /// Raised after any change to strokes(): drawn, erased or changed through the container.
-    void on_strokes_changed(Callback<void()> handler)
+    inline void on_strokes_changed(Callback<void()> handler)
     {
         on_strokes_changed_ = std::move(handler);
     }
@@ -476,14 +482,14 @@ public:
     /// that left it. In the other modes it is a right-button drag, from press to release, when the
     /// right-drag action is InkCanvasRightDragAction::LeaveUnprocessed. A Leave event ends a drag
     /// the window lost.
-    void on_unprocessed_input(Callback<void(const PointerEvent&)> handler)
+    inline void on_unprocessed_input(Callback<void(const PointerEvent&)> handler)
     {
         on_unprocessed_input_ = std::move(handler);
     }
 
     // ---- automation ----
     /// Exposed to UI Automation as a pane.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Pane;
     }
@@ -581,7 +587,7 @@ protected:
 ///     ui::Button{.text = "Clear", .on_click = [&] { canvas->strokes().clear(); }},
 /// }});
 /// @endcode
-struct InkCanvas
+LIBWINUI_EXPORT struct InkCanvas
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<InkCanvas>` points at.
@@ -658,3 +664,5 @@ struct InkCanvas
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

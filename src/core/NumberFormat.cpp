@@ -3,6 +3,7 @@
 
 #include "winui/core/Property.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <charconv>
 #include <limits>
@@ -16,6 +17,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#endif
 
 namespace ui
 {

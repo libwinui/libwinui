@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -28,7 +34,7 @@ namespace ui
 /// // is drawn in `window_frame`.
 /// window.pin_theme(ui::Theme::early(ui::EarlyPalette::windows_1x_mono()));
 /// @endcode
-struct EarlyPalette
+LIBWINUI_EXPORT struct EarlyPalette
 {
     Color scrollbar;        ///< The scroll bar's trough. The thumb is drawn separately.
     Color background;       ///< The desktop.
@@ -85,7 +91,7 @@ struct EarlyPalette
 /// renderer.fill_rounded_rect(item_rect, 0.0f, fill);
 /// renderer.draw_text("Open...", item_rect, text, theme.text_style);
 /// @endcode
-[[nodiscard]] constexpr std::pair<Color, Color> early_reverse_video(const Color& background, const Color& foreground)
+LIBWINUI_EXPORT [[nodiscard]] constexpr std::pair<Color, Color> early_reverse_video(const Color& background, const Color& foreground)
 {
     return {foreground, background};
 }
@@ -106,9 +112,11 @@ struct EarlyPalette
 /// const bool             enabled    = false;
 /// renderer.draw_text("Cancel", label_rect, enabled ? p.window_text : gray, theme.text_style);
 /// @endcode
-[[nodiscard]] constexpr Color early_dither_gray(const Color& ink, const Color& paper)
+LIBWINUI_EXPORT [[nodiscard]] constexpr Color early_dither_gray(const Color& ink, const Color& paper)
 {
     return lerp(ink, paper, 0.5f);
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

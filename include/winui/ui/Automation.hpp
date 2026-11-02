@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class Element;
+LIBWINUI_EXPORT class Element;
 
 /// What kind of thing a control is, as reported to accessibility clients such as screen readers.
 /// The default, `Group`, is right for every plain container. A `Group` node still appears in the
@@ -42,7 +48,7 @@ class Element;
 ///     double rating_ = 3.0;
 /// };
 /// @endcode
-enum class AutomationRole
+LIBWINUI_EXPORT enum class AutomationRole
 {
     Group,       ///< Generic container with no more specific semantics (StackControl, Grid, ...).
     Pane,        ///< A scrollable/major content region (Scroll, the window's own root).
@@ -81,7 +87,7 @@ enum class AutomationRole
 };
 
 /// The Toggle pattern's three-valued state, reported by ToggleProvider::toggle_value().
-enum class ToggleState
+LIBWINUI_EXPORT enum class ToggleState
 {
     Off,           ///< Unchecked / off.
     On,            ///< Checked / on.
@@ -96,7 +102,7 @@ enum class ToggleState
 // ---------------------------------------------------------------------------------------
 
 /// The Invoke pattern: a single parameterless action, as a button has. Implement every member.
-class InvokeProvider
+LIBWINUI_EXPORT class InvokeProvider
 {
 public:
     /// Run the action as a click would; true when it ran (false when disabled).
@@ -108,7 +114,7 @@ protected:
 
 /// The Toggle pattern: an on, off or indeterminate state a click advances, as a check box has.
 /// Implement every member.
-class ToggleProvider
+LIBWINUI_EXPORT class ToggleProvider
 {
 public:
     /// The current state.
@@ -123,7 +129,7 @@ protected:
 /// The SelectionItem pattern: one selectable entry of a Selection container (a radio button, a
 /// list item). Implement item_selected() and select_item(); an entry of a container that selects
 /// several at once also overrides add_to_selection() and remove_from_selection().
-class SelectionItemProvider
+LIBWINUI_EXPORT class SelectionItemProvider
 {
 public:
     /// Whether this entry is selected.
@@ -132,13 +138,13 @@ public:
     virtual bool select_item() = 0;
     /// Adds this entry to the selection and keeps the others; true when it did. The default is
     /// select_item(), for a container that selects one entry at a time.
-    virtual bool add_to_selection()
+    inline virtual bool add_to_selection()
     {
         return select_item();
     }
     /// Takes this entry out of the selection; true when it did. The default refuses, for an
     /// entry that is deselected only by selecting another one.
-    virtual bool remove_from_selection()
+    inline virtual bool remove_from_selection()
     {
         return false;
     }
@@ -149,7 +155,7 @@ protected:
 
 /// The Selection pattern: a container whose entries are SelectionItems (a list, a Carousel).
 /// Implement every member.
-class SelectionProvider
+LIBWINUI_EXPORT class SelectionProvider
 {
 public:
     /// Appends the selected entries' nodes to `out`. Only entries that exist as nodes can be
@@ -166,7 +172,7 @@ protected:
 
 /// The ExpandCollapse pattern: a collapsed or expanded state (an Expander, a ComboBox, a
 /// DropdownButton). Implement every member.
-class ExpandCollapseProvider
+LIBWINUI_EXPORT class ExpandCollapseProvider
 {
 public:
     /// Whether it is expanded (open).
@@ -180,7 +186,7 @@ protected:
 
 /// The RangeValue pattern: a bounded number (a Slider, a ProgressBar, a RatingControl), in the
 /// control's own units. Implement every member.
-class RangeValueProvider
+LIBWINUI_EXPORT class RangeValueProvider
 {
 public:
     /// The value.
@@ -202,7 +208,7 @@ protected:
 
 /// The Value pattern: a text value (a TextBox's contents, a read-only ComboBox's selected item).
 /// Implement every member.
-class ValueProvider
+LIBWINUI_EXPORT class ValueProvider
 {
 public:
     /// The text.
@@ -218,7 +224,7 @@ protected:
 
 /// The Scroll pattern: how far a view is scrolled (Scroll, VirtualList, TableView). Implement
 /// every member.
-class ScrollProvider
+LIBWINUI_EXPORT class ScrollProvider
 {
 public:
     /// Percent scrolled horizontally in [0, 100], or -1 when that axis does not scroll (0 is
@@ -235,7 +241,7 @@ protected:
 };
 
 /// The Grid pattern: cells addressed by row and column (a TableView). Implement every member.
-class GridProvider
+LIBWINUI_EXPORT class GridProvider
 {
 public:
     /// How many rows.
@@ -251,7 +257,7 @@ protected:
 };
 
 /// The GridItem pattern: one cell of a Grid. Implement every member.
-class GridItemProvider
+LIBWINUI_EXPORT class GridItemProvider
 {
 public:
     /// The cell's row.
@@ -266,7 +272,7 @@ protected:
 };
 
 /// The Table pattern: a Grid with column headers. Implement every member.
-class TableProvider
+LIBWINUI_EXPORT class TableProvider
 {
 public:
     /// Appends the column headers' nodes to `out`. A table is read row by row and has no row
@@ -279,7 +285,7 @@ protected:
 
 /// The TableItem pattern: one cell of a Table, which knows its column header. Implement every
 /// member.
-class TableItemProvider
+LIBWINUI_EXPORT class TableItemProvider
 {
 public:
     /// Appends the cell's column header node to `out`.
@@ -301,7 +307,7 @@ protected:
 ///     invoke->invoke();
 /// }
 /// @endcode
-struct AutomationProviders
+LIBWINUI_EXPORT struct AutomationProviders
 {
     InvokeProvider*         invoke          = nullptr; ///< The Invoke pattern.
     ToggleProvider*         toggle          = nullptr; ///< The Toggle pattern.
@@ -318,3 +324,5 @@ struct AutomationProviders
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

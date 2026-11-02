@@ -1,15 +1,20 @@
 // SPDX-License-Identifier: MIT
-#include "gallery.hpp"
-
 #include <algorithm>
 #include <array>
+#include <concepts>
+#include <functional>
 #include <iterator>
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
 
 #include <cstddef>
+
+import winui;
+
+#include "gallery.hpp"
 
 // Stock Win32 controls draw as comctl32 v6 only when the manifest asks for it. Without it the
 // EDIT has no placeholder and the calendar and date picker look like Windows 2000.

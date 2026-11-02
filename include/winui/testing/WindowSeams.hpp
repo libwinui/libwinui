@@ -13,6 +13,7 @@
 #include "winui/ui/WindowShell.hpp"
 #include "winui/ui/themes/ThemeSource.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <span>
 #include <string_view>
@@ -20,6 +21,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui::testing
 {

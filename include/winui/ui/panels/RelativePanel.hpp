@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -16,6 +20,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <memory>
 #include <optional>
@@ -23,13 +28,14 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// The placement constraints of one child of a ui::RelativePanelControl. A sibling reference is an
 /// observer of another child of the same panel; nullptr leaves that constraint unset.
-struct RelativePanelConstraints
+LIBWINUI_EXPORT struct RelativePanelConstraints
 {
     const Element* left_of                            = nullptr; ///< Right edge against this sibling's left edge.
     const Element* above                              = nullptr; ///< Bottom edge against this sibling's top edge.
@@ -78,7 +84,7 @@ struct RelativePanelConstraints
 ///     ui::RelativeItem{.right_of = "a", .content = ui::Text{.text = "B"}},
 /// }});
 /// @endcode
-class RelativePanelControl final : public Panel
+LIBWINUI_EXPORT class RelativePanelControl final : public Panel
 {
 public:
     /// An empty panel with no border or padding.
@@ -135,7 +141,7 @@ public:
     using Panel::set_padding;
     /// True: measuring touches only the panel and its children. The children are measured in
     /// dependency order on one thread.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
@@ -212,7 +218,7 @@ private:
 /// constraint must name a sibling in the same panel. A name that matches none is a bug, caught by
 /// an assert in a debug build and otherwise left unset. Each string field is the
 /// ui::RelativePanelConstraints member of the same name; see ui::RelativePanel for an example.
-struct RelativeItem
+LIBWINUI_EXPORT struct RelativeItem
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     std::string                                       name{};     ///< This child's name, for siblings to refer to.
@@ -237,7 +243,7 @@ struct RelativeItem
 
 /// A RelativePanel's children, built; the names are resolved when the panel is. Callers write it
 /// as a braced list of `ui::RelativeItem{...}`.
-class RelativeItemList
+LIBWINUI_EXPORT class RelativeItemList
 {
 public:
     /// One built child with its constraints; the node is already owned by the list.
@@ -266,7 +272,7 @@ public:
     std::vector<Placed> items_;
 
     /// Builds `item`'s content and appends it, as one more entry of the braced list would.
-    void add(RelativeItem item)
+    inline void add(RelativeItem item)
     {
         Placed placed{};
         placed.node                                     = item.content.take();
@@ -309,7 +315,7 @@ public:
 ///     },
 /// });
 /// @endcode
-struct RelativePanel
+LIBWINUI_EXPORT struct RelativePanel
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<RelativePanel>` points at.
@@ -372,3 +378,5 @@ struct RelativePanel
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

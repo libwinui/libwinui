@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/render/Brush.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <optional>
 #include <type_traits>
@@ -11,11 +16,12 @@
 #include <variant>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-struct Theme;
+LIBWINUI_EXPORT struct Theme;
 
 /// A color read from the theme each time it is used: a theme-resource brush. A captureless
 /// lambda taking a `const Theme&` converts to it, and ui::theme_colors names one for every
@@ -30,7 +36,7 @@ struct Theme;
 /// grid->set_background([](const ui::Theme& t) { return t.colors().background; });
 /// ui::Border{.background = ui::theme_colors::Accent.with_alpha(0.7f)};
 /// @endcode
-class ThemeColor
+LIBWINUI_EXPORT class ThemeColor
 {
 public:
     /// The function a resource reads its color with.
@@ -57,7 +63,7 @@ public:
         return copy;
     }
     /// The color under `theme`. The resource must be set.
-    [[nodiscard]] Color operator()(const Theme& theme) const
+    [[nodiscard]] inline Color operator()(const Theme& theme) const
     {
         const Color color = read_(theme);
         return alpha_ ? color.with_alpha(*alpha_) : color;
@@ -101,21 +107,21 @@ private:
 /// ui::Rectangle{.fill = picked}; // followed
 /// ui::Rectangle{.fill = ui::bind(dark, [](bool on) { return on ? ui::colors::Black : ui::colors::White; })};
 /// @endcode
-class Paint
+LIBWINUI_EXPORT class Paint
 {
 public:
     /// Nothing: the control keeps its own color.
     Paint() noexcept = default;
     /// Nothing, as the default.
-    Paint(std::nullopt_t) noexcept // NOLINT(google-explicit-constructor)
+    inline Paint(std::nullopt_t) noexcept // NOLINT(google-explicit-constructor)
     {
     }
     /// A fixed color.
-    Paint(Color color) noexcept : brush_(std::in_place, color) // NOLINT(google-explicit-constructor)
+    inline Paint(Color color) noexcept : brush_(std::in_place, color) // NOLINT(google-explicit-constructor)
     {
     }
     /// A fixed color, or nothing.
-    Paint(std::optional<Color> color) noexcept // NOLINT(google-explicit-constructor)
+    inline Paint(std::optional<Color> color) noexcept // NOLINT(google-explicit-constructor)
     {
         if (color)
         {
@@ -130,7 +136,7 @@ public:
     {
     }
     /// A Brush, or nothing.
-    Paint(std::optional<Brush> brush) noexcept : brush_(std::move(brush)) // NOLINT(google-explicit-constructor)
+    inline Paint(std::optional<Brush> brush) noexcept : brush_(std::move(brush)) // NOLINT(google-explicit-constructor)
     {
     }
     /// A theme resource; a captureless lambda converts too. Null is nothing.
@@ -141,40 +147,40 @@ public:
     }
 
     /// The fixed brush (a Color included); nullopt for a resource or nothing.
-    [[nodiscard]] const std::optional<Brush>& brush() const noexcept
+    [[nodiscard]] inline const std::optional<Brush>& brush() const noexcept
     {
         return brush_;
     }
     /// The fixed paint as one color: the Color, a gradient's first stop or an acrylic brush's
     /// `fallback_color`; nullopt for a resource or nothing.
-    [[nodiscard]] std::optional<Color> color() const noexcept
+    [[nodiscard]] inline std::optional<Color> color() const noexcept
     {
         return brush_ ? std::optional<Color>{flat(*brush_)} : std::nullopt;
     }
     /// The theme resource, or nullptr.
-    [[nodiscard]] ThemeColor resource() const noexcept
+    [[nodiscard]] inline ThemeColor resource() const noexcept
     {
         return resource_;
     }
     /// True when neither a brush nor a resource is set.
-    [[nodiscard]] bool empty() const noexcept
+    [[nodiscard]] inline bool empty() const noexcept
     {
         return !brush_ && resource_ == nullptr;
     }
     /// The paint under `theme` as one color (see color()); nullopt when empty.
-    [[nodiscard]] std::optional<Color> resolve(const Theme& theme) const
+    [[nodiscard]] inline std::optional<Color> resolve(const Theme& theme) const
     {
         return resource_ != nullptr ? std::optional<Color>{resource_(theme)} : color();
     }
     /// The paint under `theme` as a brush, for a control that paints gradients and acrylic;
     /// nullopt when empty.
-    [[nodiscard]] std::optional<Brush> resolve_brush(const Theme& theme) const
+    [[nodiscard]] inline std::optional<Brush> resolve_brush(const Theme& theme) const
     {
         return resource_ != nullptr ? std::optional<Brush>{Brush{resource_(theme)}} : brush_;
     }
 
     /// The one color a brush paints in a control that paints flat colors.
-    [[nodiscard]] static Color flat(const Brush& brush) noexcept
+    [[nodiscard]] static inline Color flat(const Brush& brush) noexcept
     {
         if (const Color* c = std::get_if<Color>(&brush))
         {
@@ -218,3 +224,5 @@ void set_paint(const Paint& paint, Set&& set)
 } // namespace detail
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Renderer.hpp"
@@ -21,11 +25,15 @@ namespace ui
 /// const ui::Rect bounds{0, 0, 75, 23};
 /// ui::draw_dotted_rect(renderer, bounds.inset(ui::Thickness{4}), ui::colors::Black);
 /// @endcode
-void draw_dotted_rect(Renderer& renderer, const Rect& bounds, const Color& color, float dash_length = 1.0f, float phase = 0.0f);
+LIBWINUI_EXPORT void draw_dotted_rect(Renderer&    renderer,
+                                      const Rect&  bounds,
+                                      const Color& color,
+                                      float        dash_length = 1.0f,
+                                      float        phase       = 0.0f);
 
 /// Which focus visual a theme draws: Fluent's two solid rings, a classic single-color dotted
 /// rect, or Metro's interleaved black+white dashed pair.
-enum class FocusVisual
+LIBWINUI_EXPORT enum class FocusVisual
 {
     FluentRings,     ///< Two concentric solid rings outside the control (Modern/HC).
     ClassicDotted,   ///< One dotted rect inset inside the control (95 through 7).
@@ -49,7 +57,7 @@ enum class FocusVisual
 ///     .inner_color = ui::colors::Black,
 /// };
 /// @endcode
-struct FocusRingStyle
+LIBWINUI_EXPORT struct FocusRingStyle
 {
     FocusVisual kind = FocusVisual::FluentRings; ///< Which visual draw_focus_ring() draws.
     Color       outer_color;                     ///< Outer ring, or the phase-0 dashes / the dots.
@@ -86,7 +94,11 @@ struct FocusRingStyle
 /// const ui::Rect           content_rect{0, 0, 120, 20};
 /// ui::draw_focus_ring_at(renderer, content_rect, ui::Symmetric{.horizontal = 7.0f, .vertical = 3.0f}, 4.0f, style);
 /// @endcode
-void draw_focus_ring_at(Renderer& renderer, const Rect& bounds, const Thickness& outward, float radius, const FocusRingStyle& style);
+LIBWINUI_EXPORT void draw_focus_ring_at(Renderer&             renderer,
+                                        const Rect&           bounds,
+                                        const Thickness&      outward,
+                                        float                 radius,
+                                        const FocusRingStyle& style);
 
 /// Draws the Fluent two-ring focus visual, whatever `style.kind` says: a `style.outer_width` ring
 /// in `style.outer_color` whose outer edge lands `style.margin` outside `bounds`, and a
@@ -110,7 +122,7 @@ void draw_focus_ring_at(Renderer& renderer, const Rect& bounds, const Thickness&
 ///     ui::draw_focus_ring(renderer, label_rect, 0.0f, style);
 /// }
 /// @endcode
-void draw_focus_ring_rings(Renderer& renderer, const Rect& bounds, float radius, const FocusRingStyle& style);
+LIBWINUI_EXPORT void draw_focus_ring_rings(Renderer& renderer, const Rect& bounds, float radius, const FocusRingStyle& style);
 
 /// Draws the focus visual `style.kind` calls for around `bounds`, at the control's corner
 /// `radius`:
@@ -136,6 +148,8 @@ void draw_focus_ring_rings(Renderer& renderer, const Rect& bounds, float radius,
 ///     }
 /// };
 /// @endcode
-void draw_focus_ring(Renderer& renderer, const Rect& bounds, float radius, const FocusRingStyle& style);
+LIBWINUI_EXPORT void draw_focus_ring(Renderer& renderer, const Rect& bounds, float radius, const FocusRingStyle& style);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

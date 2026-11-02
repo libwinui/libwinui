@@ -61,6 +61,8 @@ The repository has two hosted controls as example code, in `examples/native_cont
 --8<-- "examples/tutorials/12_hosting_native_controls/main.cpp:includes"
 ```
 
+The two headers import the module themselves, so the standard headers they use come before the `import` here as well.
+
 ### EditBox
 
 `native_controls::EditBox` is the stock Win32 `EDIT` class, with the `TextBox` and `PasswordBox` features the class can do: a header, placeholder text, read-only, max length, casing, font and colors, selection, and a password mode.
@@ -107,13 +109,14 @@ The formatting buttons call `toggle_bold()` and `toggle_italic()` on the observe
 
 ## Testing With TestNativeHost
 
-A hosted window cannot exist in a headless test, but everything the element asks for can be checked. `ui::testing::TestNativeHost` implements `NativeHost` by recording each call per `VisualId`. Like every test double it is in the testing tier, `<winui/testing.hpp>`, which the test executable gets by linking `winui::testing`:
+A hosted window cannot exist in a headless test, but everything the element asks for can be checked. `ui::testing::TestNativeHost` implements `NativeHost` by recording each call per `VisualId`. Like every test double it is in the testing tier, the module `winui.testing`, which the test executable gets by linking `winui::testing`:
 
 ```cpp
-#include "winui/testing.hpp"
-#include "winui/winui.hpp"
+#include <memory>
 
 #include <catch2/catch_test_macros.hpp>
+
+import winui.testing;
 
 TEST_CASE("A native control is created once and moved with its bounds", "[native]")
 {

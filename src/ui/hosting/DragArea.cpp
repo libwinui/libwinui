@@ -5,7 +5,9 @@
 #include "winui/ui/spec/Common.hpp"
 #include "winui/ui/spec/Control.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
+#endif
 
 namespace ui
 {

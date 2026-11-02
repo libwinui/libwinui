@@ -7,9 +7,11 @@
 #include "winui/ui/Animation.hpp"
 #include "winui/ui/Element.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui::detail
 {

@@ -1,19 +1,25 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/ui/layouts/Layout.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <memory>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
 
 /// Anything with an rvalue-qualified build() producing an owned Layout: what a `.layout` field
 /// takes. The four built-in layout values satisfy it, and so does an app's own.
-template <typename L>
+LIBWINUI_EXPORT template <typename L>
 concept LayoutLike = requires(L&& layout) {
     { std::forward<L>(layout).build() } -> std::convertible_to<std::unique_ptr<Layout>>;
 };
@@ -45,7 +51,7 @@ concept LayoutLike = requires(L&& layout) {
 ///     .item   = [](const Photo& p) -> ui::Spec { return ui::Text{.text = p.title}; },
 /// });
 /// @endcode
-class LayoutSpec
+LIBWINUI_EXPORT class LayoutSpec
 {
 public:
     /// No layout: the field's own default applies.
@@ -73,13 +79,13 @@ public:
     LayoutSpec& operator=(LayoutSpec&&)      = default;
 
     /// Moves the layout out; null if none was given.
-    [[nodiscard]] std::unique_ptr<Layout> take()
+    [[nodiscard]] inline std::unique_ptr<Layout> take()
     {
         return std::move(layout_);
     }
 
     /// True while a layout is held.
-    [[nodiscard]] explicit operator bool() const
+    [[nodiscard]] inline explicit operator bool() const
     {
         return layout_ != nullptr;
     }
@@ -89,3 +95,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

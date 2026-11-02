@@ -3,16 +3,25 @@
 // by ctest; numbers only mean something from an optimized build (RelWithDebInfo or Release).
 //
 //     winui_bench [--filter <text>] [--repeats <n>] [--out <file.json>]
-#include "Bench.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <fstream>
+#include <functional>
 #include <numeric>
 #include <string>
 #include <string_view>
+#include <utility>
+#include <vector>
 
+#include <cstddef>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+
+import winui.testing;
+
+#include "Bench.hpp"
 
 #ifndef LIBWINUI_BENCH_CONFIG
 #define LIBWINUI_BENCH_CONFIG "unknown"

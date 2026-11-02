@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -16,6 +20,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -23,6 +28,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -69,7 +75,7 @@ class BreadcrumbFlyoutList; // Breadcrumb.cpp: the ellipsis flyout's rows
 ///     },
 /// });
 /// @endcode
-class BreadcrumbControl final : public Element, private ValueProvider
+LIBWINUI_EXPORT class BreadcrumbControl final : public Element, private ValueProvider
 {
 public:
     /// An empty trail; it draws nothing and is not focusable.
@@ -85,7 +91,7 @@ public:
 
     // ---- items ----
     /// The trail, root first (UTF-8); the last entry is the current location.
-    [[nodiscard]] const std::vector<std::string>& items() const
+    [[nodiscard]] inline const std::vector<std::string>& items() const
     {
         return items_;
     }
@@ -97,7 +103,7 @@ public:
     /// Fires with the index into items() when a clickable item is activated by a click,
     /// Enter/Space, or from the ellipsis flyout. Every item but the last is clickable. Replaces
     /// any previous handler.
-    void on_item_click(Callback<void(std::size_t)> handler)
+    inline void on_item_click(Callback<void(std::size_t)> handler)
     {
         on_item_click_ = std::move(handler);
     }
@@ -105,13 +111,13 @@ public:
     // ---- overflow ----
     /// Whether the leading items are folded into the ellipsis because the trail did not fit its
     /// width, as of the last arrange.
-    [[nodiscard]] bool ellipsis_shown() const
+    [[nodiscard]] inline bool ellipsis_shown() const
     {
         return first_shown_ > 0;
     }
     /// Index of the first item drawn after the ellipsis (0 when nothing is folded); items before
     /// it live in the flyout.
-    [[nodiscard]] std::size_t first_shown_item() const
+    [[nodiscard]] inline std::size_t first_shown_item() const
     {
         return first_shown_;
     }
@@ -121,7 +127,7 @@ public:
     /// The ellipsis item's rect while it shows; nullopt when nothing is folded.
     [[nodiscard]] std::optional<Rect> ellipsis_bounds() const;
     /// Whether the ellipsis flyout listing the folded items is open.
-    [[nodiscard]] bool flyout_open() const
+    [[nodiscard]] inline bool flyout_open() const
     {
         return flyout_open_;
     }
@@ -131,20 +137,20 @@ public:
 
     // ---- focus ----
     /// Whether the strip holds keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// Focusable while the control is enabled and has a clickable item, which takes at least two
     /// items since the last one is never clickable.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled() && items_.size() > 1;
     }
 
     // ---- automation ----
     /// A Group: the items are plain strings with no automation nodes of their own.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Group;
     }
@@ -171,13 +177,13 @@ private:
     // Left/Right walk the crumbs.
     // Claimed so Window's directional focus navigation leaves them alone
     // (Element::key_override).
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowLeft || key == Key::ArrowRight ||
                (flyout_open_ && (key == Key::ArrowUp || key == Key::ArrowDown));
     }
     // Enter invokes the focused item (Element::key_override()).
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return true;
     }
@@ -191,7 +197,7 @@ private:
     friend class BreadcrumbFlyoutList;
 
     // The last item is the current location, not a link.
-    [[nodiscard]] bool is_clickable(std::size_t index) const
+    [[nodiscard]] inline bool is_clickable(std::size_t index) const
     {
         return index + 1 < items_.size();
     }
@@ -236,20 +242,20 @@ protected:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.value = this;
     }
     // The current location (the last item), or empty when there are no items.
-    [[nodiscard]] std::string text_value() const override
+    [[nodiscard]] inline std::string text_value() const override
     {
         return items_.empty() ? std::string{} : items_.back();
     }
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return true;
     }
-    bool set_text_value(std::string_view /*text*/) override
+    inline bool set_text_value(std::string_view /*text*/) override
     {
         return false;
     }
@@ -275,7 +281,7 @@ private:
 ///     .control = trail,
 /// });
 /// @endcode
-struct Breadcrumb
+LIBWINUI_EXPORT struct Breadcrumb
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Breadcrumb>` points at.
@@ -329,3 +335,5 @@ struct Breadcrumb
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

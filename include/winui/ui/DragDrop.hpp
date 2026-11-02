@@ -1,21 +1,27 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/RenderRecording.hpp"
 #include "winui/ui/Clipboard.hpp" // DataPackageOperation
 
+#ifndef LIBWINUI_MODULE
 #include <any>
 #include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
+#endif
 
 namespace ui
 {
 
-class Element;
+LIBWINUI_EXPORT class Element;
 
 /// What a drag carries: text, files and an application-defined payload, such as a ListView's
 /// dragged item indices or a TreeView's node path.
@@ -39,7 +45,7 @@ class Element;
 ///     ui::DragDrop::start(row, std::move(package), std::move(visual), row.bounds(), pointer);
 /// }
 /// @endcode
-struct DataPackage
+LIBWINUI_EXPORT struct DataPackage
 {
     /// Plain text for targets that only understand text.
     std::string text;
@@ -77,7 +83,7 @@ struct DataPackage
 ///     favorites.push_back(std::any_cast<std::size_t>(e.data.data));
 /// });
 /// @endcode
-struct DragEventArgs
+LIBWINUI_EXPORT struct DragEventArgs
 {
     /// The package being dragged; owned by the drag, valid for this call only.
     const DataPackage& data;
@@ -106,7 +112,7 @@ struct DragEventArgs
 ///     return ui::DragResponse{.operation = ui::DataPackageOperation::Copy, .caption = "Attach"};
 /// });
 /// @endcode
-struct DragResponse
+LIBWINUI_EXPORT struct DragResponse
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// What a drop here would do; None refuses it.
@@ -170,7 +176,7 @@ struct DragResponse
 ///     bool        dropped_ = false;
 /// };
 /// @endcode
-class DragDrop
+LIBWINUI_EXPORT class DragDrop
 {
 public:
     /// Start carrying `data` from `source`. `visual` is drawn under the pointer. It is recorded in
@@ -206,3 +212,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 #include "winui/core/VisualId.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <atomic>
+#endif
 
 namespace ui
 {

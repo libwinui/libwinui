@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <memory>
 #include <string>
 #include <string_view>
+#endif
 
 namespace ui
 {
@@ -33,7 +39,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-class SvgImage
+LIBWINUI_EXPORT class SvgImage
 {
 public:
     /// An empty document; draws nothing.
@@ -46,23 +52,23 @@ public:
     [[nodiscard]] static SvgImage read(const std::filesystem::path& path);
 
     /// True when there is no markup.
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return !markup_ || markup_->empty();
     }
     /// The UTF-8 markup as given; valid while this SvgImage (or a copy of it) lives.
-    [[nodiscard]] std::string_view markup() const
+    [[nodiscard]] inline std::string_view markup() const
     {
         return markup_ ? std::string_view{*markup_} : std::string_view{};
     }
     /// The root element's size in DIPs (see svg_natural_size()); zero when it has none.
-    [[nodiscard]] Size natural_size() const
+    [[nodiscard]] inline Size natural_size() const
     {
         return natural_size_;
     }
 
     /// Equal when the markup text is equal.
-    friend bool operator==(const SvgImage& a, const SvgImage& b)
+    friend inline bool operator==(const SvgImage& a, const SvgImage& b)
     {
         return a.markup() == b.markup();
     }
@@ -75,6 +81,8 @@ private:
 /// The natural size of an SVG document's root element, as SvgImage's constructor reads
 /// it. Lengths may be unitless or in px, pt, pc, in, cm or mm (CSS's 96 px per inch);
 /// percentages and font-relative units count as absent.
-[[nodiscard]] Size svg_natural_size(std::string_view markup);
+LIBWINUI_EXPORT [[nodiscard]] Size svg_natural_size(std::string_view markup);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

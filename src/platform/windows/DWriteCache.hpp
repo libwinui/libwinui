@@ -13,8 +13,11 @@
 #include "winui/render/Text.hpp"
 
 #include <dwrite.h>
-#include <string_view>
 #include <wrl/client.h>
+
+#ifndef LIBWINUI_MODULE
+#include <string_view>
+#endif
 
 namespace ui::win32
 {

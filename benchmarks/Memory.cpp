@@ -1,15 +1,22 @@
 // SPDX-License-Identifier: MIT
 // What a control costs in memory (its object and what it allocates), and what a frame in which
 // nothing changed still does.
-#include "Bench.hpp"
-#include "Fixture.hpp"
 
-#include <winui/testing.hpp>
-#include <winui/winui.hpp>
-
+#include <chrono>
+#include <functional>
 #include <memory>
 #include <string>
+#include <string_view>
+#include <utility>
 #include <vector>
+
+#include <cstddef>
+#include <cstdint>
+
+import winui.testing;
+
+#include "Bench.hpp"
+#include "Fixture.hpp"
 
 namespace bench
 {

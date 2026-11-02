@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #ifdef _WIN32
-// <windows.h>'s own tag behind HWND, so the alias below is that very type.
-struct HWND__; // NOLINT(bugprone-reserved-identifier)
+// <windows.h>'s own tag behind HWND, so the alias below is that very type. extern "C++" keeps it in
+// the global module inside the winui module too, where <windows.h> declares it.
+extern "C++" struct HWND__; // NOLINT(bugprone-reserved-identifier)
 #endif
 
 namespace ui
@@ -23,9 +28,11 @@ namespace ui
 /// }
 /// @endcode
 #ifdef _WIN32
-using NativeHandle = HWND__*;
+LIBWINUI_EXPORT using NativeHandle = HWND__*;
 #else
 using NativeHandle = void*;
 #endif
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

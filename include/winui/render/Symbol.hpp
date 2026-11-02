@@ -2,6 +2,10 @@
 // Names, values and order are fixed: each value is the icon font codepoint.
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/render/IconGlyph.hpp"
 
 namespace ui
@@ -23,7 +27,7 @@ namespace ui
 /// const ui::Rect search_rect{8.0f, 8.0f, 16.0f, 16.0f};
 /// ui::draw_icon(renderer, ui::symbol_glyph(ui::Symbol::Find, 16.0f), search_rect, theme.palette.text_fill_primary);
 /// @endcode
-enum class Symbol : char32_t
+LIBWINUI_EXPORT enum class Symbol : char32_t
 {
     Previous               = 0xE100,
     Next                   = 0xE101,
@@ -226,9 +230,11 @@ enum class Symbol : char32_t
 
 /// The glyph an icon draws for `symbol`: its codepoint at 20 DIPs, or at `size` DIPs. The family
 /// is Segoe Fluent Icons; draw_icon()'s `font_family` can swap in the era's font.
-[[nodiscard]] constexpr IconGlyph symbol_glyph(Symbol symbol, float size = 20.0f)
+LIBWINUI_EXPORT [[nodiscard]] constexpr IconGlyph symbol_glyph(Symbol symbol, float size = 20.0f)
 {
     return IconGlyph{static_cast<char32_t>(symbol), "Segoe Fluent Icons", size};
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

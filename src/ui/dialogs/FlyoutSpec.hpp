@@ -6,7 +6,9 @@
 #include "winui/ui/dialogs/Flyout.hpp"
 #include "winui/ui/spec/Common.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <utility>
+#endif
 
 namespace ui::detail
 {

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -21,11 +25,13 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -34,7 +40,7 @@ namespace ui
 /// tick_frequency() is above zero, except under the classic look. The classic look only tells
 /// None (no ticks) from the rest, which all draw its one row of ticks on the far side (see
 /// set_tick_frequency()).
-enum class SliderTickPlacement
+LIBWINUI_EXPORT enum class SliderTickPlacement
 {
     None,        ///< no ticks
     TopLeft,     ///< above a horizontal track, left of a vertical one
@@ -44,7 +50,7 @@ enum class SliderTickPlacement
 };
 
 /// What a pointer drag lands on.
-enum class SliderSnapsTo
+LIBWINUI_EXPORT enum class SliderSnapsTo
 {
     StepValues, ///< multiples of step_frequency()
     Ticks,      ///< multiples of tick_frequency(); the arrow keys move by it too
@@ -70,7 +76,7 @@ enum class SliderSnapsTo
 /// volume->on_value_changed([label](double v) { label->set_text(std::format("{:.0f}", v)); });
 /// window.set_content(std::move(panel));
 /// @endcode
-class SliderControl final : public Element, private RangeValueProvider
+LIBWINUI_EXPORT class SliderControl final : public Element, private RangeValueProvider
 {
 
     // ---- composition ----
@@ -88,18 +94,18 @@ public:
                            double      value       = 0.0);
 
     /// The orientation given at construction; there is no setter.
-    [[nodiscard]] Orientation orientation() const
+    [[nodiscard]] inline Orientation orientation() const
     {
         return orientation_;
     }
 
     /// The header text; empty when none is shown.
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return header_.text();
     }
     /// The label above the slider. Empty draws none.
-    void set_header(std::string header)
+    inline void set_header(std::string header)
     {
         if (header_.set_text(std::move(header)))
         {
@@ -108,12 +114,12 @@ public:
     }
 
     /// The value at the start of the track.
-    [[nodiscard]] double(min)() const
+    [[nodiscard]] inline double(min)() const
     {
         return min_;
     }
     /// The value at the end of the track; never below min().
-    [[nodiscard]] double(max)() const
+    [[nodiscard]] inline double(max)() const
     {
         return max_;
     }
@@ -122,7 +128,7 @@ public:
     void set_range(double min, double max);
 
     /// Value, always within [min(), max()].
-    [[nodiscard]] double value() const
+    [[nodiscard]] inline double value() const
     {
         return value_;
     }
@@ -131,19 +137,19 @@ public:
     void set_value(double value);
 
     /// The arrow-key increment, 1 by default. Also UI Automation's small change.
-    [[nodiscard]] double step() const
+    [[nodiscard]] inline double step() const
     {
         return step_;
     }
     /// The amount each arrow-key press moves the value by. Zero disables keyboard stepping
     /// (Home/End still jump to min/max). Negative is 0.
-    void set_step(double step)
+    inline void set_step(double step)
     {
         step_ = (std::max)(0.0, step);
     }
 
     /// The tick interval in value units; 0 (the default) means none is set.
-    [[nodiscard]] double tick_frequency() const
+    [[nodiscard]] inline double tick_frequency() const
     {
         return tick_frequency_;
     }
@@ -154,26 +160,26 @@ public:
     ///
     /// At zero there are no ticks, though some themes still mark the two ends of the range.
     /// Negative is 0. Redraws only.
-    void set_tick_frequency(double frequency)
+    inline void set_tick_frequency(double frequency)
     {
         tick_frequency_ = (std::max)(0.0, frequency);
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// Where the ticks go relative to the track; Inline by default.
-    [[nodiscard]] SliderTickPlacement tick_placement() const
+    [[nodiscard]] inline SliderTickPlacement tick_placement() const
     {
         return tick_placement_;
     }
     /// Redraws only.
-    void set_tick_placement(SliderTickPlacement placement)
+    inline void set_tick_placement(SliderTickPlacement placement)
     {
         tick_placement_ = placement;
         mark_dirty(DirtyFlags::Visual);
     }
 
     /// The drag snapping interval, 1 by default.
-    [[nodiscard]] double step_frequency() const
+    [[nodiscard]] inline double step_frequency() const
     {
         return step_frequency_;
     }
@@ -182,19 +188,19 @@ public:
     /// units a finer step. Zero makes the drag continuous. Snapping lands on whole multiples of
     /// the interval counted from 0, not from min(), clamped into the range. Keyboard stepping
     /// uses step() and is unaffected. set_value() never snaps.
-    void set_step_frequency(double frequency)
+    inline void set_step_frequency(double frequency)
     {
         step_frequency_ = (std::max)(0.0, frequency);
     }
 
     /// What a drag snaps to; StepValues by default.
-    [[nodiscard]] SliderSnapsTo snaps_to() const
+    [[nodiscard]] inline SliderSnapsTo snaps_to() const
     {
         return snaps_to_;
     }
     /// SliderSnapsTo::Ticks snaps a drag to tick_frequency() instead and makes the arrow keys move by
     /// it, ignoring step(). With no tick frequency set it behaves as StepValues.
-    void set_snaps_to(SliderSnapsTo snaps_to)
+    inline void set_snaps_to(SliderSnapsTo snaps_to)
     {
         snaps_to_ = snaps_to;
     }
@@ -202,12 +208,12 @@ public:
     /// Reverses the direction: min at the right of a horizontal slider and at the top of a
     /// vertical one, with the value fill, the ticks, a click, a drag and the arrow keys all
     /// following (Left and Down then increase, Right and Up decrease). False by default.
-    [[nodiscard]] bool direction_reversed() const
+    [[nodiscard]] inline bool direction_reversed() const
     {
         return direction_reversed_;
     }
     /// Redraws; the value itself does not change.
-    void set_direction_reversed(bool reversed)
+    inline void set_direction_reversed(bool reversed)
     {
         direction_reversed_ = reversed;
         mark_dirty(DirtyFlags::Visual);
@@ -219,7 +225,7 @@ public:
     /// the gradient first, so a channel whose stops carry partial alpha looks translucent.
     /// std::nullopt restores the default track. The retro (95/98/2000) bevel track ignores the
     /// gradient.
-    void set_track_gradient(std::optional<LinearGradientBrush> gradient, bool checkerboard = false)
+    inline void set_track_gradient(std::optional<LinearGradientBrush> gradient, bool checkerboard = false)
     {
         track_gradient_              = std::move(gradient);
         track_gradient_checkerboard_ = checkerboard;
@@ -228,37 +234,37 @@ public:
 
     /// Fired whenever `value` changes, from a drag, a click-to-jump, or a keyboard step
     /// alike. A drag fires on every change, not only on release.
-    void on_value_changed(Callback<void(double)> handler)
+    inline void on_value_changed(Callback<void(double)> handler)
     {
         on_value_changed_ = std::move(handler);
     }
 
     // ---- layout ----
     /// True: measuring reads only the slider's own state, the measurer and the theme.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
 
     // ---- focus ----
     /// Whether the slider holds keyboard focus (the focus ring is drawn).
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// A tab stop while enabled.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
 
     /// Whether the pointer is over the slider (false while disabled).
-    [[nodiscard]] bool hovered() const
+    [[nodiscard]] inline bool hovered() const
     {
         return hovered_;
     }
     /// Whether a pointer drag is in progress.
-    [[nodiscard]] bool dragging() const
+    [[nodiscard]] inline bool dragging() const
     {
         return dragging_;
     }
@@ -294,12 +300,12 @@ public:
     // ---- automation ----
     /// Slider. The header names it when set. Without a header, set accessibility().name, as
     /// for an icon-only Button.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Slider;
     }
     /// The header text.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_.text();
     }
@@ -308,11 +314,11 @@ private:
     // Up/Right increase and Down/Left decrease, regardless of orientation (reversed by
     // direction_reversed()). Claimed so Window's directional focus navigation leaves them
     // alone (Element::key_override).
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowUp || key == Key::ArrowDown || key == Key::ArrowLeft || key == Key::ArrowRight;
     }
-    [[nodiscard]] bool horizontal() const
+    [[nodiscard]] inline bool horizontal() const
     {
         return orientation_ == Orientation::Horizontal;
     }
@@ -359,7 +365,7 @@ private:
 
     // From the left of a horizontal track and the bottom of a vertical one. The identity
     // unless the direction is reversed.
-    [[nodiscard]] float travel_fraction(float value_fraction) const
+    [[nodiscard]] inline float travel_fraction(float value_fraction) const
     {
         return direction_reversed_ ? 1.0f - value_fraction : value_fraction;
     }
@@ -392,33 +398,33 @@ protected:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.range_value = this;
     }
     // value().
-    [[nodiscard]] double range_value() const override
+    [[nodiscard]] inline double range_value() const override
     {
         return value_;
     }
     // min().
-    [[nodiscard]] double range_minimum() const override
+    [[nodiscard]] inline double range_minimum() const override
     {
         return min_;
     }
     // max().
-    [[nodiscard]] double range_maximum() const override
+    [[nodiscard]] inline double range_maximum() const override
     {
         return max_;
     }
     // step().
-    [[nodiscard]] double range_small_change() const override
+    [[nodiscard]] inline double range_small_change() const override
     {
         return step_;
     }
     // UI Automation's SetValue: set_value() (clamped, raising on_value_changed()); refused while
     // disabled.
-    bool set_range_value(double value) override
+    inline bool set_range_value(double value) override
     {
         if (!is_enabled())
         {
@@ -427,7 +433,7 @@ private:
         set_value(value);
         return true;
     }
-    [[nodiscard]] bool range_read_only() const override
+    [[nodiscard]] inline bool range_read_only() const override
     {
         return false;
     }
@@ -456,7 +462,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Slider
+LIBWINUI_EXPORT struct Slider
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Slider>` points at.
@@ -535,3 +541,5 @@ struct Slider
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

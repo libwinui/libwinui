@@ -5,8 +5,10 @@
 #include "winui/core/NativeHandle.hpp"
 #include "winui/render/NativeHost.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <unordered_map>
+#endif
 
 namespace ui::win32
 {
@@ -37,7 +39,7 @@ class Win32NativeHost final : public NativeHost
 {
 public:
     /// Creates child windows under `parent` (non-owning), converting DIPs to pixels at `dpi`.
-    explicit Win32NativeHost(NativeHandle parent, unsigned dpi = 96) : parent_(parent), dpi_(dpi)
+    inline explicit Win32NativeHost(NativeHandle parent, unsigned dpi = 96) : parent_(parent), dpi_(dpi)
     {
     }
     /// Tells every control still registered that its host is gone: the app owns the Window and
@@ -68,7 +70,7 @@ public:
     [[nodiscard]] NativeControl* owner_for(NativeHandle hwnd) const;
 
     /// WM_DPICHANGED: later bounds convert at `dpi`. Existing children move on the next place().
-    void set_dpi(unsigned dpi)
+    inline void set_dpi(unsigned dpi)
     {
         dpi_ = dpi;
     }

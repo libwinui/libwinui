@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -49,7 +55,7 @@ namespace ui
 ///     return panel.is_dirty(ui::DirtyFlags::Measure); // measured again at the next layout
 /// }
 /// @endcode
-enum class DirtyFlags : std::uint8_t
+LIBWINUI_EXPORT enum class DirtyFlags : std::uint8_t
 {
     None    = 0,       ///< Up to date.
     Measure = 1u << 0, ///< The desired size must be recomputed, and so the arrangement too.
@@ -61,39 +67,41 @@ enum class DirtyFlags : std::uint8_t
 };
 
 /// Union of two flag sets.
-[[nodiscard]] constexpr DirtyFlags operator|(DirtyFlags a, DirtyFlags b)
+LIBWINUI_EXPORT [[nodiscard]] constexpr DirtyFlags operator|(DirtyFlags a, DirtyFlags b)
 {
     return static_cast<DirtyFlags>(static_cast<std::uint8_t>(a) | static_cast<std::uint8_t>(b));
 }
 
 /// Intersection of two flag sets; pass the result to any() to test a bit.
-[[nodiscard]] constexpr DirtyFlags operator&(DirtyFlags a, DirtyFlags b)
+LIBWINUI_EXPORT [[nodiscard]] constexpr DirtyFlags operator&(DirtyFlags a, DirtyFlags b)
 {
     return static_cast<DirtyFlags>(static_cast<std::uint8_t>(a) & static_cast<std::uint8_t>(b));
 }
 
 /// Complement within DirtyFlags::All, so `~Layout` never carries undefined high bits.
-[[nodiscard]] constexpr DirtyFlags operator~(DirtyFlags a)
+LIBWINUI_EXPORT [[nodiscard]] constexpr DirtyFlags operator~(DirtyFlags a)
 {
     return static_cast<DirtyFlags>(~static_cast<std::uint8_t>(a) & static_cast<std::uint8_t>(DirtyFlags::All));
 }
 
 /// Adds the flags in `b` to `a`.
-constexpr DirtyFlags& operator|=(DirtyFlags& a, DirtyFlags b)
+LIBWINUI_EXPORT constexpr DirtyFlags& operator|=(DirtyFlags& a, DirtyFlags b)
 {
     return a = a | b;
 }
 
 /// Keeps only the flags of `a` that are also in `b`; `a &= ~f` clears `f`.
-constexpr DirtyFlags& operator&=(DirtyFlags& a, DirtyFlags b)
+LIBWINUI_EXPORT constexpr DirtyFlags& operator&=(DirtyFlags& a, DirtyFlags b)
 {
     return a = a & b;
 }
 
 /// True if at least one flag is set.
-[[nodiscard]] constexpr bool any(DirtyFlags flags)
+LIBWINUI_EXPORT [[nodiscard]] constexpr bool any(DirtyFlags flags)
 {
     return flags != DirtyFlags::None;
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

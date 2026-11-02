@@ -19,7 +19,9 @@
 #include <commctrl.h>
 // clang-format on
 
+#ifndef LIBWINUI_MODULE
 #include <string>
+#endif
 
 namespace ui::detail
 {

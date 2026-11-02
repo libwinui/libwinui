@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -22,10 +26,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -58,7 +64,7 @@ namespace ui
 /// }.build());
 /// window.set_content(std::move(stack));
 /// @endcode
-class ToggleSwitchControl final : public Element, private ToggleProvider
+LIBWINUI_EXPORT class ToggleSwitchControl final : public Element, private ToggleProvider
 {
 
     // ---- composition ----
@@ -72,12 +78,12 @@ public:
 
     // ---- content ----
     /// The header text; empty by default. See set_header().
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return header_.text();
     }
     /// The label above the switch. Empty (the default) draws none. A change updates the layout.
-    void set_header(std::string header)
+    inline void set_header(std::string header)
     {
         if (header_.set_text(std::move(header)))
         {
@@ -87,13 +93,13 @@ public:
 
     /// The label beside the track while on: the control's own, else strings().toggle_switch.on
     /// ("On").
-    [[nodiscard]] const std::string& checked_text() const
+    [[nodiscard]] inline const std::string& checked_text() const
     {
         return checked_text_ ? *checked_text_ : strings().toggle_switch.on;
     }
     /// Replaces the on label, or with nullopt goes back to strings().toggle_switch.on. Updates the
     /// layout, since the control is as wide as its wider label.
-    void set_checked_text(std::optional<std::string> text)
+    inline void set_checked_text(std::optional<std::string> text)
     {
         checked_text_ = std::move(text);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -101,13 +107,13 @@ public:
 
     /// The label beside the track while off: the control's own, else strings().toggle_switch.off
     /// ("Off").
-    [[nodiscard]] const std::string& unchecked_text() const
+    [[nodiscard]] inline const std::string& unchecked_text() const
     {
         return unchecked_text_ ? *unchecked_text_ : strings().toggle_switch.off;
     }
     /// Replaces the off label, or with nullopt goes back to strings().toggle_switch.off. Updates
     /// the layout, as set_checked_text() does.
-    void set_unchecked_text(std::optional<std::string> text)
+    inline void set_unchecked_text(std::optional<std::string> text)
     {
         unchecked_text_ = std::move(text);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -116,31 +122,31 @@ public:
     /// An icon shown beside the track while on, in place of checked_text(). Unset (the
     /// default) shows the text; with an icon, checked_text() still names the state for UI
     /// Automation.
-    [[nodiscard]] const IconSource& checked_icon() const
+    [[nodiscard]] inline const IconSource& checked_icon() const
     {
         return checked_icon_;
     }
     /// Sets the on icon, or clears it with an empty source. Updates the layout.
-    void set_checked_icon(IconSource icon)
+    inline void set_checked_icon(IconSource icon)
     {
         checked_icon_ = std::move(icon);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// An icon shown beside the track while off, in place of unchecked_text().
-    [[nodiscard]] const IconSource& unchecked_icon() const
+    [[nodiscard]] inline const IconSource& unchecked_icon() const
     {
         return unchecked_icon_;
     }
     /// Sets the off icon, or clears it with an empty source. Updates the layout.
-    void set_unchecked_icon(IconSource icon)
+    inline void set_unchecked_icon(IconSource icon)
     {
         unchecked_icon_ = std::move(icon);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 
     /// Whether the switch is on. Off by default.
-    [[nodiscard]] bool checked() const
+    [[nodiscard]] inline bool checked() const
     {
         return on_;
     }
@@ -151,26 +157,26 @@ public:
 
     /// Invoked with the new state whenever checked() changes (click, Space, UI Automation
     /// or set_checked()). Replaces any previous handler.
-    void on_checked_changed(Callback<void(bool)> handler)
+    inline void on_checked_changed(Callback<void(bool)> handler)
     {
         on_checked_changed_ = std::move(handler);
     }
 
     // ---- layout ----
     /// True: measuring reads only the switch's own state, the measurer and the theme.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
 
     // ---- focus ----
     /// Whether the switch holds keyboard focus (and so draws its focus ring around the track).
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// Only an enabled switch joins the tab ring.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
@@ -202,19 +208,19 @@ public:
 
     // ---- automation ----
     /// Role Button; UI Automation has no dedicated toggle switch role.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Button;
     }
     /// The header when there is one, since it names the switch; otherwise the state's text.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_.empty() ? current_text() : header_.text();
     }
 
 private:
     // The text for the current state, whether or not an icon is showing in its place.
-    [[nodiscard]] const std::string& current_text() const
+    [[nodiscard]] inline const std::string& current_text() const
     {
         return on_ ? checked_text() : unchecked_text();
     }
@@ -277,17 +283,17 @@ protected:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.toggle = this;
     }
     // On or Off; a ToggleSwitch is never indeterminate.
-    [[nodiscard]] ToggleState toggle_value() const override
+    [[nodiscard]] inline ToggleState toggle_value() const override
     {
         return on_ ? ToggleState::On : ToggleState::Off;
     }
     // Flips the state through set_checked(), firing on_checked_changed(). Returns false while disabled.
-    bool toggle_next() override
+    inline bool toggle_next() override
     {
         if (!is_enabled())
         {
@@ -312,7 +318,7 @@ private:
 ///     .unchecked_text    = "Off",
 /// });
 /// @endcode
-struct ToggleSwitch
+LIBWINUI_EXPORT struct ToggleSwitch
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ToggleSwitch>` points at.
@@ -378,3 +384,5 @@ struct ToggleSwitch
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

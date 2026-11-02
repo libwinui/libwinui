@@ -38,11 +38,11 @@ cmake --build build --config Debug --target winui_tests
 
 Build the whole tree once before calling a change done: the examples, the tutorials and the doc example check keep the documentation's code compiling.
 
-The library target is `winui::winui`. An application links `winui::main`, which pulls the library in.
+The library comes as two targets built from the same sources, and a program links one of them: `winui::winui` for `import winui;`, and `winui::headers` for `#include <winui/winui.hpp>` (see [C++ Modules](../../tutorials/guides/modules.md)). An application links `winui::main` or `winui::headers_main` instead, which bring the library along.
 
-`winui::testing` is the testing tier, a library of its own built from `src/testing/`: `HeadlessUI`, `TestRenderer`, the test doubles and `OffscreenCapture`, all behind `<winui/testing.hpp>`. It links `winui::winui` publicly, so a test executable links only `winui::testing` (and its test framework); an app never links it. `winui_tests` links it. Installed, it is the package's `testing` component (see [Install and find_package](#install-and-find_package)).
+`winui::testing` is the testing tier, a library of its own built from `src/testing/`: `HeadlessUI`, `TestRenderer`, the test doubles and `OffscreenCapture`, all in the module `winui.testing`. It links `winui::winui` publicly, so a test executable links only `winui::testing` (and its test framework); an app never links it. `winui::testing_headers` is the same tier for `#include <winui/testing.hpp>`, over `winui::headers`. `winui_tests` links that one. Installed, it is the package's `testing` component (see [Install and find_package](#install-and-find_package)).
 
-`winui::main` is an interface target for applications. Linking it lets a `WIN32` executable use a plain `int main()` instead of `wWinMain`; command-line arguments then come from `ui::command_line()` as UTF-8. With MSVC and clang-cl it passes `/ENTRY:mainCRTStartup` to the linker, so the CRT calls an ordinary `main()` whatever the subsystem. MinGW's CRT already calls `main()` for a GUI executable, so there the target adds nothing. Prefer `ui::command_line()` over `argv`, which Windows hands over in the ANSI code page. The target is kept apart from `winui::winui` because the tests bring Catch2's own `main`, and a DLL linking the library has no entry point of this kind. With `LIBWINUI_BUILD_SHARED`, `winui::main_shared` does the same over `winui::winui_shared`.
+`winui::main` is an interface target for applications. It links `winui::winui` and lets a `WIN32` executable use a plain `int main()` instead of `wWinMain`; command-line arguments then come from `ui::command_line()` as UTF-8. With MSVC and clang-cl it passes `/ENTRY:mainCRTStartup` to the linker, so the CRT calls an ordinary `main()` whatever the subsystem. MinGW's CRT already calls `main()` for a GUI executable, so there the target adds nothing. Prefer `ui::command_line()` over `argv`, which Windows hands over in the ANSI code page. `winui::headers_main` does the same over `winui::headers`, and `winui::headers_main_shared` over `winui::headers_shared`. A build without the modules has no `winui::main`. The targets are kept apart from the libraries because the tests bring Catch2's own `main`, and a DLL linking the library has no entry point of this kind.
 
 On Windows the library links the usual Win32 libraries (`user32`, `gdi32`, `shell32`, ...) publicly, plus these:
 
@@ -66,9 +66,10 @@ GCC and Clang also need `Threads::Threads` (`-pthread`) linked explicitly for th
 | Option | Default | Effect |
 | --- | --- | --- |
 | `LIBWINUI_BUILD_TESTS` | `ON` | Builds `winui_tests` and registers it with CTest. |
-| `LIBWINUI_BUILD_EXAMPLES` | `ON` | Builds the example apps and one project per tutorial. |
-| `LIBWINUI_BUILD_SHARED` | `OFF` | Also builds a shared library (`winui::winui_shared`, and `winui::testing_shared` on top of it) from the same sources, exporting every symbol. The DLLs are `winui.dll` and `winui_testing.dll` (`winuid.dll` and `winui_testingd.dll` in Debug); their import libraries are `winui_shared.lib` and `winui_testing_shared.lib` (`winui_sharedd.lib` and `winui_testing_sharedd.lib` in Debug), since `winui.lib` is the static library. The static library is always built. There is no ABI promise: the DLL only works with the headers of its own version, built by the same compiler with the same options. |
-| `LIBWINUI_BUILD_MODULES` | `OFF` | Builds the C++ modules `winui` and `winui.testing` (`winui::module`, `winui::testing_module`) over the static libraries, and each tutorial once more through `import winui;`. See [C++ Modules](../../tutorials/guides/modules.md). |
+| `LIBWINUI_BUILD_EXAMPLES` | `ON` | Builds the example apps and one project per tutorial. They import the module, so they need `LIBWINUI_BUILD_MODULES`. |
+| `LIBWINUI_BUILD_SHARED` | `OFF` | Also builds a shared library for the headers (`winui::headers_shared`, and `winui::testing_headers_shared` on top of it) from the same sources, exporting every symbol. The DLLs are `winui.dll` and `winui_testing.dll` (`winuid.dll` and `winui_testingd.dll` in Debug); their import libraries are `winui_shared.lib` and `winui_testing_shared.lib` (`winui_sharedd.lib` and `winui_testing_sharedd.lib` in Debug), since `winui.lib` is the static library. The static library is always built. There is no ABI promise: the DLL only works with the headers of its own version, built by the same compiler with the same options. |
+| `LIBWINUI_BUILD_MODULES` | `ON` with Ninja or Visual Studio and MSVC 19.36 or clang-cl 17, `OFF` otherwise | Builds the C++ modules `winui` and `winui.testing` (`winui::winui`, `winui::testing`): the library's sources once more, as units of the module, and each tutorial once more through `import winui;`. See [C++ Modules](../../tutorials/guides/modules.md). |
+| `LIBWINUI_MODULE_IMPORT_STD` | `AUTO` | `import std;` inside the modules instead of the standard headers. `AUTO` turns it on where CMake provides `import std;` and libwinui is the top-level project. With it on, a target that links `winui::winui` needs `CXX_MODULE_STD`. |
 | `LIBWINUI_WARNINGS_AS_ERRORS` | `ON` top-level, `OFF` as a subproject | Every compiler warning is an error. The tree builds without a single warning under MSVC. |
 | `LIBWINUI_ENABLE_ASAN` | `OFF` | AddressSanitizer for everything in the build. Under MSVC the runtime DLLs are copied next to each executable. |
 | `LIBWINUI_ENABLE_UBSAN` | `OFF` | UndefinedBehaviorSanitizer, with GCC and Clang off Windows. |
@@ -110,15 +111,15 @@ Every public string is UTF-8. With MSVC the library adds `/utf-8` as a public co
 `cmake --install build --config Debug` and `--config Release` can share one prefix: every library gets a `d` postfix in Debug (`winuid.lib`, `winui_testingd.lib`), so the two installs never overwrite each other. The package config under `lib/cmake/winui/` picks the right one per configuration:
 
 ```cmake
-find_package(winui 0.1.0 EXACT CONFIG REQUIRED)                       # winui::winui, winui::main
-find_package(winui 0.1.0 EXACT CONFIG REQUIRED COMPONENTS testing)    # adds winui::testing
+find_package(winui 0.1.0 EXACT CONFIG REQUIRED)                       # winui::winui, winui::main, winui::headers, winui::headers_main
+find_package(winui 0.1.0 EXACT CONFIG REQUIRED COMPONENTS testing)    # adds winui::testing, winui::testing_headers
 ```
 
-A build with `LIBWINUI_BUILD_MODULES` installs the module sources under `include/winui/modules/`, and the package then also has `winui::module` and, with `COMPONENTS testing`, `winui::testing_module`.
+A build with the modules installs their interface sources under `include/winui/modules/` next to the module libraries. A build without them has no `winui::winui`, `winui::main` and `winui::testing`.
 
-`tests/package/` is a project outside the tree that does exactly this: it finds an installed copy, builds an app against `winui::main` and a headless UI test against `winui::testing`, and runs the test. When the package has the modules, it builds the same test once more through `import winui.testing;`. CI installs its MSVC and clang-cl builds and checks them this way. To try it locally, install into a prefix and configure it with `-DCMAKE_PREFIX_PATH=<prefix>`.
+`tests/package/` is a project outside the tree that does exactly this: it finds an installed copy, builds an app against `winui::headers_main` and a headless UI test against `winui::testing_headers`, and runs the test. When the package has the modules, it builds the same test once more through `import winui.testing;`. CI installs its MSVC and clang-cl builds and checks them this way. To try it locally, install into a prefix and configure it with `-DCMAKE_PREFIX_PATH=<prefix>`.
 
-The version file only accepts the exact version that was installed, since there is no ABI promise. The headers carry the same version as `LIBWINUI_VERSION_MAJOR`, `LIBWINUI_VERSION_MINOR` and `LIBWINUI_VERSION_PATCH` (and `ui::VersionMajor`, ...) in `<winui/core/Version.hpp>`; configuring fails when those differ from `project(VERSION)`.
+The version file only accepts the exact version that was installed, since there is no ABI promise. The headers carry the same version as `LIBWINUI_VERSION_MAJOR`, `LIBWINUI_VERSION_MINOR` and `LIBWINUI_VERSION_PATCH` in `<winui/Macros.hpp>` (and `ui::VersionMajor`, ... in `<winui/core/Version.hpp>`); configuring fails when those differ from `project(VERSION)`.
 
 Names kept only for compatibility are marked `LIBWINUI_DEPRECATED("use ... instead")`, which is `[[deprecated]]` and names the replacement. Define `LIBWINUI_NO_DEPRECATION_WARNINGS` before the first libwinui include to silence them while migrating.
 
@@ -155,7 +156,7 @@ Note that a crash or a silent abort in `winui_tests` after pulling changes to he
 | `tray` | An app whose entry point is a notification-area icon, with no main window. |
 | `tutorial_01_first_window`, ... | One project per tutorial page under `examples/tutorials/`, so the code the tutorials show always compiles. |
 
-The examples are only added on Windows, since they need a backend. Off Windows the build has the library and its tests.
+The examples are only added on Windows, since they need a backend. Off Windows the build has the library and its tests. They use the library through `import winui;`, so a build without the modules (`LIBWINUI_BUILD_MODULES=OFF`) leaves them and the benchmarks out.
 
 With both the tests and the examples on, Windows builds also get the benchmarks under `benchmarks/` (`winui_bench`, `winui_startup`, `winui_timers`, `winui_idle`). They measure timings and startup milestones and are never run by CTest.
 

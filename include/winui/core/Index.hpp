@@ -1,9 +1,15 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <optional>
 
 #include <cstddef>
+#endif
 
 // An index that may be "no item" is a std::optional<std::size_t> everywhere in the public API: a
 // selection that can be empty, a lookup that can miss. Controls keep a plain std::size_t in their
@@ -27,3 +33,5 @@ inline constexpr std::size_t NoIndex = static_cast<std::size_t>(-1);
 }
 
 } // namespace ui::detail
+
+#endif // LIBWINUI_IMPORTED

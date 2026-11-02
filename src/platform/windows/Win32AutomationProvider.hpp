@@ -27,10 +27,13 @@
 
 // The UIA_*Id constants live in the client header, as in the SDK's provider samples.
 #include <UIAutomationClient.h>
-#include <memory>
 #include <wrl/client.h>
 
+#ifndef LIBWINUI_MODULE
+#include <memory>
+
 #include <cstdint>
+#endif
 
 namespace ui::win32
 {
@@ -164,7 +167,7 @@ private:
     // The root stands for the window, which UI Automation keeps one provider for: it follows the
     // tree the window shows now, the content or a modal over it, and stays valid as they change.
     // Any other provider is retired with the tree it was made in.
-    [[nodiscard]] bool alive_and_current() const
+    [[nodiscard]] inline bool alive_and_current() const
     {
         if (!lifetime_->alive)
         {
@@ -205,7 +208,7 @@ private:
 class Win32AutomationEvents final : public ui::AutomationEvents
 {
 public:
-    Win32AutomationEvents(HWND hwnd, ui::Window* window, std::shared_ptr<AutomationLifetime> lifetime) :
+    inline Win32AutomationEvents(HWND hwnd, ui::Window* window, std::shared_ptr<AutomationLifetime> lifetime) :
         hwnd_(hwnd),
         window_(window),
         lifetime_(std::move(lifetime))

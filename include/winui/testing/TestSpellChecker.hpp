@@ -5,6 +5,7 @@
 #include "winui/render/SpellChecker.hpp"
 #include "winui/render/TextAnalyzer.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <map>
 #include <set>
 #include <string>
@@ -14,6 +15,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui::testing
 {

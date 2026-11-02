@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -16,10 +20,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -52,7 +58,7 @@ namespace ui
 /// average->set_read_only(true);
 /// average->set_caption("4.5 average");
 /// @endcode
-class RatingControl final : public Element, private RangeValueProvider
+LIBWINUI_EXPORT class RatingControl final : public Element, private RangeValueProvider
 {
 public:
     /// A row of `max_rating` stars (at least 1) holding `value`, coerced like `set_value()`.
@@ -60,7 +66,7 @@ public:
 
     // ---- rating ----
     /// The number of stars; 5 by default.
-    [[nodiscard]] std::size_t max_rating() const
+    [[nodiscard]] inline std::size_t max_rating() const
     {
         return static_cast<std::size_t>(max_rating_);
     }
@@ -70,7 +76,7 @@ public:
 
     /// Unset until rated, otherwise a value in [1, max_rating()] (interaction always lands
     /// on a whole number within that range; a fraction is reachable only via set_value()).
-    [[nodiscard]] std::optional<double> value() const
+    [[nodiscard]] inline std::optional<double> value() const
     {
         return value_;
     }
@@ -81,7 +87,7 @@ public:
 
     /// Unset by default. A grayed preview, such as an average rating, shown only while value()
     /// is unset and the pointer is not over the control.
-    [[nodiscard]] std::optional<double> placeholder_value() const
+    [[nodiscard]] inline std::optional<double> placeholder_value() const
     {
         return placeholder_value_;
     }
@@ -90,19 +96,19 @@ public:
     void set_placeholder_value(std::optional<double> value);
 
     /// Whether clicking the current rating's star clears it; true by default.
-    [[nodiscard]] bool is_clear_enabled() const
+    [[nodiscard]] inline bool is_clear_enabled() const
     {
         return is_clear_enabled_;
     }
     /// Whether clicking the star already representing the current rating clears it
     /// (default: true).
-    void set_clear_enabled(bool enabled)
+    inline void set_clear_enabled(bool enabled)
     {
         is_clear_enabled_ = enabled;
     }
 
     /// Where a keyboard step lands from an unset value; 1 by default.
-    [[nodiscard]] int initial_set_value() const
+    [[nodiscard]] inline int initial_set_value() const
     {
         return initial_set_value_;
     }
@@ -111,7 +117,7 @@ public:
     void set_initial_set_value(int value);
 
     /// The label above the stars; empty by default.
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return header_.text();
     }
@@ -120,7 +126,7 @@ public:
     void set_header(std::string header);
 
     /// The label right of the stars; empty by default.
-    [[nodiscard]] const std::string& caption() const
+    [[nodiscard]] inline const std::string& caption() const
     {
         return caption_;
     }
@@ -130,7 +136,7 @@ public:
 
 
     /// Whether user input is ignored; false by default. Independent of `enabled()`.
-    [[nodiscard]] bool read_only() const
+    [[nodiscard]] inline bool read_only() const
     {
         return read_only_;
     }
@@ -141,25 +147,25 @@ public:
 
     /// Fired whenever value() changes: a click/drag release, a keyboard step, or
     /// set_value() alike, including clearing it (unset).
-    void on_value_changed(Callback<void(std::optional<double>)> handler)
+    inline void on_value_changed(Callback<void(std::optional<double>)> handler)
     {
         on_value_changed_ = std::move(handler);
     }
 
     // ---- focus ----
     /// Whether the control has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// A tab stop while enabled, read-only or not.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
 
     /// Whether the pointer is over the control, which shows the hover preview.
-    [[nodiscard]] bool hovered() const
+    [[nodiscard]] inline bool hovered() const
     {
         return hovered_;
     }
@@ -167,12 +173,12 @@ public:
     // ---- automation ----
     /// Custom, with a range value, since UI Automation has no rating role. An unset rating
     /// reports 0, because a range value cannot be unset.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Custom;
     }
     /// The header names the control when accessibility().name does not.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_.text();
     }
@@ -201,7 +207,7 @@ private:
     // Up/Right increase and Down/Left decrease, regardless of orientation.
     // Claimed so Window's directional focus navigation leaves them alone
     // (Element::key_override).
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowUp || key == Key::ArrowDown || key == Key::ArrowLeft || key == Key::ArrowRight;
     }
@@ -243,28 +249,28 @@ protected:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.range_value = this;
     }
-    [[nodiscard]] double range_value() const override
+    [[nodiscard]] inline double range_value() const override
     {
         return value_.value_or(0.0);
     }
-    [[nodiscard]] double range_minimum() const override
+    [[nodiscard]] inline double range_minimum() const override
     {
         return 0.0;
     }
-    [[nodiscard]] double range_maximum() const override
+    [[nodiscard]] inline double range_maximum() const override
     {
         return static_cast<double>(max_rating_);
     }
-    [[nodiscard]] double range_small_change() const override
+    [[nodiscard]] inline double range_small_change() const override
     {
         return 1.0;
     }
     // Rates as a keyboard step would; false while disabled or read-only.
-    bool set_range_value(double value) override
+    inline bool set_range_value(double value) override
     {
         if (!is_enabled() || read_only_)
         {
@@ -274,7 +280,7 @@ private:
         return true;
     }
     // Reports read_only() alone, whatever enabled() is.
-    [[nodiscard]] bool range_read_only() const override
+    [[nodiscard]] inline bool range_read_only() const override
     {
         return read_only_;
     }
@@ -292,7 +298,7 @@ private:
 ///     .horizontal_alignment = ui::Alignment::Leading,
 /// });
 /// @endcode
-struct Rating
+LIBWINUI_EXPORT struct Rating
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Rating>` points at.
@@ -361,3 +367,5 @@ struct Rating
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

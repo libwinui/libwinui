@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <string>
 #include <string_view>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -23,7 +29,7 @@ namespace ui
 ///     link.set_cursor(ui::CursorShape::Hand);
 /// }
 /// @endcode
-enum class CursorShape
+LIBWINUI_EXPORT enum class CursorShape
 {
     Arrow,                  ///< The standard arrow; the default.
     Cross,                  ///< Crosshair, for precise picking.
@@ -70,7 +76,7 @@ enum class CursorShape
 ///     void extend_selection_to(ui::Point position);
 /// };
 /// @endcode
-struct ModifierKeys
+LIBWINUI_EXPORT struct ModifierKeys
 {
     bool ctrl  = false; ///< Ctrl.
     bool shift = false; ///< Shift.
@@ -92,16 +98,16 @@ struct ModifierKeys
 };
 
 /// Ctrl, for writing a key combination: `ui::Ctrl + ui::Key::S`.
-inline constexpr ModifierKeys Ctrl{.ctrl = true};
+LIBWINUI_EXPORT inline constexpr ModifierKeys Ctrl{.ctrl = true};
 /// Shift, for writing a key combination: `ui::Ctrl + ui::Shift + ui::Key::N`.
-inline constexpr ModifierKeys Shift{.shift = true};
+LIBWINUI_EXPORT inline constexpr ModifierKeys Shift{.shift = true};
 /// Alt, for writing a key combination: `ui::Alt + ui::Key::Enter`.
-inline constexpr ModifierKeys Alt{.alt = true};
+LIBWINUI_EXPORT inline constexpr ModifierKeys Alt{.alt = true};
 /// The Windows logo key, for writing a key combination.
-inline constexpr ModifierKeys Win{.win = true};
+LIBWINUI_EXPORT inline constexpr ModifierKeys Win{.win = true};
 
 /// Which mouse button a PointerEvent is about.
-enum class PointerButton
+LIBWINUI_EXPORT enum class PointerButton
 {
     None,   ///< No button: moves, leaves and wheel turns.
     Left,   ///< The primary button (also a touch or pen contact).
@@ -110,7 +116,7 @@ enum class PointerButton
 };
 
 /// What happened in a PointerEvent.
-enum class PointerAction
+LIBWINUI_EXPORT enum class PointerAction
 {
     Move,  ///< The pointer moved over the element (hover), with or without a button held.
     Down,  ///< `button` was pressed; see PointerEvent::click_count for double/triple clicks.
@@ -120,7 +126,7 @@ enum class PointerAction
 };
 
 /// What kind of device a PointerEvent came from.
-enum class PointerDeviceType : std::uint8_t
+LIBWINUI_EXPORT enum class PointerDeviceType : std::uint8_t
 {
     Mouse, ///< A mouse or touchpad: the default, and what an event of unknown origin counts as.
     Pen,   ///< A pen or stylus, its tip or its eraser end.
@@ -129,7 +135,7 @@ enum class PointerDeviceType : std::uint8_t
 
 /// A set of pointer devices, for a control that takes input from some
 /// kinds of device only, such as ui::InkCanvasControl::set_input_device_types(). Flags.
-enum class PointerDeviceTypes : std::uint8_t
+LIBWINUI_EXPORT enum class PointerDeviceTypes : std::uint8_t
 {
     None  = 0,                   ///< No device.
     Mouse = 1u << 0,             ///< The mouse and the touchpad.
@@ -139,13 +145,13 @@ enum class PointerDeviceTypes : std::uint8_t
 };
 
 /// Combines two device sets (`ui::PointerDeviceTypes::Pen | ui::PointerDeviceTypes::Mouse`).
-[[nodiscard]] constexpr PointerDeviceTypes operator|(PointerDeviceTypes a, PointerDeviceTypes b)
+LIBWINUI_EXPORT [[nodiscard]] constexpr PointerDeviceTypes operator|(PointerDeviceTypes a, PointerDeviceTypes b)
 {
     return static_cast<PointerDeviceTypes>(static_cast<std::uint8_t>(a) | static_cast<std::uint8_t>(b));
 }
 
 /// Whether `set` includes `device`.
-[[nodiscard]] constexpr bool has_device(PointerDeviceTypes set, PointerDeviceType device)
+LIBWINUI_EXPORT [[nodiscard]] constexpr bool has_device(PointerDeviceTypes set, PointerDeviceType device)
 {
     const auto bit = device == PointerDeviceType::Mouse   ? PointerDeviceTypes::Mouse
                      : device == PointerDeviceType::Touch ? PointerDeviceTypes::Touch
@@ -199,7 +205,7 @@ enum class PointerDeviceTypes : std::uint8_t
 ///     float offset_  = 0.0f;
 /// };
 /// @endcode
-struct PointerEvent
+LIBWINUI_EXPORT struct PointerEvent
 {
     /// Pointer position in window-client DIPs (the same space as Element::bounds()).
     Point position{};
@@ -271,7 +277,7 @@ struct PointerEvent
 ///     void remove_selected();
 /// };
 /// @endcode
-enum class Key
+LIBWINUI_EXPORT enum class Key
 {
     Unknown,    ///< A key outside this set; controls ignore it.
     A,          ///< Letter A; TextBox's Ctrl+A select-all.
@@ -349,7 +355,7 @@ enum class Key
 };
 
 /// Whether a KeyEvent is a press or a release.
-enum class KeyAction
+LIBWINUI_EXPORT enum class KeyAction
 {
     Down, ///< Pressed, or auto-repeated while held. Shortcuts and navigation fire on Down.
     Up,   ///< Released. Button activation by Enter/Space completes on Up.
@@ -402,7 +408,7 @@ enum class KeyAction
 ///     return ui::NotHandled;
 /// });
 /// @endcode
-struct KeyEvent
+LIBWINUI_EXPORT struct KeyEvent
 {
     Key       key    = Key::Unknown;    ///< The key pressed or released.
     KeyAction action = KeyAction::Down; ///< Press (including auto-repeat) or release.
@@ -415,19 +421,19 @@ struct KeyEvent
 
 /// Typed text, delivered to the focused element and bubbled up its parents like a key
 /// (Element::handle_text()). It arrives separately from the KeyEvent of the key that typed it.
-struct TextInputEvent
+LIBWINUI_EXPORT struct TextInputEvent
 {
     std::string text{}; ///< The typed text, UTF-8: usually one character.
 };
 
 /// Whether `key` is one of the letters A-Z, and which (0 for A). Unset otherwise.
-[[nodiscard]] std::optional<int> key_letter_index(Key key);
+LIBWINUI_EXPORT [[nodiscard]] std::optional<int> key_letter_index(Key key);
 
 /// The name shortcut text gives `key` ("S", "Delete", "F4", "+" for the keypad Add), the one a
 /// menu item shows beside its label and a tooltip after its text. Empty for Key::Unknown. The
 /// named keys (Delete, Enter, the arrows, ...) come from strings().keys, and the view stays
 /// valid until the next set_strings().
-[[nodiscard]] std::string_view key_display_name(Key key);
+LIBWINUI_EXPORT [[nodiscard]] std::string_view key_display_name(Key key);
 
 
 /// A key and its modifiers, without the action it runs. Menu items, app-bar buttons and commands
@@ -454,7 +460,7 @@ struct TextInputEvent
 ///     return ui::NotHandled;
 /// });
 /// @endcode
-struct KeyCombo
+LIBWINUI_EXPORT struct KeyCombo
 {
     Key          key = Key::Unknown; ///< The key; Unknown means "no shortcut".
     ModifierKeys modifiers{};        ///< Exactly the modifiers that must be held.
@@ -489,7 +495,7 @@ struct KeyCombo
 };
 
 /// A key combination of `mods` and `key`: `ui::Ctrl + ui::Key::S`.
-[[nodiscard]] constexpr KeyCombo operator+(ModifierKeys mods, Key key)
+LIBWINUI_EXPORT [[nodiscard]] constexpr KeyCombo operator+(ModifierKeys mods, Key key)
 {
     return KeyCombo{key, mods};
 }
@@ -497,7 +503,7 @@ struct KeyCombo
 /// The shortcut text for `chord`: the modifiers in a fixed order (Win, Ctrl, Alt, Shift) and the
 /// key, joined with "+", such as "Ctrl+S", "Ctrl+Shift+N", "Alt+Enter" or "Delete". Empty for an
 /// empty key combination. The key names come from strings().keys.
-[[nodiscard]] std::string shortcut_text(const KeyCombo& chord);
+LIBWINUI_EXPORT [[nodiscard]] std::string shortcut_text(const KeyCombo& chord);
 
 inline std::string KeyCombo::text() const
 {
@@ -505,3 +511,5 @@ inline std::string KeyCombo::text() const
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

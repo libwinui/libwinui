@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Duration.hpp"
 #include "winui/core/Geometry.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <span>
 #include <utility>
@@ -13,6 +18,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -20,7 +26,7 @@ namespace ui
 /// How content is stretched into its destination rect. The Image element, Icon,
 /// PersonPicture, AnimatedVisualPlayer, ScaleToFit and the shapes read it; fit_stretch() does the
 /// math.
-enum class Stretch
+LIBWINUI_EXPORT enum class Stretch
 {
     None,          ///< Native size, centered, cropped by the destination if larger.
     Fill,          ///< Distorts to exactly fill the destination on both axes.
@@ -31,7 +37,7 @@ enum class Stretch
 /// How a photo's stored pixels have to be turned to be seen upright: the EXIF orientation tag
 /// (TIFF tag 274). The values are the tag's own; the names say what the correction is, the way
 /// exiftool does. Rotations are clockwise.
-enum class ImageOrientation : std::uint8_t
+LIBWINUI_EXPORT enum class ImageOrientation : std::uint8_t
 {
     Normal           = 1, ///< Already upright.
     MirrorHorizontal = 2, ///< Mirror left-right.
@@ -44,7 +50,7 @@ enum class ImageOrientation : std::uint8_t
 };
 
 /// Whether `orientation` swaps width and height.
-[[nodiscard]] constexpr bool swaps_axes(ImageOrientation orientation)
+LIBWINUI_EXPORT [[nodiscard]] constexpr bool swaps_axes(ImageOrientation orientation)
 {
     return static_cast<int>(orientation) >= 5;
 }
@@ -56,7 +62,7 @@ enum class ImageOrientation : std::uint8_t
 /// // A 256px thumbnail of a camera photo, upright.
 /// const ui::Bitmap thumb = ui::Bitmap::read("IMG_0042.jpg", {.max_width = 256, .max_height = 256});
 /// @endcode
-struct ImageDecodeOptions
+LIBWINUI_EXPORT struct ImageDecodeOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The largest the result may be, aspect ratio kept; zero leaves that axis unconstrained.
@@ -70,7 +76,7 @@ struct ImageDecodeOptions
 };
 
 /// How a Bitmap's bytes are laid out: 4 bytes per pixel, row-major, rows packed with no padding.
-enum class PixelFormat : std::uint8_t
+LIBWINUI_EXPORT enum class PixelFormat : std::uint8_t
 {
     /// R, G, B, A with straight alpha: the default, and what the decoders and PNG give.
     Rgba8,
@@ -108,7 +114,7 @@ enum class PixelFormat : std::uint8_t
 /// ui::Bitmap page{612, 792, ui::PixelFormat::Bgra8Premultiplied};
 /// std::ranges::fill(page.bytes(), std::uint8_t{0xFF});
 /// @endcode
-class Bitmap
+LIBWINUI_EXPORT class Bitmap
 {
 public:
     /// An empty (0x0) image.
@@ -120,22 +126,22 @@ public:
     Bitmap(int width, int height, PixelFormat format);
 
     /// Width in pixels; 0 when empty.
-    [[nodiscard]] int width() const
+    [[nodiscard]] inline int width() const
     {
         return width_;
     }
     /// Height in pixels; 0 when empty.
-    [[nodiscard]] int height() const
+    [[nodiscard]] inline int height() const
     {
         return height_;
     }
     /// True when either dimension is zero (nothing to draw).
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return width_ <= 0 || height_ <= 0;
     }
     /// How the bytes are laid out; Rgba8 unless the bitmap was made in another format.
-    [[nodiscard]] PixelFormat format() const
+    [[nodiscard]] inline PixelFormat format() const
     {
         return format_;
     }
@@ -143,13 +149,13 @@ public:
     [[nodiscard]] Bitmap converted(PixelFormat format) const;
 
     /// The pixel bytes in format()'s layout, row-major, 4 per pixel, width * 4 per row.
-    [[nodiscard]] std::span<const std::uint8_t> bytes() const
+    [[nodiscard]] inline std::span<const std::uint8_t> bytes() const
     {
         return px_;
     }
     /// The pixel bytes, writable; width * height * 4 of them. Asking for them counts as a change
     /// to the pixels (content_id()).
-    [[nodiscard]] std::span<std::uint8_t> bytes()
+    [[nodiscard]] inline std::span<std::uint8_t> bytes()
     {
         content_id_ = 0;
         return px_;
@@ -161,7 +167,7 @@ public:
     [[nodiscard]] std::uint64_t content_id() const;
 
     /// Same size, format and bytes.
-    friend bool operator==(const Bitmap& a, const Bitmap& b)
+    friend inline bool operator==(const Bitmap& a, const Bitmap& b)
     {
         return a.width_ == b.width_ && a.height_ == b.height_ && a.format_ == b.format_ && a.px_ == b.px_;
     }
@@ -217,7 +223,7 @@ public:
     [[nodiscard]] Bitmap scaled_to_fit(int max_width, int max_height) const;
 
 private:
-    [[nodiscard]] std::size_t index(int x, int y) const
+    [[nodiscard]] inline std::size_t index(int x, int y) const
     {
         return (static_cast<std::size_t>(y) * width_ + x) * 4;
     }
@@ -244,7 +250,7 @@ private:
 /// spinner.auto_play = false; // show the first frame until play() is called
 /// window.set_content(ui::Image{.source = std::move(spinner)});
 /// @endcode
-struct AnimatedImage
+LIBWINUI_EXPORT struct AnimatedImage
 {
     std::vector<Bitmap>   frames;         ///< Fully composited frames, all the same size.
     std::vector<Duration> delays;         ///< Display time of each frame; one per frame.
@@ -254,22 +260,22 @@ struct AnimatedImage
     bool auto_play = true;
 
     /// True with no frames, or an empty first frame.
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return frames.empty() || frames.front().empty();
     }
     /// True with more than one frame.
-    [[nodiscard]] bool animated() const
+    [[nodiscard]] inline bool animated() const
     {
         return frames.size() > 1;
     }
     /// The first frame's width in pixels; 0 with no frames.
-    [[nodiscard]] int width() const
+    [[nodiscard]] inline int width() const
     {
         return frames.empty() ? 0 : frames.front().width();
     }
     /// The first frame's height in pixels; 0 with no frames.
-    [[nodiscard]] int height() const
+    [[nodiscard]] inline int height() const
     {
         return frames.empty() ? 0 : frames.front().height();
     }
@@ -281,7 +287,7 @@ struct AnimatedImage
     [[nodiscard]] static AnimatedImage read(const std::filesystem::path& path);
 
     /// Same frames, delays, loop count and auto_play.
-    friend bool operator==(const AnimatedImage&, const AnimatedImage&) = default;
+    friend inline bool operator==(const AnimatedImage&, const AnimatedImage&) = default;
 };
 
 /// Comparison result for golden-image tests, from compare().
@@ -299,7 +305,7 @@ struct AnimatedImage
 ///     }
 /// }
 /// @endcode
-struct ImageDiff
+LIBWINUI_EXPORT struct ImageDiff
 {
     bool        same_size         = false; ///< False when the dimensions differ (nothing else is compared).
     int         max_channel_delta = 0;     ///< Largest absolute per-channel difference, 0..255.
@@ -309,7 +315,7 @@ struct ImageDiff
 
 /// Compares two images. A pixel mismatches when any channel differs by more than `threshold`.
 /// Two images in different formats are compared as RGBA.
-[[nodiscard]] ImageDiff compare(const Bitmap& a, const Bitmap& b, int threshold = 0);
+LIBWINUI_EXPORT [[nodiscard]] ImageDiff compare(const Bitmap& a, const Bitmap& b, int threshold = 0);
 
 /// Fits a `natural` (unstretched) size into `bounds` per `stretch`, returning the resulting
 /// centered destination rect. Renderer::draw_image() fits an image's pixel size the same way,
@@ -323,11 +329,13 @@ struct ImageDiff
 ///                                             ui::Stretch::Uniform);
 /// // dest == {50, 0, 100, 100}: scaled to the height and centered horizontally.
 /// @endcode
-[[nodiscard]] Rect fit_stretch(const Rect& bounds, Size natural, Stretch stretch);
+LIBWINUI_EXPORT [[nodiscard]] Rect fit_stretch(const Rect& bounds, Size natural, Stretch stretch);
 
 /// The size `width` × `height` shrinks to inside `max_width` × `max_height` (zero:
 /// unconstrained), aspect ratio kept, rounded to whole pixels and never below 1. Never larger
 /// than the input. What Bitmap::scaled_to_fit() and the decoders size their output by.
-[[nodiscard]] std::pair<int, int> fit_within(int width, int height, int max_width, int max_height);
+LIBWINUI_EXPORT [[nodiscard]] std::pair<int, int> fit_within(int width, int height, int max_width, int max_height);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

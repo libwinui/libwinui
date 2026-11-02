@@ -9,7 +9,7 @@ The example for this page builds as `tutorial_01_first_window`.
 
 ## Get the Library
 
-libwinui is a CMake project whose library target is `winui::winui`. The simplest way in is to put the repository next to your code (a git submodule, a copy, whatever you prefer) and add it as a subdirectory:
+libwinui is a CMake project. The tutorials use it through `import winui;`, so they link the target `winui::main`, which brings the module. `winui::headers_main` is the same for `#include <winui/winui.hpp>` ([C++ Modules](../guides/modules.md) explains both). The simplest way in is to put the repository next to your code (a git submodule, a copy, whatever you prefer) and add it as a subdirectory:
 
 ```cmake
 cmake_minimum_required(VERSION 3.28)
@@ -22,18 +22,18 @@ target_compile_features(my_app PRIVATE cxx_std_23)
 target_link_libraries(my_app PRIVATE winui::main)
 ```
 
-`FetchContent` works the same way: declare the repository, call `FetchContent_MakeAvailable`, then link `winui::main` as above. An installed copy works with `find_package(winui CONFIG REQUIRED)` in place of `add_subdirectory` ([Building](../../contributing/development/building.md#install-and-find_package) has the details).
+`FetchContent` works the same way: declare the repository, call `FetchContent_MakeAvailable`, then link the targets as above. An installed copy works with `find_package(winui CONFIG REQUIRED)` in place of `add_subdirectory` ([Building](../../contributing/development/building.md#install-and-find_package) has the details).
 
 Some details:
 
 - `WIN32` in `add_executable` makes it a GUI program, so no console window opens next to yours.
-- A `WIN32` program normally starts at `wWinMain`. Linking `winui::main` lets it start at a plain `int main()` instead, which is what every tutorial uses. Leave it out if you prefer to write `wWinMain` yourself.
+- A `WIN32` program normally starts at `wWinMain`. Linking `winui::main` lets it start at a plain `int main()` instead, which is what every tutorial uses. If you prefer to write `wWinMain` yourself, link the library alone, `winui::winui`.
 - All strings in libwinui are UTF-8. With MSVC the library adds `/utf-8` to your target as well, so a literal like `"Grüezi"` arrives intact.
 - To ship a single `.exe` with nothing to install, link the C runtime statically: put `set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")` before `add_subdirectory`. Otherwise the target machine needs the Visual C++ redistributable.
 - When libwinui is a subdirectory of another project, its tests and examples are not built. You only get the library.
 - Configuring downloads `stb_image` and, on Windows, the C++/WinRT tool, so the first configure needs network access.
 
-The compiler has to speak C++23: MSVC 19.3x, Clang 16+ or GCC 14+. [Building](../../contributing/development/building.md) has the full list of options.
+The compiler has to speak C++23. The module needs MSVC 19.36 or clang-cl 17 and the Ninja or Visual Studio generator; the headers also work with older compilers and GCC 14+. [Building](../../contributing/development/building.md) has the full list of options.
 
 ## The Includes
 
@@ -41,7 +41,9 @@ The compiler has to speak C++23: MSVC 19.3x, Clang 16+ or GCC 14+. [Building](..
 --8<-- "examples/tutorials/01_first_window/main.cpp:includes"
 ```
 
-`winui/winui.hpp` is the only libwinui header an app includes: every control, the layout panels, the specs, `ui::Window` and `ui::run()`. It names nothing of the operating system, so there is no `<windows.h>` and no `#ifdef` in your code. Everything in it is in namespace `ui`.
+`import winui;` brings in all of libwinui: every control, the layout panels, the specs, `ui::Window` and `ui::run()`. It names nothing of the operating system, so there is no `<windows.h>` and no `#ifdef` in your code. Everything in it is in namespace `ui`.
+
+The standard headers go before the import, and a file includes every one it uses itself: the module exports the names in `ui` and nothing of the standard library.
 
 ## State and a Window
 

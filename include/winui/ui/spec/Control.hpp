@@ -1,21 +1,27 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/ui/Element.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <utility>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-template <typename S>
+LIBWINUI_EXPORT template <typename S>
 class Control;
-template <typename S>
+LIBWINUI_EXPORT template <typename S>
 class ControlLink;
 
 /// The type of every spec's `.control` field: where build() publishes the control it made.
@@ -37,7 +43,7 @@ class ControlLink;
 /// ui::Control<ui::Button> save;
 /// window.set_content(save_button(dirty, &save)); // `save` reaches the built button
 /// @endcode
-template <typename S>
+LIBWINUI_EXPORT template <typename S>
 class ControlOut
 {
 public:
@@ -97,7 +103,7 @@ private:
 ///
 /// save->set_enabled(false); // the tree is built: the handles are live
 /// @endcode
-template <typename S>
+LIBWINUI_EXPORT template <typename S>
 class Control
 {
 public:
@@ -181,7 +187,7 @@ private:
 ///     ui::InkCanvas{.height = 300, .control = canvas},
 /// }});
 /// @endcode
-template <typename S>
+LIBWINUI_EXPORT template <typename S>
 class ControlLink
 {
 public:
@@ -234,7 +240,7 @@ private:
 /// text box or anything else that has a handle. Written `.target = save` with any
 /// `ui::Control<S>`; it links in either build order and lets go of a destroyed target, as
 /// ControlLink does.
-class ElementLink
+LIBWINUI_EXPORT class ElementLink
 {
 public:
     /// No link.
@@ -251,13 +257,13 @@ public:
     }
 
     /// True when a handle was given.
-    [[nodiscard]] explicit operator bool() const
+    [[nodiscard]] inline explicit operator bool() const
     {
         return static_cast<bool>(resolve_);
     }
 
     /// For a spec's build(): see ControlLink::resolve(). Consumes the link.
-    void resolve(Element& owner, Callback<void(Element*)> link)
+    inline void resolve(Element& owner, Callback<void(Element*)> link)
     {
         if (resolve_)
         {
@@ -271,10 +277,12 @@ private:
 
 /// Publish the built node through a spec's `.control` field, if a handle was given. Call it last
 /// in build(), after handlers are installed; see apply_common() for an example.
-template <typename S, typename C>
+LIBWINUI_EXPORT template <typename S, typename C>
 inline void publish_control(const ControlOut<S>& out, C* node)
 {
     out.publish(node);
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -17,10 +21,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -51,7 +57,7 @@ namespace ui
 /// auto* pause = stack->add(std::make_unique<ui::ButtonControl>("Pause"));
 /// pause->on_click([gif] { gif->is_playing() ? gif->stop() : gif->play(); });
 /// @endcode
-class ImageControl final : public Element
+LIBWINUI_EXPORT class ImageControl final : public Element
 {
 public:
     /// An empty image. It measures to zero and draws nothing.
@@ -60,7 +66,7 @@ public:
     explicit ImageControl(ImageSource source);
 
     /// The picture shown.
-    [[nodiscard]] const ImageSource& source() const
+    [[nodiscard]] inline const ImageSource& source() const
     {
         return source_;
     }
@@ -71,26 +77,26 @@ public:
     void set_source(ImageSource source);
 
     /// Fires when a source made by ImageSource::load() has finished decoding and shows.
-    void on_image_opened(Callback<void()> handler)
+    inline void on_image_opened(Callback<void()> handler)
     {
         check_thread();
         on_image_opened_ = std::move(handler);
     }
     /// Fires when a source made by ImageSource::load() could not be read or decoded. The handler
     /// gets the reason.
-    void on_image_failed(Callback<void(std::string_view)> handler)
+    inline void on_image_failed(Callback<void(std::string_view)> handler)
     {
         check_thread();
         on_image_failed_ = std::move(handler);
     }
 
     /// How the picture fills the element's box. Uniform by default.
-    [[nodiscard]] Stretch stretch() const
+    [[nodiscard]] inline Stretch stretch() const
     {
         return stretch_;
     }
     /// Sets the stretch mode. Updates layout and redraws.
-    void set_stretch(Stretch stretch)
+    inline void set_stretch(Stretch stretch)
     {
         stretch_ = stretch;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -98,12 +104,12 @@ public:
 
     /// The nine-grid insets, in the picture's pixels. Zero, the default, draws the picture whole.
     /// Ignored for an SVG source.
-    [[nodiscard]] const Thickness& nine_grid() const
+    [[nodiscard]] inline const Thickness& nine_grid() const
     {
         return nine_grid_;
     }
     /// Sets the nine-grid insets. Redraws.
-    void set_nine_grid(const Thickness& nine_grid)
+    inline void set_nine_grid(const Thickness& nine_grid)
     {
         nine_grid_ = nine_grid;
         mark_dirty(DirtyFlags::Visual);
@@ -111,14 +117,14 @@ public:
 
     // ---- animated sources ----
     /// Whether the source has more than one frame.
-    [[nodiscard]] bool is_animated() const
+    [[nodiscard]] inline bool is_animated() const
     {
         const AnimatedImage* image = source_.animated();
         return image != nullptr && image->animated();
     }
     /// Whether the animation plays. play() sets it and stop() clears it. An animation that ran to
     /// its end still reports true.
-    [[nodiscard]] bool is_playing() const
+    [[nodiscard]] inline bool is_playing() const
     {
         return is_playing_;
     }
@@ -128,20 +134,20 @@ public:
     /// Stops and rewinds to the first frame.
     void stop();
     /// The index of the frame showing, 0 for a still source.
-    [[nodiscard]] std::size_t current_frame() const
+    [[nodiscard]] inline std::size_t current_frame() const
     {
         return frame_;
     }
 
     /// Returns true, since measuring reads only the source's size.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
     void on_screen_changed(bool on_screen) override;
 
     // ---- automation ----
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Image;
     }
@@ -215,7 +221,7 @@ private:
 ///     ui::Button{.text = "Next", .on_click = [&] { choice = (choice.get() + 1) % 2; }},
 /// }});
 /// @endcode
-struct Image
+LIBWINUI_EXPORT struct Image
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Image>` points at.
@@ -274,3 +280,5 @@ struct Image
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

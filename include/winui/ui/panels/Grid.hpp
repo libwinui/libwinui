@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -19,6 +23,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <concepts>
 #include <memory>
@@ -30,12 +35,13 @@
 
 #include <cassert>
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// How a Grid track's GridLength::value is read.
-enum class GridUnit
+LIBWINUI_EXPORT enum class GridUnit
 {
     Auto,     ///< sized to the largest single-span child in the track; `value` is ignored
     Fraction, ///< a weighted share of the space left after Dip and Auto tracks; `value` is the weight
@@ -57,7 +63,7 @@ enum class GridUnit
 /// grid->add_row(ui::GridLength::fraction(2.0f));     // twice the share of a fraction() row
 /// grid->add_column(ui::minmax(ui::GridLength::dip(120.0f), ui::GridLength::fraction())); // never under 120
 /// @endcode
-struct GridLength
+LIBWINUI_EXPORT struct GridLength
 {
     /// How `value` is read.
     GridUnit unit = GridUnit::Fraction;
@@ -103,7 +109,7 @@ struct GridLength
 /// using namespace ui::literals;
 /// ui::Grid{.columns = {ui::minmax(160_dip, 1_fr), 6_dip, 2_fr}, .content = {/* ... */}};
 /// @endcode
-[[nodiscard]] constexpr GridLength minmax(GridLength smallest, GridLength largest)
+LIBWINUI_EXPORT [[nodiscard]] constexpr GridLength minmax(GridLength smallest, GridLength largest)
 {
     GridLength track = largest;
     if (smallest.unit == GridUnit::Dip)
@@ -162,41 +168,41 @@ struct GridLength
 /// grid->add(std::make_unique<ui::TextBoxControl>(), 0, 1);
 /// window.set_content(std::move(grid));
 /// @endcode
-class GridControl final : public Element
+LIBWINUI_EXPORT class GridControl final : public Element
 {
 public:
     /// An empty grid with no track definitions (one implicit Fraction cell).
     GridControl() = default;
 
     /// Appends a row track and updates the layout.
-    void add_row(GridLength length)
+    inline void add_row(GridLength length)
     {
         rows_.push_back(length);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// Appends a column track and updates the layout.
-    void add_column(GridLength length)
+    inline void add_column(GridLength length)
     {
         columns_.push_back(length);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// How many rows were added (0 means one implicit Fraction row).
-    [[nodiscard]] std::size_t row_count() const
+    [[nodiscard]] inline std::size_t row_count() const
     {
         return rows_.size();
     }
     /// How many columns were added (0 means one implicit Fraction column).
-    [[nodiscard]] std::size_t column_count() const
+    [[nodiscard]] inline std::size_t column_count() const
     {
         return columns_.size();
     }
     /// Row track `index`'s definition; throws std::out_of_range past row_count().
-    [[nodiscard]] const GridLength& row(std::size_t index) const
+    [[nodiscard]] inline const GridLength& row(std::size_t index) const
     {
         return rows_.at(index);
     }
     /// Column track `index`'s definition; throws std::out_of_range past column_count().
-    [[nodiscard]] const GridLength& column(std::size_t index) const
+    [[nodiscard]] inline const GridLength& column(std::size_t index) const
     {
         return columns_.at(index);
     }
@@ -228,7 +234,7 @@ public:
     /// focus-ring outset (Element::arrange). Feeding `child->bounds().width + delta` into
     /// set_column_width() takes that band off again on every drag event, so the track collapses
     /// on the first one and never grows back.
-    [[nodiscard]] float row_size(std::size_t index) const
+    [[nodiscard]] inline float row_size(std::size_t index) const
     {
         if (index >= rows_.size())
         {
@@ -239,7 +245,7 @@ public:
                    : (index < row_sizes_.size() ? row_sizes_[index] : 0.0f);
     }
     /// The column counterpart of row_size().
-    [[nodiscard]] float column_size(std::size_t index) const
+    [[nodiscard]] inline float column_size(std::size_t index) const
     {
         if (index >= columns_.size())
         {
@@ -290,23 +296,23 @@ public:
 
     /// The color filled behind the children; nullopt (the default) draws nothing.
     /// A ThemeColor is a theme resource, re-read whenever it is drawn (ui/BackgroundBrush.hpp).
-    [[nodiscard]] const std::optional<Color>& background() const
+    [[nodiscard]] inline const std::optional<Color>& background() const
     {
         return background_.color();
     }
     /// The background as a theme resource, or nullptr when a fixed color (or nothing) is set.
-    [[nodiscard]] ThemeColor background_resource() const
+    [[nodiscard]] inline ThemeColor background_resource() const
     {
         return background_.resource();
     }
     /// Sets a fixed background color (nullopt for none); redraws.
-    void set_background(std::optional<Color> color)
+    inline void set_background(std::optional<Color> color)
     {
         background_.set(color);
         mark_dirty(DirtyFlags::Visual);
     }
     /// Sets the background to a theme resource; redraws.
-    void set_background(ThemeColor resource)
+    inline void set_background(ThemeColor resource)
     {
         background_.set(resource);
         mark_dirty(DirtyFlags::Visual);
@@ -314,12 +320,12 @@ public:
     /// With a transition set, a later change of what the background draws (a new color, or a
     /// resource under a new theme) blends from the color on screen (Animation.hpp's
     /// BrushTransition). nullopt (the default) changes it at once.
-    [[nodiscard]] const std::optional<BrushTransition>& background_transition() const
+    [[nodiscard]] inline const std::optional<BrushTransition>& background_transition() const
     {
         return background_.transition();
     }
     /// Sets or clears the background transition.
-    void set_background_transition(std::optional<BrushTransition> transition)
+    inline void set_background_transition(std::optional<BrushTransition> transition)
     {
         background_.set_transition(transition);
     }
@@ -327,88 +333,88 @@ public:
     // ---- border and padding ----
     /// The outline color; nullopt (the default) draws no border even with a non-zero
     /// border_thickness(). Nullopt as well while a ThemeColor is set.
-    [[nodiscard]] std::optional<Color> border_brush() const
+    [[nodiscard]] inline std::optional<Color> border_brush() const
     {
         return border_brush_.color();
     }
     /// The theme resource the border is drawn from, or null.
-    [[nodiscard]] ThemeColor border_brush_resource() const
+    [[nodiscard]] inline ThemeColor border_brush_resource() const
     {
         return border_brush_.resource();
     }
     /// A fixed outline color; replaces any resource. Redraws.
-    void set_border_brush(std::optional<Color> color)
+    inline void set_border_brush(std::optional<Color> color)
     {
         border_brush_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// An outline color read from the theme each time it is drawn; replaces any fixed color.
     /// Redraws.
-    void set_border_brush(ThemeColor resource)
+    inline void set_border_brush(ThemeColor resource)
     {
         border_brush_ = resource;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The border width in DIPs per side (default zero); it insets the children like padding.
-    [[nodiscard]] const Thickness& border_thickness() const
+    [[nodiscard]] inline const Thickness& border_thickness() const
     {
         return border_thickness_;
     }
     /// Sets the border width; updates the layout and redraws.
-    void set_border_thickness(const Thickness& thickness)
+    inline void set_border_thickness(const Thickness& thickness)
     {
         border_thickness_ = thickness;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The corner radius in DIPs, uniform for all four corners (default 0, square). It rounds the
     /// background and the border; the children are not clipped.
-    [[nodiscard]] float corner_radius() const
+    [[nodiscard]] inline float corner_radius() const
     {
         return corner_radius_;
     }
     /// Sets the corner radius; redraws.
-    void set_corner_radius(float radius)
+    inline void set_corner_radius(float radius)
     {
         corner_radius_ = radius;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The room in DIPs between the border and the children (default zero).
-    [[nodiscard]] const Thickness& padding() const
+    [[nodiscard]] inline const Thickness& padding() const
     {
         return padding_;
     }
     /// Sets the padding and updates the layout.
-    void set_padding(const Thickness& padding)
+    inline void set_padding(const Thickness& padding)
     {
         padding_ = padding;
         mark_dirty(DirtyFlags::Layout);
     }
 
     /// The gap between adjacent rows, DIPs; 0 by default.
-    [[nodiscard]] float row_spacing() const
+    [[nodiscard]] inline float row_spacing() const
     {
         return row_spacing_;
     }
     /// Sets the row gap and updates the layout.
-    void set_row_spacing(float spacing)
+    inline void set_row_spacing(float spacing)
     {
         row_spacing_ = spacing;
         mark_dirty(DirtyFlags::Layout);
     }
     /// The gap between adjacent columns, DIPs; 0 by default.
-    [[nodiscard]] float column_spacing() const
+    [[nodiscard]] inline float column_spacing() const
     {
         return column_spacing_;
     }
     /// Sets the column gap and updates the layout.
-    void set_column_spacing(float spacing)
+    inline void set_column_spacing(float spacing)
     {
         column_spacing_ = spacing;
         mark_dirty(DirtyFlags::Layout);
     }
 
     /// True: measuring touches only the grid and its children.
-    [[nodiscard]] bool parallel_measure_safe() const override
+    [[nodiscard]] inline bool parallel_measure_safe() const override
     {
         return true;
     }
@@ -445,7 +451,7 @@ private:
                                                            const std::vector<float>&      auto_desired);
 
     // Border plus padding, taken off every side before the children are laid out.
-    [[nodiscard]] Thickness content_inset() const
+    [[nodiscard]] inline Thickness content_inset() const
     {
         return Edges{.left   = border_thickness_.left + padding_.left,
                      .top    = border_thickness_.top + padding_.top,
@@ -480,33 +486,33 @@ private:
 inline namespace literals
 {
 /// A fixed track size in DIPs: `200_dip`, `12.5_dip`.
-consteval GridLength operator""_dip(long double value)
+LIBWINUI_EXPORT consteval GridLength operator""_dip(long double value)
 {
     return GridLength::dip(static_cast<float>(value));
 }
 
 /// Integer form of `_dip`.
-consteval GridLength operator""_dip(unsigned long long value)
+LIBWINUI_EXPORT consteval GridLength operator""_dip(unsigned long long value)
 {
     return GridLength::dip(static_cast<float>(value));
 }
 
 /// A fraction of the remaining space: a weighted share of what is left after fixed and auto
 /// tracks, so a `2_fr` track gets twice what a `1_fr` one does. `0.5_fr`.
-consteval GridLength operator""_fr(long double weight)
+LIBWINUI_EXPORT consteval GridLength operator""_fr(long double weight)
 {
     return GridLength::fraction(static_cast<float>(weight));
 }
 
 /// Integer form of `_fr`.
-consteval GridLength operator""_fr(unsigned long long weight)
+LIBWINUI_EXPORT consteval GridLength operator""_fr(unsigned long long weight)
 {
     return GridLength::fraction(static_cast<float>(weight));
 }
 } // namespace literals
 
 /// A track sized to its content.
-inline constexpr GridLength AutoSize = GridLength::auto_();
+LIBWINUI_EXPORT inline constexpr GridLength AutoSize = GridLength::auto_();
 
 /// One placed child. `row`/`column` name tracks declared in `.rows`/`.columns`, and either may be
 /// bound to move the child as state changes.
@@ -518,7 +524,7 @@ inline constexpr GridLength AutoSize = GridLength::auto_();
 /// ui::Property<std::size_t> column{0};
 /// ui::Cell moving{.row = 1, .column = column, .column_span = 2, .content = ui::Text{.text = "Here"}};
 /// @endcode
-struct Cell
+LIBWINUI_EXPORT struct Cell
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     Binding<std::size_t>                              row{std::size_t{0}};    ///< The row index.
@@ -544,7 +550,7 @@ struct Cell
 /// window.set_content(ui::Grid{.rows    = std::vector(names.size(), ui::AutoSize),
 ///                             .content = std::move(cells)});
 /// @endcode
-class CellList
+LIBWINUI_EXPORT class CellList
 {
 public:
     /// One built child with its placement; the node is already owned by the list.
@@ -576,7 +582,7 @@ public:
     std::vector<Placed> cells;
 
     /// Builds `cell`'s content and appends it, as one more entry of the braced list would.
-    void add(Cell cell)
+    inline void add(Cell cell)
     {
         cells.push_back(
             Placed{std::move(cell.row), std::move(cell.column), cell.row_span, cell.column_span, cell.content.take()});
@@ -617,7 +623,7 @@ public:
 ///     },
 /// });
 /// @endcode
-struct Grid
+LIBWINUI_EXPORT struct Grid
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Grid>` points at.
@@ -689,3 +695,5 @@ struct Grid
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

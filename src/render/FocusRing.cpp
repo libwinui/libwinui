@@ -5,9 +5,11 @@
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Renderer.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 
 #include <cmath>
+#endif
 
 namespace ui
 {

@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Property.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <chrono>
 #include <optional>
 #include <string>
 #include <string_view>
+#endif
 
 namespace ui
 {
@@ -42,7 +48,7 @@ namespace ui
 /// const std::chrono::year_month_day day{std::chrono::year{2026}, std::chrono::October, std::chrono::day{19}};
 /// window.set_content(ui::Text{.text = "Lieferung am " + ui::format_date(day, "d. MMMM yyyy", german)}); // "19. Oktober 2026"
 /// @endcode
-struct DateFormatSymbols
+LIBWINUI_EXPORT struct DateFormatSymbols
 {
     /// The month names, January first.
     std::array<std::string, 12>
@@ -85,7 +91,7 @@ struct DateFormatSymbols
     [[nodiscard]] bool twelve_hour_clock() const;
 
     /// The locale-independent symbols, the default.
-    [[nodiscard]] static DateFormatSymbols invariant()
+    [[nodiscard]] static inline DateFormatSymbols invariant()
     {
         return {};
     }
@@ -96,25 +102,27 @@ struct DateFormatSymbols
 
 /// The regional date format: what the date and time controls use. Invariant until a host sets
 /// it. Process-wide; UI thread only.
-[[nodiscard]] const DateFormatSymbols& regional_date_format();
+LIBWINUI_EXPORT [[nodiscard]] const DateFormatSymbols& regional_date_format();
 /// Sets the regional date format. The window host sets it from the user's locale and the Region
 /// settings. Raises regional_date_format_changed() when it differs from the current one.
-void set_regional_date_format(DateFormatSymbols symbols);
+LIBWINUI_EXPORT void set_regional_date_format(DateFormatSymbols symbols);
 /// Raised when the regional date format changes: the date and time controls write their text
 /// again. An app that caches formatted dates subscribes here and keeps the Subscription.
-[[nodiscard]] const Signal& regional_date_format_changed();
+LIBWINUI_EXPORT [[nodiscard]] const Signal& regional_date_format_changed();
 
 /// `date` written with `pattern` (see DateFormatSymbols). An invalid date writes nothing.
-[[nodiscard]] std::string format_date(std::chrono::year_month_day date,
-                                      std::string_view            pattern,
-                                      const DateFormatSymbols&    symbols = regional_date_format());
+LIBWINUI_EXPORT [[nodiscard]] std::string format_date(std::chrono::year_month_day date,
+                                                      std::string_view            pattern,
+                                                      const DateFormatSymbols&    symbols = regional_date_format());
 /// `time` (a time of day, from midnight) written with `pattern` (see DateFormatSymbols). Whole
 /// days in `time` are dropped.
-[[nodiscard]] std::string format_time(std::chrono::minutes     time,
-                                      std::string_view         pattern,
-                                      const DateFormatSymbols& symbols = regional_date_format());
+LIBWINUI_EXPORT [[nodiscard]] std::string format_time(std::chrono::minutes     time,
+                                                      std::string_view         pattern,
+                                                      const DateFormatSymbols& symbols = regional_date_format());
 
 /// The date today on the local clock. Read from the system clock on every call.
-[[nodiscard]] std::chrono::year_month_day today();
+LIBWINUI_EXPORT [[nodiscard]] std::chrono::year_month_day today();
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

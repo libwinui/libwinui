@@ -1,14 +1,21 @@
 // SPDX-License-Identifier: MIT
-#include "gallery.hpp"
-
 #include <array>
 #include <chrono>
+#include <concepts>
+#include <functional>
+#include <memory>
 #include <optional>
+#include <span>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <cstddef>
 #include <ctime>
+
+import winui;
+
+#include "gallery.hpp"
 
 namespace gallery
 {

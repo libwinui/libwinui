@@ -8,20 +8,23 @@
 #include "winui/core/PerfCounters.hpp"
 #include "winui/render/Renderer.hpp"
 
-#include <algorithm>
 #include <d2d1.h>
 #include <d2d1_3.h>
 #include <d2d1effects.h>
 #include <dwrite.h>
 #include <shlwapi.h>
+#include <wrl/client.h>
+
+#ifndef LIBWINUI_MODULE
+#include <algorithm>
 #include <string>
 #include <string_view>
 #include <type_traits>
 #include <unordered_map>
 #include <vector>
-#include <wrl/client.h>
 
 #include <cmath>
+#endif
 
 namespace ui::win32
 {
@@ -33,7 +36,7 @@ class D2DRenderer final : public Renderer
 public:
     // Lives as long as `target`: its caches hold device resources made on it. A window keeps one
     // and calls begin_frame() before every frame.
-    D2DRenderer(ID2D1RenderTarget* target, IDWriteFactory* dwrite) : target_(target), dwrite_(dwrite)
+    inline D2DRenderer(ID2D1RenderTarget* target, IDWriteFactory* dwrite) : target_(target), dwrite_(dwrite)
     {
         target_->GetFactory(&factory_);
         target_->GetDpi(&dpi_x_, &dpi_y_);
@@ -41,7 +44,7 @@ public:
 
     // Before every frame: picks up a DPI change and ages the caches by one frame, dropping what
     // has not been drawn for a while once a cache has grown.
-    void begin_frame()
+    inline void begin_frame()
     {
         target_->GetDpi(&dpi_x_, &dpi_y_);
         pushed_.clear();
@@ -70,13 +73,13 @@ public:
         next_text_frame();
     }
 
-    void fill_rounded_rect(const Rect& b, float radius, const Color& color) override
+    inline void fill_rounded_rect(const Rect& b, float radius, const Color& color) override
     {
         const D2D1_ROUNDED_RECT rr{to_d2d(snap(b)), radius, radius};
         target_->FillRoundedRectangle(rr, brush(color));
     }
 
-    void stroke_rounded_rect(const Rect& b, float radius, const Color& color, float stroke_width) override
+    inline void stroke_rounded_rect(const Rect& b, float radius, const Color& color, float stroke_width) override
     {
         const SnappedStroke     s = snap_stroke(b, stroke_width);
         const D2D1_ROUNDED_RECT rr{to_d2d(s.path), radius, radius};
@@ -85,7 +88,7 @@ public:
 
     // Through a text layout from the process-wide cache (DWriteCache.hpp), keyed by the string, its
     // style and the box, so a label drawn again in the next frame reuses the layout.
-    void draw_text(std::string_view utf8, const Rect& b, const Color& color, const TextStyle& style) override
+    inline void draw_text(std::string_view utf8, const Rect& b, const Color& color, const TextStyle& style) override
     {
         // Not snapped: rounding a wrap box's edges can shave a pixel and re-wrap text that fit.
         // Half a DIP of slack absorbs measure/draw rounding, so a line never breaks a word early.
@@ -114,7 +117,7 @@ public:
         target_->DrawTextLayout(D2D1::Point2F(layout_box.x, layout_box.y), layout.Get(), brush(color), Options);
     }
 
-    void fill_rounded_rect_gradient(const Rect& b, float radius, const LinearGradientBrush& brush_desc) override
+    inline void fill_rounded_rect_gradient(const Rect& b, float radius, const LinearGradientBrush& brush_desc) override
     {
         const Rect    sb = snap(b);
         D2D1_POINT_2F p0, p1;
@@ -143,11 +146,11 @@ public:
         target_->FillRoundedRectangle(rr, gradient);
     }
 
-    void stroke_rounded_rect_gradient(const Rect&                b,
-                                      float                      radius,
-                                      const LinearGradientBrush& brush_desc,
-                                      float                      extent_px,
-                                      float                      stroke_width) override
+    inline void stroke_rounded_rect_gradient(const Rect&                b,
+                                             float                      radius,
+                                             const LinearGradientBrush& brush_desc,
+                                             float                      extent_px,
+                                             float                      stroke_width) override
     {
         const SnappedStroke s  = snap_stroke(b, stroke_width);
         const Rect&         sb = s.path;
@@ -168,7 +171,7 @@ public:
 
     // Snap the band by its two edges, like snap(Rect) does for a fill. Snapping a fractional
     // center lands one pixel inside the fill and leaves a 1px spur on classic bevels.
-    void stroke_line(Point from, Point to, const Color& color, float stroke_width) override
+    inline void stroke_line(Point from, Point to, const Color& color, float stroke_width) override
     {
         D2D1_POINT_2F a{snap_x(from.x), snap_y(from.y)};
         D2D1_POINT_2F b{snap_x(to.x), snap_y(to.y)};
@@ -197,7 +200,7 @@ public:
 
     // Quadratic Béziers, one per half-period. A control point at twice the amplitude puts the
     // apex exactly `amplitude` off the axis.
-    void stroke_wavy_line(Point from, Point to, const Color& color, float stroke_width, float amplitude, float wavelength) override
+    inline void stroke_wavy_line(Point from, Point to, const Color& color, float stroke_width, float amplitude, float wavelength) override
     {
         const D2D1_POINT_2F a{snap_x(from.x), snap_y(from.y)};
         const D2D1_POINT_2F b{snap_x(to.x), snap_y(to.y)};
@@ -246,7 +249,7 @@ public:
         }
     }
 
-    void fill_polygon(const FillPolygon& polygon) override
+    inline void fill_polygon(const FillPolygon& polygon) override
     {
         if (polygon.fill.a > 0 && polygon.points.size() >= 3)
         {
@@ -257,7 +260,7 @@ public:
         }
     }
 
-    void stroke_polyline(const StrokePolyline& polyline) override
+    inline void stroke_polyline(const StrokePolyline& polyline) override
     {
         if (polyline.color.a > 0 && polyline.stroke_width > 0.0f && polyline.points.size() >= 2)
         {
@@ -270,7 +273,7 @@ public:
 
     // The snapped path through `points`, cached: filled (and so closed) for fill_polygon(), hollow
     // and open or closed for stroke_polyline().
-    ID2D1Geometry* polyline_geometry(const std::vector<Point>& points, bool filled, bool closed)
+    inline ID2D1Geometry* polyline_geometry(const std::vector<Point>& points, bool filled, bool closed)
     {
         key_begin(filled ? 'f' : (closed ? 'c' : 'o'));
         for (const Point& p : points)
@@ -291,7 +294,7 @@ public:
             });
     }
 
-    void push_clip(const Rect& bounds) override
+    inline void push_clip(const Rect& bounds) override
     {
         Pushed entry;
         entry.kind = Pushed::Kind::AxisClip;
@@ -301,13 +304,13 @@ public:
         pushed_.push_back(std::move(entry));
     }
 
-    void pop_clip() override
+    inline void pop_clip() override
     {
         // The top entry says which pop matches: PopAxisAlignedClip or push_clip_ellipse()'s PopLayer.
         pop_top();
     }
 
-    void push_clip_ellipse(Point center, float radius_x, float radius_y) override
+    inline void push_clip_ellipse(Point center, float radius_x, float radius_y) override
     {
         Pushed entry;
         entry.kind = Pushed::Kind::GeometryLayer;
@@ -338,7 +341,7 @@ public:
         pushed_.push_back(std::move(entry));
     }
 
-    void push_clip_rounded_rect(const Rect& bounds, float radius) override
+    inline void push_clip_rounded_rect(const Rect& bounds, float radius) override
     {
         if (radius <= 0.0f)
         {
@@ -380,7 +383,7 @@ public:
 
     // Opacity 1 pushes no real layer but still records an entry, so the pop stays balanced.
     // Every popup that is not mid-fade comes through here each frame.
-    void push_opacity_layer(float opacity) override
+    inline void push_opacity_layer(float opacity) override
     {
         Pushed entry;
         entry.kind    = opacity >= 1.0f ? Pushed::Kind::Nothing : Pushed::Kind::OpacityLayer;
@@ -394,12 +397,12 @@ public:
         pushed_.push_back(std::move(entry));
     }
 
-    void pop_opacity_layer() override
+    inline void pop_opacity_layer() override
     {
         pop_top();
     }
 
-    void draw_geometry(const DrawGeometry& g) override
+    inline void draw_geometry(const DrawGeometry& g) override
     {
         if (g.geometry.empty())
         {
@@ -437,7 +440,7 @@ public:
 
     // Composes onto the current transform, so nested zoomed Scroll controls magnify twice. Snapping
     // stays in untransformed DIPs; a zoomed view is a magnified raster anyway.
-    void push_matrix(const Matrix& m) override
+    inline void push_matrix(const Matrix& m) override
     {
         D2D1_MATRIX_3X2_F current{};
         target_->GetTransform(&current);
@@ -447,7 +450,7 @@ public:
         target_->SetTransform(local * *D2D1::Matrix3x2F::ReinterpretBaseType(&current));
     }
 
-    void pop_transform() override
+    inline void pop_transform() override
     {
         if (transforms_.empty())
         {
@@ -457,20 +460,20 @@ public:
         transforms_.pop_back();
     }
 
-    void fill_ellipse(Point center, float radius_x, float radius_y, const Color& color) override
+    inline void fill_ellipse(Point center, float radius_x, float radius_y, const Color& color) override
     {
         const D2D1_ELLIPSE e{D2D1::Point2F(snap_x(center.x), snap_y(center.y)), radius_x, radius_y};
         target_->FillEllipse(e, brush(color));
     }
 
-    void stroke_ellipse(Point center, float radius_x, float radius_y, const Color& color, float stroke_width) override
+    inline void stroke_ellipse(Point center, float radius_x, float radius_y, const Color& color, float stroke_width) override
     {
         const D2D1_ELLIPSE e{D2D1::Point2F(snap_x(center.x), snap_y(center.y)), radius_x, radius_y};
         target_->DrawEllipse(e, brush(color), stroke_width);
     }
 
     // 1x1 fills instead of a bitmap brush: fine for the small dither patches this is for.
-    void fill_rect_pattern(const Rect& bounds, Pattern pattern, const Color& fg, const Color& bg) override
+    inline void fill_rect_pattern(const Rect& bounds, Pattern pattern, const Color& fg, const Color& bg) override
     {
         (void)pattern; // only Checkerboard50 exists today
         target_->FillRectangle(to_d2d(bounds), brush(bg));
@@ -487,7 +490,7 @@ public:
         }
     }
 
-    void set_rasterization(const SetRasterization& policy) override
+    inline void set_rasterization(const SetRasterization& policy) override
     {
         target_->SetAntialiasMode(
             policy.geometry == GeometryAA::Aliased ? D2D1_ANTIALIAS_MODE_ALIASED : D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
@@ -508,19 +511,19 @@ public:
         snap_ = policy.snap_to_device_pixels;
     }
 
-    [[nodiscard]] float device_scale() const override
+    [[nodiscard]] inline float device_scale() const override
     {
         return dpi_x_ / 96.0f;
     }
 
     // libwinui ships no ImageThemePack; null (the default) makes draw_image_nine_slice() a no-op.
-    void set_image_pack(const ImageThemePack* pack)
+    inline void set_image_pack(const ImageThemePack* pack)
     {
         image_pack_ = pack;
         image_bitmaps_.clear();
     }
 
-    void draw_image_nine_slice(const std::string& image_name, const Rect& bounds, const Thickness& slice_margins) override
+    inline void draw_image_nine_slice(const std::string& image_name, const Rect& bounds, const Thickness& slice_margins) override
     {
         if (!image_pack_)
         {
@@ -568,7 +571,7 @@ public:
     }
 
     // The upload is cached by Bitmap::content_id(), so a picture is copied to the GPU once.
-    void draw_image(const Bitmap& image, const Rect& bounds, Stretch stretch) override
+    inline void draw_image(const Bitmap& image, const Rect& bounds, Stretch stretch) override
     {
         if (image.empty())
         {
@@ -624,7 +627,7 @@ public:
     }
 
     // A nine-grid draws the same bitmap nine times; the upload is cached as draw_image()'s is.
-    void draw_image_rect(const Bitmap& image, const Rect& source, const Rect& bounds) override
+    inline void draw_image_rect(const Bitmap& image, const Rect& source, const Rect& bounds) override
     {
         if (image.empty() || bounds.width <= 0.0f || bounds.height <= 0.0f)
         {
@@ -648,7 +651,7 @@ public:
 
     // ID2D1DeviceContext5's SVG renderer (Windows 10 1703+).
     // Parsed per call, since a renderer lives for one frame.
-    void draw_svg(const SvgImage& svg, const Rect& bounds) override
+    inline void draw_svg(const SvgImage& svg, const Rect& bounds) override
     {
         if (svg.empty() || bounds.width <= 0.0f || bounds.height <= 0.0f)
         {
@@ -684,7 +687,7 @@ public:
         dc->SetTransform(current);
     }
 
-    void reset_device_resources()
+    inline void reset_device_resources()
     {
         brushes_.clear();
         image_bitmaps_.clear();
@@ -695,18 +698,18 @@ public:
     }
 
 private:
-    static D2D1_RECT_F to_d2d(const Rect& r)
+    static inline D2D1_RECT_F to_d2d(const Rect& r)
     {
         return D2D1::RectF(r.left(), r.top(), r.right(), r.bottom());
     }
-    static D2D1_COLOR_F to_d2d(const Color& c)
+    static inline D2D1_COLOR_F to_d2d(const Color& c)
     {
         return D2D1::ColorF(c.r, c.g, c.b, c.a);
     }
 
     // Rounds to a device pixel at the target's DPI, not to a whole DIP. A no-op unless the
     // theme's SetRasterization asked for snap_to_device_pixels.
-    [[nodiscard]] float snap_x(float dip) const
+    [[nodiscard]] inline float snap_x(float dip) const
     {
         if (!snap_)
         {
@@ -715,7 +718,7 @@ private:
         const float scale = dpi_x_ / 96.0f;
         return std::round(dip * scale) / scale;
     }
-    [[nodiscard]] float snap_y(float dip) const
+    [[nodiscard]] inline float snap_y(float dip) const
     {
         if (!snap_)
         {
@@ -734,7 +737,7 @@ private:
     // edge to device pixels, the width to whole device pixels (at least one), and the path back to
     // the middle of the band. Snapping the path itself puts a one-pixel stroke on a pixel boundary,
     // where aliased rasterization drops the top-left corner pixel.
-    [[nodiscard]] SnappedStroke snap_stroke(const Rect& path, float width) const
+    [[nodiscard]] inline SnappedStroke snap_stroke(const Rect& path, float width) const
     {
         if (!snap_ || width <= 0.0f)
         {
@@ -746,7 +749,7 @@ private:
         return {outer.inset(Thickness{device * 0.5f}), device};
     }
 
-    [[nodiscard]] Rect snap(const Rect& r) const
+    [[nodiscard]] inline Rect snap(const Rect& r) const
     {
         if (!snap_)
         {
@@ -759,7 +762,7 @@ private:
         return Rect{left, top, right - left, bottom - top};
     }
 
-    ID2D1SolidColorBrush* brush(const Color& c)
+    inline ID2D1SolidColorBrush* brush(const Color& c)
     {
         const std::uint32_t key = pack(c);
         auto                it  = brushes_.find(key);
@@ -775,7 +778,7 @@ private:
         return raw;
     }
 
-    static std::uint32_t pack(const Color& c)
+    static inline std::uint32_t pack(const Color& c)
     {
         auto q = [](float v)
         {
@@ -786,7 +789,7 @@ private:
     }
 
     // Cached by name for the process; image packs are small and static.
-    ID2D1Bitmap* image_bitmap(const std::string& name, const Bitmap& image)
+    inline ID2D1Bitmap* image_bitmap(const std::string& name, const Bitmap& image)
     {
         auto it = image_bitmaps_.find(name);
         if (it != image_bitmaps_.end())
@@ -801,7 +804,7 @@ private:
 
     // Uploaded once per Bitmap::content_id(), within a byte budget: once the uploads outgrow it,
     // the ones not drawn in this frame go.
-    ID2D1Bitmap* device_bitmap(const Bitmap& image)
+    inline ID2D1Bitmap* device_bitmap(const Bitmap& image)
     {
         const std::uint64_t id = image.content_id();
         if (auto it = device_bitmaps_.find(id); it != device_bitmaps_.end())
@@ -821,7 +824,7 @@ private:
 
     // A premultiplied BGRA bitmap is the layout the GPU takes and goes up as it is. CreateBitmap
     // rejects D2D1_ALPHA_MODE_STRAIGHT with initial data, so straight RGBA is premultiplied first.
-    ComPtr<ID2D1Bitmap> upload(const Bitmap& image)
+    inline ComPtr<ID2D1Bitmap> upload(const Bitmap& image)
     {
         std::vector<std::uint8_t> premultiplied;
         const std::uint8_t*       pixels = image.bytes().data();
@@ -842,7 +845,7 @@ private:
         return bmp;
     }
 
-    static std::vector<std::uint8_t> premultiply_bytes(const Bitmap& image)
+    static inline std::vector<std::uint8_t> premultiply_bytes(const Bitmap& image)
     {
         const auto&               src_bytes = image.bytes();
         std::vector<std::uint8_t> out(src_bytes.size());
@@ -877,7 +880,7 @@ private:
         D2D1_MATRIX_3X2_F     transform{};
     };
 
-    void push(const Pushed& e)
+    inline void push(const Pushed& e)
     {
         switch (e.kind)
         {
@@ -901,7 +904,7 @@ private:
     }
 
     // A layer from the pool (made on first need); every push of a layer kind takes one.
-    ComPtr<ID2D1Layer> acquire_layer()
+    inline ComPtr<ID2D1Layer> acquire_layer()
     {
         if (!layers_.empty())
         {
@@ -915,7 +918,7 @@ private:
     }
 
     // Pops the innermost push and gives its layer back to the pool.
-    void pop_top()
+    inline void pop_top()
     {
         if (pushed_.empty())
         {
@@ -929,7 +932,7 @@ private:
         pushed_.pop_back();
     }
 
-    void pop(const Pushed& e)
+    inline void pop(const Pushed& e)
     {
         switch (e.kind)
         {
@@ -947,7 +950,7 @@ private:
 
     // ---- geometry ----
 
-    ID2D1Geometry* path_geometry(const PathGeometry& g)
+    inline ID2D1Geometry* path_geometry(const PathGeometry& g)
     {
         key_begin('g');
         key_add(static_cast<std::uint8_t>(g.fill_rule));
@@ -992,7 +995,7 @@ private:
             });
     }
 
-    static D2D1_CAP_STYLE cap(PenLineCap c)
+    static inline D2D1_CAP_STYLE cap(PenLineCap c)
     {
         switch (c)
         {
@@ -1010,7 +1013,7 @@ private:
 
     // The stroke style: every stroke property, and a custom dash when there is an array.
     // Cached by those properties.
-    ID2D1StrokeStyle* stroke_style(const StrokeStyle& s)
+    inline ID2D1StrokeStyle* stroke_style(const StrokeStyle& s)
     {
         key_begin('s');
         key_add(static_cast<std::uint8_t>(s.start_cap));
@@ -1074,7 +1077,7 @@ private:
         std::uint64_t                       last_used = 0;
     };
 
-    Gradient* gradient(const GradientStops& in, D2D1_EXTEND_MODE extend)
+    inline Gradient* gradient(const GradientStops& in, D2D1_EXTEND_MODE extend)
     {
         key_begin('G');
         key_add(static_cast<std::uint8_t>(extend));
@@ -1103,7 +1106,10 @@ private:
         return &gradients_.emplace(key_, Gradient{.stops = std::move(collection), .last_used = frame_}).first->second;
     }
 
-    ID2D1LinearGradientBrush* linear_gradient(const GradientStops& stops, D2D1_EXTEND_MODE extend, D2D1_POINT_2F p0, D2D1_POINT_2F p1)
+    inline ID2D1LinearGradientBrush* linear_gradient(const GradientStops& stops,
+                                                     D2D1_EXTEND_MODE     extend,
+                                                     D2D1_POINT_2F        p0,
+                                                     D2D1_POINT_2F        p1)
     {
         Gradient* g = gradient(stops, extend);
         if (!g)
@@ -1121,9 +1127,9 @@ private:
         return g->linear.Get();
     }
 
-    ID2D1RadialGradientBrush* radial_gradient(const GradientStops&                         stops,
-                                              D2D1_EXTEND_MODE                             extend,
-                                              const D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES& props)
+    inline ID2D1RadialGradientBrush* radial_gradient(const GradientStops&                         stops,
+                                                     D2D1_EXTEND_MODE                             extend,
+                                                     const D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES& props)
     {
         Gradient* g = gradient(stops, extend);
         if (!g)
@@ -1144,7 +1150,7 @@ private:
     }
 
     // `box` is what relatively mapped gradients span. An AcrylicBrush here (a stroke) uses its fallback color.
-    ComPtr<ID2D1Brush> make_brush(const Brush& b, const Rect& box)
+    inline ComPtr<ID2D1Brush> make_brush(const Brush& b, const Rect& box)
     {
         if (const auto* color = std::get_if<Color>(&b))
         {
@@ -1200,7 +1206,7 @@ private:
     }
 
     // In-app acrylic as an effect chain, without a 2% noise layer.
-    void fill_acrylic(ID2D1Geometry* geometry, const Rect& bounds, const AcrylicBrush& a)
+    inline void fill_acrylic(ID2D1Geometry* geometry, const Rect& bounds, const AcrylicBrush& a)
     {
         const Color tint = a.effective_tint();
         if (a.always_use_fallback)
@@ -1371,7 +1377,7 @@ private:
     }
 
     // The key of the next cache lookup, built field by field into one reused buffer.
-    void key_begin(char kind)
+    inline void key_begin(char kind)
     {
         key_.clear();
         key_.push_back(kind);

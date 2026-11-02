@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -16,15 +20,17 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
+#endif
 
 namespace ui
 {
 
 /// The density a DensityScope applies.
-enum class Density
+LIBWINUI_EXPORT enum class Density
 {
     Standard, ///< The theme's own control sizing. The scope changes nothing.
     Compact,  ///< Theme::ControlSizing::compact(), with smaller minimum heights and paddings.
@@ -60,24 +66,24 @@ enum class Density
 /// const ui::Theme& inside = scope->scoped(ui::Theme::default_light());
 /// // inside.sizing.text_control_min_height == 24, down from 32
 /// @endcode
-class DensityScopeControl final : public ContentHost
+LIBWINUI_EXPORT class DensityScopeControl final : public ContentHost
 {
 public:
     /// A compact scope with no child yet.
     DensityScopeControl() = default;
     /// A scope at `density`, with no child yet.
-    explicit DensityScopeControl(Density density) : density_(density)
+    inline explicit DensityScopeControl(Density density) : density_(density)
     {
     }
 
     /// The density applied to the child. Density::Compact by default.
-    [[nodiscard]] Density density() const
+    [[nodiscard]] inline Density density() const
     {
         return density_;
     }
     /// Changes the density. Updates layout and redraws, since every control underneath measures
     /// again against the new sizing.
-    void set_density(Density density)
+    inline void set_density(Density density)
     {
         density_ = density;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -118,7 +124,7 @@ private:
 ///     }},
 /// });
 /// @endcode
-struct DensityScope
+LIBWINUI_EXPORT struct DensityScope
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<DensityScope>` points at.
@@ -172,3 +178,5 @@ struct DensityScope
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

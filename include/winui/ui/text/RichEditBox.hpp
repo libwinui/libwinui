@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -25,6 +29,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <functional>
 #include <memory>
 #include <optional>
@@ -35,13 +40,14 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
 /// The character format one character of a RichEditBox carries. An unset color, family or size
 /// follows the control's own (its foreground(), font_family() and font_size()).
-struct RichTextFormat
+LIBWINUI_EXPORT struct RichTextFormat
 {
     /// Bold weight.
     bool bold = false;
@@ -74,7 +80,7 @@ struct RichTextFormat
 ///     {.text = "!\nA second paragraph."},
 /// });
 /// @endcode
-struct RichTextSpan
+LIBWINUI_EXPORT struct RichTextSpan
 {
     /// The text (UTF-8); `\n` is a paragraph mark.
     std::string text;
@@ -86,7 +92,7 @@ struct RichTextSpan
 
 /// The fields of a RichTextFormat that can follow the control's own value, as
 /// RichEditBoxControl::CharacterFormat::control_default lists them. Flags.
-enum class RichTextFormatField : std::uint8_t
+LIBWINUI_EXPORT enum class RichTextFormatField : std::uint8_t
 {
     None       = 0,                                               ///< no field
     Foreground = 1u << 0,                                         ///< the text color
@@ -97,25 +103,25 @@ enum class RichTextFormatField : std::uint8_t
 };
 
 /// Combines RichTextFormatField flags.
-[[nodiscard]] constexpr RichTextFormatField operator|(RichTextFormatField a, RichTextFormatField b)
+LIBWINUI_EXPORT [[nodiscard]] constexpr RichTextFormatField operator|(RichTextFormatField a, RichTextFormatField b)
 {
     return static_cast<RichTextFormatField>(static_cast<std::uint8_t>(a) | static_cast<std::uint8_t>(b));
 }
 
 /// The flags both `a` and `b` have.
-[[nodiscard]] constexpr RichTextFormatField operator&(RichTextFormatField a, RichTextFormatField b)
+LIBWINUI_EXPORT [[nodiscard]] constexpr RichTextFormatField operator&(RichTextFormatField a, RichTextFormatField b)
 {
     return static_cast<RichTextFormatField>(static_cast<std::uint8_t>(a) & static_cast<std::uint8_t>(b));
 }
 
 /// Whether `set` includes any bit of `flag`.
-[[nodiscard]] constexpr bool has_flag(RichTextFormatField set, RichTextFormatField flag)
+LIBWINUI_EXPORT [[nodiscard]] constexpr bool has_flag(RichTextFormatField set, RichTextFormatField flag)
 {
     return (set & flag) != RichTextFormatField::None;
 }
 
 /// The Ctrl+B/I/U shortcuts, with their context menu commands, to leave out. Flags.
-enum class DisabledFormattingShortcuts : std::uint8_t
+LIBWINUI_EXPORT enum class DisabledFormattingShortcuts : std::uint8_t
 {
     None      = 0,                         ///< every shortcut works (the default)
     Bold      = 1u << 0,                   ///< no Ctrl+B / Bold
@@ -125,13 +131,14 @@ enum class DisabledFormattingShortcuts : std::uint8_t
 };
 
 /// Combines DisabledFormattingShortcuts flags.
-[[nodiscard]] constexpr DisabledFormattingShortcuts operator|(DisabledFormattingShortcuts a, DisabledFormattingShortcuts b)
+LIBWINUI_EXPORT [[nodiscard]] constexpr DisabledFormattingShortcuts operator|(DisabledFormattingShortcuts a,
+                                                                              DisabledFormattingShortcuts b)
 {
     return static_cast<DisabledFormattingShortcuts>(static_cast<std::uint8_t>(a) | static_cast<std::uint8_t>(b));
 }
 
 /// Whether `set` includes any bit of `flag`.
-[[nodiscard]] constexpr bool has_flag(DisabledFormattingShortcuts set, DisabledFormattingShortcuts flag)
+LIBWINUI_EXPORT [[nodiscard]] constexpr bool has_flag(DisabledFormattingShortcuts set, DisabledFormattingShortcuts flag)
 {
     return (static_cast<std::uint8_t>(set) & static_cast<std::uint8_t>(flag)) != 0;
 }
@@ -159,7 +166,7 @@ enum class DisabledFormattingShortcuts : std::uint8_t
 /// editor->on_text_changed([editor, &draft] { draft = editor->save_rtf(); });
 /// window.set_content(std::move(panel));
 /// @endcode
-class RichEditBoxControl final : public Element, private ValueProvider
+LIBWINUI_EXPORT class RichEditBoxControl final : public Element, private ValueProvider
 {
 public:
     /// An empty document.
@@ -210,7 +217,7 @@ public:
 
     // ---- content (the document) ----
     /// The plain text, a `\n` for every paragraph mark.
-    [[nodiscard]] const std::string& text() const
+    [[nodiscard]] inline const std::string& text() const
     {
         return text_;
     }
@@ -230,14 +237,14 @@ public:
 
     // ---- selection ----
     /// The caret's offset into text(): the moving end of the selection.
-    [[nodiscard]] std::size_t caret() const
+    [[nodiscard]] inline std::size_t caret() const
     {
         return caret_;
     }
     /// The selection as [start, end) (the caret when they are equal).
     [[nodiscard]] std::pair<std::size_t, std::size_t> selection() const;
     /// Whether any text is selected (more than a caret).
-    [[nodiscard]] bool has_selection() const
+    [[nodiscard]] inline bool has_selection() const
     {
         return caret_ != anchor_;
     }
@@ -276,12 +283,12 @@ public:
 
     // ---- undo ----
     /// Whether there is a step to undo.
-    [[nodiscard]] bool can_undo() const
+    [[nodiscard]] inline bool can_undo() const
     {
         return !undo_.empty();
     }
     /// Whether there is an undone step to redo.
-    [[nodiscard]] bool can_redo() const
+    [[nodiscard]] inline bool can_redo() const
     {
         return !redo_.empty();
     }
@@ -294,12 +301,12 @@ public:
 
     // ---- header and placeholder ----
     /// The label above the box; empty when none is shown.
-    [[nodiscard]] const std::string& header() const
+    [[nodiscard]] inline const std::string& header() const
     {
         return header_.text();
     }
     /// The label above the box. Empty draws none.
-    void set_header(std::string header)
+    inline void set_header(std::string header)
     {
         if (header_.set_text(std::move(header)))
         {
@@ -307,12 +314,12 @@ public:
         }
     }
     /// The secondary text under the box; empty (the default) draws none.
-    [[nodiscard]] const std::string& description() const
+    [[nodiscard]] inline const std::string& description() const
     {
         return description_.text();
     }
     /// Sets the description. Empty draws none and takes no room.
-    void set_description(std::string description)
+    inline void set_description(std::string description)
     {
         if (description_.set_text(std::move(description)))
         {
@@ -321,12 +328,12 @@ public:
     }
     /// What is wrong with the value, shown in the description's place in the critical color,
     /// with the border in the same color; empty (the default) shows the description.
-    [[nodiscard]] const std::string& error() const
+    [[nodiscard]] inline const std::string& error() const
     {
         return description_.error();
     }
     /// Sets the error. Empty shows the description again.
-    void set_error(std::string error)
+    inline void set_error(std::string error)
     {
         if (description_.set_error(std::move(error)))
         {
@@ -335,27 +342,27 @@ public:
     }
     /// The description, or the error while one is set, is the help text a screen reader offers
     /// when accessibility().description is empty.
-    [[nodiscard]] std::string automation_help_text_fallback() const override
+    [[nodiscard]] inline std::string automation_help_text_fallback() const override
     {
         return description_.shown();
     }
     /// Invalid while an error is set.
-    [[nodiscard]] bool automation_invalid() const override
+    [[nodiscard]] inline bool automation_invalid() const override
     {
         return description_.has_error();
     }
     /// The header names the control when accessibility().name does not.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return header_.text();
     }
     /// The hint shown while the document is empty.
-    [[nodiscard]] const std::string& placeholder_text() const
+    [[nodiscard]] inline const std::string& placeholder_text() const
     {
         return placeholder_text_;
     }
     /// Drawn in a secondary text color while the document is empty.
-    void set_placeholder_text(std::string text)
+    inline void set_placeholder_text(std::string text)
     {
         placeholder_text_ = std::move(text);
         mark_dirty(DirtyFlags::Visual);
@@ -363,71 +370,71 @@ public:
 
     // ---- the control's own format ----
     /// The font family of text without one of its own; unset follows the theme.
-    [[nodiscard]] const std::optional<std::string>& font_family() const
+    [[nodiscard]] inline const std::optional<std::string>& font_family() const
     {
         return font_family_;
     }
     /// Sets or clears the default font family; unset follows the theme. Text without a family of
     /// its own is drawn in it.
-    void set_font_family(std::optional<std::string> family)
+    inline void set_font_family(std::optional<std::string> family)
     {
         font_family_ = std::move(family);
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The font size in DIPs of text without one of its own; unset follows the theme.
-    [[nodiscard]] std::optional<float> font_size() const
+    [[nodiscard]] inline std::optional<float> font_size() const
     {
         return font_size_;
     }
     /// Sets or clears the default font size; unset follows the theme.
-    void set_font_size(OptionalFloat size)
+    inline void set_font_size(OptionalFloat size)
     {
         font_size_ = size;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The color of text without a color of its own; unset follows the theme.
-    [[nodiscard]] const Paint& foreground() const
+    [[nodiscard]] inline const Paint& foreground() const
     {
         return foreground_;
     }
     /// Sets the text color; unset follows the theme. Text without a color of its own is drawn in it.
-    void set_foreground(Paint color)
+    inline void set_foreground(Paint color)
     {
         foreground_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// The fixed color behind selected text; nullopt (the default) when unset or a theme resource
     /// is set. Unset is the accent.
-    [[nodiscard]] std::optional<Color> selection_highlight_color() const
+    [[nodiscard]] inline std::optional<Color> selection_highlight_color() const
     {
         return selection_color_.color();
     }
     /// The color behind selected text as a theme resource, or nullptr.
-    [[nodiscard]] ThemeColor selection_highlight_resource() const
+    [[nodiscard]] inline ThemeColor selection_highlight_resource() const
     {
         return selection_color_.resource();
     }
     /// Sets the fixed color behind selected text and clears a theme resource; nullopt goes back
     /// to the accent.
-    void set_selection_highlight_color(std::optional<Color> color)
+    inline void set_selection_highlight_color(std::optional<Color> color)
     {
         selection_color_ = color;
         mark_dirty(DirtyFlags::Visual);
     }
     /// Sets the color behind selected text to a theme resource, re-read under every theme, and
     /// clears a fixed one.
-    void set_selection_highlight_color(ThemeColor resource)
+    inline void set_selection_highlight_color(ThemeColor resource)
     {
         selection_color_ = resource;
         mark_dirty(DirtyFlags::Visual);
     }
     /// How each line sits between the edges; Left by default.
-    [[nodiscard]] TextAlignment text_alignment() const
+    [[nodiscard]] inline TextAlignment text_alignment() const
     {
         return alignment_;
     }
     /// Sets the alignment of every paragraph.
-    void set_text_alignment(TextAlignment alignment)
+    inline void set_text_alignment(TextAlignment alignment)
     {
         alignment_ = alignment;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -436,7 +443,7 @@ public:
     [[nodiscard]] TextStyle base_style(const Theme& theme) const;
 
     /// Whether the text is read-only; false by default.
-    [[nodiscard]] bool read_only() const
+    [[nodiscard]] inline bool read_only() const
     {
         return read_only_;
     }
@@ -444,67 +451,67 @@ public:
     /// box drops its squiggles. Making it editable again checks the spelling again.
     void set_read_only(bool read_only);
     /// Whether Enter starts a new paragraph; true by default.
-    [[nodiscard]] bool accepts_return() const
+    [[nodiscard]] inline bool accepts_return() const
     {
         return accepts_return_;
     }
     /// Enter starts a new paragraph and pasted line breaks are kept. On by default.
-    void set_accepts_return(bool accepts)
+    inline void set_accepts_return(bool accepts)
     {
         accepts_return_ = accepts;
     }
     /// Whether lines break at the box's width; Wrap by default.
-    [[nodiscard]] TextWrapping wrapping() const
+    [[nodiscard]] inline TextWrapping wrapping() const
     {
         return wrapping_;
     }
     /// Sets the wrapping mode.
-    void set_wrapping(TextWrapping wrapping)
+    inline void set_wrapping(TextWrapping wrapping)
     {
         wrapping_ = wrapping;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
     /// The most characters the user can type or paste; 0 is no limit.
-    [[nodiscard]] std::size_t max_length() const
+    [[nodiscard]] inline std::size_t max_length() const
     {
         return max_length_;
     }
     /// The most characters the user can type or paste; 0 (the default) is no limit. Text set
     /// from code is not cut.
-    void set_max_length(std::size_t length)
+    inline void set_max_length(std::size_t length)
     {
         max_length_ = length;
     }
     /// How typed text is cased; Normal by default.
-    [[nodiscard]] CharacterCasing character_casing() const
+    [[nodiscard]] inline CharacterCasing character_casing() const
     {
         return casing_;
     }
     /// Sets the casing of what the user types or pastes from now on.
-    void set_character_casing(CharacterCasing casing)
+    inline void set_character_casing(CharacterCasing casing)
     {
         casing_ = casing;
     }
     /// Which of Ctrl+B/I/U and the matching context menu commands are off; None by default.
-    [[nodiscard]] DisabledFormattingShortcuts disabled_formatting_shortcuts() const
+    [[nodiscard]] inline DisabledFormattingShortcuts disabled_formatting_shortcuts() const
     {
         return disabled_shortcuts_;
     }
     /// Turns off formatting shortcuts and their menu commands. Combine flags with `|`, such as
     /// `Bold | Italic`. Takes effect on the next key press or context menu.
-    void set_disabled_formatting_shortcuts(DisabledFormattingShortcuts disabled)
+    inline void set_disabled_formatting_shortcuts(DisabledFormattingShortcuts disabled)
     {
         disabled_shortcuts_ = disabled;
     }
 
     // ---- events ----
     /// Fired after every change the user makes to the text or its formatting, with the text.
-    void on_text_changed(Callback<void(const std::string&)> handler)
+    inline void on_text_changed(Callback<void(const std::string&)> handler)
     {
         on_text_changed_ = std::move(handler);
     }
     /// Fired after the user moves the caret or the selection.
-    void on_selection_changed(Callback<void()> handler)
+    inline void on_selection_changed(Callback<void()> handler)
     {
         on_selection_changed_ = std::move(handler);
     }
@@ -514,19 +521,19 @@ public:
 
     // ---- focus ----
     /// Whether the box holds keyboard focus (the caret blinks).
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// A tab stop while enabled, read-only or not.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
     // ---- spell checking ----
     /// Whether spell checking is on; true by default. Squiggles and the context menu's suggestions
     /// work as in TextBox. There is no autocorrection.
-    [[nodiscard]] bool spell_check() const
+    [[nodiscard]] inline bool spell_check() const
     {
         return spell_check_enabled_;
     }
@@ -534,7 +541,7 @@ public:
     /// checks the document again.
     void set_spell_check(bool enabled);
     /// The misspellings found in the last check, as offsets into text().
-    [[nodiscard]] const std::vector<SpellingError>& spelling_errors() const
+    [[nodiscard]] inline const std::vector<SpellingError>& spelling_errors() const
     {
         return spelling_errors_;
     }
@@ -555,14 +562,14 @@ public:
     /// How long the caret stays shown, and then hidden, in milliseconds.
     static constexpr double CaretBlinkIntervalMs = 530.0;
     /// Whether a focused box draws its caret right now, in its blink cycle.
-    [[nodiscard]] bool caret_visible() const
+    [[nodiscard]] inline bool caret_visible() const
     {
         return caret_visible_;
     }
 
     // ---- automation ----
     /// AutomationRole::Edit.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Edit;
     }
@@ -597,12 +604,12 @@ private:
     // The editing keys and Ctrl shortcuts it handles itself, kept from app shortcuts.
     [[nodiscard]] bool takes_shortcut(const KeyEvent& e) const;
     // Every arrow key moves the caret; none moves focus.
-    [[nodiscard]] bool takes_arrow_key(Key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key) const
     {
         return true;
     }
     // Enter is a new paragraph while accepts_return() and editable.
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return accepts_return_ && !read_only_;
     }
@@ -629,11 +636,11 @@ private:
         Deleting,
     };
 
-    [[nodiscard]] bool editable() const
+    [[nodiscard]] inline bool editable() const
     {
         return is_enabled() && !read_only_;
     }
-    [[nodiscard]] bool spelling_on() const
+    [[nodiscard]] inline bool spelling_on() const
     {
         return spell_check_enabled_ && !read_only_;
     }
@@ -755,24 +762,24 @@ protected:
 
 protected:
     /// None: the field shows focus with its accent border.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return false;
     }
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.value = this;
     }
     // text().
-    [[nodiscard]] std::string text_value() const override
+    [[nodiscard]] inline std::string text_value() const override
     {
         return text_;
     }
     // True while disabled or read-only.
-    [[nodiscard]] bool text_value_read_only() const override
+    [[nodiscard]] inline bool text_value_read_only() const override
     {
         return !editable();
     }
@@ -800,7 +807,7 @@ private:
 ///     .control          = editor,
 /// });
 /// @endcode
-struct RichEditBox
+LIBWINUI_EXPORT struct RichEditBox
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<RichEditBox>` points at.
@@ -898,3 +905,5 @@ struct RichEditBox
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

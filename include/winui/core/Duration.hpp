@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <chrono>
+#endif
 
 namespace ui
 {
@@ -23,6 +29,8 @@ namespace ui
 /// });
 /// ui::Subscription hide_hint = window.after(2s, [&] { hint = ""; });
 /// @endcode
-using Duration = std::chrono::duration<double, std::milli>;
+LIBWINUI_EXPORT using Duration = std::chrono::duration<double, std::milli>;
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

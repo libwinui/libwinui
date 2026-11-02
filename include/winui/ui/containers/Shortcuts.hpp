@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -12,19 +16,21 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/spec/Spec.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// The shortcuts of a ui::Shortcuts, written as a braced list of ui::Shortcut. A shortcut owns its
 /// handler, which may capture move-only state, so the list takes them by value.
-class ShortcutList
+LIBWINUI_EXPORT class ShortcutList
 {
 public:
     /// No shortcuts.
@@ -47,7 +53,7 @@ public:
     std::vector<Shortcut> entries;
 
     /// Appends one shortcut, for a list put together in a loop.
-    void add(Shortcut shortcut)
+    inline void add(Shortcut shortcut)
     {
         entries.push_back(std::move(shortcut));
     }
@@ -73,7 +79,7 @@ public:
 ///     .content = ui::TextBox{.header = "Message", .text = message, .accepts_return = true},
 /// });
 /// @endcode
-struct Shortcuts
+LIBWINUI_EXPORT struct Shortcuts
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Shortcuts>` points at.
@@ -128,3 +134,5 @@ struct Shortcuts
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

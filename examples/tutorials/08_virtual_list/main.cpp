@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 // libwinui tutorial: long lists.
 // --8<-- [start:includes]
-#include <winui/winui.hpp>
-
 #include <algorithm>
 #include <format>
 #include <string>
 
 #include <cstddef>
+
+import winui;
 // --8<-- [end:includes]
 
 namespace

@@ -1,20 +1,26 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Renderer.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
 /// Which edges of a bevel draw. Group boxes, status-bar panes and etched separators draw only
 /// some of the four. A bit set: combine with `|`.
-enum class BevelSides : std::uint8_t
+LIBWINUI_EXPORT enum class BevelSides : std::uint8_t
 {
     None   = 0,                           ///< No edge.
     Left   = 1 << 0,                      ///< The left edge.
@@ -25,17 +31,17 @@ enum class BevelSides : std::uint8_t
 };
 
 /// The union of two side sets.
-constexpr BevelSides operator|(BevelSides a, BevelSides b)
+LIBWINUI_EXPORT constexpr BevelSides operator|(BevelSides a, BevelSides b)
 {
     return static_cast<BevelSides>(static_cast<std::uint8_t>(a) | static_cast<std::uint8_t>(b));
 }
 /// The intersection of two side sets.
-constexpr BevelSides operator&(BevelSides a, BevelSides b)
+LIBWINUI_EXPORT constexpr BevelSides operator&(BevelSides a, BevelSides b)
 {
     return static_cast<BevelSides>(static_cast<std::uint8_t>(a) & static_cast<std::uint8_t>(b));
 }
 /// True when `sides` includes any of the edges in `side`.
-constexpr bool has_side(BevelSides sides, BevelSides side)
+LIBWINUI_EXPORT constexpr bool has_side(BevelSides sides, BevelSides side)
 {
     return (sides & side) != BevelSides::None;
 }
@@ -82,7 +88,7 @@ constexpr bool has_side(BevelSides sides, BevelSides side)
 /// ui::draw_bevel_border(renderer, pane, ui::BorderStyle::Sunken, light, highlight, shadow,
 ///                          dark_shadow, 1.0f, ui::BevelSides::Left | ui::BevelSides::Right);
 /// @endcode
-void draw_bevel_border(
+LIBWINUI_EXPORT void draw_bevel_border(
     Renderer&    renderer,
     const Rect&  bounds,
     BorderStyle  style,
@@ -123,14 +129,15 @@ void draw_bevel_border(
 /// const ui::BorderStyle style = pressed ? ui::BorderStyle::Sunken : ui::BorderStyle::Raised;
 /// ui::draw_win3x_border(renderer, bounds, style, frame, highlight, shadow, 1.0f, /*radius=*/2.0f);
 /// @endcode
-void draw_win3x_border(Renderer&    renderer,
-                       const Rect&  bounds,
-                       BorderStyle  style,
-                       const Color& frame,
-                       const Color& highlight,
-                       const Color& shadow,
-                       float        step,
-                       float        radius = 0.0f);
+LIBWINUI_EXPORT void draw_win3x_border(
+    Renderer&    renderer,
+    const Rect&  bounds,
+    BorderStyle  style,
+    const Color& frame,
+    const Color& highlight,
+    const Color& shadow,
+    float        step,
+    float        radius = 0.0f);
 
 /// The classic radio button, drawn per device pixel at the target's own scale
 /// (Renderer::device_scale()): the sunken bevel made round, two one-pixel rings split along the
@@ -154,17 +161,18 @@ void draw_win3x_border(Renderer&    renderer,
 ///                        ui::Color::from_rgba(128, 128, 128), ui::colors::Black,
 ///                        ui::colors::White, ui::colors::Black);
 /// @endcode
-void draw_classic_radio(Renderer&                   renderer,
-                        const Rect&                 box,
-                        const Color&                light,
-                        const Color&                highlight,
-                        const Color&                shadow,
-                        const Color&                dark_shadow,
-                        const Color&                well,
-                        const std::optional<Color>& dot);
+LIBWINUI_EXPORT void draw_classic_radio(
+    Renderer&                   renderer,
+    const Rect&                 box,
+    const Color&                light,
+    const Color&                highlight,
+    const Color&                shadow,
+    const Color&                dark_shadow,
+    const Color&                well,
+    const std::optional<Color>& dot);
 
 /// Which way a solid classic arrow points (draw_classic_arrow()).
-enum class ArrowDirection : std::uint8_t
+LIBWINUI_EXPORT enum class ArrowDirection : std::uint8_t
 {
     Left,  ///< A scroll bar's left arrow.
     Up,    ///< A scroll bar's or spin button's up arrow.
@@ -185,7 +193,11 @@ enum class ArrowDirection : std::uint8_t
 /// ui::draw_classic_arrow(renderer, button_rect, ui::ArrowDirection::Down, ui::colors::Black);
 /// ui::draw_classic_arrow(renderer, cascade_rect, ui::ArrowDirection::Right, ui::colors::Black);
 /// @endcode
-void draw_classic_arrow(Renderer& renderer, const Rect& area, ArrowDirection direction, const Color& color, float depth = 4.0f);
+LIBWINUI_EXPORT void draw_classic_arrow(Renderer&      renderer,
+                                        const Rect&    area,
+                                        ArrowDirection direction,
+                                        const Color&   color,
+                                        float          depth = 4.0f);
 
 /// The classic tree view's expand button: a 9 x 9 box in a one-pixel `frame`
 /// around a `well`, holding a 5 px plus while collapsed or a minus while expanded, in `sign`.
@@ -198,11 +210,14 @@ void draw_classic_arrow(Renderer& renderer, const Rect& area, ArrowDirection dir
 /// ui::draw_classic_tree_button(renderer, chevron_rect, node_expanded,
 ///                              ui::Color::from_rgba(128, 128, 128), ui::colors::White, ui::colors::Black);
 /// @endcode
-void draw_classic_tree_button(Renderer&    renderer,
-                              const Rect&  area,
-                              bool         expanded,
-                              const Color& frame,
-                              const Color& well,
-                              const Color& sign);
+LIBWINUI_EXPORT void draw_classic_tree_button(
+    Renderer&    renderer,
+    const Rect&  area,
+    bool         expanded,
+    const Color& frame,
+    const Color& well,
+    const Color& sign);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

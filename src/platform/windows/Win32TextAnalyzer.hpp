@@ -4,7 +4,9 @@
 
 #include "winui/render/TextAnalyzer.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
+#endif
 
 namespace ui::win32
 {

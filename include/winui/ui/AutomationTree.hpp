@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/ui/Automation.hpp"
 #include "winui/ui/Element.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <variant>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -41,7 +47,7 @@ namespace ui
 ///     std::println("{}", child->automation_name()); // Unsaved changes, Save, Discard
 /// }
 /// @endcode
-[[nodiscard]] std::vector<Element*> automation_children(const Element& node);
+LIBWINUI_EXPORT [[nodiscard]] std::vector<Element*> automation_children(const Element& node);
 
 /// What an accessibility client can do with `node`: the provider for each pattern it supports
 /// now, null for the others (Element::automation_providers()). Screen readers reach a control
@@ -55,7 +61,7 @@ namespace ui
 ///     toggle->toggle_next(); // as a screen reader's Toggle does
 /// }
 /// @endcode
-[[nodiscard]] AutomationProviders automation_providers(const Element& node);
+LIBWINUI_EXPORT [[nodiscard]] AutomationProviders automation_providers(const Element& node);
 
 /// The nearest ancestor that automation_children() would not skip, or nullptr at the root.
 /// It is the inverse of automation_children(): `automation_parent(*child)` is the node whose
@@ -70,19 +76,19 @@ namespace ui
 ///     ui::Element* group = ui::automation_parent(*focused); // window.content()
 /// }
 /// @endcode
-[[nodiscard]] Element* automation_parent(const Element& node);
+LIBWINUI_EXPORT [[nodiscard]] Element* automation_parent(const Element& node);
 
 /// The node a client sees as focused while `focused` has keyboard focus. That is the item the
 /// control names inside itself through Element::automation_focus(), followed as far as it goes
 /// (for a menu bar, the item in its open menu), or else `focused` itself. Returns nullptr for
 /// nullptr.
-[[nodiscard]] Element* automation_focus(Element* focused);
+LIBWINUI_EXPORT [[nodiscard]] Element* automation_focus(Element* focused);
 
 /// A role's name as describe_automation() prints it: "Button", "TreeItem".
-[[nodiscard]] const char* automation_role_name(AutomationRole role);
+LIBWINUI_EXPORT [[nodiscard]] const char* automation_role_name(AutomationRole role);
 
 /// A property of a node that changes as it is used, for AutomationEvents::property_changed().
-enum class AutomationProperty
+LIBWINUI_EXPORT enum class AutomationProperty
 {
     Name,                ///< automation_name().
     ToggleState,         ///< The Toggle pattern's state.
@@ -93,10 +99,10 @@ enum class AutomationProperty
 };
 
 /// A property's value; std::monostate when the node has no such pattern.
-using AutomationValue = std::variant<std::monostate, bool, double, std::string, ToggleState>;
+LIBWINUI_EXPORT using AutomationValue = std::variant<std::monostate, bool, double, std::string, ToggleState>;
 
 /// The value of `property` on `node` now.
-[[nodiscard]] AutomationValue automation_value(const Element& node, AutomationProperty property);
+LIBWINUI_EXPORT [[nodiscard]] AutomationValue automation_value(const Element& node, AutomationProperty property);
 
 /// Receives what changed in a Window, for accessibility clients. The platform passes these
 /// changes on to screen readers, and a test can record them (ui::testing::seams(window)).
@@ -105,7 +111,7 @@ using AutomationValue = std::variant<std::monostate, bool, double, std::string, 
 /// 1. menus that opened or closed, and the nodes whose children changed with them
 /// 2. the node automation_focus() names: a new one as focused, or the same one's changed properties
 /// 3. a change among the items around it (added, removed or renamed)
-class AutomationEvents
+LIBWINUI_EXPORT class AutomationEvents
 {
 public:
     virtual ~AutomationEvents() = default;
@@ -149,6 +155,8 @@ public:
 /// //   Button "Save" [Invoke]
 /// //   CheckBox "Remember me" [Toggle=Off]
 /// @endcode
-[[nodiscard]] std::string describe_automation(const Element& root);
+LIBWINUI_EXPORT [[nodiscard]] std::string describe_automation(const Element& root);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

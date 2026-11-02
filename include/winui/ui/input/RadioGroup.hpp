@@ -1,11 +1,17 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/ui/input/RadioButton.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -32,7 +38,7 @@ namespace ui
 /// group.select(b); // programmatic: checks B, unchecks A, fires on_change once
 /// window.set_content(std::move(stack));
 /// @endcode
-class RadioGroup
+LIBWINUI_EXPORT class RadioGroup
 {
 public:
     /// A group with no members.
@@ -60,14 +66,14 @@ public:
     void select(RadioButtonControl* selected);
 
     /// The current selection (non-owning), or nullptr before anything was selected.
-    [[nodiscard]] RadioButtonControl* selected() const
+    [[nodiscard]] inline RadioButtonControl* selected() const
     {
         return selected_;
     }
 
     /// Fired once per selection change with the newly selected button, after every
     /// member's checked state is updated. Replaces any previous handler.
-    void on_change(Callback<void(RadioButtonControl*)> handler)
+    inline void on_change(Callback<void(RadioButtonControl*)> handler)
     {
         on_change_ = std::move(handler);
     }
@@ -79,3 +85,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

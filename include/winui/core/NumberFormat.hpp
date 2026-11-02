@@ -1,18 +1,24 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Property.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// How IncrementNumberRounder picks between the two neighboring multiples of its increment.
-enum class RoundingAlgorithm
+LIBWINUI_EXPORT enum class RoundingAlgorithm
 {
     RoundDown,             ///< toward negative infinity
     RoundUp,               ///< toward positive infinity
@@ -45,7 +51,7 @@ enum class RoundingAlgorithm
 /// const ui::IncrementNumberRounder bankers{1.0, ui::RoundingAlgorithm::RoundHalfToEven};
 /// const double whole = bankers.round(2.5) + bankers.round(3.5); // 2 + 4
 /// @endcode
-struct IncrementNumberRounder
+LIBWINUI_EXPORT struct IncrementNumberRounder
 {
     /// The step results are a multiple of; must be positive. 0.01 rounds to cents.
     double increment = 1.0;
@@ -70,7 +76,7 @@ struct IncrementNumberRounder
 /// };
 /// window.set_content(ui::Text{.text = "Summe: " + german.format(1234567.5) + " EUR"}); // "Summe: 1.234.567,50 EUR"
 /// @endcode
-struct NumberFormatSymbols
+LIBWINUI_EXPORT struct NumberFormatSymbols
 {
     /// The decimal separator: "." (en-US), "," (de-DE, fr-FR).
     std::string decimal_separator = ".";
@@ -84,7 +90,7 @@ struct NumberFormatSymbols
     bool repeat_last_group = true;
 
     /// The locale-independent symbols, the default.
-    [[nodiscard]] static NumberFormatSymbols invariant()
+    [[nodiscard]] static inline NumberFormatSymbols invariant()
     {
         return {};
     }
@@ -95,13 +101,13 @@ struct NumberFormatSymbols
 
 /// The regional format: what a DecimalFormatter without symbols of its own uses. Invariant until a
 /// host sets it. Process-wide; UI thread only.
-[[nodiscard]] const NumberFormatSymbols& regional_number_format();
+LIBWINUI_EXPORT [[nodiscard]] const NumberFormatSymbols& regional_number_format();
 /// Sets the regional format. The window host sets it from the user's locale. Raises
 /// regional_number_format_changed() when it differs from the current one.
-void set_regional_number_format(NumberFormatSymbols symbols);
+LIBWINUI_EXPORT void set_regional_number_format(NumberFormatSymbols symbols);
 /// Raised when the regional format changes: a NumberBox on the default formatter reformats. An
 /// app that caches formatted text subscribes here and keeps the Subscription.
-[[nodiscard]] const Signal& regional_number_format_changed();
+LIBWINUI_EXPORT [[nodiscard]] const Signal& regional_number_format_changed();
 
 /// Formats and parses plain decimal numbers.
 ///
@@ -130,7 +136,7 @@ void set_regional_number_format(NumberFormatSymbols symbols);
 /// // Text from elsewhere, a CSV cell say, parses the same way; nullopt when it is not a number.
 /// const std::optional<double> cell = dollars.parse(" 4.5 "); // 4.5
 /// @endcode
-struct DecimalFormatter
+LIBWINUI_EXPORT struct DecimalFormatter
 {
     /// The fewest integer digits shown, padded with leading zeros.
     int integer_digits = 1;
@@ -148,7 +154,7 @@ struct DecimalFormatter
     std::optional<NumberFormatSymbols> symbols{};
 
     /// The separators this formatter writes and reads with: `symbols`, or the regional format.
-    [[nodiscard]] const NumberFormatSymbols& effective_symbols() const
+    [[nodiscard]] inline const NumberFormatSymbols& effective_symbols() const
     {
         return symbols ? *symbols : regional_number_format();
     }
@@ -164,12 +170,15 @@ struct DecimalFormatter
 /// `value` rounded to `digits` significant digits. NumberBox rounds its display to 10, which hides
 /// the digits floating-point arithmetic leaves behind (0.1 + 0.2 shows as 0.3). `digits` counts
 /// significant digits, not fraction digits. NaN and the infinities pass through.
-[[nodiscard]] double round_significant(double value, int digits);
+LIBWINUI_EXPORT [[nodiscard]] double round_significant(double value, int digits);
 
 /// Evaluates an arithmetic expression of numbers, `+ - * / ^`, parentheses and spaces. Numbers
 /// are read with `parser`, so in its locale: "1,5 + 2" is 3.5 where the decimal separator is ",".
 /// `^` binds tighter than `* /`, which bind tighter than `+ -`, and each is left-associative. A
 /// division by zero is NaN, and anything malformed is nullopt.
-[[nodiscard]] std::optional<double> evaluate_expression(std::string_view expression, const DecimalFormatter& parser);
+LIBWINUI_EXPORT [[nodiscard]] std::optional<double> evaluate_expression(std::string_view        expression,
+                                                                        const DecimalFormatter& parser);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

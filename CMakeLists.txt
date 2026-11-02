@@ -1,13 +1,19 @@
 # SPDX-License-Identifier: MIT
 cmake_minimum_required(VERSION 3.28)
 
+# import std for the modules (cmake/Modules.cmake): CMake 4.5 has it, 4.4 only behind this
+# experimental gate, whose value is 4.4's. Only the top-level project can open it.
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR AND CMAKE_VERSION VERSION_GREATER_EQUAL 4.4 AND CMAKE_VERSION VERSION_LESS 4.5)
+    set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "f35a9ac6-8463-4d38-8eec-5d6008153e7d")
+endif()
+
 project(libwinui
     VERSION 0.1.0
     DESCRIPTION "A native, data-oriented, testable Windows UI framework (vertical slice 1)"
     LANGUAGES CXX)
 
-# No source of the library, its tests or examples imports a module, so they skip the scan CMake
-# 3.28 runs for C++20 targets; the module targets of cmake/Modules.cmake turn it back on.
+# The library and its tests import no module, so they skip the scan CMake 3.28 runs for C++20
+# targets; the module targets of cmake/Modules.cmake and the examples turn it back on.
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 # ---------------------------------------------------------------------------
@@ -23,12 +29,19 @@ set_property(CACHE LIBWINUI_THREAD_CHECKS PROPERTY STRINGS AUTO ON OFF)
 # TraceLogging spans for layout, render, present, tick and startup (src/core/Trace.hpp), so
 # Windows Performance Analyzer shows a frame. Off: the spans compile to nothing.
 option(LIBWINUI_ENABLE_TRACING "Emit TraceLogging events from the library" OFF)
-# winui::module and winui::testing_module, for `import winui;` (cmake/Modules.cmake).
-option(LIBWINUI_BUILD_MODULES "Build the C++ modules winui and winui.testing" OFF)
+# winui::winui and winui::testing, for `import winui;` (cmake/Modules.cmake). On where the
+# generator and the compiler build modules: Ninja or Visual Studio, MSVC 19.36 or clang-cl 17.
+set(winui_modules_default OFF)
+if(WIN32 AND CMAKE_GENERATOR MATCHES "^(Ninja|Visual Studio)" AND
+   ((CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.36) OR
+    (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 17)))
+    set(winui_modules_default ON)
+endif()
+option(LIBWINUI_BUILD_MODULES "Build the C++ modules winui and winui.testing" ${winui_modules_default})
 
-# include/winui/core/Version.hpp spells the version out for the preprocessor; it has to say the
-# same as project(VERSION) above.
-file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/include/winui/core/Version.hpp winui_version_defines
+# include/winui/Macros.hpp spells the version out for the preprocessor; it has to say the same as
+# project(VERSION) above.
+file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/include/winui/Macros.hpp winui_version_defines
      REGEX "^#define LIBWINUI_VERSION_(MAJOR|MINOR|PATCH) [0-9]+$")
 foreach(winui_version_part IN ITEMS MAJOR MINOR PATCH)
     set(winui_header_${winui_version_part} "")
@@ -40,7 +53,7 @@ foreach(winui_version_part IN ITEMS MAJOR MINOR PATCH)
 endforeach()
 set(winui_header_version "${winui_header_MAJOR}.${winui_header_MINOR}.${winui_header_PATCH}")
 if(NOT winui_header_version STREQUAL PROJECT_VERSION)
-    message(FATAL_ERROR "include/winui/core/Version.hpp says ${winui_header_version}, project(VERSION) says ${PROJECT_VERSION}")
+    message(FATAL_ERROR "include/winui/Macros.hpp says ${winui_header_version}, project(VERSION) says ${PROJECT_VERSION}")
 endif()
 
 # Standalone vs. add_subdirectory() consumer.
@@ -342,7 +355,9 @@ set(LIBWINUI_TESTING_SOURCES
 # ---------------------------------------------------------------------------
 # A helper that applies common settings to a library target.
 # ---------------------------------------------------------------------------
+# NO_SPEEDUPS: no unity batches and no precompiled header, which a module unit can't use.
 function(winui_configure_target target)
+    cmake_parse_arguments(PARSE_ARGV 1 arg "NO_SPEEDUPS" "" "")
     target_include_directories(${target}
         PUBLIC
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -380,7 +395,9 @@ function(winui_configure_target target)
     winui_set_warnings(${target})
     winui_enable_clang_tidy(${target})
     winui_enable_hardening(${target})
-    winui_enable_build_speedups(${target})
+    if(NOT arg_NO_SPEEDUPS)
+        winui_enable_build_speedups(${target})
+    endif()
     if(MSVC)
         # PUBLIC, so a consumer's "ä" is UTF-8 too: every string in the API is UTF-8, and
         # core/Utf8.hpp turns a build without the flag into a compile error.
@@ -389,13 +406,15 @@ function(winui_configure_target target)
 endfunction()
 
 # ---------------------------------------------------------------------------
-# Static library (the canonical target: winui::winui)
+# Static library for the headers (winui::headers). `import winui;` is winui::winui, the same
+# sources built as the module (cmake/Modules.cmake); a program links one of the two.
 # ---------------------------------------------------------------------------
 add_library(winui STATIC ${LIBWINUI_SOURCES})
-add_library(winui::winui ALIAS winui)
+add_library(winui::headers ALIAS winui)
 winui_configure_target(winui)
 set_target_properties(winui PROPERTIES
     OUTPUT_NAME winui
+    EXPORT_NAME headers
     DEBUG_POSTFIX d
     POSITION_INDEPENDENT_CODE ON)
 
@@ -407,19 +426,20 @@ set_target_properties(winui PROPERTIES
 # ---------------------------------------------------------------------------
 if(LIBWINUI_BUILD_SHARED)
     add_library(winui_shared SHARED ${LIBWINUI_SOURCES})
-    add_library(winui::winui_shared ALIAS winui_shared)
+    add_library(winui::headers_shared ALIAS winui_shared)
     winui_configure_target(winui_shared)
     # The import library gets a name of its own: winui.lib is the static library's.
     set_target_properties(winui_shared PROPERTIES
         OUTPUT_NAME winui
         ARCHIVE_OUTPUT_NAME winui_shared
+        EXPORT_NAME headers_shared
         DEBUG_POSTFIX d
         WINDOWS_EXPORT_ALL_SYMBOLS ON
         VERSION ${PROJECT_VERSION})
 endif()
 
 # ---------------------------------------------------------------------------
-# winui::testing: the testing tier, opt-in. OffscreenCapture draws through the backend's private
+# winui::testing_headers: the testing tier, opt-in (winui::testing is its module). OffscreenCapture draws through the backend's private
 # D2DRenderer, so this target (and only this one) sees src/ privately; nothing of it leaks into the
 # installed headers.
 # ---------------------------------------------------------------------------
@@ -430,32 +450,40 @@ function(winui_configure_testing_target target library)
 endfunction()
 
 add_library(winui_testing STATIC ${LIBWINUI_TESTING_SOURCES})
-add_library(winui::testing ALIAS winui_testing)
-winui_configure_testing_target(winui_testing winui::winui)
+add_library(winui::testing_headers ALIAS winui_testing)
+winui_configure_testing_target(winui_testing winui::headers)
 set_target_properties(winui_testing PROPERTIES
     OUTPUT_NAME winui_testing
-    EXPORT_NAME testing
+    EXPORT_NAME testing_headers
     DEBUG_POSTFIX d
     POSITION_INDEPENDENT_CODE ON)
 
 if(LIBWINUI_BUILD_SHARED)
     add_library(winui_testing_shared SHARED ${LIBWINUI_TESTING_SOURCES})
-    add_library(winui::testing_shared ALIAS winui_testing_shared)
-    winui_configure_testing_target(winui_testing_shared winui::winui_shared)
+    add_library(winui::testing_headers_shared ALIAS winui_testing_shared)
+    winui_configure_testing_target(winui_testing_shared winui::headers_shared)
     set_target_properties(winui_testing_shared PROPERTIES
         OUTPUT_NAME winui_testing
         ARCHIVE_OUTPUT_NAME winui_testing_shared
-        EXPORT_NAME testing_shared
+        EXPORT_NAME testing_headers_shared
         DEBUG_POSTFIX d
         WINDOWS_EXPORT_ALL_SYMBOLS ON
         VERSION ${PROJECT_VERSION})
 endif()
 
 # ---------------------------------------------------------------------------
-# winui::main: the one target an app links. It pulls in winui::winui and lets a WIN32 app use a
-# plain `int main()`. winui::main_shared is the same over winui::winui_shared.
+# C++ modules: `import winui;` and `import winui.testing;`, the sources built once more as units of the module
 # ---------------------------------------------------------------------------
-# Separate from winui::winui: the tests bring Catch2's main, and a DLL has no such entry point.
+if(LIBWINUI_BUILD_MODULES)
+    include(cmake/Modules.cmake)
+endif()
+
+# ---------------------------------------------------------------------------
+# The one target an app links: the library plus a plain `int main()` for a WIN32 app.
+# winui::main brings the module, winui::headers_main the headers and winui::headers_main_shared
+# the shared library. They stay apart from the libraries, since the tests bring Catch2's main and a
+# DLL has no such entry point.
+# ---------------------------------------------------------------------------
 function(winui_add_main target export_name library)
     add_library(${target} INTERFACE)
     add_library(winui::${export_name} ALIAS ${target})
@@ -466,16 +494,12 @@ function(winui_add_main target export_name library)
     endif()
 endfunction()
 
-winui_add_main(winui_main main winui::winui)
+winui_add_main(winui_headers_main headers_main winui::headers)
 if(LIBWINUI_BUILD_SHARED)
-    winui_add_main(winui_main_shared main_shared winui::winui_shared)
+    winui_add_main(winui_headers_main_shared headers_main_shared winui::headers_shared)
 endif()
-
-# ---------------------------------------------------------------------------
-# C++ modules (optional): `import winui;` and `import winui.testing;` over the static libraries
-# ---------------------------------------------------------------------------
 if(LIBWINUI_BUILD_MODULES)
-    include(cmake/Modules.cmake)
+    winui_add_main(winui_main main winui::winui)
 endif()
 
 # ---------------------------------------------------------------------------
@@ -506,8 +530,12 @@ endif()
 # ---------------------------------------------------------------------------
 # Examples
 # ---------------------------------------------------------------------------
-# Only where a backend exists: an example has no platform guards of its own.
-if(LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32)
+# Only where a backend exists: an example has no platform guards of its own. The examples import
+# the module, so they need it.
+if(LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32 AND NOT LIBWINUI_BUILD_MODULES)
+    message(STATUS "libwinui: the examples import the module, so they are skipped with LIBWINUI_BUILD_MODULES off")
+endif()
+if(LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32 AND LIBWINUI_BUILD_MODULES)
     add_subdirectory(examples/hello)
     add_subdirectory(examples/virtual_list_demo)
     add_subdirectory(examples/tile_view_demo)
@@ -531,33 +559,26 @@ if(LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32)
     add_subdirectory(examples/tutorials/14_todo_list)
     add_subdirectory(examples/tutorials/15_background_work)
     add_subdirectory(examples/tutorials/16_form_from_data)
-    # Each tutorial once more through `import winui;`, so the module exports what the docs use.
-    # 12 stays out: its native controls include the headers again, after the import.
-    if(LIBWINUI_BUILD_MODULES)
-        file(GLOB winui_tutorial_dirs LIST_DIRECTORIES true ${PROJECT_SOURCE_DIR}/examples/tutorials/*)
-        foreach(winui_tutorial_dir IN LISTS winui_tutorial_dirs)
-            get_filename_component(winui_tutorial ${winui_tutorial_dir} NAME)
-            if(EXISTS ${winui_tutorial_dir}/main.cpp AND NOT winui_tutorial STREQUAL "12_hosting_native_controls")
-                winui_add_module_tutorial(tutorial_${winui_tutorial} ${winui_tutorial_dir}/main.cpp)
-            endif()
-        endforeach()
-    endif()
 endif()
 
 # ---------------------------------------------------------------------------
 # Benchmarks (benchmarks/): timings and startup milestones, never run by ctest. They build the
 # gallery's pages, so they need the examples.
 # ---------------------------------------------------------------------------
-if(LIBWINUI_BUILD_TESTS AND LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32)
+if(LIBWINUI_BUILD_TESTS AND LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32 AND LIBWINUI_BUILD_MODULES)
     add_subdirectory(benchmarks)
 endif()
 
-# Every example target gets the library's warning set too.
+# Every example target gets the library's warning set too, and every example and benchmark
+# target what importing the module needs.
 if(LIBWINUI_STANDALONE AND WIN32 AND (LIBWINUI_BUILD_TESTS OR LIBWINUI_BUILD_EXAMPLES))
     get_property(winui_subdirs DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY SUBDIRECTORIES)
     foreach(winui_subdir IN LISTS winui_subdirs)
         if(winui_subdir MATCHES "/examples/")
             winui_configure_directory_targets(${winui_subdir})
+        endif()
+        if(LIBWINUI_BUILD_MODULES AND winui_subdir MATCHES "/(examples/|benchmarks$)")
+            winui_import_module_targets(${winui_subdir})
         endif()
     endforeach()
 endif()
@@ -565,12 +586,12 @@ endif()
 # ---------------------------------------------------------------------------
 # Install / export
 # ---------------------------------------------------------------------------
-install(TARGETS winui winui_main EXPORT winuiTargets
+install(TARGETS winui winui_headers_main EXPORT winuiTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 if(LIBWINUI_BUILD_SHARED)
-    install(TARGETS winui_shared winui_main_shared EXPORT winuiTargets
+    install(TARGETS winui_shared winui_headers_main_shared EXPORT winuiTargets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
@@ -590,6 +611,7 @@ endif()
 if(LIBWINUI_BUILD_MODULES)
     # The interface units, which a consumer's build compiles: a compiled module only fits the
     # compiler and options it was made with.
+    install(TARGETS winui_main EXPORT winuiTargets)
     install(TARGETS winui_module EXPORT winuiTargets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         FILE_SET CXX_MODULES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/winui/modules)

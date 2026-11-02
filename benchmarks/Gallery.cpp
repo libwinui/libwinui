@@ -1,19 +1,26 @@
 // SPDX-License-Identifier: MIT
 // The gallery's pages as the complex windows of the bench: each page built and laid out once, then
 // the heaviest few resized through twenty widths, as dragging a window edge does.
-#include "gallery.hpp"
+
+#include <algorithm>
+#include <chrono>
+#include <concepts>
+#include <functional>
+#include <memory>
+#include <span>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
+
+#include <cstddef>
+#include <cstdint>
+
+import winui.testing;
 
 #include "Bench.hpp"
 #include "Fixture.hpp"
-
-#include <winui/testing.hpp>
-#include <winui/winui.hpp>
-
-#include <algorithm>
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
+#include "gallery.hpp"
 
 namespace bench
 {

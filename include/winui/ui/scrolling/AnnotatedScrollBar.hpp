@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -17,11 +21,13 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -30,7 +36,7 @@ class AnnotatedScrollBarDetailSurface; // defined in AnnotatedScrollBar.cpp
 
 /// What caused an AnnotatedScrollBar scroll request. The top step button scrolls up, toward a
 /// smaller offset, and the bottom one scrolls down.
-enum class AnnotatedScrollBarScrollingEventKind
+LIBWINUI_EXPORT enum class AnnotatedScrollBarScrollingEventKind
 {
     Click,           ///< A click on the rail, Home or End, or an accessibility client setting the value.
     Drag,            ///< Dragging along the rail.
@@ -40,7 +46,7 @@ enum class AnnotatedScrollBarScrollingEventKind
 
 /// What `on_scrolling` gets before a scroll request is raised: where it goes and what caused it.
 /// The handler returns ui::Cancel to drop the request.
-struct AnnotatedScrollBarScrollingArgs
+LIBWINUI_EXPORT struct AnnotatedScrollBarScrollingArgs
 {
     double                               offset = 0.0;                                         ///< The target offset.
     AnnotatedScrollBarScrollingEventKind kind   = AnnotatedScrollBarScrollingEventKind::Click; ///< What caused it.
@@ -48,7 +54,7 @@ struct AnnotatedScrollBarScrollingArgs
 
 /// A caption pinned beside a ui::AnnotatedScrollBar's rail at the position of a scroll offset.
 /// Annotations that would overlap a previous one are hidden.
-struct AnnotatedScrollBarAnnotation
+LIBWINUI_EXPORT struct AnnotatedScrollBarAnnotation
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// Caption drawn right-aligned in the annotations column.
@@ -100,7 +106,7 @@ struct AnnotatedScrollBarAnnotation
 ///     return far_drag ? ui::Cancel : ui::Proceed;
 /// });
 /// @endcode
-class AnnotatedScrollBarControl final : public Element, private RangeValueProvider
+LIBWINUI_EXPORT class AnnotatedScrollBarControl final : public Element, private RangeValueProvider
 {
 public:
     /// An unattached bar with an empty range and no annotations.
@@ -130,7 +136,7 @@ public:
 
     // ---- target: the built-in Scroll adapter ----
     /// The Scroll this bar drives, or null, in which case the manual range values apply.
-    [[nodiscard]] ScrollControl* target() const
+    [[nodiscard]] inline ScrollControl* target() const
     {
         return target_;
     }
@@ -145,7 +151,7 @@ public:
 
     // ---- annotations ----
     /// The annotations, in the order given.
-    [[nodiscard]] const std::vector<AnnotatedScrollBarAnnotation>& annotations() const
+    [[nodiscard]] inline const std::vector<AnnotatedScrollBarAnnotation>& annotations() const
     {
         return annotations_;
     }
@@ -156,12 +162,12 @@ public:
     // ---- small change ----
     /// How far a step button or an arrow key moves value(), in DIPs. 0, the default, means
     /// automatic: an eighth of viewport_size().
-    [[nodiscard]] double small_change() const
+    [[nodiscard]] inline double small_change() const
     {
         return small_change_;
     }
     /// Sets the step size in DIPs; negative values are taken as 0 (auto).
-    void set_small_change(double small_change)
+    inline void set_small_change(double small_change)
     {
         small_change_ = (std::max)(0.0, small_change);
     }
@@ -170,36 +176,36 @@ public:
     // ---- events ----
     /// Raised before every scroll request, whether from a click, a drag, a step button, an arrow
     /// key, or Home or End. Returning ui::Cancel drops the request.
-    void on_scrolling(Callback<Decision(const AnnotatedScrollBarScrollingArgs&)> handler)
+    inline void on_scrolling(Callback<Decision(const AnnotatedScrollBarScrollingArgs&)> handler)
     {
         on_scrolling_ = std::move(handler);
     }
     /// Text for the floating detail tooltip shown while hovering over or dragging the rail, given
     /// the offset under the pointer. No tooltip opens while this is unset.
-    void on_detail_text_requested(Callback<std::string(double offset)> handler)
+    inline void on_detail_text_requested(Callback<std::string(double offset)> handler)
     {
         on_detail_text_requested_ = std::move(handler);
     }
     /// Request to scroll to `offset`, in DIPs. set_target() installs its own handler. Set it
     /// yourself to drive a scrollable that is not a Scroll.
-    void on_scroll_to_requested(Callback<void(double offset)> handler)
+    inline void on_scroll_to_requested(Callback<void(double offset)> handler)
     {
         on_scroll_to_requested_ = std::move(handler);
     }
     /// Low-level request to scroll by `delta` DIPs (step buttons, arrow keys); negative is up.
-    void on_scroll_by_requested(Callback<void(double delta)> handler)
+    inline void on_scroll_by_requested(Callback<void(double delta)> handler)
     {
         on_scroll_by_requested_ = std::move(handler);
     }
 
     // ---- focus ----
     /// Whether the bar has keyboard focus.
-    [[nodiscard]] bool focused() const
+    [[nodiscard]] inline bool focused() const
     {
         return is_focused();
     }
     /// Focusable while enabled.
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return is_enabled();
     }
@@ -207,7 +213,7 @@ public:
     // ---- automation ----
     /// Exposed to accessibility tools as a Slider, with a range value, since it shows and sets a
     /// bounded scroll value.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Slider;
     }
@@ -231,7 +237,7 @@ protected:
 private:
     // Up/Down scroll the target; this bar has no horizontal axis. Claimed so Window's
     // directional focus navigation leaves them alone.
-    [[nodiscard]] bool takes_arrow_key(Key key) const
+    [[nodiscard]] inline bool takes_arrow_key(Key key) const
     {
         return key == Key::ArrowUp || key == Key::ArrowDown;
     }
@@ -240,11 +246,11 @@ private:
     void sync_popup();
     friend class AnnotatedScrollBarDetailSurface;
 
-    [[nodiscard]] bool can_step_up() const
+    [[nodiscard]] inline bool can_step_up() const
     {
         return is_enabled() && value() > 0.0;
     }
-    [[nodiscard]] bool can_step_down() const
+    [[nodiscard]] inline bool can_step_down() const
     {
         return is_enabled() && value() < maximum();
     }
@@ -317,32 +323,32 @@ protected:
 
 private:
     // ---- automation providers ----
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.range_value = this;
     }
     // value().
-    [[nodiscard]] double range_value() const override
+    [[nodiscard]] inline double range_value() const override
     {
         return value();
     }
     // Always 0.
-    [[nodiscard]] double range_minimum() const override
+    [[nodiscard]] inline double range_minimum() const override
     {
         return 0.0;
     }
     // maximum().
-    [[nodiscard]] double range_maximum() const override
+    [[nodiscard]] inline double range_maximum() const override
     {
         return maximum();
     }
     // The small_change() setting (0 while automatic).
-    [[nodiscard]] double range_small_change() const override
+    [[nodiscard]] inline double range_small_change() const override
     {
         return small_change_;
     }
     // Scrolls to `value` as a Click would (on_scrolling() can cancel); false while disabled.
-    bool set_range_value(double value) override
+    inline bool set_range_value(double value) override
     {
         if (!is_enabled())
         {
@@ -351,7 +357,7 @@ private:
         scroll_to(value, AnnotatedScrollBarScrollingEventKind::Click);
         return true;
     }
-    [[nodiscard]] bool range_read_only() const override
+    [[nodiscard]] inline bool range_read_only() const override
     {
         return false;
     }
@@ -381,7 +387,7 @@ private:
 /// }});
 /// bar->set_target(view); // the bar now drives and mirrors the Scroll
 /// @endcode
-struct AnnotatedScrollBar
+LIBWINUI_EXPORT struct AnnotatedScrollBar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<AnnotatedScrollBar>` points at.
@@ -452,3 +458,5 @@ struct AnnotatedScrollBar
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

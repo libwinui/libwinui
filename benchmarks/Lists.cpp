@@ -2,15 +2,22 @@
 // Behind the claim that a virtualized list costs what its viewport costs, whatever the item count:
 // every list shape, first layout and a scroll step, at 100, 100'000 and 1'000'000 items. Then a
 // 100'000-item ListView scrolled in a window and drawn, through both backends.
-#include "Bench.hpp"
-#include "Fixture.hpp"
 
-#include <winui/testing.hpp>
-#include <winui/winui.hpp>
-
+#include <chrono>
 #include <functional>
 #include <memory>
 #include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
+
+#include <cstddef>
+#include <cstdint>
+
+import winui.testing;
+
+#include "Bench.hpp"
+#include "Fixture.hpp"
 
 namespace bench
 {

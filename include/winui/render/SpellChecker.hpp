@@ -1,18 +1,24 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
 #include <vector>
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
 /// What the checker suggests doing about one error.
-enum class SpellingAction
+LIBWINUI_EXPORT enum class SpellingAction
 {
     Suggest, ///< Misspelled: offer suggest()'s list.
     Replace, ///< An autocorrection is registered: `replacement` may be applied without asking.
@@ -35,7 +41,7 @@ enum class SpellingAction
 ///     }
 /// }
 /// @endcode
-struct SpellingError
+LIBWINUI_EXPORT struct SpellingError
 {
     std::size_t    start  = 0;                       ///< Offset of the range in the checked text.
     std::size_t    length = 0;                       ///< Length of the range.
@@ -84,7 +90,7 @@ struct SpellingError
 ///     std::optional<std::uint64_t>   checked_at_;
 /// };
 /// @endcode
-class SpellChecker
+LIBWINUI_EXPORT class SpellChecker
 {
 public:
     virtual ~SpellChecker() = default;
@@ -129,3 +135,5 @@ public:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

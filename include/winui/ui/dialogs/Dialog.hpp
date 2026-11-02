@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -21,6 +25,7 @@
 #include "winui/ui/text/Text.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <coroutine>
 #include <memory>
 #include <optional>
@@ -28,12 +33,13 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// Which button of a dialog is the default one.
-enum class DialogDefaultButton
+LIBWINUI_EXPORT enum class DialogDefaultButton
 {
     None,      ///< No default button: Enter clicks nothing, no button is accented.
     Primary,   ///< The primary (leftmost) button.
@@ -43,7 +49,7 @@ enum class DialogDefaultButton
 
 /// What closed the dialog. The Close button and Escape report Close; hide() and
 /// Window::close_modal() report None.
-enum class DialogResult
+LIBWINUI_EXPORT enum class DialogResult
 {
     None,      ///< Closed from outside: hide() or Window::close_modal().
     Primary,   ///< Closed by the primary button.
@@ -53,7 +59,7 @@ enum class DialogResult
 
 /// What a Dialog's `on_closing` gets: the result the close reports. The handler returns
 /// ui::Cancel to keep the dialog open.
-struct DialogClosingArgs
+LIBWINUI_EXPORT struct DialogClosingArgs
 {
     DialogResult result = DialogResult::None; ///< Which button (or Escape) is closing it.
 };
@@ -108,7 +114,7 @@ struct DialogClosingArgs
 ///     .content = ui::Text{.text = "Your changes will be lost."},
 /// });
 /// @endcode
-class DialogControl final : public Element
+LIBWINUI_EXPORT class DialogControl final : public Element
 {
 public:
     /// An empty dialog: no title, no content, no buttons.
@@ -117,7 +123,7 @@ public:
     /// Sets the heading above the content (UTF-8), drawn 20 DIPs, semibold and wrapping.
     void set_title(std::string title);
     /// The title; empty by default. Screen readers also use it as the name when none is set.
-    [[nodiscard]] const std::string& title() const
+    [[nodiscard]] inline const std::string& title() const
     {
         return title_->text();
     }
@@ -142,17 +148,17 @@ public:
     ButtonControl* set_close_button(std::string text, Callback<void()> on_click);
 
     /// The primary button, or nullptr when none was set.
-    [[nodiscard]] ButtonControl* primary_button() const
+    [[nodiscard]] inline ButtonControl* primary_button() const
     {
         return primary_.get();
     }
     /// The secondary button, or nullptr when none was set.
-    [[nodiscard]] ButtonControl* secondary_button() const
+    [[nodiscard]] inline ButtonControl* secondary_button() const
     {
         return secondary_.get();
     }
     /// The close button, or nullptr when none was set.
-    [[nodiscard]] ButtonControl* close_button() const
+    [[nodiscard]] inline ButtonControl* close_button() const
     {
         return close_.get();
     }
@@ -171,14 +177,14 @@ public:
     void hide();
 
     /// What the last close reported; `None` until one happened.
-    [[nodiscard]] DialogResult result() const
+    [[nodiscard]] inline DialogResult result() const
     {
         return result_;
     }
 
     /// Raised before every close with its result; return ui::Cancel to keep the
     /// dialog open (a Primary click on a form that does not validate, say).
-    void on_closing(Callback<Decision(const DialogClosingArgs&)> handler)
+    inline void on_closing(Callback<Decision(const DialogClosingArgs&)> handler)
     {
         on_closing_ = std::move(handler);
     }
@@ -186,7 +192,7 @@ public:
     /// Raised once the dialog is closed and out of the window, with what closed it. The dialog is
     /// destroyed by then, so the handler may show the next one. A dialog replaced by another
     /// show_modal() does not raise it.
-    void on_closed(Callback<void(DialogResult)> handler)
+    inline void on_closed(Callback<void(DialogResult)> handler)
     {
         on_closed_ = std::move(handler);
     }
@@ -201,19 +207,19 @@ public:
     /// The opening fade's opacity, rising linearly from 0 to 1 over 250 ms. The dimmed backdrop
     /// behind the dialog fades in with it. There is no closing fade. Window::close_modal() removes
     /// the dialog and restores focus at once.
-    [[nodiscard]] float transition_opacity() const override
+    [[nodiscard]] inline float transition_opacity() const override
     {
         return open_ms_ >= OpenTransitionMs || !animations_enabled() ? 1.0f : static_cast<float>(open_ms_ / OpenTransitionMs);
     }
 
     // ---- automation ----
     /// Always AutomationRole::Pane.
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Pane;
     }
     /// title(), used when Accessibility::name is not set.
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return title();
     }
@@ -292,7 +298,7 @@ protected:
 /// ui::Property<bool> can_save{false};
 /// ui::DialogButton   save_button{ .text = "Save", .enabled = can_save, .on_click = [&] { save(); } };
 /// @endcode
-struct DialogButton
+LIBWINUI_EXPORT struct DialogButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The button's caption; empty leaves the button out.
@@ -303,7 +309,7 @@ struct DialogButton
     Action on_click{};
 
     /// True when the button exists, which means it has a caption.
-    [[nodiscard]] explicit operator bool() const
+    [[nodiscard]] inline explicit operator bool() const
     {
         return !text.empty();
     }
@@ -330,7 +336,7 @@ struct DialogButton
 ///     .content        = ui::Text{.text = "Your changes will be lost."},
 /// });
 /// @endcode
-struct Dialog
+LIBWINUI_EXPORT struct Dialog
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Dialog>` points at.
@@ -398,25 +404,25 @@ struct Dialog
     [[nodiscard]] std::unique_ptr<Element> build() &&;
 };
 
-class Window;
+LIBWINUI_EXPORT class Window;
 
 /// What `co_await ui::show_dialog(window, spec)` waits on; see show_dialog().
-class DialogAwaiter
+LIBWINUI_EXPORT class DialogAwaiter
 {
 public:
     /// Holds `spec` until the coroutine suspends.
-    DialogAwaiter(Window& window, Dialog spec) : window_(&window), spec_(std::move(spec))
+    inline DialogAwaiter(Window& window, Dialog spec) : window_(&window), spec_(std::move(spec))
     {
     }
     /// Never ready: the dialog is shown when the coroutine suspends.
-    [[nodiscard]] bool await_ready() const noexcept
+    [[nodiscard]] inline bool await_ready() const noexcept
     {
         return false;
     }
     /// Shows the dialog and hands `coroutine` to its close.
     void await_suspend(std::coroutine_handle<> coroutine);
     /// What closed the dialog.
-    [[nodiscard]] DialogResult await_resume() const noexcept
+    [[nodiscard]] inline DialogResult await_resume() const noexcept
     {
         return result_;
     }
@@ -460,9 +466,11 @@ private:
 ///     status = "Deleted";
 /// }
 /// @endcode
-[[nodiscard]] inline DialogAwaiter show_dialog(Window& window, Dialog spec)
+LIBWINUI_EXPORT [[nodiscard]] inline DialogAwaiter show_dialog(Window& window, Dialog spec)
 {
     return DialogAwaiter{window, std::move(spec)};
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

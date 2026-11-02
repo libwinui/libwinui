@@ -27,6 +27,7 @@
 #include <wrl/client.h>
 // clang-format on
 
+#ifndef LIBWINUI_MODULE
 #include <charconv>
 #include <exception>
 #include <filesystem>
@@ -39,6 +40,7 @@
 #include <vector>
 
 #include <cstdint>
+#endif
 
 namespace ui::win32
 {

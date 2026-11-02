@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/render/Brush.hpp"
 
@@ -24,7 +28,7 @@ namespace ui
 /// ui::Theme theme = ui::Theme::fluent(palette);
 /// window.pin_theme(std::move(theme)); // accent buttons, toggles and links now use the purple
 /// @endcode
-struct Palette
+LIBWINUI_EXPORT struct Palette
 {
     /// Whether this is a dark palette. A few shapes differ between light and dark, and
     /// `Theme::fluent()` reads them from this flag. The main one is the neutral elevation border,
@@ -188,7 +192,7 @@ struct Palette
     /// luminosity opacity 0.85, dark has `#2C2C2C` at 0.15 and 0.96, and both fall back to
     /// `acrylic_fallback_default`. Drawn with Renderer::draw_geometry(), it blurs what is
     /// behind it.
-    [[nodiscard]] AcrylicBrush acrylic_in_app_default() const
+    [[nodiscard]] inline AcrylicBrush acrylic_in_app_default() const
     {
         AcrylicBrush brush;
         brush.tint_color              = dark ? Color::from_argb(0xFF2C2C2C) : Color::from_argb(0xFFFCFCFC);
@@ -257,3 +261,5 @@ struct Palette
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

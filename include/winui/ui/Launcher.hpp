@@ -1,8 +1,14 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <string>
+#endif
 
 namespace ui
 {
@@ -14,7 +20,7 @@ namespace ui
 /// There is one for the whole process: the platform's, or a double a test installs with
 /// `ui::testing::set_launcher()`. App code calls the free functions and never needs the class.
 /// It is public so a test double can derive from it.
-class Launcher
+LIBWINUI_EXPORT class Launcher
 {
 public:
     virtual ~Launcher() = default;
@@ -36,7 +42,7 @@ public:
 /// window.set_content(ui::Button{.text = "Help", .on_click = [] { ui::launch_uri("https://example.com/help"); }});
 /// ui::launch_uri("mailto:support@example.com"); // opens the mail client
 /// @endcode
-void launch_uri(const std::string& uri);
+LIBWINUI_EXPORT void launch_uri(const std::string& uri);
 
 /// Opens `file` with the app registered for its type, as a double-click in the file manager
 /// does, fire and forget. An empty path, or one that does not exist, does nothing.
@@ -49,14 +55,16 @@ void launch_uri(const std::string& uri);
 ///     ui::launch_file(*path); // shows it in the PDF viewer
 /// }
 /// @endcode
-void launch_file(const std::filesystem::path& file);
+LIBWINUI_EXPORT void launch_file(const std::filesystem::path& file);
 
 namespace detail
 {
 // The launcher launch_uri() and launch_file() use in place of the platform's, or nullptr for the
 // platform's own. ui::testing::set_launcher() is the public way to set it.
-void                    install_launcher(Launcher* launcher);
-[[nodiscard]] Launcher* installed_launcher();
+LIBWINUI_EXPORT void                    install_launcher(Launcher* launcher);
+LIBWINUI_EXPORT [[nodiscard]] Launcher* installed_launcher();
 } // namespace detail
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED
