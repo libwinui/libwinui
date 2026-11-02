@@ -6,15 +6,17 @@
 #define NOMINMAX
 #endif
 
-#include "edit_box.hpp"
-
-#include "strings.hpp"
-
 #include <algorithm>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <utility>
 #include <vector>
 #include <windows.h>
 
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
 #include <cwchar>
 
 // commctrl.h needs <windows.h> in scope and does not include it; the clang-format include
@@ -23,6 +25,11 @@
 
 // SetWindowTheme, for the dark visual style; it needs both headers above in scope.
 #include <uxtheme.h>
+
+import winui;
+
+#include "edit_box.hpp"
+#include "strings.hpp"
 
 namespace native_controls
 {

@@ -2,13 +2,22 @@
 // The Motion pages' shared bits. Private to the pages_motion*.cpp files, one page or two each.
 #pragma once
 
-#include "gallery.hpp"
-
 #include <algorithm>
+#include <concepts>
+#include <functional>
 #include <memory>
 #include <optional>
+#include <span>
+#include <string>
+#include <string_view>
+#include <vector>
 
 #include <cmath>
+#include <cstddef>
+
+import winui;
+
+#include "gallery.hpp"
 
 namespace gallery
 {

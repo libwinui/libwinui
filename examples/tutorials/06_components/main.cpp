@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 // libwinui tutorial: components.
-#include <winui/winui.hpp>
 
 #include <format>
 #include <string>
+
+import winui;
 
 
 namespace

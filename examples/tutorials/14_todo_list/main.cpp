@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 // libwinui tutorial: a todo list, a tree whose structure follows state.
 // --8<-- [start:includes]
-#include <winui/winui.hpp>
-
 #include <format>
 #include <optional>
 #include <string>
 #include <vector>
 
 #include <cstddef>
+
+import winui;
 // --8<-- [end:includes]
 
 namespace

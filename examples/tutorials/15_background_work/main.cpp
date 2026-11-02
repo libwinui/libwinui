@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 // libwinui tutorial: background work and the UI thread.
-#include <winui/winui.hpp>
 
 #include <coroutine>
 #include <exception>
@@ -9,6 +8,8 @@
 #include <stop_token>
 #include <string>
 #include <thread>
+
+import winui;
 
 namespace
 {

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-#include <winui/winui.hpp>
-
 #include <format>
 #include <string>
 
 #include <cmath>
+
+import winui;
 
 namespace
 {

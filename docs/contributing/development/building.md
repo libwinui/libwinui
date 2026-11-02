@@ -66,7 +66,7 @@ GCC and Clang also need `Threads::Threads` (`-pthread`) linked explicitly for th
 | Option | Default | Effect |
 | --- | --- | --- |
 | `LIBWINUI_BUILD_TESTS` | `ON` | Builds `winui_tests` and registers it with CTest. |
-| `LIBWINUI_BUILD_EXAMPLES` | `ON` | Builds the example apps and one project per tutorial. |
+| `LIBWINUI_BUILD_EXAMPLES` | `ON` | Builds the example apps and one project per tutorial. They import the module, so they need `LIBWINUI_BUILD_MODULES`. |
 | `LIBWINUI_BUILD_SHARED` | `OFF` | Also builds a shared library for the headers (`winui::headers_shared`, and `winui::testing_headers_shared` on top of it) from the same sources, exporting every symbol. The DLLs are `winui.dll` and `winui_testing.dll` (`winuid.dll` and `winui_testingd.dll` in Debug); their import libraries are `winui_shared.lib` and `winui_testing_shared.lib` (`winui_sharedd.lib` and `winui_testing_sharedd.lib` in Debug), since `winui.lib` is the static library. The static library is always built. There is no ABI promise: the DLL only works with the headers of its own version, built by the same compiler with the same options. |
 | `LIBWINUI_BUILD_MODULES` | `ON` with Ninja or Visual Studio and MSVC 19.36 or clang-cl 17, `OFF` otherwise | Builds the C++ modules `winui` and `winui.testing` (`winui::winui`, `winui::testing`): the library's sources once more, as units of the module, and each tutorial once more through `import winui;`. See [C++ Modules](../../tutorials/guides/modules.md). |
 | `LIBWINUI_MODULE_IMPORT_STD` | `AUTO` | `import std;` inside the modules instead of the standard headers. `AUTO` turns it on where CMake provides `import std;` and libwinui is the top-level project. With it on, a target that links `winui::winui` needs `CXX_MODULE_STD`. |
@@ -156,7 +156,7 @@ Note that a crash or a silent abort in `winui_tests` after pulling changes to he
 | `tray` | An app whose entry point is a notification-area icon, with no main window. |
 | `tutorial_01_first_window`, ... | One project per tutorial page under `examples/tutorials/`, so the code the tutorials show always compiles. |
 
-The examples are only added on Windows, since they need a backend. Off Windows the build has the library and its tests.
+The examples are only added on Windows, since they need a backend. Off Windows the build has the library and its tests. They use the library through `import winui;`, so a build without the modules (`LIBWINUI_BUILD_MODULES=OFF`) leaves them and the benchmarks out.
 
 With both the tests and the examples on, Windows builds also get the benchmarks under `benchmarks/` (`winui_bench`, `winui_startup`, `winui_timers`, `winui_idle`). They measure timings and startup milestones and are never run by CTest.
 

@@ -4,13 +4,9 @@
 // offscreen bitmap ("d2d").
 #pragma once
 
-#include "winui/core/Geometry.hpp"
-#include "winui/testing/HeadlessUI.hpp"
-#include "winui/testing/OffscreenCapture.hpp"
-#include "winui/testing/TestRenderer.hpp"
-#include "winui/ui/Window.hpp"
-
 #include <string>
+
+import winui.testing;
 
 namespace bench
 {

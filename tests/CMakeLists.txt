@@ -160,9 +160,9 @@ endif()
 # The backend's own classes (Win32Clipboard, Win32SpellChecker, ...) are private headers under
 # src/; the tests of the backend include them from there.
 target_include_directories(winui_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
-if(TARGET example_native_controls)
+if(TARGET example_native_controls_headers)
     # ui::NativeControl is tested through the example controls that host EDIT and RICHEDIT.
-    target_link_libraries(winui_tests PRIVATE example_native_controls)
+    target_link_libraries(winui_tests PRIVATE example_native_controls_headers)
 endif()
 target_compile_definitions(winui_tests PRIVATE
     LIBWINUI_GOLDEN_DIR="${CMAKE_CURRENT_SOURCE_DIR}/golden")

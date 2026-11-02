@@ -24,8 +24,6 @@
 // through post(), so the probe's own bookkeeping adds no timer.
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
-#include <winui/testing.hpp>
-#include <winui/winui.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -37,6 +35,8 @@
 #include <windows.h>
 
 #include <cstdio>
+
+import winui.testing;
 
 namespace
 {

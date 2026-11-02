@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 // libwinui tutorial: dialogs, flyouts and menus.
 // --8<-- [start:includes]
-#include <winui/winui.hpp>
-
 #include <coroutine>
 #include <format>
 #include <optional>
@@ -10,6 +8,8 @@
 #include <vector>
 
 #include <cstddef>
+
+import winui;
 // --8<-- [end:includes]
 
 int main()

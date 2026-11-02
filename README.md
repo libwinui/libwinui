@@ -77,7 +77,7 @@ ctest --test-dir build -C Release --output-on-failure
 | Option                 | Default | Effect                                                   |
 | ---------------------- | ------- | -------------------------------------------------------- |
 | `LIBWINUI_BUILD_TESTS`    | `ON`    | Builds `winui_tests` and registers it with CTest, when libwinui is the top-level project |
-| `LIBWINUI_BUILD_EXAMPLES` | `ON`    | Builds the example apps and one project per tutorial, when libwinui is the top-level project |
+| `LIBWINUI_BUILD_EXAMPLES` | `ON`    | Builds the example apps and one project per tutorial, when libwinui is the top-level project and builds the modules |
 | `LIBWINUI_BUILD_SHARED`   | `OFF`   | Also builds a shared library next to the static one, with no ABI promise: it only works with the headers, compiler and options it was built with |
 
 ## Using it in your project

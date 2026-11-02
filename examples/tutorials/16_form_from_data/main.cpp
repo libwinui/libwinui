@@ -2,8 +2,6 @@
 // libwinui tutorial: a form built from data. A list of questions the user edits, a preview built
 // from the same questions, and a table of answers whose columns follow them.
 // --8<-- [start:includes]
-#include <winui/winui.hpp>
-
 #include <array>
 #include <format>
 #include <map>
@@ -12,6 +10,8 @@
 #include <vector>
 
 #include <cstdint>
+
+import winui;
 // --8<-- [end:includes]
 
 namespace

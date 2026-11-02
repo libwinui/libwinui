@@ -1,4 +1,8 @@
 // SPDX-License-Identifier: MIT
+#include <string>
+
+import winui.testing;
+
 #include "Fixture.hpp"
 
 namespace bench
