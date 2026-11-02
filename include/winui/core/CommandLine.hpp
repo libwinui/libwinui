@@ -1,8 +1,14 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -23,6 +29,8 @@ namespace ui
 ///     return 0;
 /// }
 /// @endcode
-[[nodiscard]] std::vector<std::string> command_line();
+LIBWINUI_EXPORT [[nodiscard]] std::vector<std::string> command_line();
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

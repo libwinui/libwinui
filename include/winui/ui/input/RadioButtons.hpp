@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -18,12 +22,14 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -64,7 +70,7 @@ namespace ui
 /// colors->item(2)->set_enabled(false); // disable a single option
 /// colors->on_selection_changed([](std::optional<std::size_t> index) { /* unset when cleared */ });
 /// @endcode
-class RadioButtonsControl final : public Element
+LIBWINUI_EXPORT class RadioButtonsControl final : public Element
 {
 public:
     /// An empty group with no header and nothing selected.
@@ -244,7 +250,7 @@ protected:
 ///     .max_columns          = 3,
 /// });
 /// @endcode
-struct RadioButtons
+LIBWINUI_EXPORT struct RadioButtons
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<RadioButtons>` points at.
@@ -305,3 +311,5 @@ struct RadioButtons
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

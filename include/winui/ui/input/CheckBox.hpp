@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -16,10 +20,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -49,7 +55,7 @@ namespace ui
 ///     .on_checked_changed = [&](std::optional<bool> v) { remember_me = v.value_or(false); },
 /// });
 /// @endcode
-class CheckBoxControl final : public Element, private ToggleProvider
+LIBWINUI_EXPORT class CheckBoxControl final : public Element, private ToggleProvider
 {
 
     // ---- composition ----
@@ -252,7 +258,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct CheckBox
+LIBWINUI_EXPORT struct CheckBox
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<CheckBox>` points at.
@@ -314,3 +320,5 @@ struct CheckBox
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

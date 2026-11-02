@@ -1,12 +1,17 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Input.hpp"
 #include "winui/core/Property.hpp"
 #include "winui/core/Version.hpp"
 #include "winui/render/IconSource.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <string>
 #include <string_view>
@@ -14,6 +19,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -44,7 +50,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-class CommandHandler
+LIBWINUI_EXPORT class CommandHandler
 {
 public:
     /// An empty handler: calling it does nothing and it converts to false.
@@ -85,7 +91,7 @@ private:
 
 /// What a Command's fields hold right now (Command::current()). A bound field holds its latest
 /// value, a plain field its fixed value.
-struct CommandValues
+LIBWINUI_EXPORT struct CommandValues
 {
     /// The command's text.
     std::string text{};
@@ -99,8 +105,8 @@ struct CommandValues
     bool enabled = true;
 };
 
-struct Command;
-class CommandRef;
+LIBWINUI_EXPORT struct Command;
+LIBWINUI_EXPORT class CommandRef;
 
 namespace detail
 {
@@ -144,7 +150,7 @@ private:
 ///
 /// It follows the Command object it was given. A copy of the command, or one it was moved into,
 /// starts with no refs.
-class CommandRef
+LIBWINUI_EXPORT class CommandRef
 {
 public:
     /// No command.
@@ -228,7 +234,7 @@ private:
 /// });
 /// has_item = false; // the button disables itself, and Ctrl+D does nothing
 /// @endcode
-struct Command
+LIBWINUI_EXPORT struct Command
 {
     /// UTF-8 text, used by an app-bar button, a menu item or a swipe item that has no text of its
     /// own.
@@ -266,7 +272,7 @@ struct Command
 };
 
 /// The sixteen common commands standard_command() can pre-fill, plus None.
-enum class StandardCommand
+LIBWINUI_EXPORT enum class StandardCommand
 {
     None,      ///< No standard command: an empty Command.
     Cut,       ///< "Cut", Ctrl+X.
@@ -306,6 +312,10 @@ enum class StandardCommand
 ///     .primary = {ui::AppBarButton{.command = del, .command_parameter = "List item 3"}},
 /// });
 /// @endcode
-[[nodiscard]] Command standard_command(StandardCommand kind, CommandHandler execute = {}, Binding<bool> enabled = true);
+LIBWINUI_EXPORT [[nodiscard]] Command standard_command(StandardCommand kind,
+                                                       CommandHandler  execute = {},
+                                                       Binding<bool>   enabled = true);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

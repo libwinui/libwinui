@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,17 +22,19 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// Which way an Expander opens.
-enum class ExpandDirection
+LIBWINUI_EXPORT enum class ExpandDirection
 {
     Down, ///< The default. The content opens below the header.
     Up,   ///< The content opens above the header, which stays at the bottom.
@@ -68,7 +74,7 @@ enum class ExpandDirection
 /// expander->on_expanded_changed([&](bool now) { open = now; });
 /// expander->set_expanded(true); // fires the handler
 /// @endcode
-class ExpanderControl final : public Element, private ExpandCollapseProvider
+LIBWINUI_EXPORT class ExpanderControl final : public Element, private ExpandCollapseProvider
 {
 public:
     /// A collapsed Expander with an empty text header and no content.
@@ -378,7 +384,7 @@ private:
 ///     }},
 /// });
 /// @endcode
-struct Expander
+LIBWINUI_EXPORT struct Expander
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Expander>` points at.
@@ -445,3 +451,5 @@ struct Expander
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

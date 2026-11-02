@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -11,10 +15,12 @@
 #include "winui/ui/Element.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <span>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -42,7 +48,7 @@ namespace ui
 ///     child->set_margin(ui::Thickness{4.0f});
 /// window.set_content(std::move(canvas)); // the window takes ownership of the panel and its children
 /// @endcode
-class Panel : public Element
+LIBWINUI_EXPORT class Panel : public Element
 {
 public:
     /// The owned children in insertion order (not necessarily drawing order, see
@@ -207,3 +213,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

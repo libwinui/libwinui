@@ -6,8 +6,10 @@
 #include "winui/render/Text.hpp"
 #include "winui/ui/Window.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <vector>
+#endif
 
 namespace ui::testing
 {

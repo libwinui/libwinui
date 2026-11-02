@@ -1,7 +1,10 @@
 # SPDX-License-Identifier: MIT
-# find_package(winui CONFIG REQUIRED) gives winui::winui and winui::main (winui::winui_shared and
-# winui::main_shared too when the shared library was installed). COMPONENTS testing adds
-# winui::testing (and winui::testing_shared), the opt-in testing tier.
+# find_package(winui CONFIG REQUIRED) gives winui::winui (`import winui;`) and winui::main when the
+# package was built with the modules, and winui::headers and winui::headers_main (the same for
+# #include <winui/winui.hpp>, plus the *_shared ones when the shared library was installed), each
+# main target bringing its library and a plain int main(). COMPONENTS testing
+# adds the opt-in testing tier: winui::testing, winui::testing_headers (and
+# winui::testing_headers_shared).
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)

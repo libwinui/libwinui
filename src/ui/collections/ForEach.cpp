@@ -15,6 +15,7 @@
 #include "winui/ui/layouts/StackLayout.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -23,6 +24,7 @@
 
 #include <cmath>
 #include <cstddef>
+#endif
 
 namespace ui
 {

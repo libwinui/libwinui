@@ -7,10 +7,12 @@
 #include "winui/ui/WindowOptions.hpp"
 #include "winui/ui/WindowStyle.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <utility>
 
 #include <cmath>
+#endif
 
 namespace ui
 {

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -14,9 +18,11 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <string>
+#endif
 
 namespace ui
 {
@@ -37,7 +43,7 @@ namespace ui
 /// bar->add(std::make_unique<ui::SpacerControl>());
 /// bar->add(std::make_unique<ui::ButtonControl>("Next"));
 /// @endcode
-class SpacerControl final : public Element
+LIBWINUI_EXPORT class SpacerControl final : public Element
 {
 public:
     /// A spacer of weight 1.
@@ -100,7 +106,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Spacer
+LIBWINUI_EXPORT struct Spacer
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ui::Spacer>` points at.
@@ -150,3 +156,5 @@ struct Spacer
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

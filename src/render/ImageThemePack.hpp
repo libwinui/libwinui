@@ -4,9 +4,11 @@
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Bitmap.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <unordered_map>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -54,28 +56,28 @@ class ImageThemePack
 {
 public:
     /// Adds `image` under `name`, replacing any entry of that name.
-    void add(std::string name, Bitmap image, NineSliceMetrics metrics)
+    inline void add(std::string name, Bitmap image, NineSliceMetrics metrics)
     {
         entries_.insert_or_assign(std::move(name), Entry{std::move(image), metrics});
     }
 
     /// The image registered as `name`, or null. Valid until that entry is replaced or the pack
     /// is destroyed.
-    [[nodiscard]] const Bitmap* find_image(const std::string& name) const
+    [[nodiscard]] inline const Bitmap* find_image(const std::string& name) const
     {
         auto it = entries_.find(name);
         return it == entries_.end() ? nullptr : &it->second.image;
     }
 
     /// The metrics registered with `name`, or null; same lifetime as find_image()'s result.
-    [[nodiscard]] const NineSliceMetrics* find_metrics(const std::string& name) const
+    [[nodiscard]] inline const NineSliceMetrics* find_metrics(const std::string& name) const
     {
         auto it = entries_.find(name);
         return it == entries_.end() ? nullptr : &it->second.metrics;
     }
 
     /// True with no entries, the common case: every draw_image_nine_slice() is then a no-op.
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return entries_.empty();
     }

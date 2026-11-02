@@ -1,20 +1,26 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Renderer.hpp"
 #include "winui/render/Text.hpp"
 #include "winui/ui/LayoutContext.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
 
-class Element;
+LIBWINUI_EXPORT class Element;
 
 /// The `Header` label an input control (Slider, ComboBox, ToggleSwitch, TextBox, NumberBox, ...)
 /// carries above itself. It draws wrapping text in the primary text color, or in the disabled
@@ -62,7 +68,7 @@ class Element;
 ///     ui::ControlHeader header_{4.0f}; // gap below the header, DIPs
 /// };
 /// @endcode
-class ControlHeader
+LIBWINUI_EXPORT class ControlHeader
 {
 public:
     /// `gap` is the space in DIPs between the header and the control below it (4 for a Slider).
@@ -162,7 +168,7 @@ private:
 ///     ui::ControlDescription description_;
 /// };
 /// @endcode
-class ControlDescription
+LIBWINUI_EXPORT class ControlDescription
 {
 public:
     /// The description text; empty (the default) collapses it entirely.
@@ -231,3 +237,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

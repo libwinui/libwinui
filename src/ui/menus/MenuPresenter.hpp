@@ -5,11 +5,13 @@
 #include "winui/core/Index.hpp"
 #include "winui/ui/menus/MenuFlyout.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui::detail
 {
@@ -40,8 +42,8 @@ public:
     MenuPresenter& operator=(const MenuPresenter&) = delete;
 
     /// The level's items; closes any submenu. Null empties the presenter.
-    void                                 set_items(std::vector<MenuItem>* items);
-    [[nodiscard]] std::vector<MenuItem>* items() const
+    void                                        set_items(std::vector<MenuItem>* items);
+    [[nodiscard]] inline std::vector<MenuItem>* items() const
     {
         return items_;
     }
@@ -52,12 +54,12 @@ public:
     /// Starts the 83 ms close fade (a submenu's; a root's fade is its owner's).
     void begin_close();
     /// Closed at once, submenus too.
-    void               close_now();
-    [[nodiscard]] bool is_open() const
+    void                      close_now();
+    [[nodiscard]] inline bool is_open() const
     {
         return phase_ == Phase::Opening || phase_ == Phase::Open;
     }
-    [[nodiscard]] bool visible() const
+    [[nodiscard]] inline bool visible() const
     {
         return phase_ != Phase::Closed;
     }
@@ -66,30 +68,30 @@ public:
     [[nodiscard]] float self_opacity() const;
     /// The theme's `popup_motion`, as measure_override()/render_override() last saw it — for the owners'
     /// own clocks, which run in tick_override() without a Theme.
-    [[nodiscard]] const Theme::PopupMotion& motion() const
+    [[nodiscard]] inline const Theme::PopupMotion& motion() const
     {
         return motion_;
     }
     /// Whether the open slide comes up from below (the menu opened above what it hangs from)
     /// rather than down from above. The owner says so for a root; a presenter works it out for
     /// the submenus it places.
-    void set_slides_up(bool up)
+    inline void set_slides_up(bool up)
     {
         slides_up_ = up;
     }
     /// For a root: the height of what the menu hangs from (its anchor's center, or the point it
     /// was shown at). Once placed, a menu above it slides up and one below it slides down,
     /// whichever way the popup layer flipped it.
-    void set_slide_anchor(std::optional<float> y)
+    inline void set_slide_anchor(std::optional<float> y)
     {
         slide_anchor_ = y;
     }
 
-    [[nodiscard]] std::size_t focused_index() const
+    [[nodiscard]] inline std::size_t focused_index() const
     {
         return focused_;
     }
-    [[nodiscard]] std::size_t open_child_index() const
+    [[nodiscard]] inline std::size_t open_child_index() const
     {
         return child_index_;
     }
@@ -107,19 +109,19 @@ public:
 
     /// Whether the root takes keyboard focus itself (a MenuFlyout's does; a MenuBar keeps focus
     /// on its header and passes the keys on).
-    void set_takes_focus(bool takes_focus)
+    inline void set_takes_focus(bool takes_focus)
     {
         takes_focus_ = takes_focus;
     }
-    [[nodiscard]] bool focusable() const override
+    [[nodiscard]] inline bool focusable() const override
     {
         return takes_focus_ && items_ != nullptr;
     }
-    [[nodiscard]] bool takes_arrow_key(Key /*key*/) const
+    [[nodiscard]] inline bool takes_arrow_key(Key /*key*/) const
     {
         return true;
     }
-    [[nodiscard]] bool takes_enter_key() const
+    [[nodiscard]] inline bool takes_enter_key() const
     {
         return true;
     }
@@ -128,7 +130,7 @@ public:
     [[nodiscard]] float transition_opacity() const override;
 
     // ---- automation ----
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Menu;
     }
@@ -142,7 +144,7 @@ public:
 protected:
     // ---- Element ----
     [[nodiscard]] Size measure_override(Size available, const MeasureContext& context) const override;
-    void               arrange_override(const Rect& final_rect, const ArrangeContext&) override
+    inline void        arrange_override(const Rect& final_rect, const ArrangeContext&) override
     {
         if (slide_anchor_)
         {
@@ -171,7 +173,7 @@ private:
     // the next Escape goes to the menu around it.
     void sync_popup();
     // This level's phase changed: the level around it floats it, so that one re-syncs its popup.
-    void phase_changed()
+    inline void phase_changed()
     {
         if (parent_ != nullptr)
         {
@@ -248,7 +250,7 @@ private:
     mutable Thickness item_margin_{};
     mutable float     separator_slot_ = 0.0f;
 
-    [[nodiscard]] std::size_t count() const
+    [[nodiscard]] inline std::size_t count() const
     {
         return items_ ? items_->size() : 0;
     }
@@ -280,7 +282,7 @@ protected:
 protected:
     /// Rings the keyboard's item itself: the menu shows it while the bar or flyout that opened it
     /// has focus, so the window's ring pass never sees it.
-    [[nodiscard]] bool draws_focus_ring() const override
+    [[nodiscard]] inline bool draws_focus_ring() const override
     {
         return false;
     }

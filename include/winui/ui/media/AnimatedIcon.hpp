@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -21,17 +25,19 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <deque>
 #include <functional>
 #include <memory>
 #include <optional>
 #include <string>
+#endif
 
 namespace ui
 {
 
 /// What a new state does while an AnimatedIcon transition is still playing.
-enum class AnimatedIconQueueBehavior
+LIBWINUI_EXPORT enum class AnimatedIconQueueBehavior
 {
     Cut,             ///< a new state interrupts whatever is playing
     QueueOne,        ///< the default: queue it behind the running transition
@@ -70,7 +76,7 @@ enum class AnimatedIconQueueBehavior
 /// plain->set_source(&find);
 /// plain->set_state("Normal");
 /// @endcode
-class AnimatedIconControl final : public Element
+LIBWINUI_EXPORT class AnimatedIconControl final : public Element
 {
 public:
     /// An icon with no source and no fallback: measures to nothing and draws nothing.
@@ -242,7 +248,7 @@ private:
 ///                                            .state    = state},
 /// });
 /// @endcode
-struct AnimatedIcon
+LIBWINUI_EXPORT struct AnimatedIcon
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<AnimatedIcon>` points at.
@@ -301,3 +307,5 @@ struct AnimatedIcon
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

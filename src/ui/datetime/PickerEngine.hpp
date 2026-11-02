@@ -13,6 +13,7 @@
 #include "winui/ui/LayoutContext.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <chrono>
 #include <memory>
 #include <optional>
@@ -21,6 +22,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -112,7 +114,7 @@ public:
     void automation_children(std::vector<Element*>& out) const;
 
     // Whether the flyout (or a comctl32 calendar) is open, and opening or closing it.
-    [[nodiscard]] bool is_open() const
+    [[nodiscard]] inline bool is_open() const
     {
         return open_;
     }
@@ -121,9 +123,9 @@ public:
     Callback<void(bool)> on_open_changed;
 
     // Called by the flyout.
-    void                       accept(std::span<const std::size_t> selection);
-    void                       dismiss();
-    [[nodiscard]] PickerModel& model()
+    void                              accept(std::span<const std::size_t> selection);
+    void                              dismiss();
+    [[nodiscard]] inline PickerModel& model()
     {
         return model_;
     }

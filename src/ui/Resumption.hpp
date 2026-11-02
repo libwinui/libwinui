@@ -3,8 +3,10 @@
 // Window::post().
 #pragma once
 
+#ifndef LIBWINUI_MODULE
 #include <coroutine>
 #include <utility>
+#endif
 
 namespace ui::detail
 {
@@ -15,13 +17,13 @@ namespace ui::detail
 class Resumption
 {
 public:
-    explicit Resumption(std::coroutine_handle<> coroutine) noexcept : coroutine_(coroutine)
+    inline explicit Resumption(std::coroutine_handle<> coroutine) noexcept : coroutine_(coroutine)
     {
     }
-    Resumption(Resumption&& other) noexcept : coroutine_(std::exchange(other.coroutine_, {}))
+    inline Resumption(Resumption&& other) noexcept : coroutine_(std::exchange(other.coroutine_, {}))
     {
     }
-    Resumption& operator=(Resumption&& other) noexcept
+    inline Resumption& operator=(Resumption&& other) noexcept
     {
         if (this != &other)
         {
@@ -32,18 +34,18 @@ public:
     }
     Resumption(const Resumption&)            = delete;
     Resumption& operator=(const Resumption&) = delete;
-    ~Resumption()
+    inline ~Resumption()
     {
         reset();
     }
 
-    void operator()()
+    inline void operator()()
     {
         std::exchange(coroutine_, {}).resume();
     }
 
 private:
-    void reset() noexcept
+    inline void reset() noexcept
     {
         if (coroutine_)
         {

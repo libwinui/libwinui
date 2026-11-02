@@ -1,19 +1,25 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <string>
 #include <string_view>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// What a second start of the program hands to the one already running
 /// (ui::claim_single_instance()).
-struct InstanceActivation
+LIBWINUI_EXPORT struct InstanceActivation
 {
     /// The second start's arguments, UTF-8, the program first, as ui::command_line() returns
     /// them.
@@ -55,6 +61,8 @@ struct InstanceActivation
 ///     return ui::run(window);
 /// }
 /// @endcode
-[[nodiscard]] bool claim_single_instance(std::string_view id, Callback<void(InstanceActivation)> on_activated);
+LIBWINUI_EXPORT [[nodiscard]] bool claim_single_instance(std::string_view id, Callback<void(InstanceActivation)> on_activated);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -16,11 +20,13 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <string_view>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -57,7 +63,7 @@ namespace ui
 /// avatar->set_badge_number(3);
 /// avatar->set_badge_text("3 unread messages"); // spoken instead of ", 3 items"
 /// @endcode
-class PersonPictureControl final : public Element
+LIBWINUI_EXPORT class PersonPictureControl final : public Element
 {
 public:
     /// A 96 DIP placeholder avatar (the "Contact" glyph) with no badge.
@@ -238,7 +244,7 @@ private:
 ///     ui::PersonPicture{.group           = true},
 /// }});
 /// @endcode
-struct PersonPicture
+LIBWINUI_EXPORT struct PersonPicture
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<PersonPicture>` points at.
@@ -303,3 +309,5 @@ struct PersonPicture
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

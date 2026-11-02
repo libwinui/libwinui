@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -14,10 +18,12 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -43,7 +49,7 @@ namespace ui
 /// }.build());
 /// window.set_content(std::move(toolbar));
 /// @endcode
-class ToggleButtonControl final : public ButtonControl, private ToggleProvider
+LIBWINUI_EXPORT class ToggleButtonControl final : public ButtonControl, private ToggleProvider
 {
 public:
     /// An unchecked toggle with no text; give it text with set_text() or content with
@@ -134,7 +140,7 @@ private:
 ///
 /// window.set_content(ui::ToggleButton{.text = "Bold", .checked = bold});
 /// @endcode
-struct ToggleButton
+LIBWINUI_EXPORT struct ToggleButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ToggleButton>` points at.
@@ -211,3 +217,5 @@ struct ToggleButton
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

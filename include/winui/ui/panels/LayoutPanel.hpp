@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -20,12 +24,14 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -56,7 +62,7 @@ namespace ui
 /// panel->set_padding(ui::Thickness{12.0f});
 /// window.set_content(std::move(panel));
 /// @endcode
-class LayoutPanelControl final : public Panel, private LayoutOwner
+LIBWINUI_EXPORT class LayoutPanelControl final : public Panel, private LayoutOwner
 {
 public:
     /// An empty panel with no layout.
@@ -158,7 +164,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct LayoutPanel
+LIBWINUI_EXPORT struct LayoutPanel
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<LayoutPanel>` points at.
@@ -223,3 +229,5 @@ struct LayoutPanel
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

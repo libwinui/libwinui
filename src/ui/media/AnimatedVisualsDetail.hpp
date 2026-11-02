@@ -6,11 +6,13 @@
 #include "winui/render/PathGeometry.hpp"
 #include "winui/render/Renderer.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <initializer_list>
 #include <span>
 
 #include <cmath>
+#endif
 
 namespace ui::lottie
 {
@@ -229,7 +231,7 @@ struct ShapeTransform
     Matrix matrix{};
     Point  offset{};
 
-    [[nodiscard]] Matrix to_matrix() const
+    [[nodiscard]] inline Matrix to_matrix() const
     {
         Matrix m = Matrix::translation(-center.x, -center.y) * Matrix::scale(scale.x, scale.y);
         if (rotation != 0.0f)
@@ -247,32 +249,32 @@ struct ShapeTransform
 class PathBuilder
 {
 public:
-    explicit PathBuilder(FillRule rule = FillRule::Nonzero)
+    inline explicit PathBuilder(FillRule rule = FillRule::Nonzero)
     {
         geometry_.fill_rule = rule;
     }
-    PathBuilder& begin(float x, float y)
+    inline PathBuilder& begin(float x, float y)
     {
         geometry_.figures.push_back(PathFigure{Point{x, y}, {}, false, true});
         return *this;
     }
-    PathBuilder& line(float x, float y)
+    inline PathBuilder& line(float x, float y)
     {
         geometry_.figures.back().segments.push_back(PathSegment{PathSegmentKind::Line, Point{x, y}});
         return *this;
     }
-    PathBuilder& bezier(float x1, float y1, float x2, float y2, float x3, float y3)
+    inline PathBuilder& bezier(float x1, float y1, float x2, float y2, float x3, float y3)
     {
         geometry_.figures.back().segments.push_back(
             PathSegment{PathSegmentKind::Cubic, Point{x1, y1}, Point{x2, y2}, Point{x3, y3}});
         return *this;
     }
-    PathBuilder& end(bool closed)
+    inline PathBuilder& end(bool closed)
     {
         geometry_.figures.back().closed = closed;
         return *this;
     }
-    [[nodiscard]] PathGeometry build() const
+    [[nodiscard]] inline PathGeometry build() const
     {
         return geometry_;
     }
@@ -286,7 +288,7 @@ private:
 class Painter
 {
 public:
-    Painter(Renderer& renderer, const Rect& dest, Size natural, Color foreground) :
+    inline Painter(Renderer& renderer, const Rect& dest, Size natural, Color foreground) :
         renderer_(renderer),
         foreground_(foreground),
         to_dest_(Matrix::scale(natural.width > 0.0f ? dest.width / natural.width : 1.0f,
@@ -297,7 +299,7 @@ public:
 
     /// A filled sprite shape: `geometry` in the shape's own coordinates, `m` its full transform
     /// up to the visual's root.
-    void fill(const PathGeometry& geometry, const Matrix& m) const
+    inline void fill(const PathGeometry& geometry, const Matrix& m) const
     {
         DrawGeometry cmd;
         cmd.geometry = geometry.transformed(m * to_dest_);
@@ -307,12 +309,12 @@ public:
 
     /// A stroked sprite shape. The stroke is in the shape's coordinates, so the thickness
     /// scales with the transform (sqrt of the determinant, the transforms here being uniform).
-    void stroke(const PathGeometry& geometry,
-                const Matrix&       m,
-                float               thickness,
-                PenLineCap          cap         = PenLineCap::Flat,
-                PenLineJoin         join        = PenLineJoin::Miter,
-                float               miter_limit = 1.0f) const
+    inline void stroke(const PathGeometry& geometry,
+                       const Matrix&       m,
+                       float               thickness,
+                       PenLineCap          cap         = PenLineCap::Flat,
+                       PenLineJoin         join        = PenLineJoin::Miter,
+                       float               miter_limit = 1.0f) const
     {
         const Matrix total = m * to_dest_;
         const float  scale = std::sqrt(std::abs(total.m11 * total.m22 - total.m12 * total.m21));
@@ -329,23 +331,23 @@ public:
     }
 
     /// A layer's opacity below 1, around what it draws.
-    void push_opacity(float opacity) const
+    inline void push_opacity(float opacity) const
     {
         renderer_.push_opacity_layer(opacity);
     }
-    void pop_opacity() const
+    inline void pop_opacity() const
     {
         renderer_.pop_opacity_layer();
     }
 
     /// The layer's clip over its natural square, in destination coordinates.
-    void push_clip(const Rect& natural_rect) const
+    inline void push_clip(const Rect& natural_rect) const
     {
         const Point a = to_dest_.apply(Point{natural_rect.x, natural_rect.y});
         const Point b = to_dest_.apply(Point{natural_rect.right(), natural_rect.bottom()});
         renderer_.push_clip(Rect{a.x, a.y, b.x - a.x, b.y - a.y});
     }
-    void pop_clip() const
+    inline void pop_clip() const
     {
         renderer_.pop_clip();
     }

@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/ui/Element.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <initializer_list>
 #include <memory>
@@ -11,6 +16,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -42,7 +48,7 @@ namespace ui
 /// ui::Property<std::string> name;
 /// window.set_content(ui::VerticalStack{.content = {LabeledField{"Name", &name}}});
 /// @endcode
-template <typename S>
+LIBWINUI_EXPORT template <typename S>
 concept SpecLike = requires(S&& spec) {
     { std::forward<S>(spec).build() } -> std::convertible_to<std::unique_ptr<Element>>;
 };
@@ -97,7 +103,7 @@ concept SpecLike = requires(S&& spec) {
 /// bool show_footer = true;
 /// ui::Spec footer = show_footer ? ui::Spec{ui::Text{.text = "Footer"}} : ui::Spec{};
 /// @endcode
-class Spec
+LIBWINUI_EXPORT class Spec
 {
 public:
     /// An empty Spec: no content. Building it yields a null node, which every container skips.
@@ -171,7 +177,7 @@ private:
 /// // One element needs no braces.
 /// ui::VerticalStack{.spacing = 4, .content = ui::Text{.text = "Just this"}};
 /// @endcode
-class SpecList
+LIBWINUI_EXPORT class SpecList
 {
 public:
     /// An empty list.
@@ -258,7 +264,7 @@ private:
 ///
 /// window.set_content(ui::HorizontalStack{.spacing = 8, .content = std::move(actions)});
 /// @endcode
-template <typename... S>
+LIBWINUI_EXPORT template <typename... S>
     requires(std::constructible_from<Spec, S &&> && ...)
 [[nodiscard]] inline SpecList content(S&&... specs)
 {
@@ -294,7 +300,7 @@ template <typename... S>
 ///     ui::when(is_admin, ui::Button{.text = "Delete all"}),
 /// }});
 /// @endcode
-template <typename S>
+LIBWINUI_EXPORT template <typename S>
     requires std::constructible_from<Spec, S&&>
 [[nodiscard]] inline Spec when(bool condition, S&& spec)
 {
@@ -319,7 +325,7 @@ template <typename S>
 ///     }),
 /// }});
 /// @endcode
-template <typename F>
+LIBWINUI_EXPORT template <typename F>
     requires std::invocable<F&&> && std::constructible_from<Spec, std::invoke_result_t<F&&>>
 [[nodiscard]] inline Spec when(bool condition, F&& make)
 {
@@ -328,10 +334,12 @@ template <typename F>
 
 /// Builds a spec into an owned node, for handing a declared subtree to an imperative API that
 /// takes a unique_ptr.
-template <SpecLike S>
+LIBWINUI_EXPORT template <SpecLike S>
 [[nodiscard]] inline std::unique_ptr<Element> build(S&& spec)
 {
     return std::forward<S>(spec).build();
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

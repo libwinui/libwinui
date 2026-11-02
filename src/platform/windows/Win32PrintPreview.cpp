@@ -19,24 +19,27 @@
 
 #include <windows.h>
 // After windows.h, which they need.
-#include <algorithm>
-#include <atomic>
-#include <deque>
 #include <documentsource.h>
 #include <dxgi.h>
-#include <functional>
-#include <memory>
-#include <mutex>
-#include <optional>
 #include <printmanagerinterop.h>
 #include <printpreview.h>
-#include <vector>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Graphics.Printing.h>
 
+#ifndef LIBWINUI_MODULE
+#include <algorithm>
+#include <atomic>
+#include <deque>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <optional>
+#include <vector>
+
 #include <cmath>
 #include <cstddef>
+#endif
 
 namespace ui::detail
 {

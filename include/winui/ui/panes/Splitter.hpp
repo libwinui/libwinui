@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -17,10 +21,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -54,7 +60,7 @@ namespace ui
 /// auto splitter = std::make_unique<ui::SplitterControl>(ui::Orientation::Horizontal);
 /// splitter->on_drag_delta([&](float dy) { top_height = std::max(40.0f, top_height.get() + dy); });
 /// @endcode
-class SplitterControl final : public Element
+LIBWINUI_EXPORT class SplitterControl final : public Element
 {
 public:
     /// A 6 DIP bar along `orientation`, focusable.
@@ -219,7 +225,7 @@ protected:
 ///     },
 /// });
 /// @endcode
-struct Splitter
+LIBWINUI_EXPORT struct Splitter
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Splitter>` points at.
@@ -281,3 +287,5 @@ struct Splitter
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

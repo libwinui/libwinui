@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -8,6 +12,7 @@
 #include "winui/core/Index.hpp"
 #include "winui/render/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <functional>
 #include <optional>
 #include <span>
@@ -17,16 +22,17 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class Renderer;
+LIBWINUI_EXPORT class Renderer;
 
 /// Where each line sits across the width the text is laid out in.
 /// Justify stretches every line but a paragraph's last (and one ended by a line break) to the
 /// full width by widening the gaps between its words.
-enum class TextAlignment
+LIBWINUI_EXPORT enum class TextAlignment
 {
     Left,    ///< Lines start at the left edge; the default.
     Center,  ///< Lines are centered.
@@ -43,7 +49,7 @@ enum class TextAlignment
 /// ui::TextLayoutRun link{"read more", {}, ui::Color::from_argb(0xFF0066CC), 0}; // tag 0
 /// ui::TextLayoutParagraph paragraph{{bold, link}};
 /// @endcode
-struct TextLayoutRun
+LIBWINUI_EXPORT struct TextLayoutRun
 {
     /// UTF-8 text of the run; a `\n` inside it is a hard line break.
     std::string text;
@@ -62,7 +68,7 @@ struct TextLayoutRun
 
 /// Runs that flow together, with a margin around the block. Paragraphs are
 /// joined by one `\n` in TextLayout::text().
-struct TextLayoutParagraph
+LIBWINUI_EXPORT struct TextLayoutParagraph
 {
     /// The runs, in reading order. An empty list still takes one line of
     /// TextLayoutOptions::base_style height.
@@ -76,7 +82,7 @@ struct TextLayoutParagraph
 
 /// How TextLayout::layout() breaks and aligns lines: the paragraph-level settings a TextControl
 /// or RichText passes down.
-struct TextLayoutOptions
+LIBWINUI_EXPORT struct TextLayoutOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The width lines break at, and the width alignment works in. 0 or less, or infinity, is
@@ -92,7 +98,7 @@ struct TextLayoutOptions
 
 /// A range drawn with its own background and/or foreground, such as a highlight or the
 /// selection.
-struct TextHighlight
+LIBWINUI_EXPORT struct TextHighlight
 {
     /// First byte offset into TextLayout::text().
     std::size_t begin = 0;
@@ -106,7 +112,7 @@ struct TextHighlight
 
 /// A range of text drawn in its own color, such as a token a syntax highlighter colored. Unlike
 /// a TextHighlight it only recolors: the text is drawn once, in pieces.
-struct TextColorSpan
+LIBWINUI_EXPORT struct TextColorSpan
 {
     /// First byte offset into the text.
     std::size_t begin = 0;
@@ -159,7 +165,7 @@ struct TextColorSpan
 /// paint.selection  = ui::TextHighlight{0, 5, ui::colors::White, std::nullopt};
 /// layout.render(renderer, {10.0f, 20.0f}, paint);
 /// @endcode
-class TextLayout
+LIBWINUI_EXPORT class TextLayout
 {
 public:
     /// One drawn piece of a run on one line. Rect is relative to the layout's origin.
@@ -369,3 +375,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

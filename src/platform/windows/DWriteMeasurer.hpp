@@ -9,11 +9,14 @@
 
 #include <dwrite.h>
 #include <dwrite_1.h>
-#include <string>
-#include <string_view>
 #include <wrl/client.h>
 
+#ifndef LIBWINUI_MODULE
+#include <string>
+#include <string_view>
+
 #include <cmath>
+#endif
 
 namespace ui::win32
 {
@@ -55,17 +58,17 @@ inline void apply_run_format(IDWriteTextLayout* layout, const TextStyle& style, 
 class DWriteMeasurer final : public TextMeasurer
 {
 public:
-    explicit DWriteMeasurer(IDWriteFactory* dwrite) : dwrite_(dwrite)
+    inline explicit DWriteMeasurer(IDWriteFactory* dwrite) : dwrite_(dwrite)
     {
     }
 
-    [[nodiscard]] TextMetrics measure(std::string_view text, const TextStyle& style) const override
+    [[nodiscard]] inline TextMetrics measure(std::string_view text, const TextStyle& style) const override
     {
         detail::count(detail::PerfCounter::TextMeasurements);
         return line(text, style);
     }
 
-    [[nodiscard]] TextMetrics measure_wrapped(std::string_view text, const TextStyle& style, float max_width) const override
+    [[nodiscard]] inline TextMetrics measure_wrapped(std::string_view text, const TextStyle& style, float max_width) const override
     {
         detail::count(detail::PerfCounter::TextMeasurements);
         if (style.wrapping == TextWrapping::NoWrap || !(max_width > 0.0f) || !std::isfinite(max_width))
@@ -94,7 +97,7 @@ public:
     }
 
 private:
-    [[nodiscard]] TextMetrics line(std::string_view text, const TextStyle& style) const
+    [[nodiscard]] inline TextMetrics line(std::string_view text, const TextStyle& style) const
     {
         return cached_text_metrics(text,
                                    style,
@@ -102,10 +105,10 @@ private:
                                    [&] { return layout_metrics(text, style, DWRITE_WORD_WRAPPING_NO_WRAP, 1e6f); });
     }
 
-    [[nodiscard]] TextMetrics layout_metrics(std::string_view     text,
-                                             const TextStyle&     style,
-                                             DWRITE_WORD_WRAPPING wrapping,
-                                             float                max_width) const
+    [[nodiscard]] inline TextMetrics layout_metrics(std::string_view     text,
+                                                    const TextStyle&     style,
+                                                    DWRITE_WORD_WRAPPING wrapping,
+                                                    float                max_width) const
     {
         const ComPtr<IDWriteTextFormat> fmt = cached_text_format(dwrite_, style);
         if (!fmt)

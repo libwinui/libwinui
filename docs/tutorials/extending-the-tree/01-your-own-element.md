@@ -175,7 +175,7 @@ For screen readers and UI Automation clients, an element reports a role, the pat
 
 Nothing in the swatch needs a window, a GPU or even Windows. Measure it, arrange it, render it into a `TestRenderer` and count what it drew. Then drive it with synthetic pointer events and check the handler ran.
 
-The tools for that are in `<winui/testing.hpp>`, namespace `ui::testing`. The test executable links `winui::testing`, which brings `winui::winui` along.
+The tools for that are in the module `winui.testing`, namespace `ui::testing`. The test executable links `winui::testing`, which brings `winui::winui` along.
 
 ```cmake
 add_executable(my_app_tests swatch_tests.cpp)
@@ -183,10 +183,9 @@ target_link_libraries(my_app_tests PRIVATE winui::testing Catch2::Catch2WithMain
 ```
 
 ```cpp
-#include "winui/testing.hpp"
-#include "winui/winui.hpp"
-
 #include <catch2/catch_test_macros.hpp>
+
+import winui.testing;
 
 TEST_CASE("A swatch draws one fill and clicks on a full press", "[swatch]")
 {

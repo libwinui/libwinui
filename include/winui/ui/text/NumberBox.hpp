@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -21,6 +25,7 @@
 #include "winui/ui/text/TextBox.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <limits>
 #include <memory>
@@ -31,12 +36,13 @@
 #include <vector>
 
 #include <cmath>
+#endif
 
 namespace ui
 {
 
 /// Where a ui::NumberBox shows its spin buttons.
-enum class NumberBoxSpinButtonPlacementMode
+LIBWINUI_EXPORT enum class NumberBoxSpinButtonPlacementMode
 {
     /// No spin buttons (the default); the keyboard and the wheel still step.
     Hidden,
@@ -49,7 +55,7 @@ enum class NumberBoxSpinButtonPlacementMode
 };
 
 /// What a ui::NumberBox does with input that is not a number.
-enum class NumberBoxValidationMode
+LIBWINUI_EXPORT enum class NumberBoxValidationMode
 {
     /// The default: text that does not parse is replaced by the value's text, and committed
     /// values are clamped to [min, max].
@@ -94,7 +100,7 @@ class NumberBoxSpinPopup; // defined in NumberBox.cpp
 ///     .spin_button_placement = ui::NumberBoxSpinButtonPlacementMode::Compact,
 /// }.build());
 /// @endcode
-class NumberBoxControl final : public Element, private RangeValueProvider
+LIBWINUI_EXPORT class NumberBoxControl final : public Element, private RangeValueProvider
 {
 public:
     /// `value` unset is an empty box. The range is unbounded by default; `max` below `min` is
@@ -554,7 +560,7 @@ private:
 ///     .accepts_expression    = true,
 /// });
 /// @endcode
-struct NumberBox
+LIBWINUI_EXPORT struct NumberBox
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<NumberBox>` points at.
@@ -644,3 +650,5 @@ struct NumberBox
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

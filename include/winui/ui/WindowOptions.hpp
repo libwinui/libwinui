@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Property.hpp"
@@ -9,15 +13,17 @@
 #include "winui/ui/themes/Theme.hpp"
 #include "winui/ui/themes/ThemeSource.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <string>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
 
-class Window;
+LIBWINUI_EXPORT class Window;
 
 /// TextBox spell checking for one window. Read once, when the OS window is created. The user's
 /// own system settings (language, "Highlight misspelled words", "Autocorrect misspelled words")
@@ -32,7 +38,7 @@ class Window;
 ///     return ui::run(window);
 /// }
 /// @endcode
-struct SpellCheckOptions
+LIBWINUI_EXPORT struct SpellCheckOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// False turns the spell checker off: no squiggles, no autocorrect and no spelling entries in
@@ -75,7 +81,7 @@ struct SpellCheckOptions
 ///     return ui::run(window);
 /// }
 /// @endcode
-struct WindowOptions
+LIBWINUI_EXPORT struct WindowOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The caption and taskbar text, UTF-8; Window::title(). Bound, the window follows it.
@@ -161,3 +167,5 @@ struct WindowOptions
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

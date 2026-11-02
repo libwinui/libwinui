@@ -2,8 +2,8 @@
 # Project
 Standard: c++20
 ColumnLimit: 120
-# core/Version.hpp: the deprecation macros read as attributes and statements, not as code
-AttributeMacros: [LIBWINUI_DEPRECATED, LIBWINUI_DEPRECATED_MEMBER]
+# Macros.hpp: the deprecation macros and LIBWINUI_EXPORT read as attributes and statements, not as code
+AttributeMacros: [LIBWINUI_DEPRECATED, LIBWINUI_DEPRECATED_MEMBER, LIBWINUI_EXPORT]
 StatementMacros: [LIBWINUI_ALLOW_DEPRECATED_BEGIN, LIBWINUI_ALLOW_DEPRECATED_END]
 
 # Indentation

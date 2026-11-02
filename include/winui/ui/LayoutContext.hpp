@@ -3,6 +3,10 @@
 // render_override().
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/render/Text.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
@@ -27,7 +31,7 @@ namespace ui
 ///     std::unique_ptr<ui::Element> child_;
 /// };
 /// @endcode
-struct MeasureContext
+LIBWINUI_EXPORT struct MeasureContext
 {
     const TextMeasurer& measurer; ///< Sizes text the way the renderer will draw it.
     const Theme&        theme;    ///< The theme in effect here (an ElementTheme scope already applied).
@@ -43,7 +47,7 @@ struct MeasureContext
 /// What Element::arrange() hands arrange_override(): the measurer and theme the element was last
 /// measured with, so a container that measures again while arranging (a virtualizing list
 /// realizing rows) has them.
-struct ArrangeContext
+LIBWINUI_EXPORT struct ArrangeContext
 {
     const TextMeasurer& measurer; ///< The one the last measure() used.
     const Theme&        theme;    ///< The theme in effect here, as the last measure() saw it.
@@ -76,7 +80,7 @@ struct ArrangeContext
 ///     std::unique_ptr<ui::Element> child_;
 /// };
 /// @endcode
-struct RenderContext
+LIBWINUI_EXPORT struct RenderContext
 {
     const Theme& theme; ///< The theme in effect here (an ElementTheme scope already applied).
 
@@ -89,3 +93,5 @@ struct RenderContext
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

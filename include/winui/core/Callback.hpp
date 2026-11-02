@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <functional>
 #include <type_traits>
 #include <utility>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -15,24 +21,24 @@ namespace ui
 /// Written as the constants ui::Handled and ui::NotHandled. A handler that returns nothing gets
 /// its event's default: handled where the handler is the target asked to act (a shortcut, a
 /// context-menu request), not handled where it watches events pass by (`Window::on_key_preview`).
-enum class Handling : std::uint8_t
+LIBWINUI_EXPORT enum class Handling : std::uint8_t
 {
     Handled    = 1, ///< Dealt with; the event goes no further.
     NotHandled = 2, ///< Not this handler's; the event goes on.
 };
-inline constexpr Handling Handled    = Handling::Handled;    ///< See ui::Handling.
-inline constexpr Handling NotHandled = Handling::NotHandled; ///< See ui::Handling.
+LIBWINUI_EXPORT inline constexpr Handling Handled    = Handling::Handled;    ///< See ui::Handling.
+LIBWINUI_EXPORT inline constexpr Handling NotHandled = Handling::NotHandled; ///< See ui::Handling.
 
 /// What a handler asked before something happens returns: let it go ahead, or stop it (a window
 /// closing, an edit starting or being committed, a sort). Written as the constants ui::Proceed
 /// and ui::Cancel. A handler that returns nothing lets it proceed.
-enum class Decision : std::uint8_t
+LIBWINUI_EXPORT enum class Decision : std::uint8_t
 {
     Proceed = 1, ///< Go ahead.
     Cancel  = 2, ///< Stop it; nothing changes.
 };
-inline constexpr Decision Proceed = Decision::Proceed; ///< See ui::Decision.
-inline constexpr Decision Cancel  = Decision::Cancel;  ///< See ui::Decision.
+LIBWINUI_EXPORT inline constexpr Decision Proceed = Decision::Proceed; ///< See ui::Decision.
+LIBWINUI_EXPORT inline constexpr Decision Cancel  = Decision::Cancel;  ///< See ui::Decision.
 
 namespace detail
 {
@@ -70,7 +76,7 @@ inline constexpr bool is_outcome = std::same_as<R, Handling> || std::same_as<R, 
 /// toggle->on_checked_changed(std::move(on_checked_changed));
 /// toggle->on_checked_changed([] { std::puts("toggled"); }); // the payload ignored
 /// @endcode
-template <typename Sig>
+LIBWINUI_EXPORT template <typename Sig>
 class Callback;
 
 /// See the primary template.
@@ -156,6 +162,8 @@ public:
 
 /// The most common shape, `Callback<void()>`, named because it reads better in a spec field:
 /// `.on_click = [&] { save(); }`.
-using Action = Callback<void()>;
+LIBWINUI_EXPORT using Action = Callback<void()>;
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

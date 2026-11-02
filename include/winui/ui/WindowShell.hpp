@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -12,11 +16,13 @@
 #include "winui/ui/WindowStyle.hpp"
 #include "winui/ui/menus/MenuItem.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <functional>
 #include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -43,7 +49,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-enum class WindowState
+LIBWINUI_EXPORT enum class WindowState
 {
     Normal,     ///< framed, at its normal bounds (possibly snapped)
     Minimized,  ///< a taskbar button only
@@ -67,7 +73,7 @@ enum class WindowState
 /// ui::run(editor);
 /// if (auto p = editor.placement()) save_placement(*p); // where the window was when it closed
 /// @endcode
-struct WindowPlacement
+LIBWINUI_EXPORT struct WindowPlacement
 {
     /// The restored bounds, in DIPs, screen coordinates. They are kept while the window is
     /// minimized, maximized or full screen.
@@ -95,7 +101,7 @@ struct WindowPlacement
 ///     .content = ui::Text{.text = "My app"},
 /// }
 /// @endcode
-struct CaptionInsets
+LIBWINUI_EXPORT struct CaptionInsets
 {
     float left   = 0.0f; ///< reserved at the left edge, in DIPs
     float right  = 0.0f; ///< reserved at the right edge (the caption buttons), in DIPs
@@ -105,7 +111,7 @@ struct CaptionInsets
 };
 
 /// The state of the taskbar button's progress bar.
-enum class TaskbarProgressState
+LIBWINUI_EXPORT enum class TaskbarProgressState
 {
     None,          ///< no progress bar
     Indeterminate, ///< marquee; `value` is ignored
@@ -123,7 +129,7 @@ enum class TaskbarProgressState
 /// window.taskbar_progress() = ui::TaskbarProgress{ui::TaskbarProgressState::Error, 0.4};    // turn it red
 /// window.taskbar_progress() = ui::TaskbarProgress{};                                     // remove it
 /// @endcode
-struct TaskbarProgress
+LIBWINUI_EXPORT struct TaskbarProgress
 {
     /// Whether a bar shows and in which color; None hides it.
     TaskbarProgressState state = TaskbarProgressState::None;
@@ -149,7 +155,7 @@ struct TaskbarProgress
 /// window.set_taskbar_overlay(
 ///     ui::WindowIcon{.glyph = ui::IconGlyph{0xE7E7}, .foreground = ui::Color::from_argb(0xFFC42B1C)}, "3 unread");
 /// @endcode
-struct WindowIcon
+LIBWINUI_EXPORT struct WindowIcon
 {
     /// The picture, straight-alpha RGBA; takes precedence over `glyph` when not empty.
     Bitmap image{};
@@ -197,7 +203,7 @@ struct WindowIcon
 ///     {.icon = {.glyph = ui::IconGlyph{0xE893}}, .tool_tip = "Next", .command = next_track},
 /// });
 /// @endcode
-struct ThumbnailButton
+LIBWINUI_EXPORT struct ThumbnailButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The button's picture, scaled to the thumbnail toolbar's size.
@@ -223,3 +229,5 @@ struct ThumbnailButton
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

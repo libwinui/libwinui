@@ -10,8 +10,10 @@
 #include "winui/render/SvgImage.hpp"
 #include "winui/render/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
+#endif
 
 namespace ui
 {

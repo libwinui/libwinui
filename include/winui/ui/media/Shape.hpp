@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -17,6 +21,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -24,6 +29,7 @@
 #include <vector>
 
 #include <cstdlib>
+#endif
 
 namespace ui
 {
@@ -45,7 +51,7 @@ namespace ui
 /// shape->set_height(60.0f);
 /// window.set_content(std::move(shape)); // drawn as one geometry: fill and stroke together
 /// @endcode
-class Shape : public Element
+LIBWINUI_EXPORT class Shape : public Element
 {
 public:
     /// The interior paint. Empty, the default, paints no interior.
@@ -192,7 +198,7 @@ private:
 /// card->set_height(80.0f);
 /// window.set_content(std::move(panel));
 /// @endcode
-class RectangleControl final : public Shape
+LIBWINUI_EXPORT class RectangleControl final : public Shape
 {
 public:
     /// A rectangle with Stretch::Fill and no fill or stroke. Set a fill() or stroke() to see it.
@@ -256,7 +262,7 @@ private:
 /// dot->set_height(48.0f);
 /// window.set_content(std::move(panel));
 /// @endcode
-class EllipseControl final : public Shape
+LIBWINUI_EXPORT class EllipseControl final : public Shape
 {
 public:
     /// An ellipse with Stretch::Fill and no fill or stroke.
@@ -290,7 +296,7 @@ protected:
 /// rule->set_x2(300.0f); // stretch it later
 /// window.set_content(std::move(panel));
 /// @endcode
-class LineControl final : public Shape
+LIBWINUI_EXPORT class LineControl final : public Shape
 {
 public:
     /// A line from (0, 0) to (0, 0). Invisible until its ends and a stroke are set.
@@ -347,7 +353,7 @@ private:
 /// zigzag->set_stroke_thickness(4.0f);
 /// window.set_content(std::move(panel));
 /// @endcode
-class PolylineControl : public Shape
+LIBWINUI_EXPORT class PolylineControl : public Shape
 {
 public:
     /// An empty polyline: draws nothing until it has points.
@@ -411,7 +417,7 @@ private:
 /// triangle->set_fill_rule(ui::FillRule::Nonzero);
 /// window.set_content(std::move(panel));
 /// @endcode
-class PolygonControl final : public PolylineControl
+LIBWINUI_EXPORT class PolygonControl final : public PolylineControl
 {
 public:
     /// An empty polygon: draws nothing until it has points.
@@ -447,7 +453,7 @@ protected:
 /// }
 /// window.set_content(std::move(panel));
 /// @endcode
-class PathControl final : public Shape
+LIBWINUI_EXPORT class PathControl final : public Shape
 {
 public:
     /// An empty path: draws nothing until it has data().
@@ -503,7 +509,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Rectangle
+LIBWINUI_EXPORT struct Rectangle
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Rectangle>` points at.
@@ -578,7 +584,7 @@ struct Rectangle
 ///     .vertical_alignment   = ui::Alignment::Center,
 /// });
 /// @endcode
-struct Ellipse
+LIBWINUI_EXPORT struct Ellipse
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Ellipse>` points at.
@@ -653,7 +659,7 @@ struct Ellipse
 /// });
 /// end_x = 300.0f; // the line follows
 /// @endcode
-struct Line
+LIBWINUI_EXPORT struct Line
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Line>` points at.
@@ -726,7 +732,7 @@ struct Line
 ///     .stroke_thickness = 4.0f,
 /// });
 /// @endcode
-struct Polyline
+LIBWINUI_EXPORT struct Polyline
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Polyline>` points at.
@@ -799,7 +805,7 @@ struct Polyline
 ///     .stroke_thickness = 2.0f,
 /// });
 /// @endcode
-struct Polygon
+LIBWINUI_EXPORT struct Polygon
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Polygon>` points at.
@@ -874,7 +880,7 @@ struct Polygon
 ///     .stroke_thickness = 3.0f,
 /// });
 /// @endcode
-struct Path
+LIBWINUI_EXPORT struct Path
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Path>` points at.
@@ -934,3 +940,5 @@ struct Path
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

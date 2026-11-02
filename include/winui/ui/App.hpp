@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/ui/Window.hpp"
 
 namespace ui
@@ -26,7 +30,7 @@ namespace ui
 ///     return ui::run(window);
 /// }
 /// @endcode
-int run(Window& window);
+LIBWINUI_EXPORT int run(Window& window);
 
 /// Run the message loop with no main window. Every window the app shows runs on it. Closing the
 /// last one does not end the loop, only quit() does. Returns quit()'s exit code, and closes
@@ -43,7 +47,7 @@ int run(Window& window);
 ///     return ui::run(); // closing the window does not end the loop, quit() does
 /// }
 /// @endcode
-int run();
+LIBWINUI_EXPORT int run();
 
 /// Shows `window` and hands it to the message loop, which destroys it between two messages once it
 /// has closed. To get rid of it, call `window.close()` from anywhere, its own handlers included.
@@ -61,10 +65,12 @@ int run();
 /// about->set_content(ui::Button{.text = "Close", .on_click = [&w] { w.close(); }});
 /// ui::open_window(std::move(about));
 /// @endcode
-Window& open_window(std::unique_ptr<Window> window);
+LIBWINUI_EXPORT Window& open_window(std::unique_ptr<Window> window);
 
 /// End the running loop (either run()) with `exit_code`. Posted, so the handler calling it returns
 /// first. UI thread only.
-void quit(int exit_code = 0);
+LIBWINUI_EXPORT void quit(int exit_code = 0);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

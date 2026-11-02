@@ -14,10 +14,13 @@
 #include "Win32Apartment.hpp"
 
 #include <dwmapi.h>
-#include <optional>
 #include <windows.h>
 
+#ifndef LIBWINUI_MODULE
+#include <optional>
+
 #include <cstdint>
+#endif
 
 // UISettings is the only source of the accent tonal ramp (AccentLight1..3/Dark1..3); the
 // registry does not hold it.

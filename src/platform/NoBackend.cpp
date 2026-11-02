@@ -14,7 +14,9 @@
 #include "winui/ui/TrayIcon.hpp"
 #include "winui/ui/themes/ThemeSource.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <stdexcept>
+#endif
 
 namespace ui::detail
 {

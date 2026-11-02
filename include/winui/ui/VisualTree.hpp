@@ -1,14 +1,20 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/VisualId.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <unordered_map>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -41,7 +47,7 @@ namespace ui
 ///     std::println("Save is at {}, {}", tree.bounds_at(slot).x, tree.bounds_at(slot).y);
 /// }
 /// @endcode
-class VisualTree
+LIBWINUI_EXPORT class VisualTree
 {
 public:
     /// Drops every node; the tree is empty (size() == 0) afterwards.
@@ -109,3 +115,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -16,6 +20,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <memory>
 #include <optional>
@@ -23,6 +28,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -65,7 +71,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-class CanvasControl final : public Panel
+LIBWINUI_EXPORT class CanvasControl final : public Panel
 {
 public:
     /// An empty canvas; with no width/height set it takes whatever its slot gives it.
@@ -141,7 +147,7 @@ private:
 
 /// One child of a Canvas with its left and top offsets and z-index, each bindable.
 /// Written inline in a ui::Canvas's `.content`; see ui::Canvas for an example.
-struct CanvasItem
+LIBWINUI_EXPORT struct CanvasItem
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     Binding<float>                                    left{0.0f}; ///< Offset from the canvas's left, DIPs.
@@ -152,7 +158,7 @@ struct CanvasItem
 
 /// A Canvas' children, built, in the same shape as CellList. Callers write it as a braced list of
 /// `ui::CanvasItem{...}`.
-class CanvasItemList
+LIBWINUI_EXPORT class CanvasItemList
 {
 public:
     /// One built child with its position; the node is already owned by the list.
@@ -212,7 +218,7 @@ public:
 ///     ui::Button{.text = "Move", .on_click = [&] { x += 10.0f; }},
 /// }});
 /// @endcode
-struct Canvas
+LIBWINUI_EXPORT struct Canvas
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Canvas>` points at.
@@ -267,3 +273,5 @@ struct Canvas
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

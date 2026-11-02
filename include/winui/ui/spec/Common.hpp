@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -11,12 +15,14 @@
 #include "winui/render/Text.hpp"
 #include "winui/ui/Element.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <functional>
 #include <memory>
 #include <optional>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -50,7 +56,7 @@ namespace ui
 ///     ui::Button{.text = "Close", .style = app_styles::Card, .margin = ui::Thickness{16.0f}},
 /// }});
 /// @endcode
-struct Style
+LIBWINUI_EXPORT struct Style
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// Generic layout properties, mirroring what Element applies for every control. A set
@@ -111,7 +117,7 @@ struct Style
 
 /// Composes two styles into a new one; `rhs` wins wherever it sets a field. Usable in constant
 /// expressions: `constexpr Style s = styles::Spaced | styles::Leading;`.
-[[nodiscard]] constexpr Style operator|(Style lhs, const Style& rhs)
+LIBWINUI_EXPORT [[nodiscard]] constexpr Style operator|(Style lhs, const Style& rhs)
 {
     lhs |= rhs;
     return lhs;
@@ -120,12 +126,13 @@ struct Style
 /// The starter set, each entry setting one aspect so that any two compose.
 namespace styles
 {
-inline constexpr Style Compact{.margin = Thickness{2.0f}}; ///< 2 DIP margin all round.
-inline constexpr Style Spaced{.margin = Thickness{8.0f}};  ///< 8 DIP margin all round.
+LIBWINUI_EXPORT inline constexpr Style Compact{.margin = Thickness{2.0f}}; ///< 2 DIP margin all round.
+LIBWINUI_EXPORT inline constexpr Style Spaced{.margin = Thickness{8.0f}};  ///< 8 DIP margin all round.
 /// Centered on both axes in the slot.
-inline constexpr Style Centered{.horizontal_alignment = Alignment::Center, .vertical_alignment = Alignment::Center};
-inline constexpr Style Leading{.horizontal_alignment = Alignment::Leading};   ///< Left-aligned in the slot.
-inline constexpr Style Trailing{.horizontal_alignment = Alignment::Trailing}; ///< Right-aligned in the slot.
+LIBWINUI_EXPORT inline constexpr Style Centered{.horizontal_alignment = Alignment::Center,
+                                                .vertical_alignment   = Alignment::Center};
+LIBWINUI_EXPORT inline constexpr Style Leading{.horizontal_alignment = Alignment::Leading}; ///< Left-aligned in the slot.
+LIBWINUI_EXPORT inline constexpr Style Trailing{.horizontal_alignment = Alignment::Trailing}; ///< Right-aligned in the slot.
 } // namespace styles
 
 // ---------------------------------------------------------------------------------------
@@ -170,7 +177,7 @@ public:
 ///     return node;
 /// }
 /// @endcode
-template <typename T, typename Fn>
+LIBWINUI_EXPORT template <typename T, typename Fn>
     requires std::invocable<Fn&, const T&>
 inline void apply(Binding<T>& binding, Element& target, Fn sink)
 {
@@ -230,7 +237,7 @@ template <typename... Args>
 ///     }
 /// }
 /// @endcode
-template <typename T, typename First, typename... Rest>
+LIBWINUI_EXPORT template <typename T, typename First, typename... Rest>
 [[nodiscard]] inline Callback<void(First, Rest...)> write_back(Binding<T>& binding, Callback<void(First, Rest...)> handler)
 {
     auto write = binding.take_writer();
@@ -250,7 +257,7 @@ template <typename T, typename First, typename... Rest>
 
 /// The writer of a two-way binding, shared between the handlers of an open/closed field, or
 /// null when the binding is one-way. See write_back_value().
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 [[nodiscard]] inline std::shared_ptr<typename Binding<T>::Write> shared_writer(Binding<T>& binding)
 {
     auto write = binding.take_writer();
@@ -279,7 +286,7 @@ template <typename T>
 ///     }
 /// }
 /// @endcode
-template <typename W, typename First, typename... Rest>
+LIBWINUI_EXPORT template <typename W, typename First, typename... Rest>
 [[nodiscard]] inline Callback<void(First, Rest...)> write_back(const std::shared_ptr<W>&      writer,
                                                                Callback<void(First, Rest...)> handler)
 {
@@ -316,7 +323,7 @@ template <typename W, typename First, typename... Rest>
 ///     }
 /// }
 /// @endcode
-template <typename T, typename... Args>
+LIBWINUI_EXPORT template <typename T, typename... Args>
 [[nodiscard]] inline Callback<void(Args...)> write_back_value(const std::shared_ptr<typename Binding<T>::Write>& writer,
                                                               std::type_identity_t<T>                            value,
                                                               Callback<void(Args...)> handler)
@@ -436,7 +443,7 @@ void apply_events(Element&                                target,
 ///
 /// window.set_content(ui::VerticalStack{.content = {Badge{.text = "New", .style = ui::styles::Spaced}}});
 /// @endcode
-template <typename S>
+LIBWINUI_EXPORT template <typename S>
 inline void apply_common(S& spec, Element& target)
 {
     detail::apply_layout(target,
@@ -493,7 +500,7 @@ inline void apply_common(S& spec, Element& target)
 /// container's own add() does. Only sets the parent pointer: `node` keeps ownership, so the
 /// caller must store it in a member of `parent` that outlives the link. Returns the node as a
 /// non-owning observer, or nullptr when `node` is empty.
-inline Element* adopt(Element& parent, std::unique_ptr<Element>& node)
+LIBWINUI_EXPORT inline Element* adopt(Element& parent, std::unique_ptr<Element>& node)
 {
     if (!node)
     {
@@ -504,3 +511,5 @@ inline Element* adopt(Element& parent, std::unique_ptr<Element>& node)
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

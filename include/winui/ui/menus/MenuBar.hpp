@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -19,11 +23,13 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -41,7 +47,7 @@ namespace ui
 /// }};
 /// menu->set_items({std::move(file)});
 /// @endcode
-struct MenuBarItem
+LIBWINUI_EXPORT struct MenuBarItem
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The header title shown in the bar.
@@ -87,7 +93,7 @@ class MenuBarHeaderAutomation; // MenuBar.cpp: one header as automation sees it
 ///                                  { .text = "Exit", .on_click = [&] { quit(); } } } },
 /// }});
 /// @endcode
-class MenuBarControl final : public Element
+LIBWINUI_EXPORT class MenuBarControl final : public Element
 {
 public:
     /// An enabled, empty bar; it is not focusable until it has items.
@@ -280,7 +286,7 @@ protected:
 ///     ui::Text{ .text = "Document" },
 /// }});
 /// @endcode
-struct MenuBar
+LIBWINUI_EXPORT struct MenuBar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<MenuBar>` points at.
@@ -331,3 +337,5 @@ struct MenuBar
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

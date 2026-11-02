@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
@@ -11,11 +15,13 @@
 #include "winui/render/SvgImage.hpp"
 #include "winui/render/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -47,7 +53,7 @@ namespace ui
 ///     renderer.pop_opacity_layer();
 /// }
 /// @endcode
-class RenderRecording final : public Renderer
+LIBWINUI_EXPORT class RenderRecording final : public Renderer
 {
 public:
     /// Draws everything recorded into `target`, in order.
@@ -110,3 +116,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

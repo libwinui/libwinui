@@ -8,15 +8,18 @@
 #include "winui/core/Utf8.hpp"
 #include "winui/render/Bitmap.hpp"
 
+#include <wrl/client.h>
+
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <span>
 #include <string>
 #include <vector>
-#include <wrl/client.h>
 
 #include <cmath>
 #include <cstdint>
 #include <cstring>
+#endif
 
 namespace ui::win32
 {

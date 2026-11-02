@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,15 +22,17 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
 
-class RadioGroup;
-class RadioButtonsControl;
+LIBWINUI_EXPORT class RadioGroup;
+LIBWINUI_EXPORT class RadioButtonsControl;
 
 /// A round option button with a label, one of a set of mutually exclusive choices.
 ///
@@ -49,7 +55,7 @@ class RadioButtonsControl;
 /// large->on_checked_changed([](bool checked) { /* fires for checks and unchecks */ });
 /// window.set_content(std::move(stack));
 /// @endcode
-class RadioButtonControl final : public Element, private SelectionItemProvider
+LIBWINUI_EXPORT class RadioButtonControl final : public Element, private SelectionItemProvider
 {
 
     // ---- composition ----
@@ -267,7 +273,7 @@ private:
 ///     ui::RadioButton{.text = "Large", .checked = ui::selects(size, Size::Large)},
 /// }});
 /// @endcode
-struct RadioButton
+LIBWINUI_EXPORT struct RadioButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<RadioButton>` points at.
@@ -324,3 +330,5 @@ struct RadioButton
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: MIT
 #include "winui/core/Utf8.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <string>
 #include <string_view>
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {

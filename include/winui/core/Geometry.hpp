@@ -1,20 +1,26 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <limits>
+#endif
 
 namespace ui
 {
 
 /// The extent of an unbounded axis in a measure offer (Element::measure). An axis that has run
 /// out of room is 0, which is a real bound, never "unbounded".
-inline constexpr float Unbounded = std::numeric_limits<float>::infinity();
+LIBWINUI_EXPORT inline constexpr float Unbounded = std::numeric_limits<float>::infinity();
 
 /// The axis a control runs along: a stack's direction, a slider's track, a pager's row of pips.
-enum class Orientation
+LIBWINUI_EXPORT enum class Orientation
 {
     Horizontal, ///< left to right
     Vertical,   ///< top to bottom
@@ -42,7 +48,7 @@ enum class Orientation
 ///     bool close_hot_ = false;
 /// };
 /// @endcode
-struct Point
+LIBWINUI_EXPORT struct Point
 {
     float x = 0.0f; ///< Horizontal coordinate, DIPs.
     float y = 0.0f; ///< Vertical coordinate, DIPs (down is positive).
@@ -61,7 +67,7 @@ struct Point
 /// const ui::Size    desired = button.measure(ui::Size{300, ui::Unbounded}, measurer, theme);
 /// REQUIRE_FALSE(desired.empty());
 /// @endcode
-struct Size
+LIBWINUI_EXPORT struct Size
 {
     float width  = 0.0f; ///< Horizontal extent, DIPs.
     float height = 0.0f; ///< Vertical extent, DIPs.
@@ -86,7 +92,7 @@ struct Size
 /// element->set_scale(ui::Vector3{1.1f, 1.1f, 1.0f});
 /// element->set_translation(element->translation() + ui::Vector3{0, -4, 0});
 /// @endcode
-struct Vector3
+LIBWINUI_EXPORT struct Vector3
 {
     float x = 0.0f; ///< X component (DIPs for a translation/center, a factor for a scale).
     float y = 0.0f; ///< Y component.
@@ -114,7 +120,7 @@ struct Vector3
 /// Some edges of a ui::Thickness by name, the others 0: `.margin = ui::Edges{.left = 32}`.
 ///
 /// Converts to a Thickness wherever one is taken.
-struct Edges
+LIBWINUI_EXPORT struct Edges
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     float                                             left   = 0.0f; ///< Left edge, DIPs.
@@ -127,7 +133,7 @@ struct Edges
 /// `.padding = ui::Symmetric{.horizontal = 16, .vertical = 8}`.
 ///
 /// Converts to a Thickness wherever one is taken.
-struct Symmetric
+LIBWINUI_EXPORT struct Symmetric
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     float                                             horizontal = 0.0f; ///< The left and the right edge, DIPs.
@@ -148,7 +154,7 @@ struct Symmetric
 ///     .content  = {ui::Text{.text = "Indented", .margin = ui::Edges{.left = 16}}},
 /// });
 /// @endcode
-struct Thickness
+LIBWINUI_EXPORT struct Thickness
 {
     float left   = 0.0f; ///< Left edge, DIPs.
     float top    = 0.0f; ///< Top edge, DIPs.
@@ -209,7 +215,7 @@ struct Thickness
 /// const ui::Rect focus   = bounds.inflate(3.0f); // focus visual outside the border
 /// const ui::Rect visible = ui::intersection(content, ui::Rect{0, 0, 100, 100}); // {12, 5, 88, 21}
 /// @endcode
-struct Rect
+LIBWINUI_EXPORT struct Rect
 {
     float x      = 0.0f; ///< Left edge, DIPs.
     float y      = 0.0f; ///< Top edge, DIPs.
@@ -303,7 +309,7 @@ struct Rect
 };
 
 /// Intersection of two rectangles (empty rect if they do not overlap).
-[[nodiscard]] constexpr Rect intersection(const Rect& a, const Rect& b)
+LIBWINUI_EXPORT [[nodiscard]] constexpr Rect intersection(const Rect& a, const Rect& b)
 {
     const float l   = (std::max)(a.left(), b.left());
     const float t   = (std::max)(a.top(), b.top());
@@ -317,3 +323,5 @@ struct Rect
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

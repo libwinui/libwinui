@@ -9,7 +9,9 @@
 #include "winui/core/Strings.hpp"
 #include "winui/ui/Element.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <utility>
+#endif
 
 namespace ui::detail
 {

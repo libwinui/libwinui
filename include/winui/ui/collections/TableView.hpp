@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -25,6 +29,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <functional>
 #include <memory>
@@ -36,14 +41,15 @@
 
 #include <compare>
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class TextBoxControl;
+LIBWINUI_EXPORT class TextBoxControl;
 
 /// Which grid lines a TableView draws. Row banding is separate (set_alternating_rows()).
-enum class TableViewGridLinesVisibility
+LIBWINUI_EXPORT enum class TableViewGridLinesVisibility
 {
     All,        ///< Row separators and column separators (the default).
     Horizontal, ///< Row separators only.
@@ -52,7 +58,7 @@ enum class TableViewGridLinesVisibility
 };
 
 /// The direction a TableView column is sorted in.
-enum class TableViewSortDirection
+LIBWINUI_EXPORT enum class TableViewSortDirection
 {
     None,       ///< Not sorted; the rows keep their source order.
     Ascending,  ///< Smallest first; the header shows an up chevron.
@@ -60,7 +66,7 @@ enum class TableViewSortDirection
 };
 
 /// What `on_sorted` gets after a sort change.
-struct TableViewSortedArgs
+LIBWINUI_EXPORT struct TableViewSortedArgs
 {
     std::optional<std::size_t> column{};                                 ///< The sorted column; unset when cleared.
     TableViewSortDirection     direction = TableViewSortDirection::None; ///< Its new direction.
@@ -68,21 +74,21 @@ struct TableViewSortedArgs
 
 /// What `on_sorting` gets before a user sort: the column and the direction it is about to take.
 /// Return ui::Cancel from the handler to keep the current order.
-struct TableViewSortingArgs
+LIBWINUI_EXPORT struct TableViewSortingArgs
 {
     std::size_t            column    = 0;                            ///< The column about to be sorted.
     TableViewSortDirection direction = TableViewSortDirection::None; ///< The direction it is about to take.
 };
 
 /// What `on_column_resized` gets on every step of a user resize.
-struct TableViewColumnResizedArgs
+LIBWINUI_EXPORT struct TableViewColumnResizedArgs
 {
     std::size_t column = 0;    ///< The resized column.
     float       width  = 0.0f; ///< Its new width, DIPs.
 };
 
 /// A TableViewControl's `on_beginning_edit`: the cell an editor is about to open on.
-struct TableViewCellArgs
+LIBWINUI_EXPORT struct TableViewCellArgs
 {
     std::size_t row    = 0; ///< An index into rows().
     std::size_t column = 0; ///< The column.
@@ -90,7 +96,7 @@ struct TableViewCellArgs
 
 /// A TableViewControl's `on_cell_edited`: the cell and the editor's text, which the handler may
 /// rewrite to what the cell should show.
-struct TableViewCellEditArgs
+LIBWINUI_EXPORT struct TableViewCellEditArgs
 {
     std::size_t  row;    ///< An index into rows().
     std::size_t  column; ///< The column.
@@ -98,7 +104,7 @@ struct TableViewCellEditArgs
 };
 
 /// A TableView spec's `on_beginning_edit`: the item and the column an editor is about to open on.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 struct TableViewBeginningEditArgs
 {
     T&          item;   ///< The row's item.
@@ -106,7 +112,7 @@ struct TableViewBeginningEditArgs
 };
 
 /// A TableView spec's `on_cell_edited`: the item, the column and the editor's text.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 struct TableViewCellEditedArgs
 {
     T&                 item;   ///< The row's item (the edited copy for an `editing_cell` column).
@@ -117,7 +123,7 @@ struct TableViewCellEditedArgs
 /// The directions repeated clicks on a column header step through. An unsorted column starts at
 /// the first one named. The `*None` cycles end on unsorted, so a third click restores the source
 /// order.
-enum class TableViewSortCycle
+LIBWINUI_EXPORT enum class TableViewSortCycle
 {
     AscendingDescending,     ///< Ascending, Descending, Ascending, and so on (the default).
     AscendingDescendingNone, ///< Ascending, Descending, None.
@@ -135,7 +141,7 @@ enum class TableViewSortCycle
 ///
 /// Converts implicitly from a number and from a ui::GridLength, so `{"Name", 140.0f}` and
 /// `{"Name", 1_fr}` both name a column.
-struct TableViewColumnWidth : GridLength
+LIBWINUI_EXPORT struct TableViewColumnWidth : GridLength
 {
     /// A fixed width of `dips`.
     constexpr TableViewColumnWidth(float dips) // NOLINT(google-explicit-constructor): a number is a width
@@ -152,7 +158,7 @@ struct TableViewColumnWidth : GridLength
 };
 
 /// One column of a TableView: its header, its width and how the user may size, sort and pin it.
-struct TableViewColumn
+LIBWINUI_EXPORT struct TableViewColumn
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// Caption drawn in the header strip above the rows. A caption too wide for the column is
@@ -186,7 +192,7 @@ struct TableViewColumn
 };
 
 class TableViewHeaderAutomation; // TableView.cpp: the header strip as screen readers see it
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 struct TableView;
 
 /// A table: a header strip over virtualized rows, with sorting, resizable columns, frozen leading
@@ -270,7 +276,7 @@ struct TableView;
 /// grid->set_group_keys({"Staff", "Guests"}); // one key per row
 /// stack->add(std::move(grid));
 /// @endcode
-class TableViewControl final : public Element, private SelectionProvider, private GridProvider, private TableProvider
+LIBWINUI_EXPORT class TableViewControl final : public Element, private SelectionProvider, private GridProvider, private TableProvider
 {
 public:
     /// Orders two rows, by their indices into rows(), for the column being sorted.
@@ -1152,7 +1158,7 @@ inline void carry_selection(std::vector<std::size_t>& rows, const CollectionChan
 ///
 /// The callables are std::function because columns are written as a braced list, which copies
 /// its entries.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 struct TableColumn
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
@@ -1264,7 +1270,7 @@ struct TableColumn
 ///     ui::Text{.text = status},
 /// }});
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 struct TableView
 {
     /// The control this spec builds; what `ui::Control<TableView>` points at.
@@ -1706,3 +1712,5 @@ struct TableView
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

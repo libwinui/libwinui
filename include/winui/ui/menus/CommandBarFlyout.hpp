@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -16,6 +20,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <type_traits>
@@ -23,6 +28,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -62,7 +68,7 @@ namespace ui
 ///     .secondary = {ui::AppBarButton{.text = "Resize"}},
 /// });
 /// @endcode
-class CommandBarFlyoutControl final : public FlyoutBase, public AppBarCommandHost
+LIBWINUI_EXPORT class CommandBarFlyoutControl final : public FlyoutBase, public AppBarCommandHost
 {
 public:
     /// An empty flyout with no anchor.
@@ -188,7 +194,7 @@ private:
 ///     .secondary = { ui::AppBarButton{ .text = "Resize" } },
 /// });
 /// @endcode
-struct CommandBarFlyout
+LIBWINUI_EXPORT struct CommandBarFlyout
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<CommandBarFlyout>` points at.
@@ -267,3 +273,5 @@ struct CommandBarFlyout
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

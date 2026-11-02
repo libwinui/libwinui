@@ -18,12 +18,15 @@
 #include <d3d11.h>
 #include <documenttarget.h>
 #include <dwrite.h>
-#include <optional>
-#include <vector>
 #include <wincodec.h>
 #include <wrl/client.h>
 
+#ifndef LIBWINUI_MODULE
+#include <optional>
+#include <vector>
+
 #include <cstddef>
+#endif
 
 // What the print dialog (Win32Printing.cpp) and the print dialog with a preview
 // (Win32PrintPreview.cpp) share.
@@ -37,7 +40,7 @@ struct PrintMeasuring
     std::optional<win32::DWriteMeasurer>   measurer;
     Theme                                  theme = Theme::default_light();
 
-    PrintMeasuring()
+    inline PrintMeasuring()
     {
         if (SUCCEEDED(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
                                           __uuidof(IDWriteFactory),
@@ -46,7 +49,7 @@ struct PrintMeasuring
             measurer.emplace(dwrite.Get());
         }
     }
-    [[nodiscard]] PrintContext context() const
+    [[nodiscard]] inline PrintContext context() const
     {
         return PrintContext{*measurer, theme};
     }

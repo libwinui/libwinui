@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -17,6 +21,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/spec/Spec.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -28,6 +33,7 @@
 
 #include <cassert>
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -58,7 +64,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-class StackControl final : public Element
+LIBWINUI_EXPORT class StackControl final : public Element
 {
 public:
     /// An empty vertical panel, no spacing, no background.
@@ -347,9 +353,9 @@ private:
 };
 
 /// The control a `ui::VerticalStack` builds: a StackControl whose orientation is Vertical.
-using VerticalStackControl = StackControl;
+LIBWINUI_EXPORT using VerticalStackControl = StackControl;
 /// The control a `ui::HorizontalStack` builds: a StackControl whose orientation is Horizontal.
-using HorizontalStackControl = StackControl;
+LIBWINUI_EXPORT using HorizontalStackControl = StackControl;
 
 /// A column of children. Builds a ui::StackControl with vertical orientation.
 ///
@@ -374,7 +380,7 @@ using HorizontalStackControl = StackControl;
 ///     },
 /// });
 /// @endcode
-struct VerticalStack
+LIBWINUI_EXPORT struct VerticalStack
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<VerticalStack>` points at.
@@ -463,7 +469,7 @@ struct VerticalStack
 ///     },
 /// });
 /// @endcode
-struct HorizontalStack
+LIBWINUI_EXPORT struct HorizontalStack
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<HorizontalStack>` points at.
@@ -536,3 +542,5 @@ struct HorizontalStack
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

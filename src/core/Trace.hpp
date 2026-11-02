@@ -15,7 +15,9 @@
 
 #if LIBWINUI_ENABLE_TRACING && defined(_WIN32)
 
+#ifndef LIBWINUI_MODULE
 #include <cstdint>
+#endif
 
 namespace ui::detail
 {

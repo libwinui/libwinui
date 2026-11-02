@@ -4,12 +4,14 @@
 #include "winui/core/Geometry.hpp"
 #include "winui/render/ContextMenuHost.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui::testing
 {

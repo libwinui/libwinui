@@ -12,11 +12,14 @@
 #include "../../ui/WindowHost.hpp"
 
 #include <shobjidl.h>
+#include <windows.h>
+#include <wrl/client.h>
+
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
 #include <vector>
-#include <windows.h>
-#include <wrl/client.h>
+#endif
 
 namespace ui::win32
 {

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -17,16 +21,18 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
 #include <string>
+#endif
 
 namespace ui
 {
 
 /// The severity a badge takes its background color from.
-enum class InfoBadgeSeverity
+LIBWINUI_EXPORT enum class InfoBadgeSeverity
 {
     Default,       ///< the accent fill
     Attention,     ///< the attention fill
@@ -65,7 +71,7 @@ enum class InfoBadgeSeverity
 /// badge->set_severity(ui::InfoBadgeSeverity::Attention);
 /// badge->set_value(std::nullopt); // back to a dot
 /// @endcode
-class InfoBadgeControl final : public Element
+LIBWINUI_EXPORT class InfoBadgeControl final : public Element
 {
 public:
     /// A dot badge in the Default severity.
@@ -169,7 +175,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct InfoBadge
+LIBWINUI_EXPORT struct InfoBadge
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<InfoBadge>` points at.
@@ -226,3 +232,5 @@ struct InfoBadge
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

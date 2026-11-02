@@ -22,6 +22,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -33,6 +34,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstddef>
+#endif
 
 namespace ui
 {

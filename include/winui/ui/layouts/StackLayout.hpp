@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 #include "winui/ui/layouts/Layout.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <memory>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -37,7 +43,7 @@ class FlowLayoutAlgorithm;
 /// repeater->set_item_count(rows.size());
 /// window.set_content(std::move(scroll));
 /// @endcode
-class StackLayoutEngine final : public VirtualizingLayout
+LIBWINUI_EXPORT class StackLayoutEngine final : public VirtualizingLayout
 {
 public:
     /// A vertical stack with no spacing and virtualization on.
@@ -111,7 +117,7 @@ private:
 ///     .item   = [](const std::string& text) -> ui::Spec { return ui::Text{.text = text}; },
 /// });
 /// @endcode
-struct StackLayout
+LIBWINUI_EXPORT struct StackLayout
 {
     Orientation orientation = Orientation::Vertical; ///< The direction items follow each other in.
     float       spacing     = 0.0f;                  ///< Gap between adjacent items, DIPs.
@@ -127,3 +133,5 @@ struct StackLayout
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

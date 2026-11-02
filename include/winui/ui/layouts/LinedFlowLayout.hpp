@@ -1,21 +1,27 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 #include "winui/core/OptionalFloat.hpp"
 #include "winui/ui/layouts/Layout.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// Whether lines narrower than the room are widened to fill it.
-enum class LinedFlowLayoutItemsStretch
+LIBWINUI_EXPORT enum class LinedFlowLayoutItemsStretch
 {
     None, ///< lines keep their natural width and are placed by ItemsJustification (the default)
     Fill, ///< every line but the last is scaled up to run edge to edge
@@ -52,7 +58,7 @@ enum class LinedFlowLayoutItemsStretch
 ///     },
 /// });
 /// @endcode
-class LinedFlowLayoutEngine final : public VirtualizingLayout
+LIBWINUI_EXPORT class LinedFlowLayoutEngine final : public VirtualizingLayout
 {
 public:
     /// The line height in DIPs; nullopt (the default) takes the height of item 0.
@@ -152,7 +158,7 @@ private:
 ///     .item   = [](const ui::ImageSource& photo) -> ui::Spec { return ui::Image{.source = photo}; },
 /// });
 /// @endcode
-struct LinedFlowLayout
+LIBWINUI_EXPORT struct LinedFlowLayout
 {
     OptionalFloat line_height{};           ///< Height of every line, DIPs; unset takes the first item's.
     float         min_item_spacing = 0.0f; ///< Least gap between items on a line, DIPs.
@@ -176,3 +182,5 @@ struct LinedFlowLayout
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

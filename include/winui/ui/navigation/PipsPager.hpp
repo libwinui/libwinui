@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -17,6 +21,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <limits>
 #include <memory>
@@ -26,12 +31,13 @@
 
 #include <cassert>
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// How a PipsPager shows its previous or next button.
-enum class PipsPagerButtonVisibility
+LIBWINUI_EXPORT enum class PipsPagerButtonVisibility
 {
     Visible, ///< Shown whenever it has somewhere to go.
     /// Shown only while the pointer is over the pager or it has focus; its slot is
@@ -41,7 +47,7 @@ enum class PipsPagerButtonVisibility
 };
 
 /// What a PipsPager's previous/next buttons and arrow keys do at the ends.
-enum class PipsPagerWrapMode
+LIBWINUI_EXPORT enum class PipsPagerWrapMode
 {
     None, ///< Stop at the first/last page; the button at that edge hides (the default).
     Wrap, ///< Next from the last page goes to the first, Previous from the first to the last.
@@ -81,7 +87,7 @@ enum class PipsPagerWrapMode
 /// pager->set_wrap_mode(ui::PipsPagerWrapMode::Wrap);
 /// pager->on_selection_changed([](std::size_t index) { /* show page `index` */ });
 /// @endcode
-class PipsPagerControl final : public Element, private RangeValueProvider
+LIBWINUI_EXPORT class PipsPagerControl final : public Element, private RangeValueProvider
 {
 public:
     /// `number_of_pages` nullopt (the default) is an unknown, open-ended count.
@@ -373,7 +379,7 @@ private:
 ///     .horizontal_alignment       = ui::Alignment::Center,
 /// });
 /// @endcode
-struct PipsPager
+LIBWINUI_EXPORT struct PipsPager
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<PipsPager>` points at.
@@ -439,3 +445,5 @@ struct PipsPager
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

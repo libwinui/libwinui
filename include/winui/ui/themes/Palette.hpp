@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/render/Brush.hpp"
 
@@ -24,7 +28,7 @@ namespace ui
 /// ui::Theme theme = ui::Theme::fluent(palette);
 /// window.pin_theme(std::move(theme)); // accent buttons, toggles and links now use the purple
 /// @endcode
-struct Palette
+LIBWINUI_EXPORT struct Palette
 {
     /// Whether this is a dark palette. A few shapes differ between light and dark, and
     /// `Theme::fluent()` reads them from this flag. The main one is the neutral elevation border,
@@ -257,3 +261,5 @@ struct Palette
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

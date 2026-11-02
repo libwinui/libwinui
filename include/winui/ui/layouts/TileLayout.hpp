@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 #include "winui/core/OptionalFloat.hpp"
 #include "winui/ui/layouts/Layout.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <limits>
 #include <memory>
 #include <optional>
@@ -12,6 +17,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -22,7 +28,7 @@ class FlowLayoutAlgorithm;
 }
 
 /// Whether cells grow to use the leftover room on a line.
-enum class TileLayoutItemsStretch
+LIBWINUI_EXPORT enum class TileLayoutItemsStretch
 {
     None,    ///< Cells keep their size (the default).
     Fill,    ///< Cells widen (along the line) so the line fills the available size.
@@ -58,7 +64,7 @@ enum class TileLayoutItemsStretch
 ///     },
 /// });
 /// @endcode
-class TileLayoutEngine final : public VirtualizingLayout
+LIBWINUI_EXPORT class TileLayoutEngine final : public VirtualizingLayout
 {
 public:
     /// Horizontal, cells sized from item 0, no spacing, Start, None, unlimited per line.
@@ -200,7 +206,7 @@ private:
 ///     .item   = [](const std::string& name) -> ui::Spec { return ui::Text{.text = name}; },
 /// });
 /// @endcode
-struct TileLayout
+LIBWINUI_EXPORT struct TileLayout
 {
     Orientation   orientation = Orientation::Horizontal; ///< The direction of a line of cells.
     OptionalFloat min_item_width{};                      ///< Cell width, DIPs; unset takes the first item's.
@@ -231,3 +237,5 @@ struct TileLayout
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

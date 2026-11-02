@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -26,6 +30,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <concepts>
 #include <memory>
@@ -37,15 +42,16 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class ButtonControl;
-class ToolTipControl;
+LIBWINUI_EXPORT class ButtonControl;
+LIBWINUI_EXPORT class ToolTipControl;
 
 /// How a Tabs control sizes its tabs.
-enum class TabsWidthMode
+LIBWINUI_EXPORT enum class TabsWidthMode
 {
     Equal,         ///< The strip divided evenly, each tab clamped to 100..240 DIPs (the default).
     SizeToContent, ///< Each tab as wide as its icon, header and close button.
@@ -53,7 +59,7 @@ enum class TabsWidthMode
 };
 
 /// When a closable tab shows its close button.
-enum class TabsCloseButtonOverlayMode
+LIBWINUI_EXPORT enum class TabsCloseButtonOverlayMode
 {
     Auto,          ///< the same as Always
     OnPointerOver, ///< on the selected tab and the hovered one
@@ -77,7 +83,7 @@ enum class TabsCloseButtonOverlayMode
 ///     .content  = std::make_unique<ui::TextControl>("Settings go here"),
 /// });
 /// @endcode
-struct Tab
+LIBWINUI_EXPORT struct Tab
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The tab's caption, and its tooltip. A bound header follows its property. A tab without
@@ -126,7 +132,7 @@ class TabsItemAutomation; // Tabs.cpp: one tab as automation sees it
 /// tabs->on_selection_changed([](const std::string& key) { std::println("tab {}", key); });
 /// window.set_content(std::move(owned));
 /// @endcode
-class TabsControl final : public Element, private ValueProvider, private SelectionProvider
+LIBWINUI_EXPORT class TabsControl final : public Element, private ValueProvider, private SelectionProvider
 {
 public:
     /// An empty view: no tabs, and no add button until there is an add handler.
@@ -572,7 +578,7 @@ private:
 ///                      ui::Tab{ .header = "Two", .content = ui::Text{ .text = "2" } } };
 /// window.set_content(ui::Tabs{ .items = std::move(tabs) });
 /// @endcode
-class TabList
+LIBWINUI_EXPORT class TabList
 {
 public:
     /// One tab with its content already built.
@@ -637,7 +643,7 @@ public:
 ///     },
 /// });
 /// @endcode
-struct Tabs
+LIBWINUI_EXPORT struct Tabs
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Tabs>` points at.
@@ -717,3 +723,5 @@ struct Tabs
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

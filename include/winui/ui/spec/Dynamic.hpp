@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 // Structure that follows state. Nothing here diffs a tree: each tool either holds the change it
 // was told about, or (a keyed ForEach over a whole vector) compares keys.
 //
@@ -30,6 +34,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/spec/Spec.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <memory>
 #include <optional>
@@ -40,6 +45,7 @@
 
 #include <cassert>
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -105,7 +111,7 @@ public:
 ///     },
 /// }});
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 struct Match
 {
     /// The control this spec builds; what `ui::Control<Match>` points at.
@@ -266,7 +272,7 @@ struct Match
 ///     },
 /// }});
 /// @endcode
-struct Lazy
+LIBWINUI_EXPORT struct Lazy
 {
     /// The control this spec builds; what `ui::Control<ui::Lazy>` points at.
     using control_type = ContentHost;
@@ -403,7 +409,7 @@ private:
 ///     };
 /// }
 /// @endcode
-template <typename S>
+LIBWINUI_EXPORT template <typename S>
 struct State
 {
     /// The control this spec builds; what `ui::Control<State>` points at.
@@ -471,3 +477,5 @@ struct State
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

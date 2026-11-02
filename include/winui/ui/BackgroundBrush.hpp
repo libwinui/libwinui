@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/ui/Animation.hpp"
 #include "winui/ui/Paint.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <optional>
 #include <type_traits>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -64,7 +70,7 @@ namespace ui
 ///     ui::BackgroundBrush background_;
 /// };
 /// @endcode
-class BackgroundBrush
+LIBWINUI_EXPORT class BackgroundBrush
 {
 public:
     /// The fixed color; nullopt (a null brush) when there is none or a resource is set.
@@ -145,3 +151,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

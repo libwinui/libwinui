@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -21,6 +25,7 @@
 #include "winui/ui/spec/LayoutSpec.hpp"
 #include "winui/ui/spec/Spec.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <map>
 #include <memory>
@@ -33,19 +38,20 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
 /// What `on_element_prepared` gets: an element about to show item `index`.
-struct ElementPreparedArgs
+LIBWINUI_EXPORT struct ElementPreparedArgs
 {
     Element&    element; ///< The realized element.
     std::size_t index;   ///< The item it shows.
 };
 
 /// What `on_element_index_changed` gets: an element whose item moved.
-struct ElementIndexChangedArgs
+LIBWINUI_EXPORT struct ElementIndexChangedArgs
 {
     Element&    element;   ///< The realized element.
     std::size_t old_index; ///< Where its item was.
@@ -91,7 +97,7 @@ struct ElementIndexChangedArgs
 /// rows.insert(rows.begin(), "New first row");
 /// repeater->notify_inserted(0);
 /// @endcode
-class ForEachControl final : public Element, private LayoutOwner
+LIBWINUI_EXPORT class ForEachControl final : public Element, private LayoutOwner
 {
 public:
     /// Makes the element for item `index` and may choose a different look per item. Called when the
@@ -403,7 +409,7 @@ void apply_collection_change(ForEachControl& control, const CollectionChange& ch
 /// std::ranges::sort(sorted, {}, &Photo::title);
 /// photos = sorted; // the rows move, none is built again
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 struct ForEach
 {
     /// The control this spec builds; what `ui::Control<ForEach>` points at.
@@ -611,3 +617,5 @@ struct ForEach
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

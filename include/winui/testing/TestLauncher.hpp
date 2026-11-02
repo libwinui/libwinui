@@ -3,9 +3,11 @@
 
 #include "winui/ui/Launcher.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <string>
 #include <vector>
+#endif
 
 namespace ui::testing
 {

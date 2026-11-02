@@ -14,10 +14,12 @@
 #include "winui/ui/Element.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <memory>
 #include <string>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -44,8 +46,8 @@ public:
     explicit WindowFrameElement(Window& window);
 
     // The era's frame; a change relayouts and repaints.
-    void                                            set_chrome(const ControlChrome::WindowFrame& chrome);
-    [[nodiscard]] const ControlChrome::WindowFrame& chrome() const
+    void                                                   set_chrome(const ControlChrome::WindowFrame& chrome);
+    [[nodiscard]] inline const ControlChrome::WindowFrame& chrome() const
     {
         return chrome_;
     }
@@ -68,7 +70,7 @@ public:
     // The caption for UI Automation: a TitleBar over the caption, named after the window, with a
     // Button for each caption button shown. Not one of the frame's children; a host lists it
     // beside the content.
-    [[nodiscard]] Element* title_bar_node() const
+    [[nodiscard]] inline Element* title_bar_node() const
     {
         return title_bar_.get();
     }

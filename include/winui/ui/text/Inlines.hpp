@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -9,6 +13,7 @@
 #include "winui/render/Text.hpp"
 #include "winui/render/TextLayout.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <functional>
 #include <optional>
@@ -17,6 +22,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -41,7 +47,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-struct Inline
+LIBWINUI_EXPORT struct Inline
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The run's text (UTF-8). `\n` is a line break.
@@ -76,7 +82,7 @@ struct Inline
 };
 
 /// A line break: an Inline holding only `\n`.
-[[nodiscard]] inline Inline line_break()
+LIBWINUI_EXPORT [[nodiscard]] inline Inline line_break()
 {
     return Inline{.text = "\n"};
 }
@@ -95,7 +101,7 @@ struct Inline
 ///     },
 /// });
 /// @endcode
-struct Paragraph
+LIBWINUI_EXPORT struct Paragraph
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The paragraph's runs, in order.
@@ -117,7 +123,7 @@ struct Paragraph
 ///         ui::TextHighlighter{.ranges = {{28, 11}}, .background = ui::Color::from_argb(0xFFFFFF00)}},
 /// });
 /// @endcode
-struct TextHighlighter
+LIBWINUI_EXPORT struct TextHighlighter
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// A span of the plain text: `length` characters from offset `start`.
@@ -140,14 +146,14 @@ struct TextHighlighter
 /// run gets its inline's own formatting over `base`, and `character_spacing`. Links are underlined
 /// and tagged with their index in document order. When `links` is given, it receives the links in
 /// that order. Its pointers point into `paragraphs` and stay valid only as long as it does.
-[[nodiscard]] std::vector<TextLayoutParagraph> to_layout_paragraphs(
+LIBWINUI_EXPORT [[nodiscard]] std::vector<TextLayoutParagraph> to_layout_paragraphs(
     const std::vector<Paragraph>& paragraphs,
     const TextStyle&              base,
     int                           character_spacing,
     std::vector<const Inline*>*   links = nullptr);
 
-class ContextMenuHost;
-struct Theme;
+LIBWINUI_EXPORT class ContextMenuHost;
+LIBWINUI_EXPORT struct Theme;
 
 /// Selection and link state over laid-out inline text, shared by TextControl, RichText and
 /// RichTextOverflow. Offsets are the TextLayout's. A RichText and its overflow containers each have
@@ -188,7 +194,7 @@ struct Theme;
 ///     std::vector<const ui::Inline*> links_; // from to_layout_paragraphs()
 /// };
 /// @endcode
-class TextInteraction
+LIBWINUI_EXPORT class TextInteraction
 {
 public:
     /// Where the selection started (the fixed end), as a layout offset.
@@ -255,3 +261,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

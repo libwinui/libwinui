@@ -19,11 +19,14 @@
 #include <shellapi.h>
 // clang-format on
 
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.System.h>
+
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <string>
 #include <system_error>
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.System.h>
+#endif
 
 namespace ui::win32
 {

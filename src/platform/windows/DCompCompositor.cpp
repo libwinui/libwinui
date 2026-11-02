@@ -9,6 +9,7 @@
 #include "winui/core/Geometry.hpp"
 #include "winui/core/VisualId.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <chrono>
 #include <memory>
@@ -16,6 +17,7 @@
 #include <vector>
 
 #include <cmath>
+#endif
 
 namespace ui::win32
 {

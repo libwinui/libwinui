@@ -5,8 +5,10 @@
 #include "winui/ui/Animation.hpp"
 #include "winui/ui/Element.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -42,7 +44,7 @@ public:
     // which is when the container has to be drawn again.
     bool advance(Duration delta);
 
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] inline bool empty() const
     {
         return ghosts_.empty();
     }

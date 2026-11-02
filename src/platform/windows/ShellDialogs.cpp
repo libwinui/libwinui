@@ -15,12 +15,16 @@
 #include "winui/ui/Pickers.hpp"
 #include "winui/ui/Window.hpp"
 
+#include <shlobj.h>
+#include <shobjidl.h>
+#include <windows.h>
+#include <wrl/client.h>
+
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <filesystem>
 #include <limits>
 #include <optional>
-#include <shlobj.h>
-#include <shobjidl.h>
 #include <span>
 #include <stdexcept>
 #include <string>
@@ -30,8 +34,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
-#include <windows.h>
-#include <wrl/client.h>
+#endif
 
 namespace ui::win32
 {

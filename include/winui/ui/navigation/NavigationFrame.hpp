@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,6 +22,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <functional>
 #include <memory>
@@ -28,12 +33,13 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// How the page on screen got there.
-enum class NavigationMode
+LIBWINUI_EXPORT enum class NavigationMode
 {
     /// navigate(): a new page, the old one pushed onto the back stack.
     New,
@@ -45,7 +51,7 @@ enum class NavigationMode
 
 /// Whether a page on the back stack is kept alive (Enabled) or built again
 /// by its factory when it is gone back to (Disabled, the default).
-enum class NavigationCacheMode
+LIBWINUI_EXPORT enum class NavigationCacheMode
 {
     /// The page is destroyed when left and rebuilt by its factory on return.
     Disabled,
@@ -55,7 +61,7 @@ enum class NavigationCacheMode
 
 /// What the frame's on_navigated() handler gets: the page now on screen, not laid out yet, and
 /// how it got there.
-struct NavigationEventArgs
+LIBWINUI_EXPORT struct NavigationEventArgs
 {
     /// The new page; owned by the frame, valid until it navigates away from it.
     Element* content = nullptr;
@@ -65,7 +71,7 @@ struct NavigationEventArgs
 
 /// What the frame's on_navigating_from() handler gets: the page about to leave, still on screen
 /// and laid out, and how the frame is leaving it.
-struct NavigatingFromEventArgs
+LIBWINUI_EXPORT struct NavigatingFromEventArgs
 {
     Element&       page;                       ///< The page on screen now.
     NavigationMode mode = NavigationMode::New; ///< Leaving by navigate(), go_back() or go_forward().
@@ -103,7 +109,7 @@ struct NavigatingFromEventArgs
 /// });
 /// page_host->navigate([] { return ui::Text{.text = "Home"}; });
 /// @endcode
-class NavigationFrameControl final : public Element
+LIBWINUI_EXPORT class NavigationFrameControl final : public Element
 {
 public:
     /// Builds a page. Called on every navigation to it, and again on going back to it unless it
@@ -275,7 +281,7 @@ private:
 /// frame->navigate([] { return ui::Text{.text = "Settings"}; }, ui::ZoomPageTransition{});
 /// frame->go_back(); // "Home" again, rebuilt by its factory
 /// @endcode
-struct NavigationFrame
+LIBWINUI_EXPORT struct NavigationFrame
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<NavigationFrame>` points at.
@@ -327,3 +333,5 @@ struct NavigationFrame
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

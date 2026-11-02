@@ -11,16 +11,19 @@
 #include "winui/ui/Element.hpp"
 #include "winui/ui/Window.hpp"
 
+#include <wrl/client.h>
+
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <utility>
 #include <variant>
 #include <vector>
-#include <wrl/client.h>
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui::win32
 {

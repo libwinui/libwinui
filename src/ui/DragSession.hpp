@@ -4,8 +4,10 @@
 #include "winui/ui/DragDrop.hpp"
 #include "winui/ui/Element.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <vector>
+#endif
 
 namespace ui
 {

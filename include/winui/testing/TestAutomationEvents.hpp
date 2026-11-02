@@ -5,10 +5,12 @@
 #include "winui/ui/AutomationTree.hpp"
 #include "winui/ui/Element.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <format>
 #include <string>
 #include <variant>
 #include <vector>
+#endif
 
 namespace ui::testing
 {

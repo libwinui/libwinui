@@ -8,10 +8,12 @@
 #include "winui/ui/spec/Common.hpp"
 #include "winui/ui/spec/ItemsModel.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <utility>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/CubicBezier.hpp"
@@ -10,12 +14,14 @@
 #include "winui/ui/Element.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
 #include <variant>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -33,27 +39,27 @@ namespace ui
 ///     animation.set_flight_path(ui::ArcFlightPath{.shadow = false});
 /// }
 /// @endcode
-struct ArcFlightPath
+LIBWINUI_EXPORT struct ArcFlightPath
 {
     bool shadow = true; ///< A shadow under the element as it flies.
 };
 /// A straight, decelerating 200 ms move with (0.1,0.9)-(0.2,1) easing. Use it for back
 /// navigation.
-struct ShortFlightPath
+LIBWINUI_EXPORT struct ShortFlightPath
 {
 };
 /// A straight move with the service's default duration and easing
 /// (ConnectedAnimationService::default_duration(), default_easing()).
-struct StraightFlightPath
+LIBWINUI_EXPORT struct StraightFlightPath
 {
 };
 /// One of the three paths a connected animation flies.
-using FlightPath = std::variant<ArcFlightPath, ShortFlightPath, StraightFlightPath>;
+LIBWINUI_EXPORT using FlightPath = std::variant<ArcFlightPath, ShortFlightPath, StraightFlightPath>;
 
-class ConnectedAnimationService;
+LIBWINUI_EXPORT class ConnectedAnimationService;
 
 /// The stage a ConnectedAnimation is in.
-enum class ConnectedAnimationState
+LIBWINUI_EXPORT enum class ConnectedAnimationState
 {
     Prepared, ///< snapshot taken, waiting for try_start()
     Started,  ///< try_start() called, waiting for the destination's layout
@@ -92,7 +98,7 @@ enum class ConnectedAnimationState
 ///     }
 /// }
 /// @endcode
-class ConnectedAnimation
+LIBWINUI_EXPORT class ConnectedAnimation
 {
 public:
     /// Non-copyable: the service owns every animation.
@@ -216,7 +222,7 @@ private:
 ///     }
 /// }
 /// @endcode
-class ConnectedAnimationService
+LIBWINUI_EXPORT class ConnectedAnimationService
 {
 public:
     /// An empty service; a Window constructs its own.
@@ -288,3 +294,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

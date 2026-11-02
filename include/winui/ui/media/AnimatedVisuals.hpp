@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/AnimatedVisualSource.hpp"
 #include "winui/render/Renderer.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <unordered_map>
+#endif
 
 namespace ui
 {
@@ -32,7 +38,7 @@ namespace ui
 /// auto player = std::make_unique<ui::AnimatedVisualPlayerControl>();
 /// player->set_source(&settings);
 /// @endcode
-class LottieIconSource : public AnimatedIconSource
+LIBWINUI_EXPORT class LottieIconSource : public AnimatedIconSource
 {
 public:
     /// Always 48x48 DIPs.
@@ -54,7 +60,7 @@ public:
 /// static const ui::AnimatedBackVisualSource back;
 /// ui::AnimatedIcon{.source = &back, .state = std::string{"Normal"}};
 /// @endcode
-class AnimatedBackVisualSource final : public LottieIconSource
+LIBWINUI_EXPORT class AnimatedBackVisualSource final : public LottieIconSource
 {
 public:
     /// The length of the whole animation, from progress 0 to 1, in milliseconds.
@@ -66,7 +72,7 @@ public:
 };
 
 /// A small downward chevron.
-class AnimatedChevronDownSmallVisualSource final : public LottieIconSource
+LIBWINUI_EXPORT class AnimatedChevronDownSmallVisualSource final : public LottieIconSource
 {
 public:
     /// The length of the whole animation, from progress 0 to 1, in milliseconds.
@@ -78,7 +84,7 @@ public:
 };
 
 /// A small chevron turning from right to down.
-class AnimatedChevronRightDownSmallVisualSource final : public LottieIconSource
+LIBWINUI_EXPORT class AnimatedChevronRightDownSmallVisualSource final : public LottieIconSource
 {
 public:
     /// The length of the whole animation, from progress 0 to 1, in milliseconds.
@@ -90,7 +96,7 @@ public:
 };
 
 /// A small chevron turning between up and down.
-class AnimatedChevronUpDownSmallVisualSource final : public LottieIconSource
+LIBWINUI_EXPORT class AnimatedChevronUpDownSmallVisualSource final : public LottieIconSource
 {
 public:
     /// The length of the whole animation, from progress 0 to 1, in milliseconds.
@@ -110,7 +116,7 @@ public:
 ///                  .fallback = ui::symbol_glyph(ui::Symbol::Find),
 ///                  .state    = std::string{"Normal"}};
 /// @endcode
-class AnimatedFindVisualSource final : public LottieIconSource
+LIBWINUI_EXPORT class AnimatedFindVisualSource final : public LottieIconSource
 {
 public:
     /// The length of the whole animation, from progress 0 to 1, in milliseconds.
@@ -122,7 +128,7 @@ public:
 };
 
 /// The three-line navigation menu icon, for a button that opens a navigation pane.
-class AnimatedGlobalNavigationButtonVisualSource final : public LottieIconSource
+LIBWINUI_EXPORT class AnimatedGlobalNavigationButtonVisualSource final : public LottieIconSource
 {
 public:
     /// The length of the whole animation, from progress 0 to 1, in milliseconds.
@@ -134,7 +140,7 @@ public:
 };
 
 /// The settings gear.
-class AnimatedSettingsVisualSource final : public LottieIconSource
+LIBWINUI_EXPORT class AnimatedSettingsVisualSource final : public LottieIconSource
 {
 public:
     /// The length of the whole animation, from progress 0 to 1, in milliseconds.
@@ -146,3 +152,5 @@ public:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

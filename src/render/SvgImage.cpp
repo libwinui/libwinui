@@ -4,6 +4,7 @@
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Utf8Path.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <charconv>
 #include <filesystem>
 #include <fstream>
@@ -18,6 +19,7 @@
 #include <utility>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {

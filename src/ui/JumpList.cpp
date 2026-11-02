@@ -3,7 +3,9 @@
 
 #include "../platform/Backend.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <utility>
+#endif
 
 namespace ui
 {

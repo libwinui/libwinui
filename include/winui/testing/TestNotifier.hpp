@@ -3,10 +3,12 @@
 
 #include "winui/ui/Notification.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <utility>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui::testing
 {

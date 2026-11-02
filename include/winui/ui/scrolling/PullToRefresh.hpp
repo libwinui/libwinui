@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -19,17 +23,19 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// Which way the content is pulled.
-enum class RefreshPullDirection
+LIBWINUI_EXPORT enum class RefreshPullDirection
 {
     LeftToRight, ///< Pulled rightwards from the left edge, while scrolled to the start.
     TopToBottom, ///< Pulled down from the top, while scrolled to the start (the default).
@@ -38,7 +44,7 @@ enum class RefreshPullDirection
 };
 
 /// How the indicator is turned.
-enum class RefreshVisualizerOrientation
+LIBWINUI_EXPORT enum class RefreshVisualizerOrientation
 {
     Auto,                            ///< Turned along the pull.
     Normal,                          ///< Upright.
@@ -47,7 +53,7 @@ enum class RefreshVisualizerOrientation
 };
 
 /// Where a pull to refresh is: idle, being pulled, armed or refreshing.
-enum class PullToRefreshState
+LIBWINUI_EXPORT enum class PullToRefreshState
 {
     Idle,        ///< Not pulled and not refreshing.
     Interacting, ///< Pulled, but not far enough to refresh.
@@ -56,7 +62,7 @@ enum class PullToRefreshState
 };
 
 /// What `on_refresh_state_changed` gets: the state before and after the change.
-struct PullToRefreshStateChangedArgs
+LIBWINUI_EXPORT struct PullToRefreshStateChangedArgs
 {
     PullToRefreshState old_state = PullToRefreshState::Idle; ///< The state it left.
     PullToRefreshState new_state = PullToRefreshState::Idle; ///< The state it is in now.
@@ -97,7 +103,7 @@ struct PullToRefreshStateChangedArgs
 /// ptr->on_refresh_state_changed([](const ui::PullToRefreshStateChangedArgs& args) { /* e.g. show a status text */ });
 /// ptr->request_refresh(); // refresh programmatically, without a pull
 /// @endcode
-class PullToRefreshControl final : public Element
+LIBWINUI_EXPORT class PullToRefreshControl final : public Element
 {
 public:
     /// Pulls TopToBottom, with the default Refresh-symbol indicator and no content.
@@ -309,7 +315,7 @@ private:
 ///     }}},
 /// });
 /// @endcode
-struct PullToRefresh
+LIBWINUI_EXPORT struct PullToRefresh
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<PullToRefresh>` points at.
@@ -371,3 +377,5 @@ struct PullToRefresh
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

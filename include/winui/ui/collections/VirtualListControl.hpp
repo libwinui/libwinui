@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -12,6 +16,7 @@
 #include "winui/ui/scrolling/ScrollBarOverlay.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -19,6 +24,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -48,7 +54,7 @@ namespace ui
 /// auto top_button = std::make_unique<ui::ButtonControl>("Top");
 /// top_button->on_click([observer] { observer->set_scroll_offset(0.0f); }); // back to the top
 /// @endcode
-class VirtualListControl final : public Element, private ScrollProvider
+LIBWINUI_EXPORT class VirtualListControl final : public Element, private ScrollProvider
 {
 public:
     /// Builds the row for item `index`. The list takes ownership and destroys the row once it
@@ -308,3 +314,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

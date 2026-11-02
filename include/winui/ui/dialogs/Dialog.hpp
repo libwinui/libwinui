@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -21,6 +25,7 @@
 #include "winui/ui/text/Text.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <coroutine>
 #include <memory>
 #include <optional>
@@ -28,12 +33,13 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// Which button of a dialog is the default one.
-enum class DialogDefaultButton
+LIBWINUI_EXPORT enum class DialogDefaultButton
 {
     None,      ///< No default button: Enter clicks nothing, no button is accented.
     Primary,   ///< The primary (leftmost) button.
@@ -43,7 +49,7 @@ enum class DialogDefaultButton
 
 /// What closed the dialog. The Close button and Escape report Close; hide() and
 /// Window::close_modal() report None.
-enum class DialogResult
+LIBWINUI_EXPORT enum class DialogResult
 {
     None,      ///< Closed from outside: hide() or Window::close_modal().
     Primary,   ///< Closed by the primary button.
@@ -53,7 +59,7 @@ enum class DialogResult
 
 /// What a Dialog's `on_closing` gets: the result the close reports. The handler returns
 /// ui::Cancel to keep the dialog open.
-struct DialogClosingArgs
+LIBWINUI_EXPORT struct DialogClosingArgs
 {
     DialogResult result = DialogResult::None; ///< Which button (or Escape) is closing it.
 };
@@ -108,7 +114,7 @@ struct DialogClosingArgs
 ///     .content = ui::Text{.text = "Your changes will be lost."},
 /// });
 /// @endcode
-class DialogControl final : public Element
+LIBWINUI_EXPORT class DialogControl final : public Element
 {
 public:
     /// An empty dialog: no title, no content, no buttons.
@@ -292,7 +298,7 @@ protected:
 /// ui::Property<bool> can_save{false};
 /// ui::DialogButton   save_button{ .text = "Save", .enabled = can_save, .on_click = [&] { save(); } };
 /// @endcode
-struct DialogButton
+LIBWINUI_EXPORT struct DialogButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The button's caption; empty leaves the button out.
@@ -330,7 +336,7 @@ struct DialogButton
 ///     .content        = ui::Text{.text = "Your changes will be lost."},
 /// });
 /// @endcode
-struct Dialog
+LIBWINUI_EXPORT struct Dialog
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Dialog>` points at.
@@ -398,10 +404,10 @@ struct Dialog
     [[nodiscard]] std::unique_ptr<Element> build() &&;
 };
 
-class Window;
+LIBWINUI_EXPORT class Window;
 
 /// What `co_await ui::show_dialog(window, spec)` waits on; see show_dialog().
-class DialogAwaiter
+LIBWINUI_EXPORT class DialogAwaiter
 {
 public:
     /// Holds `spec` until the coroutine suspends.
@@ -460,9 +466,11 @@ private:
 ///     status = "Deleted";
 /// }
 /// @endcode
-[[nodiscard]] inline DialogAwaiter show_dialog(Window& window, Dialog spec)
+LIBWINUI_EXPORT [[nodiscard]] inline DialogAwaiter show_dialog(Window& window, Dialog spec)
 {
     return DialogAwaiter{window, std::move(spec)};
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

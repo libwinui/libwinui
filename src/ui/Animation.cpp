@@ -7,6 +7,7 @@
 #include "winui/render/PathGeometry.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <numbers>
 #include <optional>
@@ -17,6 +18,7 @@
 #include <vector>
 
 #include <cmath>
+#endif
 
 namespace ui
 {

@@ -7,8 +7,10 @@
 #include "winui/ui/Element.hpp"
 #include "winui/ui/menus/MenuFlyout.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <vector>
+#endif
 
 namespace ui::detail
 {

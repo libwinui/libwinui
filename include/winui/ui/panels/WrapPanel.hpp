@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -17,18 +21,20 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// Whether a WrapPanel stretches its last child.
-enum class WrapPanelItemsStretch
+LIBWINUI_EXPORT enum class WrapPanelItemsStretch
 {
     None, ///< every child keeps its desired length along the line (the default)
     Last, ///< the panel's last child is widened to the end of its line
@@ -71,7 +77,7 @@ enum class WrapPanelItemsStretch
 /// }
 /// window.set_content(std::move(panel));
 /// @endcode
-class WrapPanelControl final : public Panel
+LIBWINUI_EXPORT class WrapPanelControl final : public Panel
 {
 public:
     /// An empty horizontal panel with no spacing, no padding and no stretch.
@@ -214,7 +220,7 @@ private:
 ///     .content      = {chip("Alpha"), chip("Beta item"), chip("Gamma"), chip("Delta item")},
 /// });
 /// @endcode
-struct WrapPanel
+LIBWINUI_EXPORT struct WrapPanel
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<WrapPanel>` points at.
@@ -285,3 +291,5 @@ struct WrapPanel
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

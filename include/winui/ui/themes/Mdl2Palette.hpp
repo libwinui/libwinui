@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 
 namespace ui
@@ -30,7 +34,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-struct Mdl2Palette
+LIBWINUI_EXPORT struct Mdl2Palette
 {
     /// The page color at full opacity: white in light, black in dark.
     Color page_100;
@@ -99,3 +103,5 @@ struct Mdl2Palette
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

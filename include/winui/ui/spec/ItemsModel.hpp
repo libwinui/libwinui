@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 // What the views share: finished controls around a collection (ui::ListView, ui::TileView,
 // ui::TableView), each typed on its item. `.items` is the collection, `.item` is
 // how one item looks, and the handlers receive the item. The controls they build stay
@@ -14,6 +18,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/text/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <concepts>
 #include <memory>
@@ -26,6 +31,7 @@
 
 #include <cassert>
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -33,12 +39,12 @@ namespace ui
 /// An item template in a spec: the Spec for item `index`, which may pick a different look by the
 /// item. Called only for the items a control creates rows for, and it may be called again for an
 /// item later, so it indexes into a model the caller keeps alive for the life of the control.
-using ItemTemplate = Callback<Spec(std::size_t index)>;
+LIBWINUI_EXPORT using ItemTemplate = Callback<Spec(std::size_t index)>;
 
 /// What a typed view's `on_selection_changed` receives: a copy of the selected item (the first one
 /// when several are), or unset when nothing is selected. A copy is safe to keep. For an item type
 /// that cannot be copied it is the selected index instead.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 using SelectedItem = std::conditional_t<std::copy_constructible<T>, std::optional<T>, std::optional<std::size_t>>;
 
 namespace detail
@@ -300,3 +306,5 @@ void move_common(From& from, To& to)
 } // namespace detail
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

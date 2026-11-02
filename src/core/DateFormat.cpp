@@ -3,6 +3,7 @@
 
 #include "winui/core/Property.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <chrono>
 #include <string>
@@ -10,6 +11,7 @@
 #include <utility>
 
 #include <ctime>
+#endif
 
 namespace ui
 {

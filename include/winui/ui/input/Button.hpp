@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -20,16 +24,18 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
 
-class FlyoutBase; // ui/dialogs/Flyout.hpp; a Button only ever points at the flyout that owns it
+LIBWINUI_EXPORT class FlyoutBase; // ui/dialogs/Flyout.hpp; a Button only ever points at the flyout that owns it
 
 /// Which of Theme's per-control token sets a Button draws with.
 ///
@@ -38,7 +44,7 @@ class FlyoutBase; // ui/dialogs/Flyout.hpp; a Button only ever points at the fly
 /// auto save = std::make_unique<ui::ButtonControl>("Save");
 /// save->set_variant(ui::ButtonVariant::Accent); // the one high-emphasis action in the view
 /// @endcode
-enum class ButtonVariant
+LIBWINUI_EXPORT enum class ButtonVariant
 {
     /// The default look: a subtle translucent fill with an elevation border.
     Neutral,
@@ -84,7 +90,7 @@ enum class ButtonVariant
 ///     },
 /// });
 /// @endcode
-class ButtonControl : public Element, protected InvokeProvider
+LIBWINUI_EXPORT class ButtonControl : public Element, protected InvokeProvider
 {
 
     // ---- composition ----
@@ -466,7 +472,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Button
+LIBWINUI_EXPORT struct Button
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Button>` points at.
@@ -549,3 +555,5 @@ struct Button
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

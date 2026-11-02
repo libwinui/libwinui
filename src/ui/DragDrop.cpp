@@ -5,7 +5,9 @@
 #include "winui/core/Geometry.hpp"
 #include "winui/render/RenderRecording.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <utility>
+#endif
 
 namespace ui
 {

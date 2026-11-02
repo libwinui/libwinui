@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -18,6 +22,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/text/Inlines.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -25,12 +30,13 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// What a TextControl shows when its text does not fit the arranged box.
-enum class TextTrimming
+LIBWINUI_EXPORT enum class TextTrimming
 {
     None,              ///< All of the text, clipped at the box (the default).
     CharacterEllipsis, ///< As much as fits, cut between characters, then an ellipsis.
@@ -74,7 +80,7 @@ enum class TextTrimming
 /// block->set_selection_enabled(true);
 /// ui::TextControl* observer = stack->add(std::move(block)); // the stack owns it now
 /// @endcode
-class TextControl final : public Element
+LIBWINUI_EXPORT class TextControl final : public Element
 {
 public:
     /// An empty label.
@@ -417,7 +423,7 @@ protected:
 ///     },
 /// });
 /// @endcode
-struct Text
+LIBWINUI_EXPORT struct Text
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Text>` points at.
@@ -501,3 +507,5 @@ struct Text
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

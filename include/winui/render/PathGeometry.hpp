@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <span>
 #include <string_view>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -14,7 +20,7 @@ namespace ui
 /// Which parts of a self-intersecting or multi-figure geometry are inside.
 /// `EvenOdd` (the default, markup `F0`) alternates at every crossing; `Nonzero` (`F1`) counts
 /// winding direction.
-enum class FillRule
+LIBWINUI_EXPORT enum class FillRule
 {
     EvenOdd, ///< Inside when a ray crosses the outline an odd number of times.
     Nonzero, ///< Inside when the outline winds around the point at all.
@@ -36,7 +42,7 @@ enum class FillRule
 /// // ... draw ...
 /// renderer.pop_transform();
 /// @endcode
-struct Matrix
+LIBWINUI_EXPORT struct Matrix
 {
     float m11 = 1.0f; ///< x scale (and rotation cosine).
     float m12 = 0.0f; ///< How much x feeds y' (rotation / skew).
@@ -97,7 +103,7 @@ struct Matrix
 };
 
 /// Which curve this segment is, and so which of the points it uses.
-enum class PathSegmentKind
+LIBWINUI_EXPORT enum class PathSegmentKind
 {
     Line,      ///< Straight to `p1`.
     Quadratic, ///< Control point `p1`, end `p2`.
@@ -118,7 +124,7 @@ enum class PathSegmentKind
 ///                            .p1   = ui::Point{15, 5},
 ///                            .p2   = ui::Point{10, 10}});
 /// @endcode
-struct PathSegment
+LIBWINUI_EXPORT struct PathSegment
 {
     PathSegmentKind kind = PathSegmentKind::Line; ///< The segment type; decides which points are read.
     Point           p1{};                         ///< The end point of a Line, else the first control point.
@@ -146,7 +152,7 @@ struct PathSegment
 ///     .closed   = true,
 /// });
 /// @endcode
-struct PathFigure
+LIBWINUI_EXPORT struct PathFigure
 {
     Point                    start{};        ///< Where the first segment begins, in DIPs.
     std::vector<PathSegment> segments{};     ///< Each segment continues from the previous end point.
@@ -175,7 +181,7 @@ struct PathFigure
 ///     .stroke = ui::Color::from_rgba(0, 120, 215),
 /// });
 /// @endcode
-class PathGeometry
+LIBWINUI_EXPORT class PathGeometry
 {
 public:
     /// The figures, drawn in order; all share `fill_rule`.
@@ -222,3 +228,5 @@ public:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

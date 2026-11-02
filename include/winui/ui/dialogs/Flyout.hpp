@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,6 +22,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -25,6 +30,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -32,7 +38,7 @@ namespace ui
 class FlyoutSurface; // defined in Flyout.cpp
 
 /// Whether an open flyout takes keyboard focus.
-enum class FlyoutShowMode
+LIBWINUI_EXPORT enum class FlyoutShowMode
 {
     Standard,  ///< takes keyboard focus while open
     Transient, ///< leaves focus where it is
@@ -40,7 +46,7 @@ enum class FlyoutShowMode
 
 /// Where a flyout is in its open and close cycle (FlyoutBase::phase()). During Closing, is_open()
 /// is already false, but the popup keeps drawing and fades out until the close transition ends.
-enum class FlyoutPhase
+LIBWINUI_EXPORT enum class FlyoutPhase
 {
     Closed,  ///< not shown
     Opening, ///< shown, fading in
@@ -72,7 +78,7 @@ enum class FlyoutPhase
 /// flyout->on_closed([](ui::PopupCloseReason) { std::println("flyout closed"); });
 /// window.set_content(std::move(flyout));
 /// @endcode
-class FlyoutBase : public Element
+LIBWINUI_EXPORT class FlyoutBase : public Element
 {
 public:
     /// Takes ownership of the anchor element, replacing any previous one, and returns a non-owning
@@ -379,7 +385,7 @@ protected:
 /// owned->set_content(std::make_unique<ui::TextControl>("Flyout content"));
 /// stack->add(std::move(owned));
 /// @endcode
-class FlyoutControl final : public FlyoutBase
+LIBWINUI_EXPORT class FlyoutControl final : public FlyoutBase
 {
 public:
     /// A flyout with no anchor and no content.
@@ -446,7 +452,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Flyout
+LIBWINUI_EXPORT struct Flyout
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Flyout>` points at.
@@ -520,3 +526,5 @@ struct Flyout
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

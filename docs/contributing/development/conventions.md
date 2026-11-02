@@ -20,7 +20,7 @@ include/winui/                     src/
     testing.hpp  the testing tier's umbrella header
 ```
 
-When you add a public header, put it in the `include/` directory that matches where its `.cpp` goes in `src/`. A new `.cpp` also goes into `LIBWINUI_CORE_SOURCES` or, for Windows-only code, `LIBWINUI_WIN32_SOURCES` in the top-level `CMakeLists.txt` (`LIBWINUI_TESTING_SOURCES` for the testing tier, which builds into its own library, `winui::testing`), and a new control's header into `include/winui/winui.hpp`.
+When you add a public header, put it in the `include/` directory that matches where its `.cpp` goes in `src/`. A new `.cpp` also goes into `LIBWINUI_CORE_SOURCES` or, for Windows-only code, `LIBWINUI_WIN32_SOURCES` in the top-level `CMakeLists.txt` (`LIBWINUI_TESTING_SOURCES` for the testing tier, which builds into libraries of its own, `winui::testing` and `winui::testing_headers`), and a new control's header into `include/winui/winui.hpp`.
 
 Private Windows headers that expose backend internals (`src/platform/windows/D2DRenderer.hpp`, `DWriteMeasurer.hpp`, `Win32Launcher.hpp`, ...) stay in `src/` and are never installed.
 
@@ -40,6 +40,17 @@ Every include of a libwinui header spells the full path from `include/`:
 ```
 
 A header then resolves the same way from anywhere, and moving a file is a search-and-replace of one string. clang-format regroups includes into blocks: quoted project headers first, then `<winui/...>`, then standard headers, then the C headers (`<cstddef>`, `<cstdint>`, ...).
+
+## Headers in the Module
+
+The public headers are also the module `winui`: `modules/winui.cppm` includes them inside the module, and every source in `src/` is compiled once more as a unit of it (`cmake/Modules.cmake`). That takes a few rules:
+
+- A core public header includes `winui/Macros.hpp` first and keeps the rest inside `#ifndef LIBWINUI_IMPORTED`. A unit of the module already has the declarations from the module's interface.
+- Standard includes sit inside `#ifndef LIBWINUI_MODULE`, in `include/` and in `src/` alike. In the module the standard library comes from `import std;`, or from the standard headers ahead of the module declaration.
+- Every namespace-scope declaration of the public API starts with `LIBWINUI_EXPORT`: classes, enums, functions, aliases, concepts and `inline constexpr` constants, forward declarations of them too. Names in `ui::detail`, member definitions outside their class and specializations don't get it, except the few a testing header uses (the `install_*` seams, `WindowHost`, `Compositor`): `winui.testing` is a module of its own and sees only what `winui` exports. A declaration without it is missing from `import winui;`.
+- A private header in `src/` writes `inline` on a member function it defines inside its class. In a module such a function is not implicitly inline, and several units include the header, so each would define it again.
+- A core header that forward-declares a class of `ui::testing` marks the declaration `extern "C++"`. The module `winui.testing` exports its headers from an `extern "C++"` block, so they need none of the markers.
+- A macro goes into `winui/Macros.hpp`, since a module exports none.
 
 ## Namespaces
 

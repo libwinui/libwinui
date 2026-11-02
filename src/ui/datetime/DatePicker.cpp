@@ -7,12 +7,14 @@
 #include "winui/ui/spec/Common.hpp"
 #include "winui/ui/spec/Control.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <array>
 #include <chrono>
 #include <string>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {

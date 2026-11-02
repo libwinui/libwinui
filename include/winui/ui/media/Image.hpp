@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -17,10 +21,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -51,7 +57,7 @@ namespace ui
 /// auto* pause = stack->add(std::make_unique<ui::ButtonControl>("Pause"));
 /// pause->on_click([gif] { gif->is_playing() ? gif->stop() : gif->play(); });
 /// @endcode
-class ImageControl final : public Element
+LIBWINUI_EXPORT class ImageControl final : public Element
 {
 public:
     /// An empty image. It measures to zero and draws nothing.
@@ -215,7 +221,7 @@ private:
 ///     ui::Button{.text = "Next", .on_click = [&] { choice = (choice.get() + 1) % 2; }},
 /// }});
 /// @endcode
-struct Image
+LIBWINUI_EXPORT struct Image
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Image>` points at.
@@ -274,3 +280,5 @@ struct Image
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

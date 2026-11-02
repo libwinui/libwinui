@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 /// @file
 /// The umbrella header, and the one include an app needs: core value types and `Property<T>`,
 /// the render abstraction, every spec and control, `Window` and the app loop, all in namespace
@@ -227,3 +231,5 @@
 #include "winui/ui/spec/ItemsModel.hpp"
 #include "winui/ui/spec/LayoutSpec.hpp"
 #include "winui/ui/spec/Spec.hpp"
+
+#endif // LIBWINUI_IMPORTED

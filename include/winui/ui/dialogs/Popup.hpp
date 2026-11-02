@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,10 +22,12 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -58,7 +64,7 @@ namespace ui
 ///     .content       = ui::Text{.text = "Simple Popup"},
 /// }); // add `node` to any panel
 /// @endcode
-class PopupControl final : public Element
+LIBWINUI_EXPORT class PopupControl final : public Element
 {
 public:
     /// A closed popup with no child, zero offsets and light dismiss off. Not hit-test visible: it
@@ -208,7 +214,7 @@ private:
 ///                .content           = ui::Text{ .text = "Simple Popup" } },
 /// }});
 /// @endcode
-struct Popup
+LIBWINUI_EXPORT struct Popup
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Popup>` points at.
@@ -276,3 +282,5 @@ struct Popup
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

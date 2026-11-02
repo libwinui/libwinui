@@ -3,6 +3,7 @@
 
 #include "winui/core/Utf8.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <atomic>
 #include <string>
@@ -10,6 +11,7 @@
 #include <utility>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {

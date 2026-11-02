@@ -20,6 +20,7 @@
 #include "winui/ui/text/TextBox.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <limits>
 #include <memory>
@@ -28,6 +29,7 @@
 #include <utility>
 
 #include <cmath>
+#endif
 
 namespace ui
 {

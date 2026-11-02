@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Duration.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Renderer.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <unordered_map>
+#endif
 
 namespace ui
 {
@@ -43,7 +49,7 @@ namespace ui
 /// static const Pulse pulse; // must outlive the player
 /// window.set_content(ui::AnimatedVisualPlayer{.source = &pulse, .width = 96, .height = 96});
 /// @endcode
-class AnimatedVisualSource
+LIBWINUI_EXPORT class AnimatedVisualSource
 {
 public:
     virtual ~AnimatedVisualSource() = default;
@@ -116,7 +122,7 @@ public:
 /// icon->set_source(&pulse);
 /// icon->set_state("PointerOver"); // animates from 0 toward 0.5
 /// @endcode
-class AnimatedIconSource : public AnimatedVisualSource
+LIBWINUI_EXPORT class AnimatedIconSource : public AnimatedVisualSource
 {
 public:
     /// State name to the normalized progress (0..1) its pose sits at. Transition segments such
@@ -133,3 +139,5 @@ public:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

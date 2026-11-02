@@ -4,12 +4,14 @@
 #include "winui/ui/Element.hpp"
 #include "winui/ui/layouts/Layout.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <limits>
 #include <optional>
 #include <vector>
 
 #include <cmath>
 #include <cstddef>
+#endif
 
 namespace ui::detail
 {
@@ -19,59 +21,62 @@ struct OrientationMeasures
 {
     bool vertical_scroll = true; // the major axis is y
 
-    [[nodiscard]] float major(Size s) const
+    [[nodiscard]] inline float major(Size s) const
     {
         return vertical_scroll ? s.height : s.width;
     }
-    [[nodiscard]] float minor(Size s) const
+    [[nodiscard]] inline float minor(Size s) const
     {
         return vertical_scroll ? s.width : s.height;
     }
-    [[nodiscard]] float major_start(const Rect& r) const
+    [[nodiscard]] inline float major_start(const Rect& r) const
     {
         return vertical_scroll ? r.y : r.x;
     }
-    [[nodiscard]] float minor_start(const Rect& r) const
+    [[nodiscard]] inline float minor_start(const Rect& r) const
     {
         return vertical_scroll ? r.x : r.y;
     }
-    [[nodiscard]] float major_size(const Rect& r) const
+    [[nodiscard]] inline float major_size(const Rect& r) const
     {
         return vertical_scroll ? r.height : r.width;
     }
-    [[nodiscard]] float minor_size(const Rect& r) const
+    [[nodiscard]] inline float minor_size(const Rect& r) const
     {
         return vertical_scroll ? r.width : r.height;
     }
-    [[nodiscard]] float major_end(const Rect& r) const
+    [[nodiscard]] inline float major_end(const Rect& r) const
     {
         return major_start(r) + major_size(r);
     }
-    [[nodiscard]] float minor_end(const Rect& r) const
+    [[nodiscard]] inline float minor_end(const Rect& r) const
     {
         return minor_start(r) + minor_size(r);
     }
-    void set_major_start(Rect& r, float v) const
+    inline void set_major_start(Rect& r, float v) const
     {
         (vertical_scroll ? r.y : r.x) = v;
     }
-    void set_minor_start(Rect& r, float v) const
+    inline void set_minor_start(Rect& r, float v) const
     {
         (vertical_scroll ? r.x : r.y) = v;
     }
-    void set_major_size(Rect& r, float v) const
+    inline void set_major_size(Rect& r, float v) const
     {
         (vertical_scroll ? r.height : r.width) = v;
     }
-    void set_minor_size(Rect& r, float v) const
+    inline void set_minor_size(Rect& r, float v) const
     {
         (vertical_scroll ? r.width : r.height) = v;
     }
-    [[nodiscard]] Size make_size(float minor_value, float major_value) const
+    [[nodiscard]] inline Size make_size(float minor_value, float major_value) const
     {
         return vertical_scroll ? Size{minor_value, major_value} : Size{major_value, minor_value};
     }
-    [[nodiscard]] Rect make_rect(float minor_start_value, float major_start_value, float minor_size_value, float major_size_value) const
+    [[nodiscard]] inline Rect make_rect(float minor_start_value,
+                                        float major_start_value,
+                                        float minor_size_value,
+                                        float major_size_value) const
     {
         return vertical_scroll ? Rect{minor_start_value, major_start_value, minor_size_value, major_size_value}
                                : Rect{major_start_value, minor_start_value, major_size_value, minor_size_value};
@@ -126,7 +131,7 @@ public:
         const Element*             last_realized,
         std::size_t                last_index,
         const Rect&                last_bounds) = 0;
-    virtual void on_element_measured(std::size_t index, Size available, Size measure_size, Size desired, Size provisional)
+    inline virtual void on_element_measured(std::size_t index, Size available, Size measure_size, Size desired, Size provisional)
     {
         (void)index;
         (void)available;
@@ -135,7 +140,7 @@ public:
         (void)provisional;
     }
     /// A realized line: `count` items from `start`, `line_size` along the major axis.
-    virtual void on_line_arranged(std::size_t start, std::size_t count, float line_size, VirtualizingLayoutContext& context)
+    inline virtual void on_line_arranged(std::size_t start, std::size_t count, float line_size, VirtualizingLayoutContext& context)
     {
         (void)start;
         (void)count;
@@ -173,54 +178,54 @@ public:
     /// Forget everything (a layout detached from its host, or a property that invalidates it all).
     void reset();
 
-    [[nodiscard]] const Rect& last_extent() const
+    [[nodiscard]] inline const Rect& last_extent() const
     {
         return last_extent_;
     }
-    [[nodiscard]] const OrientationMeasures& om() const
+    [[nodiscard]] inline const OrientationMeasures& om() const
     {
         return om_;
     }
 
     // ---- the realized range ----
-    [[nodiscard]] std::size_t realized_count() const
+    [[nodiscard]] inline std::size_t realized_count() const
     {
         return elements_.size();
     }
-    [[nodiscard]] std::size_t first_realized_index() const
+    [[nodiscard]] inline std::size_t first_realized_index() const
     {
         return first_index_;
     }
-    [[nodiscard]] bool is_realized(std::size_t index) const
+    [[nodiscard]] inline bool is_realized(std::size_t index) const
     {
         return index >= first_index_ && index - first_index_ < elements_.size() &&
                elements_[index - first_index_] != nullptr;
     }
-    [[nodiscard]] Element* realized_element(std::size_t index) const
+    [[nodiscard]] inline Element* realized_element(std::size_t index) const
     {
         return is_realized(index) ? elements_[index - first_index_] : nullptr;
     }
-    [[nodiscard]] Rect realized_bounds(std::size_t index) const
+    [[nodiscard]] inline Rect realized_bounds(std::size_t index) const
     {
         return is_realized(index) ? bounds_[index - first_index_] : Rect{};
     }
 
 private:
     [[nodiscard]] std::optional<std::size_t> anchor_index(Size available, const MeasureParams& params, FlowAlgorithmDelegates& d);
-    void                generate(bool                       forward,
-                                 std::optional<std::size_t> anchor,
-                                 Size                       available,
-                                 const MeasureParams&       params,
-                                 FlowAlgorithmDelegates&    d);
-    [[nodiscard]] Size  measure_element(std::size_t index, Size available, FlowAlgorithmDelegates& d);
-    [[nodiscard]] bool  should_continue_filling(bool forward, std::size_t previous) const;
-    [[nodiscard]] bool  is_window_connected() const;
-    void                discard_outside_window();
-    void                discard_beyond(bool forward, std::size_t index);
-    void                clear_realized_range();
-    void                ensure_realized(std::size_t index);
-    void                raise_line_arranged(FlowAlgorithmDelegates& d);
-    [[nodiscard]] Rect& bounds_at(std::size_t index)
+    void                       generate(bool                       forward,
+                                        std::optional<std::size_t> anchor,
+                                        Size                       available,
+                                        const MeasureParams&       params,
+                                        FlowAlgorithmDelegates&    d);
+    [[nodiscard]] Size         measure_element(std::size_t index, Size available, FlowAlgorithmDelegates& d);
+    [[nodiscard]] bool         should_continue_filling(bool forward, std::size_t previous) const;
+    [[nodiscard]] bool         is_window_connected() const;
+    void                       discard_outside_window();
+    void                       discard_beyond(bool forward, std::size_t index);
+    void                       clear_realized_range();
+    void                       ensure_realized(std::size_t index);
+    void                       raise_line_arranged(FlowAlgorithmDelegates& d);
+    [[nodiscard]] inline Rect& bounds_at(std::size_t index)
     {
         return bounds_[index - first_index_];
     }

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 
 namespace ui
@@ -25,7 +29,7 @@ namespace ui
 /// ui::Theme theme = ui::Theme::metro(palette, /*dark=*/true);
 /// window.pin_theme(std::move(theme)); // every control picks up the new colors
 /// @endcode
-struct MetroPalette
+LIBWINUI_EXPORT struct MetroPalette
 {
     // ---- Page-level ----
     Color page_background;      ///< Page fill.
@@ -104,3 +108,5 @@ struct MetroPalette
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

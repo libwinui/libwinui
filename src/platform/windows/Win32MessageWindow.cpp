@@ -3,8 +3,10 @@
 
 #include "Win32MessageWindow.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <utility>
+#endif
 
 namespace ui::win32
 {

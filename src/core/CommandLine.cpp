@@ -3,10 +3,12 @@
 
 #include "winui/core/Utf8.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -20,8 +22,10 @@
 #include <shellapi.h> // needs windows.h ahead of it
 // clang-format on
 #else
+#ifndef LIBWINUI_MODULE
 #include <fstream>
 #include <iterator>
+#endif
 #endif
 
 namespace ui

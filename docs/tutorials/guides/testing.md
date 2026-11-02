@@ -12,7 +12,17 @@ target_compile_features(my_app_tests PRIVATE cxx_std_23)
 target_link_libraries(my_app_tests PRIVATE winui::testing Catch2::Catch2WithMain)
 ```
 
-Include `<winui/testing.hpp>` next to `<winui/winui.hpp>`. Everything in it is in namespace `ui::testing`.
+Write `import winui.testing;` after the standard includes and the test framework's headers. It re-exports `winui`, and everything it adds is in namespace `ui::testing`:
+
+```cpp
+#include <string>
+
+#include <catch2/catch_test_macros.hpp>
+
+import winui.testing;
+```
+
+With the headers, link `winui::testing_headers` and include `<winui/testing.hpp>` next to `<winui/winui.hpp>`.
 
 ## A Headless Window
 

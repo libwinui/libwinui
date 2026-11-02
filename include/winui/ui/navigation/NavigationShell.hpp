@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -29,6 +33,7 @@
 #include "winui/ui/status/InfoBadge.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <concepts>
 #include <memory>
@@ -40,17 +45,18 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class ButtonControl;
-class ToolTipControl;
+LIBWINUI_EXPORT class ButtonControl;
+LIBWINUI_EXPORT class ToolTipControl;
 class NavFlyoutList; // NavigationShell.cpp: the rows of a children or overflow flyout
 class NavPaneButtonContent;
 
 /// Where a NavigationShell puts its items.
-enum class NavigationShellPaneDisplayMode
+LIBWINUI_EXPORT enum class NavigationShellPaneDisplayMode
 {
     /// Expanded from expanded_mode_threshold_width() on, Minimal below
     /// compact_mode_threshold_width(), Compact between.
@@ -66,7 +72,7 @@ enum class NavigationShellPaneDisplayMode
 };
 
 /// What a NavigationShell's pane is doing right now.
-enum class NavigationShellDisplayMode
+LIBWINUI_EXPORT enum class NavigationShellDisplayMode
 {
     /// No pane showing while closed. An open pane overlays the content and closes on a click
     /// outside it.
@@ -78,7 +84,7 @@ enum class NavigationShellDisplayMode
 };
 
 /// Whether a NavigationShell selects the item the arrow keys land on.
-enum class NavigationShellSelectionFollowsFocus
+LIBWINUI_EXPORT enum class NavigationShellSelectionFollowsFocus
 {
     /// The default: the arrow keys move a cursor, Enter/Space select.
     Disabled,
@@ -87,7 +93,7 @@ enum class NavigationShellSelectionFollowsFocus
 };
 
 /// What a NavEntry is: an item, a section header or a separator.
-enum class NavEntryKind
+LIBWINUI_EXPORT enum class NavEntryKind
 {
     /// A selectable, invokable row.
     Item,
@@ -123,7 +129,7 @@ enum class NavEntryKind
 ///
 /// nav->set_items(std::move(items)); // pre-order indices: Home 0, Mail 1, Inbox 2, Sent 3
 /// @endcode
-struct NavEntry
+LIBWINUI_EXPORT struct NavEntry
 {
     /// The row's text; a header's title. Also the tooltip and the
     /// automation value when the item is selected.
@@ -161,7 +167,7 @@ struct NavEntry
 
 /// What NavigationShellControl::on_expanded_changed() gets: the group whose expansion changed, and
 /// whether it is expanded now.
-struct NavigationShellExpandedChangedArgs
+LIBWINUI_EXPORT struct NavigationShellExpandedChangedArgs
 {
     std::size_t index    = 0;     ///< The group's pre-order index.
     bool        expanded = false; ///< True when it opened.
@@ -204,7 +210,7 @@ struct NavigationShellExpandedChangedArgs
 ///                           ui::NavItem{.text = "Mail", .key = "mail", .icon = ui::symbol_glyph(ui::Symbol::Mail)}},
 /// });
 /// @endcode
-class NavigationShellControl final : public Element, private ValueProvider
+LIBWINUI_EXPORT class NavigationShellControl final : public Element, private ValueProvider
 {
     /// Forwards to the owned elements and the active content.
     void sync_composition_override(detail::Compositor& compositor, const Theme& theme) override;
@@ -1101,11 +1107,11 @@ private:
     }
 };
 
-struct NavItem;
+LIBWINUI_EXPORT struct NavItem;
 
 /// A built, owned list of navigation entries, the braced-list form of the move-only ui::NavEntry.
 /// Callers never name it, since a braced list of `ui::NavItem{...}` converts to it.
-class NavList
+LIBWINUI_EXPORT class NavList
 {
 public:
     /// One entry with its content and badge already built; mirrors ui::NavItem's fields.
@@ -1166,7 +1172,7 @@ private:
 ///                  ui::NavItem{ .text = "CheckBox", .key = "checkbox", .content = ui::Text{ .text = "CheckBox page" } },
 ///              } }
 /// @endcode
-struct NavItem
+LIBWINUI_EXPORT struct NavItem
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     // ---- properties ----
@@ -1239,7 +1245,7 @@ inline void NavList::add(NavItem&& item)
 ///     .footer_items = { ui::NavItem{ .text = "Account", .key = "account", .icon = ui::glyphs::Contact } },
 /// });
 /// @endcode
-struct NavigationShell
+LIBWINUI_EXPORT struct NavigationShell
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<NavigationShell>` points at.
@@ -1358,3 +1364,5 @@ struct NavigationShell
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

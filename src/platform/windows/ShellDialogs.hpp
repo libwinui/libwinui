@@ -6,11 +6,13 @@
 #include "winui/core/Strings.hpp"
 #include "winui/ui/Pickers.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <optional>
 #include <span>
 #include <string>
 #include <vector>
+#endif
 
 namespace ui
 {

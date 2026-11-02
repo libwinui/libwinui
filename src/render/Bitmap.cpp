@@ -7,6 +7,7 @@
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Utf8Path.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <atomic>
 #include <filesystem>
 #include <ios>
@@ -17,17 +18,20 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 #ifdef _WIN32
 #include "../platform/windows/WicDecoder.hpp"
 #endif
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <fstream>
 #include <iterator>
 #include <stdexcept>
 
 #include <cmath>
+#endif
 
 namespace ui
 {

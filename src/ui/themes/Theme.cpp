@@ -10,8 +10,10 @@
 #include "winui/ui/themes/ClassicPalette.hpp"
 #include "winui/ui/themes/Palette.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <atomic>
 #include <optional>
+#endif
 
 namespace ui
 {

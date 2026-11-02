@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -23,6 +27,7 @@
 #include "winui/ui/text/TextBox.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -31,6 +36,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -43,7 +49,7 @@ class AutoSuggestBoxPopup; // defined in AutoSuggestBox.cpp
 
 /// Why the text box's text changed. Lets an `on_text_changed` handler tell the user's typing,
 /// which is worth filtering suggestions for, apart from the text this control writes itself.
-enum class AutoSuggestBoxTextChangeReason
+LIBWINUI_EXPORT enum class AutoSuggestBoxTextChangeReason
 {
     UserInput,          ///< The user typed, deleted or pasted text.
     ProgrammaticChange, ///< Escape, or an arrow key past either end of the list, restored the typed text.
@@ -51,14 +57,14 @@ enum class AutoSuggestBoxTextChangeReason
 };
 
 /// What an AutoSuggestBox's `on_text_changed` gets: the text and what changed it.
-struct AutoSuggestBoxTextChangedArgs
+LIBWINUI_EXPORT struct AutoSuggestBoxTextChangedArgs
 {
     const std::string&             text;   ///< The text now in the box.
     AutoSuggestBoxTextChangeReason reason; ///< UserInput is the one to update the suggestions on.
 };
 
 /// What `on_query_submitted` gets: the text, and the suggestion it came from, if any.
-struct AutoSuggestBoxQuerySubmittedArgs
+LIBWINUI_EXPORT struct AutoSuggestBoxQuerySubmittedArgs
 {
     const std::string&         query_text;        ///< The submitted text.
     std::optional<std::size_t> chosen_suggestion; ///< The suggestion's index; unset for typed text.
@@ -98,7 +104,7 @@ struct AutoSuggestBoxQuerySubmittedArgs
 /// });
 /// window.set_content(std::move(box));
 /// @endcode
-class AutoSuggestBoxControl final : public Element, private ValueProvider
+LIBWINUI_EXPORT class AutoSuggestBoxControl final : public Element, private ValueProvider
 {
 public:
     /// An empty box with no suggestions, header or query button.
@@ -449,7 +455,7 @@ private:
 ///     { std::println("Search for {}", args.query_text); },
 /// });
 /// @endcode
-struct AutoSuggestBox
+LIBWINUI_EXPORT struct AutoSuggestBox
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<AutoSuggestBox>` points at.
@@ -523,3 +529,5 @@ struct AutoSuggestBox
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

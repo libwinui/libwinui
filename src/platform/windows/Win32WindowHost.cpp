@@ -43,31 +43,34 @@
 #include "winui/ui/hosting/NativeControl.hpp" // WM_CONTEXTMENU routes a child HWND back to its Element
 #include "winui/ui/themes/Theme.hpp"
 
-#include <algorithm>
 #include <d2d1.h>
 #include <dwmapi.h>
 #include <dwrite.h>
-#include <imm.h> // after <windows.h>, which it needs
-#include <memory>
-#include <optional>
+#include <imm.h>             // after <windows.h>, which it needs
 #include <shellapi.h>        // SHAppBarMessage: the auto-hide taskbar gap
 #include <shellscalingapi.h> // GetDpiForMonitor: WindowPlacement's DIPs
 #include <shlobj.h>          // IDropTargetHelper, DROPDESCRIPTION
-#include <span>
-#include <string>
-#include <string_view>
-#include <utility>
-#include <uxtheme.h> // SetWindowThemeAttribute: WindowStyle::caption_title/caption_icon
-#include <vector>
+#include <uxtheme.h>         // SetWindowThemeAttribute: WindowStyle::caption_title/caption_icon
 #include <windows.h>
 #include <windowsx.h> // GET_X_LPARAM / GET_Y_LPARAM
 #include <wrl/client.h>
 #include <wtsapi32.h> // WTSRegisterSessionNotification: a remote session turns transparency off
 
+#ifndef LIBWINUI_MODULE
+#include <algorithm>
+#include <memory>
+#include <optional>
+#include <span>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
+
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
 #include <cwchar>
+#endif
 
 namespace ui::win32
 {

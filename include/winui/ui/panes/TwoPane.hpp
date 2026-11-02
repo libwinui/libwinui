@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -17,17 +21,19 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
 
 /// Which pane wins when the available space fits neither Wide nor Tall.
-enum class TwoPanePriority
+LIBWINUI_EXPORT enum class TwoPanePriority
 {
     Pane1, ///< Show pane 1 alone (the default).
     Pane2, ///< Show pane 2 alone.
@@ -36,7 +42,7 @@ enum class TwoPanePriority
 /// Which axis, if either, the two panes are split along, as mode() reports it. The order of the
 /// panes on that axis comes from TwoPaneWideModeConfiguration or TwoPaneTallModeConfiguration, so
 /// mode() does not tell LeftRight from RightLeft.
-enum class TwoPaneMode
+LIBWINUI_EXPORT enum class TwoPaneMode
 {
     SinglePane, ///< Only the pane_priority() pane is shown.
     Wide,       ///< Both panes, side by side.
@@ -44,7 +50,7 @@ enum class TwoPaneMode
 };
 
 /// How the panes are arranged once the width qualifies for Wide.
-enum class TwoPaneWideModeConfiguration
+LIBWINUI_EXPORT enum class TwoPaneWideModeConfiguration
 {
     SinglePane, ///< Never split horizontally; fall through to the Tall test.
     LeftRight,  ///< Pane 1 on the left (the default).
@@ -52,7 +58,7 @@ enum class TwoPaneWideModeConfiguration
 };
 
 /// How the panes are arranged once the height qualifies for Tall.
-enum class TwoPaneTallModeConfiguration
+LIBWINUI_EXPORT enum class TwoPaneTallModeConfiguration
 {
     SinglePane, ///< Never stack; show a single pane instead.
     TopBottom,  ///< Pane 1 on top (the default).
@@ -88,7 +94,7 @@ enum class TwoPaneTallModeConfiguration
 ///     .pane2               = ui::Text{.text = "Detail"},
 /// });
 /// @endcode
-class TwoPaneControl final : public Element
+LIBWINUI_EXPORT class TwoPaneControl final : public Element
 {
 public:
     /// An empty view: no panes, pane 1 Auto, pane 2 one fraction, both thresholds 641 DIPs.
@@ -300,7 +306,7 @@ private:
 ///     .pane2               = ui::Text{.text = "Select an item"},
 /// });
 /// @endcode
-struct TwoPane
+LIBWINUI_EXPORT struct TwoPane
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<TwoPane>` points at.
@@ -369,3 +375,5 @@ struct TwoPane
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

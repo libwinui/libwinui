@@ -5,10 +5,12 @@
 #include "winui/core/Input.hpp"
 #include "winui/render/Symbol.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <string_view>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {

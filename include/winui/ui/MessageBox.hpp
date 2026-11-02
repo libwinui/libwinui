@@ -1,17 +1,23 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
+#endif
 
 namespace ui
 {
 
-class Window;
+LIBWINUI_EXPORT class Window;
 
 /// The buttons a message box offers (MessageBoxOptions::buttons).
-enum class MessageBoxButtons
+LIBWINUI_EXPORT enum class MessageBoxButtons
 {
     Ok,          ///< OK. The default.
     OkCancel,    ///< OK and Cancel.
@@ -21,7 +27,7 @@ enum class MessageBoxButtons
 };
 
 /// The icon beside a message box's text (MessageBoxOptions::icon).
-enum class MessageBoxIcon
+LIBWINUI_EXPORT enum class MessageBoxIcon
 {
     None,        ///< No icon. The default.
     Information, ///< The system information icon.
@@ -31,7 +37,7 @@ enum class MessageBoxIcon
 
 /// The button the user chose, what ui::message_box() returns. Closing the box with Escape or its
 /// close button is Cancel, or Ok on a box whose only button is OK.
-enum class MessageBoxResult
+LIBWINUI_EXPORT enum class MessageBoxResult
 {
     Ok,
     Cancel,
@@ -41,7 +47,7 @@ enum class MessageBoxResult
 };
 
 /// What ui::message_box() shows. Fill it with designated initializers.
-struct MessageBoxOptions
+LIBWINUI_EXPORT struct MessageBoxOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The box's window title. Empty: the program's file name.
@@ -75,7 +81,7 @@ struct MessageBoxOptions
 ///     save();
 /// }
 /// @endcode
-MessageBoxResult message_box(const Window& owner, const MessageBoxOptions& options);
+LIBWINUI_EXPORT MessageBoxResult message_box(const Window& owner, const MessageBoxOptions& options);
 
 /// ui::message_box() without an owner window, for a message before any window exists (a failed
 /// start-up) or after the last one closed. The box gets a taskbar button of its own.
@@ -94,14 +100,14 @@ MessageBoxResult message_box(const Window& owner, const MessageBoxOptions& optio
 ///     return 0;
 /// }
 /// @endcode
-MessageBoxResult message_box(const MessageBoxOptions& options);
+LIBWINUI_EXPORT MessageBoxResult message_box(const MessageBoxOptions& options);
 
 /// What shows the message boxes ui::message_box() asks for.
 ///
 /// There is one for the whole process: the platform's, or a double a test installs with
 /// `ui::testing::set_message_box_host()`. App code calls ui::message_box() and never needs the
 /// class. It is public so a test double can derive from it.
-class MessageBoxHost
+LIBWINUI_EXPORT class MessageBoxHost
 {
 public:
     virtual ~MessageBoxHost() = default;
@@ -114,8 +120,10 @@ namespace detail
 {
 // The host message_box() uses in place of the platform's, or nullptr for the platform's own.
 // ui::testing::set_message_box_host() is the public way to set it.
-void                          install_message_box_host(MessageBoxHost* host);
-[[nodiscard]] MessageBoxHost* installed_message_box_host();
+LIBWINUI_EXPORT void                          install_message_box_host(MessageBoxHost* host);
+LIBWINUI_EXPORT [[nodiscard]] MessageBoxHost* installed_message_box_host();
 } // namespace detail
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

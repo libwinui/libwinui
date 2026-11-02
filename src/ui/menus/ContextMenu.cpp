@@ -7,10 +7,12 @@
 #include "winui/ui/spec/Common.hpp"
 #include "winui/ui/spec/Control.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {

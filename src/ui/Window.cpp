@@ -36,6 +36,7 @@
 #include "winui/ui/text/Text.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <array>
 #include <functional>
@@ -50,6 +51,7 @@
 
 #include <cmath>
 #include <cstddef>
+#endif
 
 namespace ui
 {

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -16,10 +20,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -51,7 +57,7 @@ namespace ui
 /// ring->set_background(ui::Color::from_argb(0x33808080));
 /// ring->set_value(75.0);
 /// @endcode
-class ProgressRingControl final : public Element, private RangeValueProvider
+LIBWINUI_EXPORT class ProgressRingControl final : public Element, private RangeValueProvider
 {
 
     // ---- compositor layers ----
@@ -228,7 +234,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct ProgressRing
+LIBWINUI_EXPORT struct ProgressRing
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ProgressRing>` points at.
@@ -290,3 +296,5 @@ struct ProgressRing
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

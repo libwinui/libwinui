@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Property.hpp"
@@ -14,9 +18,11 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -39,7 +45,7 @@ namespace ui
 ///     .content = ui::CheckBox{.text = "Show the status bar"},
 /// });
 /// @endcode
-class GroupBoxControl final : public ContentHost
+LIBWINUI_EXPORT class GroupBoxControl final : public ContentHost
 {
 public:
     /// Returns false, so the group box is hit anywhere in its bounds, even where it draws nothing.
@@ -117,7 +123,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct GroupBox
+LIBWINUI_EXPORT struct GroupBox
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<GroupBox>` points at.
@@ -171,3 +177,5 @@ struct GroupBox
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

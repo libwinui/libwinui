@@ -4,11 +4,13 @@
 #include "WindowRegistry.hpp"
 #include "winui/ui/Window.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <mutex>
 #include <unordered_map>
 #include <utility>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {

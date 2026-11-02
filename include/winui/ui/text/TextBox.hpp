@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -25,6 +29,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -35,13 +40,14 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
 /// What a TextBox's `on_edit` gets: `removed` at `position` became `inserted`. Byte offsets into
 /// the text before the change; the views are valid during the call.
-struct TextBoxEditArgs
+LIBWINUI_EXPORT struct TextBoxEditArgs
 {
     std::size_t      position = 0; ///< Where the change starts.
     std::string_view removed;      ///< The text that was there.
@@ -88,7 +94,7 @@ struct TextBoxEditArgs
 /// code->set_spell_check(false);
 /// code->on_text_changed([](const std::string& text) { /* validate */ });
 /// @endcode
-class TextBoxControl final : public Element, private ValueProvider
+LIBWINUI_EXPORT class TextBoxControl final : public Element, private ValueProvider
 {
 public:
     /// An empty, enabled, single-line box.
@@ -915,7 +921,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct TextBox
+LIBWINUI_EXPORT struct TextBox
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<TextBox>` points at.
@@ -1028,3 +1034,5 @@ struct TextBox
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

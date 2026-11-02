@@ -8,20 +8,23 @@
 #include "winui/core/Utf8.hpp"
 #include "winui/render/SpellChecker.hpp"
 
-#include <map>
-#include <memory>
 #include <objbase.h> // CoInitializeEx/CoCreateInstance; <windows.h> skips it under WIN32_LEAN_AND_MEAN
 #include <spellcheck.h>
+#include <windows.h>
+#include <wrl/client.h>
+
+#ifndef LIBWINUI_MODULE
+#include <map>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <utility>
 #include <vector>
-#include <windows.h>
-#include <wrl/client.h>
 
 #include <cstddef>
 #include <cstdint>
 #include <cwctype>
+#endif
 
 namespace ui::win32
 {

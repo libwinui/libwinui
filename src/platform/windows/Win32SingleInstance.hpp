@@ -4,9 +4,11 @@
 
 #include "winui/ui/SingleInstance.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <string>
 #include <string_view>
+#endif
 
 namespace ui::win32
 {

@@ -3,9 +3,11 @@
 
 #include "winui/core/Duration.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 
 #include <cstdint>
+#endif
 
 namespace ui::testing
 {

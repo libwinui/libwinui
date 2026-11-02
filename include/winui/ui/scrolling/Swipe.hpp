@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -23,6 +27,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <functional>
 #include <memory>
@@ -33,6 +38,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -40,26 +46,26 @@ namespace ui
 /// How a Swipe side shows its items. Reveal opens a drawer of items at their natural widths, as
 /// far as it is dragged. Execute shows one item as wide as the control, invoked by swiping it
 /// all the way, as in "swipe to archive".
-enum class SwipeMode
+LIBWINUI_EXPORT enum class SwipeMode
 {
     Reveal,  ///< A drawer of items at their natural widths. A tap invokes one.
     Execute, ///< One item as wide as the control, invoked by swiping past the threshold.
 };
 
 /// What the strip does after an item is invoked. Auto closes, as Close does, in both modes.
-enum class SwipeBehaviorOnInvoked
+LIBWINUI_EXPORT enum class SwipeBehaviorOnInvoked
 {
     Auto,       ///< Close after the item runs.
     Close,      ///< Close after the item runs.
     RemainOpen, ///< Leave the strip open after the item runs.
 };
 
-class SwipeControl;
-struct SwipeItem;
+LIBWINUI_EXPORT class SwipeControl;
+LIBWINUI_EXPORT struct SwipeItem;
 
 /// The arguments of an item's on_invoked: the item that was invoked, whose text or icon the
 /// handler may change, and the control it was swiped from.
-struct SwipeItemInvokedEventArgs
+LIBWINUI_EXPORT struct SwipeItemInvokedEventArgs
 {
     SwipeControl& swipe_control; ///< The control the item was swiped from.
     SwipeItem&    item;          ///< The invoked item. Its text and icon may be changed here.
@@ -77,7 +83,7 @@ struct SwipeItemInvokedEventArgs
 /// ui::SwipeItem mark_read{ .text       = "Mark read",
 ///                          .on_invoked = [](ui::SwipeItemInvokedEventArgs& e) { e.item.text = "Marked"; } };
 /// @endcode
-class SwipeItemInvokedHandler
+LIBWINUI_EXPORT class SwipeItemInvokedHandler
 {
 public:
     /// No handler. Invoking it does nothing.
@@ -130,7 +136,7 @@ private:
 ///     .on_invoked = [&] { archive_message(); },
 /// };
 /// @endcode
-struct SwipeItem
+LIBWINUI_EXPORT struct SwipeItem
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The text. Falls back to the command's text.
@@ -169,7 +175,7 @@ struct SwipeItem
 
 /// One side's items and how they are revealed. An Execute set shows a single item, as wide as
 /// the control.
-struct SwipeItems
+LIBWINUI_EXPORT struct SwipeItems
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The strip's items, in order from the left.
@@ -211,7 +217,7 @@ struct SwipeItems
 /// swipe->set_left_items({ .items = { reply_item } });
 /// swipe->set_right_items({ .items = { delete_item }, .mode = ui::SwipeMode::Execute });
 /// @endcode
-class SwipeControl final : public Element
+LIBWINUI_EXPORT class SwipeControl final : public Element
 {
 public:
     /// No content and no items; closed.
@@ -417,7 +423,7 @@ protected:
 ///     };
 /// }
 /// @endcode
-struct Swipe
+LIBWINUI_EXPORT struct Swipe
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Swipe>` points at.
@@ -483,3 +489,5 @@ struct Swipe
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

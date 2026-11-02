@@ -15,12 +15,14 @@
 #include "winui/ui/Animation.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <array>
 #include <optional>
 #include <vector>
 
 #include <cmath>
+#endif
 
 namespace ui
 {

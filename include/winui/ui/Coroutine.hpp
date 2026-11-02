@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Scheduler.hpp"
 #include "winui/ui/WindowRef.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <coroutine>
 #include <exception>
+#endif
 
 namespace ui
 {
 
-class Window;
+LIBWINUI_EXPORT class Window;
 
 // ---------------------------------------------------------------------------------------
 // FireAndForget: the coroutine return type for UI work nobody waits on.
@@ -37,7 +43,7 @@ class Window;
 ///     status = std::move(text);
 /// }
 /// @endcode
-class FireAndForget
+LIBWINUI_EXPORT class FireAndForget
 {
 public:
     /// What the compiler needs to make a coroutine of this type.
@@ -72,7 +78,7 @@ public:
 
 /// The awaitable on_ui_thread() returns: posts the resumption to the window through WindowRef.
 /// Only ever awaited, never named.
-class UiThreadHop
+LIBWINUI_EXPORT class UiThreadHop
 {
 public:
     /// That Window, while it exists.
@@ -97,7 +103,7 @@ private:
 
 /// The awaitable on_background() returns: submits the resumption to a scheduler. Only ever
 /// awaited, never named.
-class BackgroundHop
+LIBWINUI_EXPORT class BackgroundHop
 {
 public:
     /// Resumes on one of `scheduler`'s workers.
@@ -149,7 +155,7 @@ private:
 ///     status = std::move(text); // the property's observers run on the UI thread
 /// }
 /// @endcode
-[[nodiscard]] inline UiThreadHop on_ui_thread(WindowRef window) noexcept
+LIBWINUI_EXPORT [[nodiscard]] inline UiThreadHop on_ui_thread(WindowRef window) noexcept
 {
     return UiThreadHop{window};
 }
@@ -158,7 +164,7 @@ private:
 /// created on first use and is never destroyed. Its workers end with the process, so a coroutine
 /// waiting on it at exit is not resumed. A coroutine that hops back to a destroyed Window is
 /// dropped (see on_ui_thread()).
-[[nodiscard]] Scheduler& background_scheduler();
+LIBWINUI_EXPORT [[nodiscard]] Scheduler& background_scheduler();
 
 /// `co_await ui::on_background(scheduler)` resumes the coroutine on one of `scheduler`'s
 /// workers. Code running there must not touch the UI tree. In Scheduler::Inline mode it resumes at
@@ -174,7 +180,7 @@ private:
 /// };
 /// work();
 /// @endcode
-[[nodiscard]] inline BackgroundHop on_background(Scheduler& scheduler) noexcept
+LIBWINUI_EXPORT [[nodiscard]] inline BackgroundHop on_background(Scheduler& scheduler) noexcept
 {
     return BackgroundHop{scheduler};
 }
@@ -186,9 +192,11 @@ private:
 /// The default pool is never joined, so work can still run on it after main() returned and the
 /// Window it hops back to is gone. on_ui_thread() then drops the coroutine. Anything else the
 /// coroutine refers to has to outlive it, or must not be touched after that hop.
-[[nodiscard]] inline BackgroundHop on_background()
+LIBWINUI_EXPORT [[nodiscard]] inline BackgroundHop on_background()
 {
     return BackgroundHop{background_scheduler()};
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

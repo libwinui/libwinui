@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Input.hpp"
 #include "winui/render/Text.hpp"
 #include "winui/ui/Element.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string_view>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -65,7 +71,7 @@ namespace ui
 /// next->on_click([slot] { slot->set_child(std::make_unique<ui::TextControl>("Step 2")); });
 /// window.set_content(std::move(stack));
 /// @endcode
-class ContentHost : public Element
+LIBWINUI_EXPORT class ContentHost : public Element
 {
 public:
     /// An empty host; it measures to nothing until set_child().
@@ -155,3 +161,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

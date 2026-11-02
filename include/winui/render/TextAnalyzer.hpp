@@ -1,11 +1,17 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
 #include <utility>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -46,7 +52,7 @@ namespace ui
 /// // Typed text in an upper-case field.
 /// const std::string typed = analyzer.to_upper("hello"); // "HELLO"
 /// @endcode
-class TextAnalyzer
+LIBWINUI_EXPORT class TextAnalyzer
 {
 public:
     virtual ~TextAnalyzer() = default;
@@ -71,29 +77,33 @@ public:
 
 /// The analyzer in use: the one a host installed with set_text_analyzer(), or the built-in one.
 /// Never null; the reference stays valid while the installed analyzer lives.
-[[nodiscard]] const TextAnalyzer& text_analyzer();
+LIBWINUI_EXPORT [[nodiscard]] const TextAnalyzer& text_analyzer();
 
 /// Installs `analyzer` process-wide; not owned, and it has to outlive its use. nullptr goes
 /// back to the built-in one. The library installs the platform's analyzer at start-up.
-void set_text_analyzer(const TextAnalyzer* analyzer);
+LIBWINUI_EXPORT void set_text_analyzer(const TextAnalyzer* analyzer);
 
 /// Decodes the UTF-8 code point starting at byte `pos`, or 0 at the end.
-[[nodiscard]] char32_t code_point_at(std::string_view text, std::size_t pos);
+LIBWINUI_EXPORT [[nodiscard]] char32_t code_point_at(std::string_view text, std::size_t pos);
 
 /// Decodes the UTF-8 code point that ends at byte `pos`, or 0 at the start.
-[[nodiscard]] char32_t code_point_before(std::string_view text, std::size_t pos);
+LIBWINUI_EXPORT [[nodiscard]] char32_t code_point_before(std::string_view text, std::size_t pos);
 
 /// The run around `pos` whose code points all agree with the one at `pos` (the one before it
 /// at the end) on text_analyzer().is_word_char(): a word, or the spaces and punctuation between
 /// two. What a double-click selects. With `stop_at_line_break` the run never extends across a
 /// '\n'. Returns the half-open byte range `{start, end}`; `{0, 0}` for empty text.
-[[nodiscard]] std::pair<std::size_t, std::size_t> word_run(std::string_view text, std::size_t pos, bool stop_at_line_break);
+LIBWINUI_EXPORT [[nodiscard]] std::pair<std::size_t, std::size_t> word_run(std::string_view text,
+                                                                           std::size_t      pos,
+                                                                           bool             stop_at_line_break);
 
 /// Where Ctrl+Left goes from `pos`: back over white space, then to the start of the word (or the
 /// run of punctuation) before it.
-[[nodiscard]] std::size_t previous_word_start(std::string_view text, std::size_t pos);
+LIBWINUI_EXPORT [[nodiscard]] std::size_t previous_word_start(std::string_view text, std::size_t pos);
 /// Where Ctrl+Right goes from `pos`: past the word (or the run of punctuation) at it, then past the
 /// white space after it, to the start of the next.
-[[nodiscard]] std::size_t next_word_start(std::string_view text, std::size_t pos);
+LIBWINUI_EXPORT [[nodiscard]] std::size_t next_word_start(std::string_view text, std::size_t pos);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

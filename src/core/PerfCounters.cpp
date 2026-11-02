@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 #include "winui/core/PerfCounters.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <atomic>
 #include <chrono>
 
 #include <cstddef>
+#endif
 
 namespace ui::detail
 {

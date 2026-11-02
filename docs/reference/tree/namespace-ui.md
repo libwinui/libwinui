@@ -721,7 +721,8 @@ Any of the four, for [Element::start_animation()](element.md#start_animation).
 ### PageTransition
 
 ```cpp
-using ui::PageTransition = std::variant<RisePageTransition, ZoomPageTransition, NoPageTransition, SlidePageTransition, FadeThroughPageTransition>
+using ui::PageTransition = std::
+   variant<RisePageTransition, ZoomPageTransition, NoPageTransition, SlidePageTransition, FadeThroughPageTransition>
 ```
 
 Header: `winui/ui/Animation.hpp`.
@@ -731,7 +732,8 @@ One of the navigation transitions, passed to [`NavigationFrameControl::navigate(
 ### Transition
 
 ```cpp
-using ui::Transition = std::variant<EntranceTransition, RepositionTransition, ContentTransition, AddRemoveTransition, PopupTransition, NavigationTransition>
+using ui::Transition = std::
+   variant<EntranceTransition, RepositionTransition, ContentTransition, AddRemoveTransition, PopupTransition, NavigationTransition>
 ```
 
 Header: `winui/ui/Animation.hpp`.

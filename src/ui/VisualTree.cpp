@@ -5,8 +5,10 @@
 #include "winui/core/Geometry.hpp"
 #include "winui/core/VisualId.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <cassert>
 #include <cstddef>
+#endif
 
 namespace ui
 {

@@ -3,9 +3,11 @@
 
 #include "winui/ui/JumpList.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui::testing
 {

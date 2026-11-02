@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/ThreadCheck.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <concepts>
 #include <functional>
@@ -20,12 +25,13 @@
 
 #include <cassert>
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class PropertyBase;
-class Element;
+LIBWINUI_EXPORT class PropertyBase;
+LIBWINUI_EXPORT class Element;
 
 // ---------------------------------------------------------------------------------------
 // Subscription: one edge of the observer graph, owned by the observer.
@@ -54,7 +60,7 @@ class Element;
 /// count = 1;   // both handlers fire
 /// sub.reset(); // only the label's remains
 /// @endcode
-class Subscription
+LIBWINUI_EXPORT class Subscription
 {
 public:
     /// A dead subscription observing nothing; alive() is false.
@@ -128,7 +134,7 @@ private:
 /// log.reset();
 /// std::printf("busy has %zu observers\n", busy.observer_count()); // 0
 /// @endcode
-class PropertyBase
+LIBWINUI_EXPORT class PropertyBase
 {
 public:
     /// Not copyable: subscriptions point at this object.
@@ -366,7 +372,7 @@ inline void Subscription::splice_from(Subscription& other) noexcept
 /// // file changed, since a Signal has no value to compare.
 /// window.set_content(ui::Button{.text = "Save", .on_click = [&] { save(); settings_changed.raise(); }});
 /// @endcode
-class Signal : private PropertyBase
+LIBWINUI_EXPORT class Signal : private PropertyBase
 {
 public:
     /// A signal with no observers.
@@ -457,7 +463,7 @@ struct AssignedValue
 ///     },
 /// });
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
     requires std::equality_comparable<T>
 class Property final : public PropertyBase
 {
@@ -603,7 +609,7 @@ private:
     T value_{};
 };
 
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
     requires std::equality_comparable<T>
 class Computed;
 
@@ -664,7 +670,7 @@ template <typename T>
 ///     [](const std::string& f, const std::string& l) { std::println("Hello, {} {}", f, l); }, first, last);
 /// first = "Ada"; // prints "Hello, Ada "
 /// @endcode
-template <typename Fn, typename... Ss>
+LIBWINUI_EXPORT template <typename Fn, typename... Ss>
     requires(sizeof...(Ss) > 0) && (detail::is_source<Ss> && ...) &&
             std::invocable<Fn&, const detail::source_value_t<Ss>&...> &&
             (std::copy_constructible<detail::source_value_t<Ss>> && ...)
@@ -715,7 +721,7 @@ template <typename Fn, typename... Ss>
 }
 
 /// Deleted: the subscription keeps a reference to each source, so none of them can be a temporary.
-template <typename Fn, typename... Sources>
+LIBWINUI_EXPORT template <typename Fn, typename... Sources>
     requires(sizeof...(Sources) > 0) && (detail::is_source<Sources> && ...) &&
                 (std::is_rvalue_reference_v<Sources &&> || ...)
 Subscription observe(Fn fn, Sources&&... sources) = delete;
@@ -748,7 +754,7 @@ Subscription observe(Fn fn, Sources&&... sources) = delete;
 /// window.set_content(ui::Button{.text = "Submit", .enabled = can_submit});
 /// if (can_submit.get()) { save(); }
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
     requires std::equality_comparable<T>
 class Computed
 {
@@ -817,7 +823,7 @@ Computed(Fn, const Ss&...)
 // ---------------------------------------------------------------------------------------
 // Binding<T>: "a value" or "a value that keeps arriving", told apart in the source.
 // ---------------------------------------------------------------------------------------
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 class ObservableVector;
 
 namespace detail
@@ -958,18 +964,18 @@ template <typename U, typename T>
 concept UnsetIntoPlain = OptionalValue<T>::optional && (!OptionalValue<U>::optional);
 } // namespace detail
 
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 class Binding;
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 class TwoWayBinding;
 
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 [[nodiscard]] Binding<T> bind(const Property<T>& source);
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 [[nodiscard]] TwoWayBinding<T> bind(Property<T>& source);
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 [[nodiscard]] Binding<std::vector<T>> bind(ObservableVector<T>& source);
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
     requires std::copy_constructible<T>
 [[nodiscard]] Binding<std::vector<T>> bind(const ObservableVector<T>& source);
 
@@ -1052,7 +1058,7 @@ template <typename T>
 /// ui::Binding<std::string> name = ui::bind(title); // one binding, two fields
 /// ui::VerticalStack{.content = {ui::TextBox{.text = name}, ui::Text{.text = name}}};
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 class Binding
 {
 public:
@@ -1360,7 +1366,7 @@ private:
 /// every field a `Binding<T>` does, except an editable field that can be unset (a TwoWayField
 /// of `std::optional<T>`). Nothing names it; a binding kept in a variable is `auto` or a
 /// `Binding<T>`.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 class TwoWayBinding : public Binding<T>
 {
 public:
@@ -1371,7 +1377,7 @@ public:
 /// list of values. It goes into any index field, one that can show no selection (a ListView's
 /// `selected_index`) and one that always shows one (a Sections control's). Nothing names it; see
 /// bind_choice().
-class ChoiceBinding : public Binding<std::optional<std::size_t>>
+LIBWINUI_EXPORT class ChoiceBinding : public Binding<std::optional<std::size_t>>
 {
 public:
     using Binding<std::optional<std::size_t>>::Binding;
@@ -1406,7 +1412,7 @@ public:
 /// // nothing selected, which `size` cannot hold.
 /// // .value = volume does not compile: a drag to 40.5 does not fit an int.
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 class TwoWayField : public Binding<T>
 {
 public:
@@ -1502,7 +1508,7 @@ public:
 /// ui::CheckBox{.text = "I agree", .checked = agreed};     // two-way, two states
 /// ui::CheckBox{.text = "Select all", .checked = all};     // two-way, shows mixed
 /// @endcode
-class CheckedField : public Binding<std::optional<bool>>
+LIBWINUI_EXPORT class CheckedField : public Binding<std::optional<bool>>
 {
 public:
     using Binding<std::optional<bool>>::Binding;
@@ -1571,7 +1577,7 @@ private:
 /// ui::Property<bool> online{true};
 /// window.set_content(ui::ToggleSwitch{.checked = ui::bind(online)}); // or `.checked = online`
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 [[nodiscard]] Binding<T> bind(const Property<T>& source)
 {
     return Binding<T>{source.get(), detail::attach_property(source)};
@@ -1588,7 +1594,7 @@ template <typename T>
 /// @endcode
 ///
 /// `fn` must be copyable, because it is stored once per subscription edge.
-template <typename T, typename Fn>
+LIBWINUI_EXPORT template <typename T, typename Fn>
     requires std::invocable<Fn&, const T&> && std::copy_constructible<Fn>
 [[nodiscard]] auto bind(const Property<T>& source, Fn fn)
 {
@@ -1620,13 +1626,13 @@ template <typename T, typename Fn>
 ///     .on_value_changed = [&](double v) { if (v <= 0.8) { level = static_cast<float>(v); } },
 /// });
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 [[nodiscard]] Binding<T> bind_one_way(const Property<T>& source)
 {
     return bind(source);
 }
 /// Deleted: a binding keeps a reference to its source, so a temporary Property cannot be bound.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 Binding<T> bind_one_way(const Property<T>&& source) = delete;
 
 /// Binding of a property the app can write, with no conversion. On an editable field (a text
@@ -1650,7 +1656,7 @@ Binding<T> bind_one_way(const Property<T>&& source) = delete;
 /// @endcode
 ///
 /// This overload also keeps ADL from picking std::bind for a non-const lvalue of a std:: type.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 [[nodiscard]] TwoWayBinding<T> bind(Property<T>& source)
 {
     return TwoWayBinding<T>{source.get(),
@@ -1681,7 +1687,7 @@ template <typename T>
 ///     ui::RadioButton{.text = "Large", .checked = ui::selects(size, Size::Large)},
 /// }});
 /// @endcode
-template <typename T, typename V>
+LIBWINUI_EXPORT template <typename T, typename V>
     requires std::constructible_from<T, V> && std::equality_comparable<T>
 [[nodiscard]] TwoWayBinding<bool> selects(Property<T>& source, V&& value)
 {
@@ -1707,7 +1713,7 @@ template <typename T, typename V>
                                static_cast<const void*>(&source)};
 }
 /// Deleted: the binding keeps a reference to its source, so a temporary Property cannot be used.
-template <typename T, typename V>
+LIBWINUI_EXPORT template <typename T, typename V>
 TwoWayBinding<bool> selects(Property<T>&& source, V&& value) = delete;
 
 /// A property holding one of several values, bound two-way to an index field
@@ -1733,7 +1739,7 @@ TwoWayBinding<bool> selects(Property<T>&& source, V&& value) = delete;
 /// };
 /// filter = Filter::Done; // selects "Done"
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
     requires std::equality_comparable<T> && std::copy_constructible<T>
 [[nodiscard]] ChoiceBinding bind_choice(Property<T>& source, std::vector<T> choices)
 {
@@ -1769,7 +1775,7 @@ template <typename T>
                          }};
 }
 /// Deleted: the binding keeps a reference to its source, so a temporary Property cannot be used.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 ChoiceBinding bind_choice(Property<T>&& source, std::vector<T> choices) = delete;
 
 /// As bind_choice() with a fixed list, for a list that changes: the field shows the position of
@@ -1787,7 +1793,7 @@ ChoiceBinding bind_choice(Property<T>&& source, std::vector<T> choices) = delete
 /// });
 /// names = std::vector<std::string>{"Grace", "Ada", "Hedy"}; // the selection moves with "Grace"
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
     requires std::equality_comparable<T> && std::copy_constructible<T>
 [[nodiscard]] ChoiceBinding bind_choice(Property<T>& source, const Property<std::vector<T>>& choices)
 {
@@ -1830,14 +1836,14 @@ template <typename T>
                          }};
 }
 /// Deleted: the binding keeps references to both properties, so neither can be a temporary.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 ChoiceBinding bind_choice(Property<T>&& source, const Property<std::vector<T>>& choices) = delete;
 /// Deleted: the binding keeps references to both properties, so neither can be a temporary.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 ChoiceBinding bind_choice(Property<T>& source, const Property<std::vector<T>>&& choices) = delete;
 
 /// Same as bind(const Property<T>&, Fn); exists so ADL never picks std::bind.
-template <typename T, typename Fn>
+LIBWINUI_EXPORT template <typename T, typename Fn>
     requires std::invocable<Fn&, const T&> && std::copy_constructible<Fn>
 [[nodiscard]] auto bind(Property<T>& source, Fn fn)
 {
@@ -1866,7 +1872,7 @@ template <typename T, typename Fn>
 ///
 /// Three arguments with a Property first: a one-source bind() never considers it, and a
 /// several-source bind() of a function rejects it at once, so it costs other calls nothing.
-template <typename T, typename To, typename From>
+LIBWINUI_EXPORT template <typename T, typename To, typename From>
     requires std::invocable<To&, const T&> && std::copy_constructible<To> && std::copy_constructible<From> &&
              std::invocable<From&, const std::remove_cvref_t<std::invoke_result_t<To&, const T&>>&> &&
              std::convertible_to<std::invoke_result_t<From&, const std::remove_cvref_t<std::invoke_result_t<To&, const T&>>&>, T>
@@ -1887,7 +1893,7 @@ template <typename T, typename To, typename From>
                                  [&source, from](const Result& value) mutable { source.set(T(from(value))); }};
 }
 /// Deleted: the binding keeps a reference to its source, so a temporary Property cannot be bound.
-template <typename T, typename To, typename From>
+LIBWINUI_EXPORT template <typename T, typename To, typename From>
 auto bind(Property<T>&& source, To to, From from) = delete;
 
 /// Several-source binding: `fn(a.get(), b.get(), ...)`, computed again whenever any of the
@@ -1910,7 +1916,7 @@ auto bind(Property<T>&& source, To to, From from) = delete;
 ///     .enabled = ui::bind([](bool is_dirty, bool is_busy) { return is_dirty && !is_busy; }, dirty, busy),
 /// };
 /// @endcode
-template <typename Fn, typename... Ss>
+LIBWINUI_EXPORT template <typename Fn, typename... Ss>
     requires(sizeof...(Ss) > 0) && (detail::is_source<Ss> && ...) &&
             std::invocable<Fn&, const detail::source_value_t<Ss>&...> && std::copy_constructible<Fn> &&
             (std::copy_constructible<detail::source_value_t<Ss>> && ...)
@@ -1944,13 +1950,13 @@ template <typename Fn, typename... Ss>
 }
 
 /// One-way binding of a Computed: its value, verbatim. Same as bind() of a `const Property<T>`.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 [[nodiscard]] Binding<T> bind(const Computed<T>& source)
 {
     return bind(source.property());
 }
 /// One-way binding of a Computed with a transform, as bind(const Property<T>&, Fn).
-template <typename T, typename Fn>
+LIBWINUI_EXPORT template <typename T, typename Fn>
     requires std::invocable<Fn&, const T&> && std::copy_constructible<Fn>
 [[nodiscard]] auto bind(const Computed<T>& source, Fn fn)
 {
@@ -1958,23 +1964,25 @@ template <typename T, typename Fn>
 }
 
 /// Deleted: a binding keeps a reference to its source, so a temporary Property cannot be bound.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 Binding<T> bind(const Property<T>&& source) = delete;
 /// Deleted: a binding keeps a reference to its source, so a temporary Property cannot be bound.
-template <typename T, typename Fn>
+LIBWINUI_EXPORT template <typename T, typename Fn>
 auto bind(const Property<T>&& source, Fn fn) = delete;
 /// Deleted: a binding keeps a reference to its source, so a temporary Computed cannot be bound.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 Binding<T> bind(const Computed<T>&& source) = delete;
 /// Deleted: a binding keeps a reference to its source, so a temporary Computed cannot be bound.
-template <typename T, typename Fn>
+LIBWINUI_EXPORT template <typename T, typename Fn>
 auto bind(const Computed<T>&& source, Fn fn) = delete;
 
 /// Deleted: the several-source form keeps a reference to each source, so none of them can be a
 /// temporary.
-template <typename Fn, typename... Sources>
+LIBWINUI_EXPORT template <typename Fn, typename... Sources>
     requires(sizeof...(Sources) > 0) && (detail::is_source<Sources> && ...) &&
                 (std::is_rvalue_reference_v<Sources &&> || ...)
 auto bind(Fn fn, Sources&&... sources) = delete;
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

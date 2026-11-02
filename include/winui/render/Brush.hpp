@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/OptionalFloat.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <array>
 #include <initializer_list>
@@ -14,6 +19,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -27,7 +33,7 @@ namespace ui
 /// const ui::GradientStop top{0.0f, ui::Color::from_rgba(255, 255, 255)};
 /// const ui::GradientStop bottom{1.0f, ui::Color::from_rgba(200, 200, 200)};
 /// @endcode
-struct GradientStop
+LIBWINUI_EXPORT struct GradientStop
 {
     /// Position along the gradient axis (or out along the radius), 0..1.
     float offset = 0.0f;
@@ -48,7 +54,7 @@ struct GradientStop
 /// stops.push_back({0.5f, ui::Color::from_rgba(128, 128, 128)});
 /// for (const ui::GradientStop& stop : stops) { (void)stop.offset; }
 /// @endcode
-class GradientStops
+LIBWINUI_EXPORT class GradientStops
 {
 public:
     /// How many stops fit without allocating.
@@ -226,7 +232,7 @@ private:
 ///
 /// FillRoundedRectGradient honors all three. StrokeRoundedRectGradient, Fluent's elevation
 /// border, always runs vertically.
-enum class GradientAxis
+LIBWINUI_EXPORT enum class GradientAxis
 {
     Vertical,   ///< Top to bottom, as in Luna and Aero button chrome.
     Horizontal, ///< Left to right, as in 98 and XP caption bars and toolbar backgrounds.
@@ -250,7 +256,7 @@ enum class GradientAxis
 /// auto rect = std::make_unique<ui::RectangleControl>();
 /// rect->set_fill(ui::LinearGradientBrush{.stops = luna.stops, .axis = ui::GradientAxis::Horizontal});
 /// @endcode
-struct LinearGradientBrush
+LIBWINUI_EXPORT struct LinearGradientBrush
 {
     /// The color stops, in increasing `offset` order. Empty paints nothing.
     GradientStops stops;
@@ -262,7 +268,7 @@ struct LinearGradientBrush
 
 /// Whether a gradient's points are fractions of the painted
 /// shape's bounding box (0,0 its top-left, 1,1 its bottom-right) or DIPs from its top-left.
-enum class BrushMappingMode
+LIBWINUI_EXPORT enum class BrushMappingMode
 {
     RelativeToBoundingBox, ///< 0..1 fractions of the bounding box (the default).
     Absolute,              ///< DIPs from the bounding box's top-left.
@@ -270,7 +276,7 @@ enum class BrushMappingMode
 
 /// What a gradient paints past its last stop: the end colors held
 /// (`Pad`), the gradient mirrored (`Reflect`) or started over (`Repeat`).
-enum class GradientSpreadMethod
+LIBWINUI_EXPORT enum class GradientSpreadMethod
 {
     Pad,     ///< The end colors extend outwards (the default).
     Reflect, ///< The gradient repeats mirrored.
@@ -289,7 +295,7 @@ enum class GradientSpreadMethod
 ///     .center = ui::Point{0.25f, 0.25f},
 /// });
 /// @endcode
-struct RadialGradientBrush
+LIBWINUI_EXPORT struct RadialGradientBrush
 {
     /// The color stops, from `gradient_origin` (offset 0) out to the ellipse's edge (offset 1).
     GradientStops stops;
@@ -329,7 +335,7 @@ struct RadialGradientBrush
 ///     .fallback_color = ui::Color::from_rgba(0, 90, 160),
 /// });
 /// @endcode
-struct AcrylicBrush
+LIBWINUI_EXPORT struct AcrylicBrush
 {
     /// The tint laid over the blurred backdrop; its alpha counts.
     Color tint_color = Color::from_argb(0xCCFFFFFF);
@@ -356,6 +362,8 @@ struct AcrylicBrush
 
 /// Any paint a Shape's fill or stroke accepts: a solid `Color` or one
 /// of the brush structs. Renderer::draw_geometry() takes it; control chrome keeps plain `Color`.
-using Brush = std::variant<Color, LinearGradientBrush, RadialGradientBrush, AcrylicBrush>;
+LIBWINUI_EXPORT using Brush = std::variant<Color, LinearGradientBrush, RadialGradientBrush, AcrylicBrush>;
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

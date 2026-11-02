@@ -107,13 +107,14 @@ The formatting buttons call `toggle_bold()` and `toggle_italic()` on the observe
 
 ## Testing With TestNativeHost
 
-A hosted window cannot exist in a headless test, but everything the element asks for can be checked. `ui::testing::TestNativeHost` implements `NativeHost` by recording each call per `VisualId`. Like every test double it is in the testing tier, `<winui/testing.hpp>`, which the test executable gets by linking `winui::testing`:
+A hosted window cannot exist in a headless test, but everything the element asks for can be checked. `ui::testing::TestNativeHost` implements `NativeHost` by recording each call per `VisualId`. Like every test double it is in the testing tier, the module `winui.testing`, which the test executable gets by linking `winui::testing`:
 
 ```cpp
-#include "winui/testing.hpp"
-#include "winui/winui.hpp"
+#include <memory>
 
 #include <catch2/catch_test_macros.hpp>
+
+import winui.testing;
 
 TEST_CASE("A native control is created once and moved with its bounds", "[native]")
 {

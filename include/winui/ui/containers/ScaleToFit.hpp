@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -16,17 +20,19 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <string_view>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
 
 /// Which way a ScaleToFit may scale its child.
-enum class StretchDirection
+LIBWINUI_EXPORT enum class StretchDirection
 {
     UpOnly,   ///< Only enlarge. A child bigger than the room is drawn at its natural size.
     DownOnly, ///< Only shrink. A child smaller than the room is drawn at its natural size.
@@ -57,7 +63,7 @@ enum class StretchDirection
 ///     .content = ui::Text{.text = "42"},
 /// });
 /// @endcode
-class ScaleToFitControl final : public Element
+LIBWINUI_EXPORT class ScaleToFitControl final : public Element
 {
 public:
     /// An empty ScaleToFit, Uniform and Both.
@@ -182,7 +188,7 @@ private:
 ///     .content           = ui::Text{.text = "Scaled to fit", .role = ui::TextRole::Header},
 /// });
 /// @endcode
-struct ScaleToFit
+LIBWINUI_EXPORT struct ScaleToFit
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ScaleToFit>` points at.
@@ -238,3 +244,5 @@ struct ScaleToFit
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

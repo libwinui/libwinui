@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -23,18 +27,20 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// How a SidePane's pane is shown.
-enum class SidePaneDisplayMode
+LIBWINUI_EXPORT enum class SidePaneDisplayMode
 {
     Overlay,        ///< Closed: hidden. Open: the pane lies over the content.
     Inline,         ///< Closed: hidden. Open: the content shrinks to make room beside the pane.
@@ -43,14 +49,14 @@ enum class SidePaneDisplayMode
 };
 
 /// Which side a SidePane's pane is on.
-enum class SidePanePlacement
+LIBWINUI_EXPORT enum class SidePanePlacement
 {
     Left,  ///< The pane on the left, the content to its right.
     Right, ///< The pane on the right.
 };
 
 /// Whether a light-dismissable surface dims what is behind it.
-enum class LightDismissOverlayMode
+LIBWINUI_EXPORT enum class LightDismissOverlayMode
 {
     Auto, ///< Behaves as Off.
     On,   ///< Dim what is behind the open surface.
@@ -88,7 +94,7 @@ enum class LightDismissOverlayMode
 /// split->set_content(std::make_unique<ui::TextControl>("Content"));
 /// split->set_pane_open(true);
 /// @endcode
-class SidePaneControl final : public Element
+LIBWINUI_EXPORT class SidePaneControl final : public Element
 {
 public:
     /// An Overlay view with the pane closed on the left, 320 DIPs open, 48 compact.
@@ -365,7 +371,7 @@ protected:
 ///     }},
 /// });
 /// @endcode
-struct SidePane
+LIBWINUI_EXPORT struct SidePane
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<SidePane>` points at.
@@ -442,3 +448,5 @@ struct SidePane
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED
