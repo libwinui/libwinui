@@ -3,9 +3,11 @@
 
 #include "winui/ui/input/RadioButton.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {

@@ -33,6 +33,7 @@
 #include "winui/ui/scrolling/Scroll.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <any>
 #include <functional>
@@ -48,6 +49,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {

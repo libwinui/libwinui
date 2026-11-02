@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -20,6 +24,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <limits>
 #include <memory>
@@ -30,6 +35,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -76,7 +82,7 @@ namespace ui
 /// flip->on_selection_changed([&page](std::size_t i) { page = i; });
 /// flip->set_selected_index(1); // slides once laid out; fires the handler
 /// @endcode
-class CarouselControl final : public Element, private SelectionProvider
+LIBWINUI_EXPORT class CarouselControl final : public Element, private SelectionProvider
 {
 public:
     /// An empty view: no items, nothing selected, not focusable.
@@ -343,7 +349,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Carousel
+LIBWINUI_EXPORT struct Carousel
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Carousel>` points at.
@@ -409,3 +415,5 @@ struct Carousel
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

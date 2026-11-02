@@ -8,10 +8,12 @@
 #include "winui/ui/ParallelLayout.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <span>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {

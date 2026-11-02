@@ -4,10 +4,12 @@
 #include "winui/render/Bitmap.hpp"
 #include "winui/ui/Clipboard.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <optional>
 #include <string>
 #include <vector>
+#endif
 
 namespace ui::testing
 {

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,6 +22,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <memory>
 #include <optional>
@@ -28,6 +33,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -66,7 +72,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-class TilePanelControl final : public Panel
+LIBWINUI_EXPORT class TilePanelControl final : public Panel
 {
 public:
     /// An empty grid: Vertical, cells sized from the first child, no line cap, Leading alignment.
@@ -262,7 +268,7 @@ private:
 
 /// One child of a TilePanel with the cell rows and columns it spans.
 /// Written inline in the grid's `.content`; see ui::TilePanel for an example.
-struct TilePanelItem
+LIBWINUI_EXPORT struct TilePanelItem
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     int                                               row_span    = 1; ///< Cells covered along the column axis.
@@ -272,7 +278,7 @@ struct TilePanelItem
 
 /// A TilePanel's children, built, in the same shape as CellList. Callers write it as a braced list of
 /// `ui::TilePanelItem{...}`.
-class TilePanelItemList
+LIBWINUI_EXPORT class TilePanelItemList
 {
 public:
     /// One built child with its spans; the node is already owned by the list.
@@ -326,7 +332,7 @@ public:
 ///     },
 /// });
 /// @endcode
-struct TilePanel
+LIBWINUI_EXPORT struct TilePanel
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<TilePanel>` points at.
@@ -393,3 +399,5 @@ struct TilePanel
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

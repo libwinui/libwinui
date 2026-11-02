@@ -4,8 +4,10 @@
 
 #include "winui/render/Bitmap.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <span>
+#endif
 
 namespace ui::win32
 {

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -25,6 +29,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -32,12 +37,13 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// Which axes a Scroll's content is free to grow along.
-enum class ScrollContentOrientation
+LIBWINUI_EXPORT enum class ScrollContentOrientation
 {
     Vertical,   ///< Width fixed to the viewport, height free (the default).
     Horizontal, ///< Height fixed to the viewport, width free.
@@ -46,7 +52,7 @@ enum class ScrollContentOrientation
 };
 
 /// Whether the user can scroll along an axis.
-enum class ScrollMode
+LIBWINUI_EXPORT enum class ScrollMode
 {
     Enabled,  ///< The wheel, the scroll bar and the keys scroll this axis.
     Disabled, ///< User input leaves this axis alone. scroll_to() and the other calls still move it.
@@ -54,7 +60,7 @@ enum class ScrollMode
 };
 
 /// Whether the user can zoom (Ctrl+wheel).
-enum class ScrollZoomMode
+LIBWINUI_EXPORT enum class ScrollZoomMode
 {
     Enabled,  ///< Ctrl+wheel zooms, 10 % a notch.
     Disabled, ///< The default. zoom_to() and zoom_by() still work.
@@ -64,7 +70,7 @@ enum class ScrollZoomMode
 /// toward, goes on to the scroller around it. Auto and Always differ only for touch input, which
 /// the library does not handle, so both pass the turn on. Never keeps the turn, and the page
 /// behind does not move.
-enum class ScrollChainMode
+LIBWINUI_EXPORT enum class ScrollChainMode
 {
     Auto,   ///< Pass the turn on (the default).
     Always, ///< Pass the turn on, the same as Auto without touch.
@@ -72,7 +78,7 @@ enum class ScrollChainMode
 };
 
 /// When a scroll bar shows.
-enum class ScrollBarVisibility
+LIBWINUI_EXPORT enum class ScrollBarVisibility
 {
     Auto,    ///< Shown while its axis is scrollable and its scroll mode enabled.
     Visible, ///< Always shown.
@@ -80,7 +86,7 @@ enum class ScrollBarVisibility
 };
 
 /// Whether a programmatic view change animates.
-enum class ScrollAnimationMode
+LIBWINUI_EXPORT enum class ScrollAnimationMode
 {
     Disabled, ///< Jump straight to the target.
     Enabled,  ///< Animate over a duration that depends on the distance.
@@ -88,7 +94,7 @@ enum class ScrollAnimationMode
 };
 
 /// What is moving the view right now (ScrollControl::state()).
-enum class ScrollInteractionState
+LIBWINUI_EXPORT enum class ScrollInteractionState
 {
     Idle,        ///< Nothing.
     Interaction, ///< A scroll bar thumb is being dragged.
@@ -105,7 +111,7 @@ enum class ScrollInteractionState
 /// // Back to the top at once, no animation.
 /// view->scroll_to(0.0f, 0.0f, {.animation_mode = ui::ScrollAnimationMode::Disabled});
 /// @endcode
-struct ScrollOptions
+LIBWINUI_EXPORT struct ScrollOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// Whether the scroll animates. Auto animates.
@@ -113,7 +119,7 @@ struct ScrollOptions
 };
 
 /// How ScrollControl::zoom_to() and zoom_by() change the zoom.
-struct ScrollZoomOptions
+LIBWINUI_EXPORT struct ScrollZoomOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// Whether the zoom animates. Auto animates.
@@ -123,7 +129,7 @@ struct ScrollZoomOptions
 /// How a key frame eases in from the one before it: a cubic Bézier curve, or a step easing when
 /// `steps` is positive. A step easing jumps in `steps` equal steps, the last of them at the key
 /// frame itself.
-struct KeyFrameEasing
+LIBWINUI_EXPORT struct KeyFrameEasing
 {
     /// The curve, used while `steps` is 0. Fluent's fast-out-slow-in by default.
     CubicBezier curve = easing::ControlFastOutSlowIn;
@@ -139,7 +145,7 @@ struct KeyFrameEasing
 /// One key frame of a scroll animation: at `progress`, 0 to 1 of the duration, the view is at
 /// `offsets`. The offsets are horizontal and vertical, in zoomed DIPs, and are clamped to the
 /// scrollable range as the animation plays.
-struct ScrollKeyFrame
+LIBWINUI_EXPORT struct ScrollKeyFrame
 {
     /// Where in the animation the frame sits, 0..1 of the duration.
     float progress = 1.0f;
@@ -154,7 +160,7 @@ struct ScrollKeyFrame
 /// The key-frame animation a Scroll builds for an animated scroll. By default it is one key
 /// frame at 1.0 on the target, over a duration that depends on the distance. The start at
 /// progress 0 is implicit. Key frames play in `progress` order.
-struct ScrollAnimation
+LIBWINUI_EXPORT struct ScrollAnimation
 {
     /// The whole animation's length.
     Duration duration{};
@@ -177,7 +183,7 @@ struct ScrollAnimation
 ///     };
 /// });
 /// @endcode
-struct ScrollAnimationStarting
+LIBWINUI_EXPORT struct ScrollAnimationStarting
 {
     /// The animation about to play. The handler may change it.
     ScrollAnimation animation;
@@ -191,7 +197,7 @@ struct ScrollAnimationStarting
 
 /// One key frame of a zoom animation. It carries a zoom factor, applied about the
 /// animation's `center_point`.
-struct ZoomKeyFrame
+LIBWINUI_EXPORT struct ZoomKeyFrame
 {
     /// Where in the animation the frame sits, 0..1 of the duration.
     float progress = 1.0f;
@@ -205,7 +211,7 @@ struct ZoomKeyFrame
 
 /// The key-frame animation a Scroll builds for an animated zoom. By default it is one key frame
 /// at 1.0 on the target factor, over 250 ms per whole zoom step, kept within 50 to 1000 ms.
-struct ZoomAnimation
+LIBWINUI_EXPORT struct ZoomAnimation
 {
     /// The whole animation's length.
     Duration duration{};
@@ -215,7 +221,7 @@ struct ZoomAnimation
 
 /// The arguments of ScrollControl::on_zoom_animation_starting(). The handler may edit or
 /// replace `animation`, as in ScrollAnimationStarting.
-struct ZoomAnimationStarting
+LIBWINUI_EXPORT struct ZoomAnimationStarting
 {
     /// The animation about to play. The handler may change it.
     ZoomAnimation animation;
@@ -256,7 +262,7 @@ struct ZoomAnimationStarting
 ///
 /// observer->scroll_to(0.0f, 500.0f); // animated; lands after the first layout if called before it
 /// @endcode
-class ScrollControl final : public Element, private ScrollProvider
+LIBWINUI_EXPORT class ScrollControl final : public Element, private ScrollProvider
 {
 public:
     /// The default min_zoom_factor().
@@ -868,7 +874,7 @@ private:
 ///     },
 /// }});
 /// @endcode
-struct Scroll
+LIBWINUI_EXPORT struct Scroll
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Scroll>` points at.
@@ -969,3 +975,5 @@ struct Scroll
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

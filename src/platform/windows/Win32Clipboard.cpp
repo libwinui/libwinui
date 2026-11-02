@@ -24,6 +24,10 @@
 #include "winui/render/Bitmap.hpp"
 #include "winui/ui/Clipboard.hpp"
 
+#include <winrt/Windows.ApplicationModel.DataTransfer.h>
+#include <winrt/Windows.Foundation.h>
+
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <exception>
 #include <filesystem>
@@ -32,12 +36,11 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <winrt/Windows.ApplicationModel.DataTransfer.h>
-#include <winrt/Windows.Foundation.h>
 
 #include <cstdint>
 #include <cstring>
 #include <cwchar>
+#endif
 
 namespace ui::win32
 {

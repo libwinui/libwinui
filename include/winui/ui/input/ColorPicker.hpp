@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -21,18 +25,20 @@
 #include "winui/ui/text/TextBox.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <memory>
 #include <string>
 #include <utility>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class TextControl;
-class IconControl;
+LIBWINUI_EXPORT class TextControl;
+LIBWINUI_EXPORT class IconControl;
 
 /// A hue/saturation/value/alpha color editor with channel, alpha and hex text entry and a
 /// preview swatch.
@@ -78,7 +84,7 @@ class IconControl;
 ///     },
 /// });
 /// @endcode
-class ColorPickerControl final : public Element
+LIBWINUI_EXPORT class ColorPickerControl final : public Element
 {
 public:
     /// A picker showing `color`; its alpha is kept only when `alpha_enabled`.
@@ -322,7 +328,7 @@ protected:
 ///                .height     = 100.0f},
 /// }});
 /// @endcode
-struct ColorPicker
+LIBWINUI_EXPORT struct ColorPicker
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ColorPicker>` points at.
@@ -386,3 +392,5 @@ struct ColorPicker
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

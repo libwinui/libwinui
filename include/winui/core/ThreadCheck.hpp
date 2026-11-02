@@ -1,24 +1,15 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <source_location>
 #include <string>
 #include <string_view>
 #include <thread>
-
-// ---- the switch ----
-// 1 compiles the thread-affinity checks in, 0 compiles them out. Unset, it follows the build
-// type: on without NDEBUG, off with it. The CMake option LIBWINUI_THREAD_CHECKS (AUTO, ON, OFF) sets
-// it for the library and everything that links it. It never changes a class layout: the owning
-// thread ids are stored either way (one std::thread::id per Window, Element and observed
-// source) and only the checks are switched, so a consumer built with a different NDEBUG than
-// the library still agrees with it on every object it shares.
-#ifndef LIBWINUI_THREAD_CHECKS
-#ifdef NDEBUG
-#define LIBWINUI_THREAD_CHECKS 0
-#else
-#define LIBWINUI_THREAD_CHECKS 1
-#endif
 #endif
 
 namespace ui
@@ -26,10 +17,10 @@ namespace ui
 
 /// Whether this build checks thread affinity (see set_thread_check_handler()); LIBWINUI_THREAD_CHECKS
 /// as a constant.
-inline constexpr bool ThreadChecksEnabled = LIBWINUI_THREAD_CHECKS != 0;
+LIBWINUI_EXPORT inline constexpr bool ThreadChecksEnabled = LIBWINUI_THREAD_CHECKS != 0;
 
 /// One wrong-thread call, handed to the thread check handler.
-struct ThreadCheckFailure
+LIBWINUI_EXPORT struct ThreadCheckFailure
 {
     /// The whole report, e.g. "ui::TextControl::set_text called on thread 1234, but the tree
     /// belongs to thread 5678 (Text.cpp:41)".
@@ -46,7 +37,7 @@ struct ThreadCheckFailure
 
 /// What set_thread_check_handler() installs: called on the offending thread, before the call it
 /// reports goes ahead.
-using ThreadCheckHandler = void (*)(const ThreadCheckFailure&);
+LIBWINUI_EXPORT using ThreadCheckHandler = void (*)(const ThreadCheckFailure&);
 
 /// Replace what a failed thread check does; nullptr restores the default. Returns the handler
 /// it replaced (nullptr for the default). Safe from any thread.
@@ -74,11 +65,11 @@ using ThreadCheckHandler = void (*)(const ThreadCheckFailure&);
 ///     ++failures;
 /// });
 /// @endcode
-ThreadCheckHandler set_thread_check_handler(ThreadCheckHandler handler) noexcept;
+LIBWINUI_EXPORT ThreadCheckHandler set_thread_check_handler(ThreadCheckHandler handler) noexcept;
 
 /// What a failed check does unless set_thread_check_handler() says otherwise: print the message,
 /// then break into an attached debugger or abort. Public so a custom handler can fall back to it.
-void default_thread_check_handler(const ThreadCheckFailure& failure);
+LIBWINUI_EXPORT void default_thread_check_handler(const ThreadCheckFailure& failure);
 
 namespace detail
 {
@@ -101,3 +92,5 @@ private:
 } // namespace detail
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

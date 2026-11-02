@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Version.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
 
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -27,7 +33,7 @@ namespace ui
 ///     return ui::IconGlyph{0xE734, family}; // copies the name
 /// }
 /// @endcode
-class FontName
+LIBWINUI_EXPORT class FontName
 {
 public:
     /// The longest name it holds, in bytes.
@@ -103,7 +109,7 @@ private:
 
 /// Where a text run sits inside the box it is drawn into, per axis (TextStyle::horizontal and
 /// TextStyle::vertical). Leading/Trailing are left/right horizontally and top/bottom vertically.
-enum class TextAlign
+LIBWINUI_EXPORT enum class TextAlign
 {
     Leading,  ///< Left edge horizontally, top edge vertically.
     Center,   ///< Centered on the axis (TextStyle's default for both axes).
@@ -124,7 +130,7 @@ enum class TextAlign
 ///     },
 /// });
 /// @endcode
-enum class TextRole
+LIBWINUI_EXPORT enum class TextRole
 {
     Body,      ///< Running body text; the default.
     Header,    ///< Largest display rung (a page or hub header).
@@ -141,7 +147,7 @@ enum class TextRole
 /// the string is drawn twice, once in the highlight color offset by (1,1) and then in the
 /// shadow color at the origin, for an engraved look. `None` (the default) keeps a single plain
 /// pass.
-enum class TextEffectKind
+LIBWINUI_EXPORT enum class TextEffectKind
 {
     None,   ///< One plain pass in the run's own color.
     Emboss, ///< Highlight pass at the offset, then the shadow pass on the origin.
@@ -158,7 +164,7 @@ enum class TextEffectKind
 /// style.effect = ui::TextEffect{ui::TextEffectKind::Emboss, ui::colors::White,
 ///                                  ui::Color::from_argb(0xFF808080), 1.0f, 1.0f};
 /// @endcode
-struct TextEffect
+LIBWINUI_EXPORT struct TextEffect
 {
     /// Which effect to apply; None disables the extra pass entirely.
     TextEffectKind kind = TextEffectKind::None;
@@ -179,7 +185,7 @@ struct TextEffect
 /// breaks between words, and inside a word too long for a line on its own. `WrapWholeWords`
 /// never splits a word and lets one that doesn't fit overflow instead. Explicit line breaks
 /// (`\n`) start a new line in either mode.
-enum class TextWrapping
+LIBWINUI_EXPORT enum class TextWrapping
 {
     NoWrap,         ///< Everything on one line; the default.
     Wrap,           ///< Break between words, and inside a word too long for a line.
@@ -188,7 +194,7 @@ enum class TextWrapping
 
 /// How a text input control such as TextBox cases what the user types or pastes. Text already
 /// in the control and text set from code keep their case.
-enum class CharacterCasing
+LIBWINUI_EXPORT enum class CharacterCasing
 {
     Normal, ///< Keep the case as typed.
     Lower,  ///< Lower-case typed and pasted text.
@@ -198,7 +204,7 @@ enum class CharacterCasing
 /// Font weight classes, with their OpenType values. Metro's type hierarchy is carried almost
 /// entirely by weight, on a ramp a plain `bool bold` can't express: Header and Subheader are
 /// Light, Body is SemiLight, Title is SemiBold and Caption is Regular.
-enum class FontWeight : std::uint16_t
+LIBWINUI_EXPORT enum class FontWeight : std::uint16_t
 {
     Light     = 300, ///< Light.
     SemiLight = 350, ///< Semilight.
@@ -230,7 +236,7 @@ enum class FontWeight : std::uint16_t
 /// // Or in a spec:
 /// ui::Text{.text = "Account", .text_style = heading};
 /// @endcode
-struct TextStyle
+LIBWINUI_EXPORT struct TextStyle
 {
     /// Font size in DIPs (not points). Default 14.
     float font_size = 14.0f;
@@ -291,7 +297,7 @@ struct TextStyle
 /// const ui::Size        box     = metrics; // width x height
 /// const float           ascent  = metrics.baseline;
 /// @endcode
-struct TextMetrics
+LIBWINUI_EXPORT struct TextMetrics
 {
     /// The widest line's width, in DIPs.
     float width = 0.0f;
@@ -342,7 +348,7 @@ struct TextMetrics
 ///     std::string text_;
 /// };
 /// @endcode
-class TextMeasurer
+LIBWINUI_EXPORT class TextMeasurer
 {
 public:
     virtual ~TextMeasurer() = default;
@@ -361,3 +367,5 @@ public:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

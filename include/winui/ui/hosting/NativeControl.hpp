@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/NativeHandle.hpp"
@@ -15,9 +19,11 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
+#endif
 
 namespace ui
 {
@@ -71,7 +77,7 @@ namespace ui
 ///     .content  = { ui::Text{.text = "Pick a date"}, std::make_unique<MonthCalendar>() },
 /// });
 /// @endcode
-class NativeControl : public Element
+LIBWINUI_EXPORT class NativeControl : public Element
 {
 public:
     /// `desc` describes the window class/style to create; `size` is the fixed desired
@@ -199,7 +205,7 @@ private:
 ///     .control = edit,
 /// });
 /// @endcode
-struct Native
+LIBWINUI_EXPORT struct Native
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Native>` points at.
@@ -252,3 +258,5 @@ struct Native
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

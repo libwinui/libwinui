@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -22,6 +26,7 @@
 #include "winui/ui/text/TextBox.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -29,12 +34,13 @@
 #include <utility>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// How a ui::PasswordBox shows its password.
-enum class PasswordBoxRevealMode
+LIBWINUI_EXPORT enum class PasswordBoxRevealMode
 {
     /// Masked, with a reveal button that shows the password while held down (the default). The
     /// button appears only while the box is focused, for a password typed since the box was last
@@ -74,7 +80,7 @@ enum class PasswordBoxRevealMode
 /// pin->set_reveal_mode(ui::PasswordBoxRevealMode::Hidden);
 /// pin->on_password_changed([](const std::string& p) { /* validate p */ });
 /// @endcode
-class PasswordBoxControl final : public Element, private ValueProvider
+LIBWINUI_EXPORT class PasswordBoxControl final : public Element, private ValueProvider
 {
 public:
     /// An empty, enabled box in Peek mode, masking with U+25CF.
@@ -347,7 +353,7 @@ private:
 ///     .on_submit           = [&] { sign_in(secret); },
 /// });
 /// @endcode
-struct PasswordBox
+LIBWINUI_EXPORT struct PasswordBox
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<PasswordBox>` points at.
@@ -420,3 +426,5 @@ struct PasswordBox
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

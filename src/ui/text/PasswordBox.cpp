@@ -18,11 +18,13 @@
 #include "winui/ui/text/TextBox.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
+#endif
 
 namespace ui
 {

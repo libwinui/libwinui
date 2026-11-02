@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#ifndef LIBWINUI_MODULE
 #include <cstdint>
+#endif
 
 namespace ui
 {

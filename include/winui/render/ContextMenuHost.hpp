@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <string>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -25,7 +31,7 @@ namespace ui
 ///     {"Paste", /*enabled=*/false},
 /// };
 /// @endcode
-struct ContextMenuItem
+LIBWINUI_EXPORT struct ContextMenuItem
 {
     std::string text;                 ///< UTF-8 label; ignored for a separator.
     bool        enabled      = true;  ///< A disabled item shows grayed and can't be picked.
@@ -72,7 +78,7 @@ struct ContextMenuItem
 ///     void      run_command(std::size_t index);
 /// };
 /// @endcode
-class ContextMenuHost
+LIBWINUI_EXPORT class ContextMenuHost
 {
 public:
     virtual ~ContextMenuHost() = default;
@@ -85,3 +91,5 @@ public:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

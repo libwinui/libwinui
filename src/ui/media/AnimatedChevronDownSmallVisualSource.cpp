@@ -8,8 +8,10 @@
 #include "winui/render/Renderer.hpp"
 #include "winui/ui/media/AnimatedVisuals.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <unordered_map>
+#endif
 
 namespace ui
 {

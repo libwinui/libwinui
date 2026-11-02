@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -14,10 +18,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -54,7 +60,7 @@ namespace ui
 /// bar->set_value(0.25);
 /// bar->set_show_paused(true); // amber indicator
 /// @endcode
-class ProgressBarControl final : public Element, private RangeValueProvider
+LIBWINUI_EXPORT class ProgressBarControl final : public Element, private RangeValueProvider
 {
 
     // ---- compositor layers ----
@@ -233,7 +239,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct ProgressBar
+LIBWINUI_EXPORT struct ProgressBar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ProgressBar>` points at.
@@ -295,3 +301,5 @@ struct ProgressBar
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

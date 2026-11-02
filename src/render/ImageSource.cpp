@@ -4,6 +4,7 @@
 #include "winui/core/Scheduler.hpp"
 #include "winui/core/Utf8Path.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <atomic>
 #include <exception>
@@ -14,6 +15,7 @@
 #include <vector>
 
 #include <cctype>
+#endif
 
 namespace ui
 {

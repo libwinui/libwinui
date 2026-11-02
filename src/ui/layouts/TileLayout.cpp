@@ -6,6 +6,7 @@
 #include "winui/ui/Element.hpp"
 #include "winui/ui/layouts/Layout.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -14,6 +15,7 @@
 
 #include <cmath>
 #include <cstddef>
+#endif
 
 namespace ui
 {

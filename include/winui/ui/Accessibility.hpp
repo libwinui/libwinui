@@ -1,9 +1,15 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
+#endif
 
 namespace ui
 {
@@ -36,7 +42,7 @@ namespace ui
 /// auto divider = std::make_unique<ui::TextControl>("|");
 /// divider->set_accessibility({.decorative = true});
 /// @endcode
-struct Accessibility
+LIBWINUI_EXPORT struct Accessibility
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The short name announced for this control ("Save document"). Empty derives the name from
@@ -68,3 +74,5 @@ struct Accessibility
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

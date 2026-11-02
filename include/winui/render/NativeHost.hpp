@@ -1,21 +1,27 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 #include "winui/core/NativeHandle.hpp"
 #include "winui/core/VisualId.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <string>
 #include <unordered_map>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
-class NativeControl;
-class SpellChecker;
+LIBWINUI_EXPORT class NativeControl;
+LIBWINUI_EXPORT class SpellChecker;
 
 /// The Win32 child window a NativeControl creates: a window class name, its initial text and
 /// style bits. Windows only. Without a native host (a headless window, another platform) nothing
@@ -33,7 +39,7 @@ class SpellChecker;
 /// };
 /// stack->add(std::make_unique<ui::NativeControl>(std::move(desc), ui::Size{200.0f, 80.0f}));
 /// @endcode
-struct NativeControlDesc
+LIBWINUI_EXPORT struct NativeControlDesc
 {
     std::string   class_name;     ///< Registered window class, e.g. "RICHEDIT50W" or "EDIT".
     std::string   initial_text{}; ///< The window text at creation (initial content).
@@ -69,7 +75,7 @@ struct NativeControlDesc
 ///     void position_changed(int position);
 /// };
 /// @endcode
-struct NativeNotification
+LIBWINUI_EXPORT struct NativeNotification
 {
     std::uint32_t  message = 0; ///< The message id (WM_COMMAND, WM_NOTIFY, ...).
     std::uintptr_t wparam  = 0; ///< The message's WPARAM.
@@ -97,7 +103,7 @@ struct NativeNotification
 ///     ui::NativeControlDesc{.class_name = "EDIT", .initial_text = "hello"}, ui::Size{100, 20});
 /// window.set_content(std::move(edit));
 /// @endcode
-class NativeHost
+LIBWINUI_EXPORT class NativeHost
 {
 public:
     virtual ~NativeHost() = default;
@@ -245,3 +251,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -7,12 +7,14 @@
 #include "winui/core/Property.hpp"
 #include "winui/core/Strings.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <initializer_list>
 #include <string>
 #include <string_view>
 #include <utility>
 
 #include <cstdint>
+#endif
 
 namespace ui::detail
 {

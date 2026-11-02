@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -25,6 +29,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <functional>
 #include <memory>
 #include <optional>
@@ -35,13 +40,14 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
 /// The character format one character of a RichEditBox carries. An unset color, family or size
 /// follows the control's own (its foreground(), font_family() and font_size()).
-struct RichTextFormat
+LIBWINUI_EXPORT struct RichTextFormat
 {
     /// Bold weight.
     bool bold = false;
@@ -74,7 +80,7 @@ struct RichTextFormat
 ///     {.text = "!\nA second paragraph."},
 /// });
 /// @endcode
-struct RichTextSpan
+LIBWINUI_EXPORT struct RichTextSpan
 {
     /// The text (UTF-8); `\n` is a paragraph mark.
     std::string text;
@@ -86,7 +92,7 @@ struct RichTextSpan
 
 /// The fields of a RichTextFormat that can follow the control's own value, as
 /// RichEditBoxControl::CharacterFormat::control_default lists them. Flags.
-enum class RichTextFormatField : std::uint8_t
+LIBWINUI_EXPORT enum class RichTextFormatField : std::uint8_t
 {
     None       = 0,                                               ///< no field
     Foreground = 1u << 0,                                         ///< the text color
@@ -97,25 +103,25 @@ enum class RichTextFormatField : std::uint8_t
 };
 
 /// Combines RichTextFormatField flags.
-[[nodiscard]] constexpr RichTextFormatField operator|(RichTextFormatField a, RichTextFormatField b)
+LIBWINUI_EXPORT [[nodiscard]] constexpr RichTextFormatField operator|(RichTextFormatField a, RichTextFormatField b)
 {
     return static_cast<RichTextFormatField>(static_cast<std::uint8_t>(a) | static_cast<std::uint8_t>(b));
 }
 
 /// The flags both `a` and `b` have.
-[[nodiscard]] constexpr RichTextFormatField operator&(RichTextFormatField a, RichTextFormatField b)
+LIBWINUI_EXPORT [[nodiscard]] constexpr RichTextFormatField operator&(RichTextFormatField a, RichTextFormatField b)
 {
     return static_cast<RichTextFormatField>(static_cast<std::uint8_t>(a) & static_cast<std::uint8_t>(b));
 }
 
 /// Whether `set` includes any bit of `flag`.
-[[nodiscard]] constexpr bool has_flag(RichTextFormatField set, RichTextFormatField flag)
+LIBWINUI_EXPORT [[nodiscard]] constexpr bool has_flag(RichTextFormatField set, RichTextFormatField flag)
 {
     return (set & flag) != RichTextFormatField::None;
 }
 
 /// The Ctrl+B/I/U shortcuts, with their context menu commands, to leave out. Flags.
-enum class DisabledFormattingShortcuts : std::uint8_t
+LIBWINUI_EXPORT enum class DisabledFormattingShortcuts : std::uint8_t
 {
     None      = 0,                         ///< every shortcut works (the default)
     Bold      = 1u << 0,                   ///< no Ctrl+B / Bold
@@ -125,13 +131,14 @@ enum class DisabledFormattingShortcuts : std::uint8_t
 };
 
 /// Combines DisabledFormattingShortcuts flags.
-[[nodiscard]] constexpr DisabledFormattingShortcuts operator|(DisabledFormattingShortcuts a, DisabledFormattingShortcuts b)
+LIBWINUI_EXPORT [[nodiscard]] constexpr DisabledFormattingShortcuts operator|(DisabledFormattingShortcuts a,
+                                                                              DisabledFormattingShortcuts b)
 {
     return static_cast<DisabledFormattingShortcuts>(static_cast<std::uint8_t>(a) | static_cast<std::uint8_t>(b));
 }
 
 /// Whether `set` includes any bit of `flag`.
-[[nodiscard]] constexpr bool has_flag(DisabledFormattingShortcuts set, DisabledFormattingShortcuts flag)
+LIBWINUI_EXPORT [[nodiscard]] constexpr bool has_flag(DisabledFormattingShortcuts set, DisabledFormattingShortcuts flag)
 {
     return (static_cast<std::uint8_t>(set) & static_cast<std::uint8_t>(flag)) != 0;
 }
@@ -159,7 +166,7 @@ enum class DisabledFormattingShortcuts : std::uint8_t
 /// editor->on_text_changed([editor, &draft] { draft = editor->save_rtf(); });
 /// window.set_content(std::move(panel));
 /// @endcode
-class RichEditBoxControl final : public Element, private ValueProvider
+LIBWINUI_EXPORT class RichEditBoxControl final : public Element, private ValueProvider
 {
 public:
     /// An empty document.
@@ -800,7 +807,7 @@ private:
 ///     .control          = editor,
 /// });
 /// @endcode
-struct RichEditBox
+LIBWINUI_EXPORT struct RichEditBox
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<RichEditBox>` points at.
@@ -898,3 +905,5 @@ struct RichEditBox
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

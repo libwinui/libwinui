@@ -7,9 +7,11 @@
 #include "winui/render/Renderer.hpp"
 #include "winui/ui/media/InkCanvas.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <span>
 #include <vector>
+#endif
 
 namespace ui::detail
 {

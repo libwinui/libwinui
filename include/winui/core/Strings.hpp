@@ -1,15 +1,21 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 // The text libwinui itself shows: command labels, context menu items, key names, the names
 // screen readers read for built-in buttons. One replaceable set, English by default.
 
 #include "winui/core/Property.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <functional>
 #include <string>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -37,7 +43,7 @@ namespace ui
 /// german.person_picture.badge = [](std::size_t n) { return n == 1 ? "1 Element" : std::format("{} Elemente", n); };
 /// ui::set_strings(std::move(german));
 /// @endcode
-struct Strings
+LIBWINUI_EXPORT struct Strings
 {
     /// A standard command's text and the description shown as its tooltip.
     struct CommandText
@@ -282,12 +288,14 @@ struct Strings
 
 /// The text libwinui shows now: English until set_strings() replaces it. Process-wide; UI
 /// thread only. The reference stays valid until the next set_strings().
-[[nodiscard]] const Strings& strings();
+LIBWINUI_EXPORT [[nodiscard]] const Strings& strings();
 /// Replaces the text libwinui shows and raises strings_changed(): every window lays out and
 /// draws again, and the controls that hold text of their own refresh it.
-void set_strings(Strings replacement);
+LIBWINUI_EXPORT void set_strings(Strings replacement);
 /// Raised by set_strings(). An app that caches text from strings() subscribes here and keeps the
 /// Subscription.
-[[nodiscard]] const Signal& strings_changed();
+LIBWINUI_EXPORT [[nodiscard]] const Signal& strings_changed();
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

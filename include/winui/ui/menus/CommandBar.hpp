@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -24,6 +28,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -32,12 +37,13 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// What a closed CommandBar shows.
-enum class AppBarClosedDisplayMode
+LIBWINUI_EXPORT enum class AppBarClosedDisplayMode
 {
     Compact, ///< the icons, 48 tall
     Minimal, ///< the More button only, 24 tall
@@ -79,7 +85,7 @@ enum class AppBarClosedDisplayMode
 ///     .secondary = {ui::AppBarButton{.text = "Settings", .icon = ui::Symbol::Setting}},
 /// });
 /// @endcode
-class CommandBarControl final : public Element, public AppBarCommandHost
+LIBWINUI_EXPORT class CommandBarControl final : public Element, public AppBarCommandHost
 {
     /// Forwards composition sync to the content and every primary.
     void sync_composition_override(detail::Compositor& compositor, const Theme& theme) override;
@@ -446,7 +452,7 @@ protected:
 ///     .secondary = { ui::AppBarButton{ .text = "Settings", .icon = ui::Symbol::Setting } },
 /// });
 /// @endcode
-struct CommandBar
+LIBWINUI_EXPORT struct CommandBar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<CommandBar>` points at.
@@ -527,3 +533,5 @@ struct CommandBar
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

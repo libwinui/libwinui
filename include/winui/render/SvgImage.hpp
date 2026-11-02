@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <memory>
 #include <string>
 #include <string_view>
+#endif
 
 namespace ui
 {
@@ -33,7 +39,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-class SvgImage
+LIBWINUI_EXPORT class SvgImage
 {
 public:
     /// An empty document; draws nothing.
@@ -75,6 +81,8 @@ private:
 /// The natural size of an SVG document's root element, as SvgImage's constructor reads
 /// it. Lengths may be unitless or in px, pt, pc, in, cm or mm (CSS's 96 px per inch);
 /// percentages and font-relative units count as absent.
-[[nodiscard]] Size svg_natural_size(std::string_view markup);
+LIBWINUI_EXPORT [[nodiscard]] Size svg_natural_size(std::string_view markup);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -21,11 +25,13 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -34,7 +40,7 @@ namespace ui
 /// tick_frequency() is above zero, except under the classic look. The classic look only tells
 /// None (no ticks) from the rest, which all draw its one row of ticks on the far side (see
 /// set_tick_frequency()).
-enum class SliderTickPlacement
+LIBWINUI_EXPORT enum class SliderTickPlacement
 {
     None,        ///< no ticks
     TopLeft,     ///< above a horizontal track, left of a vertical one
@@ -44,7 +50,7 @@ enum class SliderTickPlacement
 };
 
 /// What a pointer drag lands on.
-enum class SliderSnapsTo
+LIBWINUI_EXPORT enum class SliderSnapsTo
 {
     StepValues, ///< multiples of step_frequency()
     Ticks,      ///< multiples of tick_frequency(); the arrow keys move by it too
@@ -70,7 +76,7 @@ enum class SliderSnapsTo
 /// volume->on_value_changed([label](double v) { label->set_text(std::format("{:.0f}", v)); });
 /// window.set_content(std::move(panel));
 /// @endcode
-class SliderControl final : public Element, private RangeValueProvider
+LIBWINUI_EXPORT class SliderControl final : public Element, private RangeValueProvider
 {
 
     // ---- composition ----
@@ -456,7 +462,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Slider
+LIBWINUI_EXPORT struct Slider
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Slider>` points at.
@@ -535,3 +541,5 @@ struct Slider
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

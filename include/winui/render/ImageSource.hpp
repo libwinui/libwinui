@@ -1,22 +1,28 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Bitmap.hpp"
 #include "winui/render/SvgImage.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <memory>
 #include <string>
 #include <utility>
 #include <variant>
+#endif
 
 namespace ui
 {
 
 /// Where an ImageSource made by ImageSource::load() is. Every other source is Loaded.
-enum class ImageLoadState
+LIBWINUI_EXPORT enum class ImageLoadState
 {
     Loaded,  ///< The picture is there (or the source was made from one).
     Loading, ///< Decoding on a background thread; the source draws nothing yet.
@@ -52,7 +58,7 @@ struct ImageLoad;
 ///     },
 /// });
 /// @endcode
-class ImageSource
+LIBWINUI_EXPORT class ImageSource
 {
 public:
     /// An empty source; an Image showing it draws nothing.
@@ -159,3 +165,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

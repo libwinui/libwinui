@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/ui/WindowShell.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <string>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -14,7 +20,7 @@ namespace ui
 /// One entry in the Tasks section of the app's jump list (ui::set_jump_list()): clicking it
 /// starts the app again with `arguments` on its command line. Fill it with designated
 /// initializers.
-struct JumpTask
+LIBWINUI_EXPORT struct JumpTask
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The entry's text.
@@ -48,7 +54,7 @@ struct JumpTask
 ///     ui::JumpTask{.title = "New note", .arguments = "--new-note", .description = "Opens an empty note"},
 /// });
 /// @endcode
-void set_jump_list(std::vector<JumpTask> tasks);
+LIBWINUI_EXPORT void set_jump_list(std::vector<JumpTask> tasks);
 
 /// Records that the app opened the file at `path`, for the Recent section of its jump list and
 /// the system's list of recent files. The jump list shows it only for a file type the app is
@@ -62,14 +68,14 @@ void set_jump_list(std::vector<JumpTask> tasks);
 ///     ui::add_recent_file(*file);
 /// }
 /// @endcode
-void add_recent_file(const std::filesystem::path& path);
+LIBWINUI_EXPORT void add_recent_file(const std::filesystem::path& path);
 
 /// What keeps the app's jump list for ui::set_jump_list() and ui::add_recent_file().
 ///
 /// There is one for the whole process: the platform's, or a double a test installs with
 /// `ui::testing::set_jump_list_host()`. App code calls the two free functions and never needs the
 /// class. It is public so a test double can derive from it.
-class JumpListHost
+LIBWINUI_EXPORT class JumpListHost
 {
 public:
     virtual ~JumpListHost() = default;
@@ -84,8 +90,10 @@ namespace detail
 {
 // The host set_jump_list() and add_recent_file() use in place of the platform's, or nullptr for
 // the platform's own. ui::testing::set_jump_list_host() is the public way to set it.
-void                        install_jump_list_host(JumpListHost* host);
-[[nodiscard]] JumpListHost* installed_jump_list_host();
+LIBWINUI_EXPORT void                        install_jump_list_host(JumpListHost* host);
+LIBWINUI_EXPORT [[nodiscard]] JumpListHost* installed_jump_list_host();
 } // namespace detail
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

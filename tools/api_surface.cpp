@@ -7,9 +7,9 @@
 // testing tier (ui::testing) gets its own file; the namespaces control_map.toml hides are left out.
 // A change to either file in a commit is the signal that the public API moved.
 //
-// From the same names it writes the two C++ module interfaces, modules/winui.cppm and
-// modules/winui.testing.cppm: each includes the headers in its global module fragment and exports
-// every public name of its tier with a using-declaration, so the module can't fall behind them.
+// It also writes the two C++ module interfaces, modules/winui.cppm and modules/winui.testing.cppm:
+// each includes its tier's headers (the umbrella and the public headers it leaves out) and the
+// standard headers they use, for a build without import std.
 //
 //     winui_api_surface <repository root> [--xml-dir <dir>] [--check]
 //
@@ -812,57 +812,90 @@ std::string surface(const std::vector<const Compound*>& sorted, const std::vecto
 
 // ---- the module interfaces ----
 
-// "ui::Foo" -> "ui"; empty for a name that isn't one plain name in a scope (a specialization).
-std::string scope_of(const std::string& name)
+// The C headers a module unit always includes in its global module fragment: a module exports
+// no macros, and these are where assert, SIZE_MAX and the like come from.
+const std::set<std::string>
+    CHeaders{"cassert",
+             "cctype",
+             "cerrno",
+             "cfloat",
+             "cinttypes",
+             "climits",
+             "cmath",
+             "csignal",
+             "cstdarg",
+             "cstddef",
+             "cstdint",
+             "cstdio",
+             "cstdlib",
+             "cstring",
+             "ctime",
+             "cwchar",
+             "cwctype"};
+
+// The standard headers the public headers of a tier include (both tiers for the testing one, whose
+// headers lean on what the core headers bring in).
+std::set<std::string> standard_headers(const fs::path& root, bool testing)
 {
-    if (name.find('<') != std::string::npos)
+    std::set<std::string> out;
+    for (const auto& entry : fs::recursive_directory_iterator(root / "include/winui"))
     {
-        return {};
+        const fs::path& path = entry.path();
+        if (path.extension() != ".hpp")
+        {
+            continue;
+        }
+        const std::string relative = fs::relative(path, root / "include/winui").generic_string();
+        const bool        tier     = relative.starts_with("testing/") || relative == "testing.hpp";
+        if (tier && !testing)
+        {
+            continue;
+        }
+        std::istringstream lines(read_file(path));
+        for (std::string line; std::getline(lines, line);)
+        {
+            const std::size_t open  = line.find("#include <");
+            const std::size_t close = line.find('>', open);
+            if (open == std::string::npos || close == std::string::npos)
+            {
+                continue;
+            }
+            const std::string name = line.substr(open + 10, close - open - 10);
+            if (std::ranges::all_of(name, [](char c) { return std::islower(c) || std::isdigit(c) || c == '_'; }))
+            {
+                out.insert(name);
+            }
+        }
     }
-    const std::size_t colons = name.rfind("::");
-    return colons == std::string::npos ? std::string{} : name.substr(0, colons);
+    return out;
 }
 
-// A module interface exporting every public name of a tier: the types, concepts, functions
-// (one using-declaration names all overloads), aliases, enums and constants each namespace
-// declares, namespace by namespace. Nested types come with their class; hidden friends and the
-// members of ui::detail stay reachable through the declarations that use them.
+// A module interface of a tier. winui includes the headers in the module, where LIBWINUI_EXPORT
+// marks what it exports. winui.testing exports its headers from an extern "C++" block instead, so
+// its declarations stay attached to the global module (cmake/Modules.cmake says why).
 std::string module_text(const fs::path&                     root,
                         const std::vector<const Compound*>& sorted,
                         const std::vector<std::string>&     hidden,
                         bool                                testing)
 {
-    std::map<std::string, const Compound*>       namespaces;
-    std::map<std::string, std::set<std::string>> names;
-    std::set<std::string>                        headers; // where the names are declared
-    for (const Compound* c : sorted)
-    {
-        if (c->kind == "namespace" && in_tier(c->name, hidden, testing))
-        {
-            namespaces[c->name] = c;
-        }
-    }
+    std::set<std::string> headers; // where the tier's names are declared
     for (const Compound* c : sorted)
     {
         if (c->kind == "namespace")
         {
-            if (namespaces.contains(c->name))
+            if (in_tier(c->name, hidden, testing))
             {
                 for (const Member& m : c->members)
                 {
                     if (m.prot == "public" && m.kind != "friend")
                     {
-                        names[c->name].insert(m.name);
                         headers.insert(m.header);
                     }
                 }
             }
-            continue;
         }
-        const std::string scope = scope_of(c->name);
-        if (c->prot == "public" && namespaces.contains(scope))
+        else if (c->prot == "public" && in_tier(c->name, hidden, testing))
         {
-            names[scope].insert(c->name.substr(scope.size() + 2));
             headers.insert(c->header);
         }
     }
@@ -873,10 +906,12 @@ std::string module_text(const fs::path&                     root,
         "// generated by tools/api_surface.cpp from include/winui; do not edit\n"
         "//\n";
     text += testing ? "// `import winui.testing;`: the testing tier of <winui/testing.hpp> as a module, with the\n"
-                      "// winui module re-exported.\n"
-                    : "// `import winui;`: the public API of <winui/winui.hpp> as a module. The headers stay the\n"
-                      "// source; they sit in the global module fragment, so code built either way uses the same\n"
-                      "// entities and links the same library.\n";
+                      "// winui module re-exported. Its declarations are exported from an extern \"C++\" block,\n"
+                      "// so they belong to the global module, like the code of src/testing/.\n"
+                    : "// `import winui;`: the public API of <winui/winui.hpp> as a module. The headers are\n"
+                      "// included in the module, where LIBWINUI_EXPORT exports each public declaration, and the\n"
+                      "// library's sources are its implementation units. A module exports no macros: those are\n"
+                      "// in <winui/Macros.hpp>.\n";
     // The umbrella, and the few public headers it leaves out (e.g. render/Describe.hpp).
     const std::string     listed = read_file(root / "include/winui" / umbrella);
     std::set<std::string> includes{umbrella};
@@ -887,45 +922,58 @@ std::string module_text(const fs::path&                     root,
             includes.insert(header);
         }
     }
-    text += "module;\n\n";
-    for (const std::string& header : includes)
-    {
-        text += "#include <winui/" + header + ">\n";
-    }
-    text += "\nexport module " + (testing ? std::string("winui.testing") : std::string("winui")) + ";\n";
+    text += "module;\n\n#define LIBWINUI_MODULE\n";
     if (testing)
     {
-        text += "\nexport import winui;\n";
+        text += "#define LIBWINUI_IMPORTED\n";
     }
-    for (const auto& [scope, members] : names)
+    text += "\n#include <winui/Macros.hpp>\n\n";
+    const std::set<std::string> standard = standard_headers(root, testing);
+    for (const std::string& name : standard)
     {
-        // ui::literals is inline: reopened as one, so `ui::operator""_fr` keeps working
-        const std::string outer  = scope.substr(0, scope.rfind("::"));
-        const bool        reopen = namespaces.at(scope)->inline_namespace && outer != scope;
-        const std::string inner  = reopen ? scope.substr(outer.size() + 2) : std::string{};
-        text += reopen ? "\nexport namespace " + outer + "\n{\ninline namespace " + inner + "\n{\n"
-                       : "\nexport namespace " + scope + "\n{\n";
-        // In clang-format's order (SortUsingDeclarations), so the file passes the format check
-        std::vector<std::string> ordered(members.begin(), members.end());
-        std::ranges::stable_sort(ordered,
-                                 [](const std::string& a, const std::string& b)
-                                 {
-                                     const auto lower = [](std::string s)
-                                     {
-                                         std::ranges::transform(s,
-                                                                s.begin(),
-                                                                [](unsigned char c)
-                                                                { return static_cast<char>(std::tolower(c)); });
-                                         return s;
-                                     };
-                                     return lower(a) < lower(b);
-                                 });
-        for (const std::string& name : ordered)
+        if (CHeaders.contains(name))
         {
-            text += "using " + scope + "::" + name + ";\n";
+            text += "#include <" + name + ">\n";
         }
-        text += reopen ? "} // namespace " + inner + "\n} // namespace " + outer + "\n"
-                       : "} // namespace " + scope + "\n";
+    }
+    // In clang-format's include blocks: a header whose name starts with c and isn't one of the C++
+    // headers its rule lists (<compare>) sorts into the C headers' block
+    const auto c_block = [](const std::string& name)
+    {
+        static const std::set<std::string>
+            cpp{"coroutine", "charconv", "chrono", "complex", "concepts", "condition_variable"};
+        return name.starts_with('c') && !cpp.contains(name);
+    };
+    text += "\n#if !LIBWINUI_IMPORT_STD\n";
+    for (const bool second : {false, true})
+    {
+        bool first = true;
+        for (const std::string& name : standard)
+        {
+            if (!CHeaders.contains(name) && c_block(name) == second)
+            {
+                text += (second && first ? "\n#include <" : "#include <") + name + ">\n";
+                first = false;
+            }
+        }
+    }
+    text += "#endif\n\nexport module " + (testing ? std::string("winui.testing") : std::string("winui")) + ";\n\n";
+    if (testing)
+    {
+        text += "export import winui;\n\n";
+    }
+    text += "#if LIBWINUI_IMPORT_STD\nimport std;\n#endif\n\n";
+    if (testing)
+    {
+        text += "export extern \"C++\"\n{\n";
+    }
+    for (const std::string& header : includes)
+    {
+        text += "#include \"winui/" + header + "\"\n";
+    }
+    if (testing)
+    {
+        text += "}\n";
     }
     return text;
 }

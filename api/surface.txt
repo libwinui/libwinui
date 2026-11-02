@@ -689,8 +689,8 @@ namespace ui  [ui/Animation.hpp]
         FromBottom
         FromLeft
         FromRight
-    using ui::PageTransition = std::variant<RisePageTransition, ZoomPageTransition, NoPageTransition, SlidePageTransition, FadeThroughPageTransition>
-    using ui::Transition = std::variant<EntranceTransition, RepositionTransition, ContentTransition, AddRemoveTransition, PopupTransition, NavigationTransition>
+    using ui::PageTransition = std:: variant<RisePageTransition, ZoomPageTransition, NoPageTransition, SlidePageTransition, FadeThroughPageTransition>
+    using ui::Transition = std:: variant<EntranceTransition, RepositionTransition, ContentTransition, AddRemoveTransition, PopupTransition, NavigationTransition>
     using ui::TransitionList = std::vector<Transition>
     template <typename T> const T* find_transition(const TransitionList& transitions)
     enum class TransitionChannel : std::uint8_t

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -17,11 +21,13 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -30,7 +36,7 @@ class AnnotatedScrollBarDetailSurface; // defined in AnnotatedScrollBar.cpp
 
 /// What caused an AnnotatedScrollBar scroll request. The top step button scrolls up, toward a
 /// smaller offset, and the bottom one scrolls down.
-enum class AnnotatedScrollBarScrollingEventKind
+LIBWINUI_EXPORT enum class AnnotatedScrollBarScrollingEventKind
 {
     Click,           ///< A click on the rail, Home or End, or an accessibility client setting the value.
     Drag,            ///< Dragging along the rail.
@@ -40,7 +46,7 @@ enum class AnnotatedScrollBarScrollingEventKind
 
 /// What `on_scrolling` gets before a scroll request is raised: where it goes and what caused it.
 /// The handler returns ui::Cancel to drop the request.
-struct AnnotatedScrollBarScrollingArgs
+LIBWINUI_EXPORT struct AnnotatedScrollBarScrollingArgs
 {
     double                               offset = 0.0;                                         ///< The target offset.
     AnnotatedScrollBarScrollingEventKind kind   = AnnotatedScrollBarScrollingEventKind::Click; ///< What caused it.
@@ -48,7 +54,7 @@ struct AnnotatedScrollBarScrollingArgs
 
 /// A caption pinned beside a ui::AnnotatedScrollBar's rail at the position of a scroll offset.
 /// Annotations that would overlap a previous one are hidden.
-struct AnnotatedScrollBarAnnotation
+LIBWINUI_EXPORT struct AnnotatedScrollBarAnnotation
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// Caption drawn right-aligned in the annotations column.
@@ -100,7 +106,7 @@ struct AnnotatedScrollBarAnnotation
 ///     return far_drag ? ui::Cancel : ui::Proceed;
 /// });
 /// @endcode
-class AnnotatedScrollBarControl final : public Element, private RangeValueProvider
+LIBWINUI_EXPORT class AnnotatedScrollBarControl final : public Element, private RangeValueProvider
 {
 public:
     /// An unattached bar with an empty range and no annotations.
@@ -381,7 +387,7 @@ private:
 /// }});
 /// bar->set_target(view); // the bar now drives and mirrors the Scroll
 /// @endcode
-struct AnnotatedScrollBar
+LIBWINUI_EXPORT struct AnnotatedScrollBar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<AnnotatedScrollBar>` points at.
@@ -452,3 +458,5 @@ struct AnnotatedScrollBar
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,14 +1,20 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 // The std::filesystem::path seams of core/Utf8.hpp, apart so that <filesystem> stays out of every
 // header that only needs the string helpers.
 
 #include "winui/core/Utf8.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <string>
 #include <string_view>
+#endif
 
 namespace ui
 {
@@ -28,9 +34,11 @@ namespace ui
 /// // path_to_utf8() goes back the other way, for a label.
 /// ui::Property<std::string> status{"Saved " + ui::path_to_utf8(path.filename())}; // "Saved Zürich.png"
 /// @endcode
-[[nodiscard]] std::filesystem::path path_from_utf8(std::string_view text);
+LIBWINUI_EXPORT [[nodiscard]] std::filesystem::path path_from_utf8(std::string_view text);
 
 /// `path` as UTF-8, the inverse of path_from_utf8().
-[[nodiscard]] std::string path_to_utf8(const std::filesystem::path& path);
+LIBWINUI_EXPORT [[nodiscard]] std::string path_to_utf8(const std::filesystem::path& path);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

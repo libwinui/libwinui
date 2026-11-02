@@ -24,24 +24,27 @@
 #include "winui/ui/menus/MenuFlyout.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
-#include <algorithm>
 #include <d2d1.h>
 #include <dwmapi.h>
 #include <dwrite.h>
-#include <memory>
-#include <optional>
 #include <shellapi.h>
 #include <shellscalingapi.h> // GetDpiForMonitor
-#include <string>
-#include <string_view>
-#include <utility>
-#include <vector>
 #include <windows.h>
 #include <windowsx.h> // GET_X_LPARAM / GET_Y_LPARAM
 #include <wrl/client.h>
 
+#ifndef LIBWINUI_MODULE
+#include <algorithm>
+#include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
+
 #include <cmath>
 #include <cwchar>
+#endif
 
 namespace ui::win32
 {

@@ -18,6 +18,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -26,6 +27,7 @@
 #include <vector>
 
 #include <cmath>
+#endif
 
 namespace ui
 {

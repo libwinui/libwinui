@@ -3,9 +3,11 @@
 
 #include "winui/core/Strings.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <string>
 #include <string_view>
+#endif
 
 namespace ui
 {

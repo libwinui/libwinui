@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -17,10 +21,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -48,7 +54,7 @@ namespace ui
 /// });
 /// window.set_content(std::move(stack));
 /// @endcode
-class ResizeGripperControl final : public Element
+LIBWINUI_EXPORT class ResizeGripperControl final : public Element
 {
 public:
     /// A 16 DIP gripper.
@@ -153,7 +159,7 @@ protected:
 ///     },
 /// });
 /// @endcode
-struct ResizeGripper
+LIBWINUI_EXPORT struct ResizeGripper
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ResizeGripper>` points at.
@@ -206,3 +212,5 @@ struct ResizeGripper
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

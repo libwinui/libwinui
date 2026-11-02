@@ -1,9 +1,15 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Scheduler.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -19,7 +25,7 @@ namespace ui
 /// ui::Window window{{.title = "Report"}};
 /// window.set_parallel_layout({.enabled = false}); // everything on the UI thread
 /// @endcode
-struct ParallelLayout
+LIBWINUI_EXPORT struct ParallelLayout
 {
     /// Whether to measure on worker threads at all. On by default. Below `min_elements` nothing
     /// changes, and above it a form with real text measurement lays out about three times faster
@@ -37,3 +43,5 @@ struct ParallelLayout
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

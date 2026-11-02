@@ -11,11 +11,13 @@
 #include "winui/testing/TestRenderer.hpp"
 #include "winui/ui/Animation.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <utility>
 #include <variant>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui::testing
 {

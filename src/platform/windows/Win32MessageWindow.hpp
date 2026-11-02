@@ -27,7 +27,7 @@ public:
     // The window class, for finding the window of another process by its title.
     [[nodiscard]] static const wchar_t* class_name();
 
-    [[nodiscard]] HWND hwnd() const
+    [[nodiscard]] inline HWND hwnd() const
     {
         return hwnd_;
     }

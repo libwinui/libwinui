@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -19,6 +23,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/text/Inlines.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -26,11 +31,12 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class RichTextOverflowControl;
+LIBWINUI_EXPORT class RichTextOverflowControl;
 
 /// Read-only paragraphs of formatted inlines, wrapping by default, selectable, with links and
 /// highlighters. Content that doesn't fit can flow into RichTextOverflow containers.
@@ -59,7 +65,7 @@ class RichTextOverflowControl;
 /// rich->set_overflow_target(overflow);
 /// window.set_content(std::move(row));
 /// @endcode
-class RichTextControl final : public Element
+LIBWINUI_EXPORT class RichTextControl final : public Element
 {
 public:
     /// An empty block: Wrap, Left alignment, selection enabled.
@@ -335,7 +341,7 @@ protected:
 /// second->set_overflow_target(third);
 /// window.set_content(std::move(columns));
 /// @endcode
-class RichTextOverflowControl final : public Element
+LIBWINUI_EXPORT class RichTextOverflowControl final : public Element
 {
 public:
     /// An unlinked, empty container.
@@ -435,7 +441,7 @@ protected:
     }
 };
 
-struct RichTextOverflow;
+LIBWINUI_EXPORT struct RichTextOverflow;
 
 /// Paragraphs of formatted inlines. Builds a ui::RichTextControl.
 ///
@@ -455,7 +461,7 @@ struct RichTextOverflow;
 ///     .max_width = 400,
 /// });
 /// @endcode
-struct RichText
+LIBWINUI_EXPORT struct RichText
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<RichText>` points at.
@@ -544,7 +550,7 @@ struct RichText
 ///     },
 /// });
 /// @endcode
-struct RichTextOverflow
+LIBWINUI_EXPORT struct RichTextOverflow
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<RichTextOverflow>` points at.
@@ -595,3 +601,5 @@ struct RichTextOverflow
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

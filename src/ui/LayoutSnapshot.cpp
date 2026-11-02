@@ -8,6 +8,7 @@
 #include "winui/ui/Animation.hpp"
 #include "winui/ui/Element.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <exception>
 #include <limits>
@@ -17,6 +18,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -19,6 +23,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <concepts>
 #include <memory>
@@ -30,12 +35,13 @@
 
 #include <cassert>
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// How a Grid track's GridLength::value is read.
-enum class GridUnit
+LIBWINUI_EXPORT enum class GridUnit
 {
     Auto,     ///< sized to the largest single-span child in the track; `value` is ignored
     Fraction, ///< a weighted share of the space left after Dip and Auto tracks; `value` is the weight
@@ -57,7 +63,7 @@ enum class GridUnit
 /// grid->add_row(ui::GridLength::fraction(2.0f));     // twice the share of a fraction() row
 /// grid->add_column(ui::minmax(ui::GridLength::dip(120.0f), ui::GridLength::fraction())); // never under 120
 /// @endcode
-struct GridLength
+LIBWINUI_EXPORT struct GridLength
 {
     /// How `value` is read.
     GridUnit unit = GridUnit::Fraction;
@@ -103,7 +109,7 @@ struct GridLength
 /// using namespace ui::literals;
 /// ui::Grid{.columns = {ui::minmax(160_dip, 1_fr), 6_dip, 2_fr}, .content = {/* ... */}};
 /// @endcode
-[[nodiscard]] constexpr GridLength minmax(GridLength smallest, GridLength largest)
+LIBWINUI_EXPORT [[nodiscard]] constexpr GridLength minmax(GridLength smallest, GridLength largest)
 {
     GridLength track = largest;
     if (smallest.unit == GridUnit::Dip)
@@ -162,7 +168,7 @@ struct GridLength
 /// grid->add(std::make_unique<ui::TextBoxControl>(), 0, 1);
 /// window.set_content(std::move(grid));
 /// @endcode
-class GridControl final : public Element
+LIBWINUI_EXPORT class GridControl final : public Element
 {
 public:
     /// An empty grid with no track definitions (one implicit Fraction cell).
@@ -480,33 +486,33 @@ private:
 inline namespace literals
 {
 /// A fixed track size in DIPs: `200_dip`, `12.5_dip`.
-consteval GridLength operator""_dip(long double value)
+LIBWINUI_EXPORT consteval GridLength operator""_dip(long double value)
 {
     return GridLength::dip(static_cast<float>(value));
 }
 
 /// Integer form of `_dip`.
-consteval GridLength operator""_dip(unsigned long long value)
+LIBWINUI_EXPORT consteval GridLength operator""_dip(unsigned long long value)
 {
     return GridLength::dip(static_cast<float>(value));
 }
 
 /// A fraction of the remaining space: a weighted share of what is left after fixed and auto
 /// tracks, so a `2_fr` track gets twice what a `1_fr` one does. `0.5_fr`.
-consteval GridLength operator""_fr(long double weight)
+LIBWINUI_EXPORT consteval GridLength operator""_fr(long double weight)
 {
     return GridLength::fraction(static_cast<float>(weight));
 }
 
 /// Integer form of `_fr`.
-consteval GridLength operator""_fr(unsigned long long weight)
+LIBWINUI_EXPORT consteval GridLength operator""_fr(unsigned long long weight)
 {
     return GridLength::fraction(static_cast<float>(weight));
 }
 } // namespace literals
 
 /// A track sized to its content.
-inline constexpr GridLength AutoSize = GridLength::auto_();
+LIBWINUI_EXPORT inline constexpr GridLength AutoSize = GridLength::auto_();
 
 /// One placed child. `row`/`column` name tracks declared in `.rows`/`.columns`, and either may be
 /// bound to move the child as state changes.
@@ -518,7 +524,7 @@ inline constexpr GridLength AutoSize = GridLength::auto_();
 /// ui::Property<std::size_t> column{0};
 /// ui::Cell moving{.row = 1, .column = column, .column_span = 2, .content = ui::Text{.text = "Here"}};
 /// @endcode
-struct Cell
+LIBWINUI_EXPORT struct Cell
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     Binding<std::size_t>                              row{std::size_t{0}};    ///< The row index.
@@ -544,7 +550,7 @@ struct Cell
 /// window.set_content(ui::Grid{.rows    = std::vector(names.size(), ui::AutoSize),
 ///                             .content = std::move(cells)});
 /// @endcode
-class CellList
+LIBWINUI_EXPORT class CellList
 {
 public:
     /// One built child with its placement; the node is already owned by the list.
@@ -617,7 +623,7 @@ public:
 ///     },
 /// });
 /// @endcode
-struct Grid
+LIBWINUI_EXPORT struct Grid
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Grid>` points at.
@@ -689,3 +695,5 @@ struct Grid
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

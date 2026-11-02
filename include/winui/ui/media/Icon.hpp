@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,10 +22,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -49,7 +55,7 @@ namespace ui
 /// content->add(std::make_unique<ui::TextControl>("Save"));
 /// button->set_content(std::move(content));
 /// @endcode
-class IconControl final : public Element
+LIBWINUI_EXPORT class IconControl final : public Element
 {
 public:
     /// An icon with no source. It measures to nothing and draws nothing.
@@ -139,7 +145,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Icon
+LIBWINUI_EXPORT struct Icon
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Icon>` points at.
@@ -194,3 +200,5 @@ struct Icon
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

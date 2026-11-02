@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -23,6 +27,7 @@
 #include "winui/ui/scrolling/Scroll.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <functional>
 #include <memory>
 #include <optional>
@@ -33,6 +38,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -45,14 +51,14 @@ class ItemSelection;
 class ListItemContainer;
 
 /// Where ListViewBase::scroll_into_view() puts the item.
-enum class ScrollIntoViewAlignment
+LIBWINUI_EXPORT enum class ScrollIntoViewAlignment
 {
     Default, ///< The least scroll that shows the item.
     Leading, ///< The item at the top of the viewport.
 };
 
 /// How a list keeps its scroll position while items are inserted and removed.
-enum class ItemsUpdatingScrollMode
+LIBWINUI_EXPORT enum class ItemsUpdatingScrollMode
 {
     KeepItemsInView,    ///< The first item in view stays in view (the default).
     KeepScrollOffset,   ///< The scroll offset stays put and the items move under it.
@@ -77,7 +83,7 @@ enum class ItemsUpdatingScrollMode
 ///     });
 /// }
 /// @endcode
-struct ListViewDragPayload
+LIBWINUI_EXPORT struct ListViewDragPayload
 {
     /// The list the drag started from (non-owning).
     const Element* source = nullptr;
@@ -101,7 +107,7 @@ struct ListViewDragPayload
 ///     return ui::Proceed;
 /// });
 /// @endcode
-struct DragItemsStartingArgs
+LIBWINUI_EXPORT struct DragItemsStartingArgs
 {
     /// The indices of the items about to be dragged.
     std::vector<std::size_t> items;
@@ -110,7 +116,7 @@ struct DragItemsStartingArgs
 };
 
 /// What `on_drag_items_completed` gets once a drag out of a ListView or TileView ends.
-struct DragItemsCompletedArgs
+LIBWINUI_EXPORT struct DragItemsCompletedArgs
 {
     std::vector<std::size_t> items;                               ///< The indices of the dragged items.
     DataPackageOperation     result = DataPackageOperation::None; ///< What the drop did; None when refused.
@@ -118,7 +124,7 @@ struct DragItemsCompletedArgs
 
 /// What `on_items_reordered` gets when a drop inside the list moved item `from` to `to`. Both are
 /// positions in the collection after the move.
-struct ItemsReorderedArgs
+LIBWINUI_EXPORT struct ItemsReorderedArgs
 {
     std::size_t from = 0; ///< Where the item was.
     std::size_t to   = 0; ///< Where it is now.
@@ -165,7 +171,7 @@ struct ItemsReorderedArgs
 ///
 /// window.set_content(std::move(list));
 /// @endcode
-class ListViewBase : public Element, protected SelectionProvider, protected ValueProvider
+LIBWINUI_EXPORT class ListViewBase : public Element, protected SelectionProvider, protected ValueProvider
 {
 public:
     /// Makes the content for item `index` and may choose a different look per item. Called when an
@@ -850,3 +856,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

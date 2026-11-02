@@ -13,6 +13,7 @@
 #include "winui/ui/Window.hpp"
 #include "winui/ui/WindowStyle.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <array>
 #include <optional>
@@ -24,6 +25,7 @@
 
 #include <cmath>
 #include <cstddef>
+#endif
 
 namespace ui::detail
 {

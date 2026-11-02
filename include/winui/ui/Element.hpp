@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Duration.hpp"
@@ -22,6 +26,7 @@
 #include "winui/ui/VisualTree.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <limits>
 #include <memory>
@@ -39,27 +44,28 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
 namespace testing
 {
-struct VisualStates;
-struct ElementAccess;
+extern "C++" struct VisualStates;
+extern "C++" struct ElementAccess;
 } // namespace testing
-class Clipboard;
-class Window;
-class ContextMenuHost;
-class NativeHost;
-class SpellChecker;
-struct DragEventArgs;
-struct DragResponse;
-enum class DataPackageOperation : unsigned;
+LIBWINUI_EXPORT class Clipboard;
+LIBWINUI_EXPORT class Window;
+LIBWINUI_EXPORT class ContextMenuHost;
+LIBWINUI_EXPORT class NativeHost;
+LIBWINUI_EXPORT class SpellChecker;
+LIBWINUI_EXPORT struct DragEventArgs;
+LIBWINUI_EXPORT struct DragResponse;
+LIBWINUI_EXPORT enum class DataPackageOperation : unsigned;
 
 /// Whether an element is shown. A Collapsed element takes no room in layout, draws nothing, takes no
 /// input and leaves the tab ring, along with everything under it.
-enum class Visibility
+LIBWINUI_EXPORT enum class Visibility
 {
     Visible,   ///< laid out, drawn and hit-tested (the default)
     Collapsed, ///< zero size, not drawn, no input, out of the tab ring
@@ -67,7 +73,7 @@ enum class Visibility
 
 /// The theme an element (and everything under it) uses: light or dark whatever the window's is, or
 /// following it (Default).
-enum class ElementTheme
+LIBWINUI_EXPORT enum class ElementTheme
 {
     Default, ///< whatever theme the parent hands down (the default)
     Light,   ///< the light version of that theme
@@ -88,18 +94,18 @@ struct PointerRouteDeleter
 };
 } // namespace detail
 
-struct ElementMotionDeleter
+LIBWINUI_EXPORT struct ElementMotionDeleter
 {
     void operator()(ElementMotion* motion) const;
 };
 
-class Element;
+LIBWINUI_EXPORT class Element;
 
 /// What Element::for_each_child() calls once per child: a non-owning reference to any callable
 /// taking an `Element&`, two pointers wide, so walking the tree allocates nothing. It refers to
 /// the callable it was made from and must not outlive it, which a lambda passed straight to
 /// for_each_child() never does.
-class ChildVisitor
+LIBWINUI_EXPORT class ChildVisitor
 {
 public:
     template <typename F>
@@ -125,7 +131,7 @@ namespace detail
 {
 class PaintTracker;
 // The backend's compositor seam, private to libwinui (src/render/Compositor.hpp).
-class Compositor;
+LIBWINUI_EXPORT class Compositor;
 struct LayerPlacement;
 // Element::request_tick()'s note, and Window::tick()'s read of it (which clears it), per thread.
 void               note_tick_request() noexcept;
@@ -147,7 +153,7 @@ void note_dirty_mark() noexcept;
 
 // Collects, while it lives on this thread, the focused and focus-visible elements drawn, so their
 // focus rings can be drawn over everything once a root is done (render_focus_rings()).
-class FocusRingPass
+LIBWINUI_EXPORT class FocusRingPass
 {
 public:
     FocusRingPass() noexcept;
@@ -167,7 +173,7 @@ private:
 // Draws the focus ring of each element `pass` found under `root` (drawn with `theme`), through
 // the visual transforms and child mappings of the elements above it and clipped to their
 // viewports (Element::children_hit_clip()).
-void render_focus_rings(Renderer& renderer, const Element& root, const Theme& theme, const FocusRingPass& pass);
+LIBWINUI_EXPORT void render_focus_rings(Renderer& renderer, const Element& root, const Theme& theme, const FocusRingPass& pass);
 struct LayoutAccess;
 struct TreeAccess;
 
@@ -251,7 +257,7 @@ private:
 ///     ui::ElementWatch target_;
 /// };
 /// @endcode
-class ElementWatch
+LIBWINUI_EXPORT class ElementWatch
 {
 public:
     /// Watches nothing.
@@ -293,7 +299,7 @@ private:
 /// `Stretch`, the default, hands the element the whole rect. The other three shrink the element
 /// to its own desired extent and position it within the rect. A stack's `child_alignment` uses the
 /// same values for all of its children at once, on the axis across the stack (see Stack.hpp).
-enum class Alignment
+LIBWINUI_EXPORT enum class Alignment
 {
     Leading,  ///< left / top
     Center,   ///< centered in the slot
@@ -304,7 +310,7 @@ enum class Alignment
 /// Whether a part a control can show is shown: decided by the control (`Auto`, the default),
 /// always, or never. A TeachingTip's tail, a CommandBar's More button and a NavigationShell's back
 /// button take it; each field's comment says what `Auto` decides there.
-enum class AutoVisibility
+LIBWINUI_EXPORT enum class AutoVisibility
 {
     Auto,      ///< The control decides.
     Visible,   ///< Always shown.
@@ -313,7 +319,7 @@ enum class AutoVisibility
 
 /// How many items a collection lets the user select, and with which gestures (ListView, TileView,
 /// TableView).
-enum class SelectionMode
+LIBWINUI_EXPORT enum class SelectionMode
 {
     /// Nothing is selectable; a click only invokes or moves the focus cue.
     None,
@@ -338,7 +344,7 @@ enum class SelectionMode
 /// auto row = std::make_unique<ui::TextControl>("Row 42");
 /// row->start_bring_into_view({.vertical_alignment_ratio = 0.5f, .animation_desired = true});
 /// @endcode
-struct BringIntoViewOptions
+LIBWINUI_EXPORT struct BringIntoViewOptions
 {
     /// Where across the viewport's width the element lands, 0..1; unset scrolls as little as it can.
     OptionalFloat horizontal_alignment_ratio{};
@@ -365,7 +371,7 @@ struct BringIntoViewOptions
 /// editor->add_shortcut({.keys = ui::Ctrl + ui::Key::S, .on_pressed = [] { save_document(); }});
 /// // Ctrl+S now saves whenever focus is anywhere inside `editor`.
 /// @endcode
-struct Shortcut
+LIBWINUI_EXPORT struct Shortcut
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The key and exactly the modifiers that fire it; an empty key combination never matches.
@@ -377,7 +383,7 @@ struct Shortcut
 /// Which side of its anchor a popup (ComboBox/Menu/Flyout/ToolTip/TeachingTip, see
 /// PopupRequest::placement) hangs from. When there isn't room, every popup flips to the opposite
 /// side of the same axis instead of covering the anchor. A TeachingTip also tries the other axis.
-enum class PopupPlacement
+LIBWINUI_EXPORT enum class PopupPlacement
 {
     Below, ///< under the anchor (the default)
     Above, ///< over the anchor
@@ -389,7 +395,7 @@ enum class PopupPlacement
 /// the left (top) edges or the right (bottom) edges lined up. A TeachingTip keeps its tail on
 /// the target's center, so Leading lets the card run right (or down) from the tail and Trailing
 /// left (or up).
-enum class PopupPlacementAlignment
+LIBWINUI_EXPORT enum class PopupPlacementAlignment
 {
     Center,   ///< centered on the anchor
     Leading,  ///< left (or top) edges lined up
@@ -397,7 +403,7 @@ enum class PopupPlacementAlignment
 };
 
 /// Why a popup (Flyout, MenuFlyout, CommandBarFlyout, TeachingTip) closed.
-enum class PopupCloseReason
+LIBWINUI_EXPORT enum class PopupCloseReason
 {
     Programmatic, ///< hide(), `.is_open` set to false, or a TeachingTip that fit nowhere.
     LightDismiss, ///< A click outside it or Escape, with `light_dismiss` on.
@@ -407,16 +413,16 @@ enum class PopupCloseReason
 
 /// What a popup's `on_closing` gets: why it is closing. The handler returns ui::Cancel to keep it
 /// open.
-struct PopupClosingArgs
+LIBWINUI_EXPORT struct PopupClosingArgs
 {
     PopupCloseReason reason = PopupCloseReason::Programmatic; ///< Why it is closing.
 };
 
-class Element;
+LIBWINUI_EXPORT class Element;
 
 /// How the window draws around a popup's content: the shadow behind it, and the corners and
 /// elevation that shadow is cast at.
-struct PopupChrome
+LIBWINUI_EXPORT struct PopupChrome
 {
     /// Whether the window casts the theme's popup shadow behind the content. Off for content that
     /// draws all of its own chrome, as a bare Popup's child does.
@@ -460,7 +466,7 @@ struct PopupChrome
 ///     std::unique_ptr<ui::StackControl> list_ = std::make_unique<ui::StackControl>(ui::Orientation::Vertical);
 /// };
 /// @endcode
-struct PopupRequest
+LIBWINUI_EXPORT struct PopupRequest
 {
     /// The element shown in the popup. The control that opens the popup owns it and keeps it alive
     /// while the popup is open; the window lays it out and draws it, and never owns it.
@@ -501,7 +507,7 @@ struct PopupRequest
 /// the title bar. Resize edges depend on DPI frame metrics, so the host classifies those itself
 /// before asking the tree. The caption-button values are for a caption the app draws itself:
 /// the press still reaches the element under it, and the host tells the OS what is there.
-enum class HitRegion
+LIBWINUI_EXPORT enum class HitRegion
 {
     Client,  ///< an ordinary click, delivered to the element
     Caption, ///< the window's caption: drag to move, double-click to maximize, right-click for the system menu
@@ -519,7 +525,7 @@ enum class HitRegion
 
 /// What an element asks Window to do with keyboard focus, once, polled on every layout pass
 /// through take_focus_request() below.
-enum class FocusRequest
+LIBWINUI_EXPORT enum class FocusRequest
 {
     /// Nothing to do.
     None,
@@ -622,7 +628,7 @@ enum class FocusRequest
 /// swatch->set_tool_tip("Accent blue");
 /// swatch->on_click([] { /* ... */ });
 /// @endcode
-class Element
+LIBWINUI_EXPORT class Element
 {
 public:
     /// Leaves keyboard focus bookkeeping consistent (has_focus_within()) when the focused element
@@ -2890,3 +2896,5 @@ using ExitGhostsPtr = std::unique_ptr<ExitGhosts, ExitGhostsDelete>;
 } // namespace detail
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

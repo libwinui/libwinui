@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Input.hpp"
@@ -11,10 +15,12 @@
 #include "winui/ui/spec/Common.hpp"
 #include "winui/ui/spec/Control.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <chrono>
 #include <memory>
 #include <optional>
 #include <string>
+#endif
 
 namespace ui
 {
@@ -25,7 +31,7 @@ class PickerEngine;
 } // namespace detail
 
 /// Which clock a TimePicker shows.
-enum class TimePickerClock
+LIBWINUI_EXPORT enum class TimePickerClock
 {
     TwelveHour,     ///< 12 hours and an AM/PM column.
     TwentyFourHour, ///< 0 to 23 hours.
@@ -48,7 +54,7 @@ enum class TimePickerClock
 /// picker.set_minute_increment(5);
 /// picker.set_selected_time(std::chrono::hours{7} + std::chrono::minutes{30});
 /// @endcode
-class TimePickerControl final : public Element, private InvokeProvider, private ValueProvider
+LIBWINUI_EXPORT class TimePickerControl final : public Element, private InvokeProvider, private ValueProvider
 {
 public:
     /// A picker with no time, on the regional clock, offering every minute.
@@ -173,7 +179,7 @@ private:
 ///     .minute_increment = 15,
 /// });
 /// @endcode
-struct TimePicker
+LIBWINUI_EXPORT struct TimePicker
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<TimePicker>` points at.
@@ -230,3 +236,5 @@ struct TimePicker
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

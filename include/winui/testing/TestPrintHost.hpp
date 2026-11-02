@@ -7,11 +7,13 @@
 #include "winui/ui/Printing.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <string>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui::testing
 {

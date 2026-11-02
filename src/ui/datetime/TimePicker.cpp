@@ -7,6 +7,7 @@
 #include "winui/ui/spec/Common.hpp"
 #include "winui/ui/spec/Control.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <chrono>
 #include <string>
@@ -14,6 +15,7 @@
 #include <vector>
 
 #include <ctime>
+#endif
 
 namespace ui
 {

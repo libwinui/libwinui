@@ -4,8 +4,10 @@
 
 #include "winui/render/SpellChecker.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
+#endif
 
 namespace ui::win32
 {

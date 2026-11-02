@@ -9,7 +9,7 @@ The example for this page builds as `tutorial_01_first_window`.
 
 ## Get the Library
 
-libwinui is a CMake project whose library target is `winui::winui`. The simplest way in is to put the repository next to your code (a git submodule, a copy, whatever you prefer) and add it as a subdirectory:
+libwinui is a CMake project. The tutorials include its headers, so they link the target `winui::headers_main`, which brings the header library. `winui::main` is the same for `import winui;` ([C++ Modules](../guides/modules.md) explains both). The simplest way in is to put the repository next to your code (a git submodule, a copy, whatever you prefer) and add it as a subdirectory:
 
 ```cmake
 cmake_minimum_required(VERSION 3.28)
@@ -19,15 +19,15 @@ add_subdirectory(external/libwinui)
 
 add_executable(my_app WIN32 main.cpp)
 target_compile_features(my_app PRIVATE cxx_std_23)
-target_link_libraries(my_app PRIVATE winui::main)
+target_link_libraries(my_app PRIVATE winui::headers_main)
 ```
 
-`FetchContent` works the same way: declare the repository, call `FetchContent_MakeAvailable`, then link `winui::main` as above. An installed copy works with `find_package(winui CONFIG REQUIRED)` in place of `add_subdirectory` ([Building](../../contributing/development/building.md#install-and-find_package) has the details).
+`FetchContent` works the same way: declare the repository, call `FetchContent_MakeAvailable`, then link the targets as above. An installed copy works with `find_package(winui CONFIG REQUIRED)` in place of `add_subdirectory` ([Building](../../contributing/development/building.md#install-and-find_package) has the details).
 
 Some details:
 
 - `WIN32` in `add_executable` makes it a GUI program, so no console window opens next to yours.
-- A `WIN32` program normally starts at `wWinMain`. Linking `winui::main` lets it start at a plain `int main()` instead, which is what every tutorial uses. Leave it out if you prefer to write `wWinMain` yourself.
+- A `WIN32` program normally starts at `wWinMain`. Linking `winui::headers_main` lets it start at a plain `int main()` instead, which is what every tutorial uses. If you prefer to write `wWinMain` yourself, link the library alone, `winui::headers`.
 - All strings in libwinui are UTF-8. With MSVC the library adds `/utf-8` to your target as well, so a literal like `"Grüezi"` arrives intact.
 - To ship a single `.exe` with nothing to install, link the C runtime statically: put `set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")` before `add_subdirectory`. Otherwise the target machine needs the Visual C++ redistributable.
 - When libwinui is a subdirectory of another project, its tests and examples are not built. You only get the library.

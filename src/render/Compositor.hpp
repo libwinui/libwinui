@@ -10,10 +10,12 @@
 #include "winui/render/CubicBezier.hpp"
 #include "winui/ui/Animation.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <vector>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -68,13 +70,13 @@ struct LayerAnimation
     Point center{};
 
     // The cycle length: `duration`, or the last key time when that is 0.
-    [[nodiscard]] Duration cycle() const
+    [[nodiscard]] inline Duration cycle() const
     {
         return duration > Duration{} ? duration : key_frames_duration(key_frames);
     }
 
     // The property's value `elapsed` after the animation started, `phase` included.
-    [[nodiscard]] float value_at(Duration elapsed) const
+    [[nodiscard]] inline float value_at(Duration elapsed) const
     {
         if (key_frames.empty())
         {
@@ -112,7 +114,7 @@ struct LayerPlacement
     std::optional<Rect> clip{};
 
     // Memberwise equality.
-    friend bool operator==(const LayerPlacement&, const LayerPlacement&) = default;
+    friend inline bool operator==(const LayerPlacement&, const LayerPlacement&) = default;
 };
 
 // The seam between a control's visual state and the system compositor: a state-transition
@@ -172,14 +174,14 @@ public:
 
     // Whether this compositor shows layers. False by default, and then Window draws everything
     // into its frame.
-    [[nodiscard]] virtual bool supports_layers()
+    [[nodiscard]] inline virtual bool supports_layers()
     {
         return false;
     }
 
     // Creates layer `id` or moves it to `placement` (window-client DIPs, `clip` always set). Its
     // running animations carry on.
-    virtual void sync_layer(VisualId id, const LayerPlacement& placement)
+    inline virtual void sync_layer(VisualId id, const LayerPlacement& placement)
     {
         (void)id;
         (void)placement;
@@ -187,27 +189,27 @@ public:
 
     // Replaces layer `id`'s content with `content`, drawn with (0,0) at the top-left of the
     // placement's bounds. Called again only when the content changes.
-    virtual void paint_layer(VisualId id, const RenderRecording& content)
+    inline virtual void paint_layer(VisualId id, const RenderRecording& content)
     {
         (void)id;
         (void)content;
     }
 
     // Runs `animation` on layer `id`, replacing any animation of the same property.
-    virtual void animate_layer(VisualId id, const LayerAnimation& animation)
+    inline virtual void animate_layer(VisualId id, const LayerAnimation& animation)
     {
         (void)id;
         (void)animation;
     }
 
     // Stops every animation on layer `id` and puts its properties back at rest.
-    virtual void stop_layer_animations(VisualId id)
+    inline virtual void stop_layer_animations(VisualId id)
     {
         (void)id;
     }
 
     // Drops layer `id` with its animations.
-    virtual void remove_layer(VisualId id)
+    inline virtual void remove_layer(VisualId id)
     {
         (void)id;
     }
@@ -215,7 +217,7 @@ public:
     // The compositor's clock, the time animations run on. Window times how long a layer ran with
     // it, so a control that takes its drawing back continues where the compositor was. Zero by
     // default.
-    [[nodiscard]] virtual Duration now() const
+    [[nodiscard]] inline virtual Duration now() const
     {
         return {};
     }

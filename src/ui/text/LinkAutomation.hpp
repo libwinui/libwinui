@@ -8,6 +8,7 @@
 #include "winui/ui/Launcher.hpp"
 #include "winui/ui/text/Inlines.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <functional>
 #include <limits>
@@ -17,6 +18,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui::detail
 {
@@ -36,13 +38,13 @@ public:
         std::function<bool()>  enabled;
     };
 
-    LinkAutomation(Element* owner, Source source, std::size_t index) : source_(std::move(source)), index_(index)
+    inline LinkAutomation(Element* owner, Source source, std::size_t index) : source_(std::move(source)), index_(index)
     {
         set_parent_of(*this, owner);
     }
 
     // Around every piece of the link this view draws.
-    void place()
+    inline void place()
     {
         std::optional<Rect> box;
         if (index_ < source_.links().size())
@@ -83,35 +85,35 @@ public:
         LayoutAccess::set_bounds(*this, box.value_or(Rect{}));
     }
 
-    [[nodiscard]] AutomationRole automation_role() const override
+    [[nodiscard]] inline AutomationRole automation_role() const override
     {
         return AutomationRole::Hyperlink;
     }
-    void automation_children(std::vector<Element*>& out) const override
+    inline void automation_children(std::vector<Element*>& out) const override
     {
         (void)out;
     }
 
 protected:
-    [[nodiscard]] std::string automation_name_fallback() const override
+    [[nodiscard]] inline std::string automation_name_fallback() const override
     {
         return index_ < source_.links().size() ? source_.links()[index_]->text : std::string{};
     }
-    void automation_providers(AutomationProviders& out) override
+    inline void automation_providers(AutomationProviders& out) override
     {
         out.invoke = this;
     }
-    [[nodiscard]] Size measure_override(Size, const MeasureContext&) const override
+    [[nodiscard]] inline Size measure_override(Size, const MeasureContext&) const override
     {
         return {};
     }
-    void render_override(Renderer&, const RenderContext&) const override
+    inline void render_override(Renderer&, const RenderContext&) const override
     {
     }
 
 private:
     // Follows the link as a click does.
-    bool invoke() override
+    inline bool invoke() override
     {
         if (!source_.enabled() || index_ >= source_.links().size())
         {

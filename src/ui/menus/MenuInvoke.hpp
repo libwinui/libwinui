@@ -6,8 +6,10 @@
 #include "winui/core/Property.hpp"
 #include "winui/ui/menus/MenuFlyout.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <functional>
 #include <vector>
+#endif
 
 namespace ui
 {

@@ -1,9 +1,15 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <optional>
 #include <type_traits>
+#endif
 
 namespace ui
 {
@@ -26,7 +32,7 @@ concept OptionalFloatNumber = std::is_arithmetic_v<T> && !std::same_as<T, bool>;
 /// auto panel = std::make_unique<ui::TilePanelControl>();
 /// panel->set_item_width(std::nullopt); // back to the first item's width
 /// @endcode
-class OptionalFloat
+LIBWINUI_EXPORT class OptionalFloat
 {
 public:
     /// Unset.
@@ -111,3 +117,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -18,6 +22,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -25,6 +30,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -58,7 +64,7 @@ class ToolTipSurface; // defined in ToolTip.cpp
 ///     .content = ui::Text{.text = "Saves the current document"},
 /// }.build());
 /// @endcode
-class ToolTipControl final : public Element
+LIBWINUI_EXPORT class ToolTipControl final : public Element
 {
 public:
     /// An empty tooltip: no anchor, no content, 800 ms delay, placed Above.
@@ -294,7 +300,7 @@ protected:
 ///     .content   = ui::Text{ .text = "Open a document from disk" },
 /// });
 /// @endcode
-struct ToolTip
+LIBWINUI_EXPORT struct ToolTip
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ToolTip>` points at.
@@ -358,3 +364,5 @@ struct ToolTip
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Duration.hpp"
@@ -25,6 +29,7 @@
 #include "winui/ui/themes/Theme.hpp"
 #include "winui/ui/themes/ThemeSource.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <chrono>
 #include <memory>
@@ -41,23 +46,24 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
-class ContextMenuHost;
-class AutomationEvents;
-struct Command;
-class NativeHost;
-class SpellChecker;
-class WindowHost; // the backend's side of a window, private to libwinui
+LIBWINUI_EXPORT class ContextMenuHost;
+LIBWINUI_EXPORT class AutomationEvents;
+LIBWINUI_EXPORT struct Command;
+LIBWINUI_EXPORT class NativeHost;
+LIBWINUI_EXPORT class SpellChecker;
+LIBWINUI_EXPORT class WindowHost; // the backend's side of a window, private to libwinui
 
 namespace testing
 {
-class WindowSeams;
+extern "C++" class WindowSeams;
 }
-class NativeControl;
-struct NativeNotification;
+LIBWINUI_EXPORT class NativeControl;
+LIBWINUI_EXPORT struct NativeNotification;
 
 namespace detail
 {
@@ -71,7 +77,7 @@ struct PaintScratchDelete
 } // namespace detail
 
 /// What a Window's `on_closing` gets. It carries no fields yet.
-struct WindowClosingArgs
+LIBWINUI_EXPORT struct WindowClosingArgs
 {
 };
 
@@ -111,7 +117,7 @@ struct WindowClosingArgs
 ///     return ui::run(window);
 /// }
 /// @endcode
-class Window
+LIBWINUI_EXPORT class Window
 {
 public:
     /// A window with no content and no OS window yet, Theme::light(), state() Normal. `options`
@@ -1564,3 +1570,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

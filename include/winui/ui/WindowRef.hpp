@@ -1,15 +1,21 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
-class Window;
-class UiThreadHop;
+LIBWINUI_EXPORT class Window;
+LIBWINUI_EXPORT class UiThreadHop;
 
 /// A weak handle to a Window, for a worker that may outlive it. Take it with Window::ref() while
 /// the Window is known to exist (on the UI thread, before the work starts); post() through it is
@@ -31,7 +37,7 @@ class UiThreadHop;
 ///     }).detach();
 /// }
 /// @endcode
-class WindowRef
+LIBWINUI_EXPORT class WindowRef
 {
 public:
     /// Names no window: post() drops everything.
@@ -63,3 +69,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

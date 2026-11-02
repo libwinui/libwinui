@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/render/Brush.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <optional>
 #include <type_traits>
@@ -11,11 +16,12 @@
 #include <variant>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-struct Theme;
+LIBWINUI_EXPORT struct Theme;
 
 /// A color read from the theme each time it is used: a theme-resource brush. A captureless
 /// lambda taking a `const Theme&` converts to it, and ui::theme_colors names one for every
@@ -30,7 +36,7 @@ struct Theme;
 /// grid->set_background([](const ui::Theme& t) { return t.colors().background; });
 /// ui::Border{.background = ui::theme_colors::Accent.with_alpha(0.7f)};
 /// @endcode
-class ThemeColor
+LIBWINUI_EXPORT class ThemeColor
 {
 public:
     /// The function a resource reads its color with.
@@ -101,7 +107,7 @@ private:
 /// ui::Rectangle{.fill = picked}; // followed
 /// ui::Rectangle{.fill = ui::bind(dark, [](bool on) { return on ? ui::colors::Black : ui::colors::White; })};
 /// @endcode
-class Paint
+LIBWINUI_EXPORT class Paint
 {
 public:
     /// Nothing: the control keeps its own color.
@@ -218,3 +224,5 @@ void set_paint(const Paint& paint, Set&& set)
 } // namespace detail
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

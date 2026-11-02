@@ -7,7 +7,9 @@
 #include "winui/ui/Element.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <utility>
+#endif
 
 namespace ui
 {

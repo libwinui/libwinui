@@ -13,11 +13,13 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <chrono>
 #include <string>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {

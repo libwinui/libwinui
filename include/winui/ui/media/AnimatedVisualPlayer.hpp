@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -18,8 +22,10 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
+#endif
 
 namespace ui
 {
@@ -65,7 +71,7 @@ namespace ui
 ///     },
 /// });
 /// @endcode
-class AnimatedVisualPlayerControl final : public Panel
+LIBWINUI_EXPORT class AnimatedVisualPlayerControl final : public Panel
 {
 public:
     /// A player with no source: auto-play on, rate 1, Uniform stretch.
@@ -240,7 +246,7 @@ private:
 ///     }},
 /// }});
 /// @endcode
-struct AnimatedVisualPlayer
+LIBWINUI_EXPORT struct AnimatedVisualPlayer
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<AnimatedVisualPlayer>` points at.
@@ -300,3 +306,5 @@ struct AnimatedVisualPlayer
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

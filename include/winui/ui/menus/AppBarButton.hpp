@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -20,18 +24,20 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
 
-class CommandBarControl;
+LIBWINUI_EXPORT class CommandBarControl;
 
 /// Where a CommandBar puts its buttons' text.
-enum class CommandBarDefaultTextPosition
+LIBWINUI_EXPORT enum class CommandBarDefaultTextPosition
 {
     Bottom,    ///< Under the icon, revealed when the bar opens; the default.
     Right,     ///< Beside the icon, always visible.
@@ -40,7 +46,7 @@ enum class CommandBarDefaultTextPosition
 
 /// Where one button puts its text. Collapsed hides it wherever the bar puts text, Default
 /// follows the bar.
-enum class CommandBarTextPosition
+LIBWINUI_EXPORT enum class CommandBarTextPosition
 {
     Default,   ///< Follow the bar's CommandBarDefaultTextPosition.
     Collapsed, ///< Never show this button's text.
@@ -49,7 +55,7 @@ enum class CommandBarTextPosition
 /// How the CommandBar holding an app-bar element wants it drawn. A button on its own keeps the
 /// default: full size, text at the bottom. The bar pushes one down with
 /// CommandBarElement::set_app_bar_look() whenever its state changes; apps rarely build one.
-struct AppBarLook
+LIBWINUI_EXPORT struct AppBarLook
 {
     bool                          compact          = false;                                 ///< the bar is closed
     CommandBarDefaultTextPosition text_position    = CommandBarDefaultTextPosition::Bottom; ///< the bar's text position
@@ -66,13 +72,13 @@ struct AppBarLook
     friend bool operator==(const AppBarLook&, const AppBarLook&) = default;
 };
 
-class CommandBarElement;
+LIBWINUI_EXPORT class CommandBarElement;
 
 /// What holds app-bar commands (a CommandBar, a CommandBarFlyout): told when one is clicked, so a
 /// bar can close after a click on one of its commands. Implement it only for a custom command
 /// container, and register it on each element with
 /// CommandBarElement::set_command_host().
-class AppBarCommandHost
+LIBWINUI_EXPORT class AppBarCommandHost
 {
 public:
     /// Called after `command`'s own click handler and command have run.
@@ -85,7 +91,7 @@ protected:
 /// What a CommandBar needs of the things in it: the look it pushes down, the overflow order and
 /// the facts the overflow menu sizes its columns by. Mixed into AppBarButton,
 /// AppBarToggleButton and AppBarSeparator; use command_bar_element() to reach it from an Element.
-class CommandBarElement
+LIBWINUI_EXPORT class CommandBarElement
 {
 public:
     virtual ~CommandBarElement() = default;
@@ -159,9 +165,9 @@ protected:
 /// The app-bar element `element` is, or wraps: an AppBarButton, AppBarToggleButton or
 /// AppBarSeparator, or the trigger of a flyout wrapped around one (an AppBarButton with a flyout,
 /// where the flyout owns its button). Null for anything else.
-[[nodiscard]] CommandBarElement* command_bar_element(Element* element);
+LIBWINUI_EXPORT [[nodiscard]] CommandBarElement* command_bar_element(Element* element);
 /// Const overload of command_bar_element().
-[[nodiscard]] const CommandBarElement* command_bar_element(const Element* element);
+LIBWINUI_EXPORT [[nodiscard]] const CommandBarElement* command_bar_element(const Element* element);
 
 /// A command-bar button: an icon over a small label that changes shape with where it sits.
 ///
@@ -192,7 +198,7 @@ protected:
 ///                                  .on_click = [] { /* save */ }}},
 /// });
 /// @endcode
-class AppBarButtonControl : public ButtonControl, public CommandBarElement
+LIBWINUI_EXPORT class AppBarButtonControl : public ButtonControl, public CommandBarElement
 {
     /// Drives the hover/press overlay over the plate rather than the whole button.
     void sync_composition_override(detail::Compositor& compositor, const Theme& theme) override;
@@ -369,7 +375,7 @@ protected:
 ///                                        .on_checked_changed = [&](std::optional<bool> on) { is_bold = on; }}},
 /// });
 /// @endcode
-class AppBarToggleButtonControl final : public AppBarButtonControl, private ToggleProvider
+LIBWINUI_EXPORT class AppBarToggleButtonControl final : public AppBarButtonControl, private ToggleProvider
 {
 public:
     /// An empty, unchecked toggle.
@@ -455,7 +461,7 @@ private:
 /// bar->add_primary(std::make_unique<ui::AppBarSeparatorControl>());
 /// bar->add_primary(std::make_unique<ui::AppBarButtonControl>("Delete", ui::Symbol::Delete));
 /// @endcode
-class AppBarSeparatorControl final : public Element, public CommandBarElement
+LIBWINUI_EXPORT class AppBarSeparatorControl final : public Element, public CommandBarElement
 {
 public:
     /// A separator; its orientation follows the look the bar sets.
@@ -497,7 +503,7 @@ protected:
 ///     },
 /// });
 /// @endcode
-struct AppBarButton
+LIBWINUI_EXPORT struct AppBarButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<AppBarButton>` points at.
@@ -582,7 +588,7 @@ struct AppBarButton
 ///     },
 /// });
 /// @endcode
-struct AppBarToggleButton
+LIBWINUI_EXPORT struct AppBarToggleButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<AppBarToggleButton>` points at.
@@ -671,7 +677,7 @@ struct AppBarToggleButton
 ///                  ui::AppBarButton{ .text = "Delete", .icon = ui::Symbol::Delete } },
 /// });
 /// @endcode
-struct AppBarSeparator
+LIBWINUI_EXPORT struct AppBarSeparator
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<AppBarSeparator>` points at.
@@ -717,3 +723,5 @@ struct AppBarSeparator
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

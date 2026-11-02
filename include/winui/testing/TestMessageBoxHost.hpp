@@ -3,7 +3,9 @@
 
 #include "winui/ui/MessageBox.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <vector>
+#endif
 
 namespace ui::testing
 {

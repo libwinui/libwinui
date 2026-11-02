@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Bitmap.hpp"
@@ -11,6 +15,7 @@
 #include "winui/render/Symbol.hpp"
 #include "winui/render/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <atomic>
 #include <concepts>
 #include <memory>
@@ -19,6 +24,7 @@
 #include <variant>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -53,7 +59,7 @@ namespace ui
 /// share.measure(measurer); // a glyph's box is measured (and cached) before draw()
 /// share.draw(renderer, ui::Rect{0, 0, 20, 20}, theme.palette.text_fill_primary);
 /// @endcode
-class IconSource
+LIBWINUI_EXPORT class IconSource
 {
 public:
     /// No icon (a null IconSource).
@@ -192,3 +198,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -25,11 +29,13 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -71,7 +77,7 @@ namespace ui
 /// // Run the window with ui::WindowOptions{.style = {.extend_content_into_title_bar = true}} to make
 /// // the bar the caption; without it the bar is an ordinary row under the standard title bar.
 /// @endcode
-class TitleBarControl final : public Element
+LIBWINUI_EXPORT class TitleBarControl final : public Element
 {
 public:
     /// A bar showing `title` and, beside it in the secondary text color, `subtitle`. Both
@@ -384,7 +390,7 @@ protected:
 ///     },
 /// });
 /// @endcode
-struct TitleBar
+LIBWINUI_EXPORT struct TitleBar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<TitleBar>` points at.
@@ -467,3 +473,5 @@ struct TitleBar
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

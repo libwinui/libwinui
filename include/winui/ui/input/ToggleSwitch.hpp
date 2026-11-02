@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -22,10 +26,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -58,7 +64,7 @@ namespace ui
 /// }.build());
 /// window.set_content(std::move(stack));
 /// @endcode
-class ToggleSwitchControl final : public Element, private ToggleProvider
+LIBWINUI_EXPORT class ToggleSwitchControl final : public Element, private ToggleProvider
 {
 
     // ---- composition ----
@@ -312,7 +318,7 @@ private:
 ///     .unchecked_text    = "Off",
 /// });
 /// @endcode
-struct ToggleSwitch
+LIBWINUI_EXPORT struct ToggleSwitch
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ToggleSwitch>` points at.
@@ -378,3 +384,5 @@ struct ToggleSwitch
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

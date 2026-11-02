@@ -6,13 +6,16 @@
 #include "../../ui/WindowHost.hpp"
 #include "Win32String.hpp"
 
-#include <algorithm>
 #include <objbase.h> // CoInitializeEx/CoCreateInstance; <windows.h> skips it under WIN32_LEAN_AND_MEAN
+
+#ifndef LIBWINUI_MODULE
+#include <algorithm>
 #include <string_view>
 #include <vector>
 
 #include <cmath>
 #include <cwchar>
+#endif
 
 namespace ui::win32
 {

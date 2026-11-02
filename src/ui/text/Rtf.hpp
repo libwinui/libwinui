@@ -3,9 +3,11 @@
 
 #include "winui/ui/text/RichEditBox.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
 #include <vector>
+#endif
 
 namespace ui::detail
 {

@@ -3,11 +3,14 @@
 
 #include "winui/core/PerfCounters.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <chrono>
+#endif
 
 #ifdef _WIN32
-#include <psapi.h>
 #include <windows.h>
+// after <windows.h>, which it needs
+#include <psapi.h>
 #endif
 
 namespace ui::testing

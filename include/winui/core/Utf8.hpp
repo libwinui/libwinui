@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
 
 #include <cstddef>
+#endif
 
 // The escape is on purpose: without /utf-8 a literal ä would be read as two ANSI characters and pass.
 static_assert(sizeof("\u00E4") == 3, "libwinui needs UTF-8 string literals: compile with /utf-8 (MSVC, clang-cl)");
@@ -13,7 +19,7 @@ namespace ui
 {
 
 /// U+FFFD, what malformed input decodes to.
-inline constexpr char32_t ReplacementCharacter = 0xFFFD;
+LIBWINUI_EXPORT inline constexpr char32_t ReplacementCharacter = 0xFFFD;
 
 /// One decoded code point and the number of bytes it took, as returned by decode_utf8().
 ///
@@ -31,7 +37,7 @@ inline constexpr char32_t ReplacementCharacter = 0xFFFD;
 /// }
 /// // dump == "U+0061 U+00E4 "
 /// @endcode
-struct Utf8Decoded
+LIBWINUI_EXPORT struct Utf8Decoded
 {
     char32_t    code_point = 0; ///< the decoded code point; U+FFFD for a malformed sequence
     std::size_t length     = 0; ///< at least 1 unless `pos` was at the end
@@ -40,50 +46,50 @@ struct Utf8Decoded
 /// The code point starting at byte `pos` of `text`. A malformed sequence decodes to U+FFFD and
 /// takes only the bytes that belonged to it, so decoding carries on at the next one. At or past
 /// the end the result is `{0, 0}`.
-[[nodiscard]] Utf8Decoded decode_utf8(std::string_view text, std::size_t pos = 0);
+LIBWINUI_EXPORT [[nodiscard]] Utf8Decoded decode_utf8(std::string_view text, std::size_t pos = 0);
 
 /// Appends `code_point` to `out` as UTF-8. A surrogate or a value beyond U+10FFFF appends U+FFFD.
-void append_utf8(std::string& out, char32_t code_point);
+LIBWINUI_EXPORT void append_utf8(std::string& out, char32_t code_point);
 
 /// `code_point` as a UTF-8 string.
-[[nodiscard]] std::string encode_utf8(char32_t code_point);
+LIBWINUI_EXPORT [[nodiscard]] std::string encode_utf8(char32_t code_point);
 
 /// The byte offset of the code point after the one at `pos`; `text.size()` at or past the end.
-[[nodiscard]] std::size_t next_code_point(std::string_view text, std::size_t pos);
+LIBWINUI_EXPORT [[nodiscard]] std::size_t next_code_point(std::string_view text, std::size_t pos);
 
 /// The byte offset of the code point before `pos`; 0 at the start.
-[[nodiscard]] std::size_t previous_code_point(std::string_view text, std::size_t pos);
+LIBWINUI_EXPORT [[nodiscard]] std::size_t previous_code_point(std::string_view text, std::size_t pos);
 
 /// True when `pos` is 0, `text.size()`, or the first byte of a code point.
-[[nodiscard]] bool is_code_point_boundary(std::string_view text, std::size_t pos);
+LIBWINUI_EXPORT [[nodiscard]] bool is_code_point_boundary(std::string_view text, std::size_t pos);
 
 /// `pos` moved back onto the start of the code point it falls inside, clamped to the text.
-[[nodiscard]] std::size_t floor_code_point(std::string_view text, std::size_t pos);
+LIBWINUI_EXPORT [[nodiscard]] std::size_t floor_code_point(std::string_view text, std::size_t pos);
 
 /// How many code points `text` holds, a malformed sequence counting as one.
-[[nodiscard]] std::size_t code_point_count(std::string_view text);
+LIBWINUI_EXPORT [[nodiscard]] std::size_t code_point_count(std::string_view text);
 
 /// True when `text` is well-formed UTF-8: no overlong forms, no surrogates, nothing past U+10FFFF.
-[[nodiscard]] bool is_valid_utf8(std::string_view text);
+LIBWINUI_EXPORT [[nodiscard]] bool is_valid_utf8(std::string_view text);
 
 /// `text` with every malformed sequence replaced by U+FFFD. libwinui passes text from outside,
 /// such as keyboard input, the clipboard, files and the command line, through this once.
-[[nodiscard]] std::string sanitize_utf8(std::string_view text);
+LIBWINUI_EXPORT [[nodiscard]] std::string sanitize_utf8(std::string_view text);
 
 /// `text` as UTF-16, for system and library APIs that take it.
-[[nodiscard]] std::u16string to_utf16(std::string_view text);
+LIBWINUI_EXPORT [[nodiscard]] std::u16string to_utf16(std::string_view text);
 
 /// `text`, which is UTF-16, as UTF-8.
-[[nodiscard]] std::string from_utf16(std::u16string_view text);
+LIBWINUI_EXPORT [[nodiscard]] std::string from_utf16(std::u16string_view text);
 
 /// How many UTF-16 code units `text` takes: one per code point, two past the BMP. The UTF-16
 /// offset of byte `pos` is `utf16_length(text.substr(0, pos))`.
-[[nodiscard]] std::size_t utf16_length(std::string_view text);
+LIBWINUI_EXPORT [[nodiscard]] std::size_t utf16_length(std::string_view text);
 
 /// The byte offset of `text` that lies `units` UTF-16 code units in, the inverse of
 /// utf16_length(). A count that ends between the two halves of a surrogate pair lands before
 /// the pair; one past the end lands on `text.size()`.
-[[nodiscard]] std::size_t utf8_offset_from_utf16(std::string_view text, std::size_t units);
+LIBWINUI_EXPORT [[nodiscard]] std::size_t utf8_offset_from_utf16(std::string_view text, std::size_t units);
 
 /// Puts UTF-16 code units that arrive one at a time, as typed characters do, back together into
 /// UTF-8. A high surrogate is held until its low half arrives. A half without its partner comes
@@ -102,7 +108,7 @@ void append_utf8(std::string& out, char32_t code_point);
 ///
 /// ui::Utf16Decoder decoder; // one per input source
 /// @endcode
-class Utf16Decoder
+LIBWINUI_EXPORT class Utf16Decoder
 {
 public:
     /// Feeds one unit and returns the text it completes: empty while a high surrogate waits,
@@ -140,7 +146,7 @@ private:
 ///     }
 /// }
 /// @endcode
-class CodePoints
+LIBWINUI_EXPORT class CodePoints
 {
 public:
     /// Forward iterator over the code points; compares by byte offset only.
@@ -213,9 +219,11 @@ private:
 };
 
 /// A CodePoints view over `text`, for a range-for. `text` must outlive the loop.
-[[nodiscard]] inline CodePoints code_points(std::string_view text)
+LIBWINUI_EXPORT [[nodiscard]] inline CodePoints code_points(std::string_view text)
 {
     return CodePoints{text};
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

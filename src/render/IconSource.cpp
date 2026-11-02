@@ -12,6 +12,7 @@
 #include "winui/render/SvgImage.hpp"
 #include "winui/render/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <bit>
 #include <memory>
@@ -24,6 +25,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {

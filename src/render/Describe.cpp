@@ -10,6 +10,7 @@
 #include "winui/render/Renderer.hpp"
 #include "winui/render/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -20,6 +21,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
+#endif
 
 namespace ui
 {

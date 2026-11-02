@@ -20,6 +20,7 @@
 #include "winui/ui/text/Text.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <array>
 #include <limits>
@@ -29,6 +30,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {

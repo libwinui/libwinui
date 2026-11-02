@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Duration.hpp"
@@ -9,6 +13,7 @@
 #include "winui/render/CubicBezier.hpp"
 #include "winui/render/PathGeometry.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <optional>
 #include <span>
@@ -17,6 +22,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -42,18 +48,18 @@ namespace ui
 ///     }
 /// };
 /// @endcode
-[[nodiscard]] bool animations_enabled();
+LIBWINUI_EXPORT [[nodiscard]] bool animations_enabled();
 
 /// How far an animation's clock moves in a tick of `delta`: `delta` itself, or, while
 /// animations_enabled() is false, far enough to finish any finite animation in that one tick.
 /// Use it only for animations. A delay, a timeout, a blink or a looping indicator keeps counting
 /// `delta`.
-[[nodiscard]] Duration animation_delta(Duration delta);
+LIBWINUI_EXPORT [[nodiscard]] Duration animation_delta(Duration delta);
 
 // ---- easing ----------------------------------------------------------------------------------
 
 /// Which end of the curve the easing is applied to. EaseOut is the default.
-enum class EasingMode
+LIBWINUI_EXPORT enum class EasingMode
 {
     EaseOut,   ///< The curve is mirrored so it decelerates into the end; the default.
     EaseIn,    ///< The curve as defined: accelerates out of the start.
@@ -70,81 +76,81 @@ enum class EasingMode
 ///                                              .duration = 400ms,
 ///                                              .easing   = ui::BackEase{.amplitude = 0.5f}});
 /// @endcode
-struct BackEase
+LIBWINUI_EXPORT struct BackEase
 {
     float      amplitude = 1.0f;                ///< How far it pulls back; 0 is plain t cubed.
     EasingMode mode      = EasingMode::EaseOut; ///< Which end the curve applies to.
 };
 /// `bounces` bounces, each `bounciness` times smaller than the last (clamped above 1).
-struct BounceEase
+LIBWINUI_EXPORT struct BounceEase
 {
     int        bounces    = 3;                   ///< Number of bounces; negative is taken as 0.
     float      bounciness = 2.0f;                ///< Ratio between successive bounce heights.
     EasingMode mode       = EasingMode::EaseOut; ///< Which end the curve applies to.
 };
 /// A quarter circle.
-struct CircleEase
+LIBWINUI_EXPORT struct CircleEase
 {
     EasingMode mode = EasingMode::EaseOut; ///< Which end the curve applies to.
 };
 /// t³.
-struct CubicEase
+LIBWINUI_EXPORT struct CubicEase
 {
     EasingMode mode = EasingMode::EaseOut; ///< Which end the curve applies to.
 };
 /// `oscillations` swings, damped exponentially by `springiness`.
-struct ElasticEase
+LIBWINUI_EXPORT struct ElasticEase
 {
     int        oscillations = 3;                   ///< Number of swings; negative is taken as 0.
     float      springiness  = 3.0f;                ///< Exponential damping of the swings.
     EasingMode mode         = EasingMode::EaseOut; ///< Which end the curve applies to.
 };
 /// (e^(k·t) − 1) / (e^k − 1).
-struct ExponentialEase
+LIBWINUI_EXPORT struct ExponentialEase
 {
     float      exponent = 2.0f;                ///< k in the formula; 0 is linear.
     EasingMode mode     = EasingMode::EaseOut; ///< Which end the curve applies to.
 };
 /// t^power (a negative power is taken as 0).
-struct PowerEase
+LIBWINUI_EXPORT struct PowerEase
 {
     float      power = 2.0f;                ///< The exponent.
     EasingMode mode  = EasingMode::EaseOut; ///< Which end the curve applies to.
 };
 /// t².
-struct QuadraticEase
+LIBWINUI_EXPORT struct QuadraticEase
 {
     EasingMode mode = EasingMode::EaseOut; ///< Which end the curve applies to.
 };
 /// t⁴.
-struct QuarticEase
+LIBWINUI_EXPORT struct QuarticEase
 {
     EasingMode mode = EasingMode::EaseOut; ///< Which end the curve applies to.
 };
 /// t⁵.
-struct QuinticEase
+LIBWINUI_EXPORT struct QuinticEase
 {
     EasingMode mode = EasingMode::EaseOut; ///< Which end the curve applies to.
 };
 /// A quarter sine.
-struct SineEase
+LIBWINUI_EXPORT struct SineEase
 {
     EasingMode mode = EasingMode::EaseOut; ///< Which end the curve applies to.
 };
 
 /// One easing curve: a CubicBezier (the default, which is linear) or one of the eleven named
 /// eases above. Assign any of them directly: `.easing = ui::SineEase{ui::EasingMode::EaseInOut}`.
-using EasingFunction = std::
+LIBWINUI_EXPORT using EasingFunction = std::
     variant<CubicBezier, BackEase, BounceEase, CircleEase, CubicEase, ElasticEase, ExponentialEase, PowerEase, QuadraticEase, QuarticEase, QuinticEase, SineEase>;
 
 /// The eased progress for linear progress `t` (0..1), with the curve applied at the end its
 /// EasingMode names. The curves may overshoot 0..1 (Back, Elastic).
-[[nodiscard]] float ease(const EasingFunction& function, float t);
+LIBWINUI_EXPORT [[nodiscard]] float ease(const EasingFunction& function, float t);
 
 // ---- key frames --------------------------------------------------------------------------------
 
 /// How a key frame's segment gets from the previous value to its own.
-enum class KeyFrameKind
+LIBWINUI_EXPORT enum class KeyFrameKind
 {
     Linear,   ///< Interpolates linearly.
     Discrete, ///< Holds the previous value, then jumps at the key time.
@@ -166,7 +172,7 @@ enum class KeyFrameKind
 /// auto element = std::make_unique<ui::RectangleControl>();
 /// element->start_animation(ui::AnimatedProperty::Opacity, ui::KeyFrameAnimation{.key_frames = frames});
 /// @endcode
-struct KeyFrame
+LIBWINUI_EXPORT struct KeyFrame
 {
     /// Key time from the animation's start.
     Duration time{};
@@ -202,16 +208,16 @@ struct KeyFrame
 /// The value of `frames` (sorted by time) at `time`. Each frame's segment starts at the previous
 /// frame's value, the first one's at `base` (the value the property had when the animation
 /// started). After the last frame its value holds.
-[[nodiscard]] float sample_key_frames(std::span<const KeyFrame> frames, float base, Duration time);
+LIBWINUI_EXPORT [[nodiscard]] float sample_key_frames(std::span<const KeyFrame> frames, float base, Duration time);
 
 /// The time of the last key frame: a key frame animation's natural duration.
-[[nodiscard]] Duration key_frames_duration(std::span<const KeyFrame> frames);
+LIBWINUI_EXPORT [[nodiscard]] Duration key_frames_duration(std::span<const KeyFrame> frames);
 
 // ---- the animations an element runs on its own visual properties ----------------------------
 
 /// What an animation started on an element drives (Element::start_animation()): the element's
 /// opacity, rotation, translation, scale or center point, whole or one component.
-enum class AnimatedProperty : std::uint8_t
+LIBWINUI_EXPORT enum class AnimatedProperty : std::uint8_t
 {
     Opacity,      ///< Element::opacity(), 0..1.
     Rotation,     ///< Element::rotation(), in degrees about the center point.
@@ -231,7 +237,7 @@ enum class AnimatedProperty : std::uint8_t
 
 /// Whether a finished animation keeps its last value (HoldEnd, the default) or hands the
 /// property back to the value it had before it started (Stop).
-enum class FillBehavior
+LIBWINUI_EXPORT enum class FillBehavior
 {
     HoldEnd, ///< Keep the final value (written into the property); the default.
     Stop,    ///< Hand the property back to its pre-animation value.
@@ -263,7 +269,7 @@ enum class FillBehavior
 ///                                           .repeat_count = 3.0,
 ///                                           .fill         = ui::FillBehavior::Stop});
 /// @endcode
-struct DoubleAnimation
+LIBWINUI_EXPORT struct DoubleAnimation
 {
     /// Start value. Unset starts from the property's current animated value.
     OptionalFloat from{};
@@ -298,7 +304,7 @@ struct DoubleAnimation
 ///                                                                 ui::KeyFrame::linear(300ms, 1.0f)},
 ///                                                .repeat_count = 2.0});
 /// @endcode
-struct KeyFrameAnimation
+LIBWINUI_EXPORT struct KeyFrameAnimation
 {
     /// The frames, sorted by time; the first segment starts at the property's current value.
     std::vector<KeyFrame> key_frames{};
@@ -332,7 +338,7 @@ struct KeyFrameAnimation
 ///                             ui::SpringAnimation{.final_value = ui::Vector3{1.0f, 1.0f, 1.0f}});
 /// });
 /// @endcode
-struct SpringAnimation
+LIBWINUI_EXPORT struct SpringAnimation
 {
     /// The rest value the spring pulls to; a scalar property uses `.x`.
     Vector3 final_value{1.0f, 1.0f, 1.0f};
@@ -367,14 +373,14 @@ struct SpringAnimation
 /// // ... later
 /// badge->stop_animation(ui::AnimatedProperty::Scale);
 /// @endcode
-struct ExpressionAnimation
+LIBWINUI_EXPORT struct ExpressionAnimation
 {
     /// The expression, evaluated again every frame. Captured elements must outlive the animation.
     std::variant<Callback<float()>, Callback<Vector3()>> expression;
 };
 
 /// Any of the four, for Element::start_animation().
-using Animation = std::variant<DoubleAnimation, KeyFrameAnimation, SpringAnimation, ExpressionAnimation>;
+LIBWINUI_EXPORT using Animation = std::variant<DoubleAnimation, KeyFrameAnimation, SpringAnimation, ExpressionAnimation>;
 
 // ---- implicit transitions ----------------------------------------------------------------------
 
@@ -388,14 +394,14 @@ using Animation = std::variant<DoubleAnimation, KeyFrameAnimation, SpringAnimati
 /// element->set_opacity_transition(ui::ScalarTransition{.duration = 200ms});
 /// element->set_opacity(0.0f); // fades out over 200 ms instead of vanishing
 /// @endcode
-struct ScalarTransition
+LIBWINUI_EXPORT struct ScalarTransition
 {
     Duration duration{300.0}; ///< Length of each transition.
 };
 
 /// Which components of a Vector3 property a transition animates;
 /// the others snap to their new value.
-enum class Vector3Components : std::uint8_t
+LIBWINUI_EXPORT enum class Vector3Components : std::uint8_t
 {
     None = 0, ///< Every component snaps.
     X    = 1, ///< Animate x.
@@ -404,12 +410,12 @@ enum class Vector3Components : std::uint8_t
     All  = 7, ///< Animate all three; the default.
 };
 /// Combines two component sets (`Vector3Components::X | Vector3Components::Y`).
-[[nodiscard]] constexpr Vector3Components operator|(Vector3Components a, Vector3Components b)
+LIBWINUI_EXPORT [[nodiscard]] constexpr Vector3Components operator|(Vector3Components a, Vector3Components b)
 {
     return static_cast<Vector3Components>(static_cast<std::uint8_t>(a) | static_cast<std::uint8_t>(b));
 }
 /// Whether `set` includes component `c`.
-[[nodiscard]] constexpr bool has_component(Vector3Components set, Vector3Components c)
+LIBWINUI_EXPORT [[nodiscard]] constexpr bool has_component(Vector3Components set, Vector3Components c)
 {
     return (static_cast<std::uint8_t>(set) & static_cast<std::uint8_t>(c)) != 0;
 }
@@ -424,7 +430,7 @@ enum class Vector3Components : std::uint8_t
 /// element->set_translation_transition(ui::Vector3Transition{.components = ui::Vector3Components::Y});
 /// element->set_translation(ui::Vector3{20.0f, 40.0f, 0.0f}); // y glides, x snaps
 /// @endcode
-struct Vector3Transition
+LIBWINUI_EXPORT struct Vector3Transition
 {
     Duration          duration{300.0};                     ///< Length of each transition.
     Vector3Components components = Vector3Components::All; ///< Which components animate.
@@ -441,7 +447,7 @@ struct Vector3Transition
 ///     .content               = {ui::Text{.text = "Fades on color changes"}},
 /// });
 /// @endcode
-struct BrushTransition
+LIBWINUI_EXPORT struct BrushTransition
 {
     Duration duration{150.0}; ///< Length of the blend (at least 1 ms).
 };
@@ -477,7 +483,7 @@ struct BrushTransition
 ///     ui::ColorAnimator        animator_;
 /// };
 /// @endcode
-class ColorAnimator
+LIBWINUI_EXPORT class ColorAnimator
 {
 public:
     /// The background is changing from `from` (what current() draws right now) to `to`. Starts a
@@ -577,20 +583,20 @@ private:
 /// frame->navigate([] { return std::make_unique<ui::TextControl>("Home"); },
 ///                 ui::RisePageTransition{});
 /// @endcode
-struct RisePageTransition
+LIBWINUI_EXPORT struct RisePageTransition
 {
 };
 /// The new page grows from 94 % as it fades in, and the old one grows to 104 % as it fades out.
 /// Going back plays the reverse.
-struct ZoomPageTransition
+LIBWINUI_EXPORT struct ZoomPageTransition
 {
 };
 /// No animation at all. A page that plays a connected animation navigates with it.
-struct NoPageTransition
+LIBWINUI_EXPORT struct NoPageTransition
 {
 };
 /// The direction of a SlidePageTransition.
-enum class PageSlideDirection
+LIBWINUI_EXPORT enum class PageSlideDirection
 {
     FromBottom, ///< The new page slides up; the default.
     FromLeft,   ///< The new page slides in from the left.
@@ -605,19 +611,20 @@ enum class PageSlideDirection
 /// frame->navigate([] { return std::make_unique<ui::TextControl>("Next"); },
 ///                 ui::SlidePageTransition{.direction = ui::PageSlideDirection::FromRight});
 /// @endcode
-struct SlidePageTransition
+LIBWINUI_EXPORT struct SlidePageTransition
 {
     PageSlideDirection direction = PageSlideDirection::FromBottom; ///< Where the new page comes from.
 };
 /// The new page zooms in from 90 % after the old one has faded. Going back, the old page drops
 /// 200 DIPs away.
-struct FadeThroughPageTransition
+LIBWINUI_EXPORT struct FadeThroughPageTransition
 {
 };
 
 /// One of the navigation transitions, passed to `NavigationFrameControl::navigate()` or used as a
 /// NavigationTransition's default.
-using PageTransition = std::variant<RisePageTransition, ZoomPageTransition, NoPageTransition, SlidePageTransition, FadeThroughPageTransition>;
+LIBWINUI_EXPORT using PageTransition = std::
+    variant<RisePageTransition, ZoomPageTransition, NoPageTransition, SlidePageTransition, FadeThroughPageTransition>;
 
 // ---- element transitions -----------------------------------------------------------------
 
@@ -633,7 +640,7 @@ using PageTransition = std::variant<RisePageTransition, ZoomPageTransition, NoPa
 ///     .content              = {ui::Text{.text = "First"}, ui::Text{.text = "Second"}},
 /// });
 /// @endcode
-struct EntranceTransition
+LIBWINUI_EXPORT struct EntranceTransition
 {
     float offset_x = 0.0f;  ///< Start x offset from the final position, DIPs.
     float offset_y = 28.0f; ///< Start y offset from the final position, DIPs.
@@ -647,20 +654,20 @@ struct EntranceTransition
 /// auto item = std::make_unique<ui::BorderControl>();
 /// item->set_transitions({ui::RepositionTransition{.stagger = false}});
 /// @endcode
-struct RepositionTransition
+LIBWINUI_EXPORT struct RepositionTransition
 {
     bool stagger = true; ///< Delay elements moved together 33 ms apart.
 };
 /// New content slides in from the offset over 500 ms and fades in over 170 ms after 50 ms.
 /// Outgoing content fades out in 50 ms.
-struct ContentTransition
+LIBWINUI_EXPORT struct ContentTransition
 {
     float offset_x = 0.0f;  ///< Start x offset of incoming content, DIPs.
     float offset_y = 28.0f; ///< Start y offset of incoming content, DIPs.
 };
 /// An added item grows from 90 % and fades in after the items it displaces have moved. A deleted
 /// one shrinks to 90 % and fades out, and the rest close the gap.
-struct AddRemoveTransition
+LIBWINUI_EXPORT struct AddRemoveTransition
 {
 };
 /// An opening popup slides in from the offset and fades in. A closing one fades out in 83 ms.
@@ -670,7 +677,7 @@ struct AddRemoveTransition
 /// auto popup = std::make_unique<ui::PopupControl>();
 /// popup->set_child_transitions({ui::PopupTransition{.offset_y = 20.0f}});
 /// @endcode
-struct PopupTransition
+LIBWINUI_EXPORT struct PopupTransition
 {
     float offset_x = 0.0f;  ///< Start x offset of the opening popup, DIPs.
     float offset_y = 40.0f; ///< Start y offset of the opening popup, DIPs.
@@ -686,7 +693,7 @@ struct PopupTransition
 ///     .default_transition = ui::ZoomPageTransition{}}});
 /// frame->navigate([] { return std::make_unique<ui::TextControl>("Details"); }); // zooms in
 /// @endcode
-struct NavigationTransition
+LIBWINUI_EXPORT struct NavigationTransition
 {
     /// Used when navigate() is given no transition. Unset uses RisePageTransition.
     std::optional<PageTransition> default_transition{};
@@ -694,13 +701,14 @@ struct NavigationTransition
 
 /// One transition, for Element::set_transitions(), Element::set_children_transitions() and
 /// the `transitions`-style spec fields.
-using Transition = std::variant<EntranceTransition, RepositionTransition, ContentTransition, AddRemoveTransition, PopupTransition, NavigationTransition>;
+LIBWINUI_EXPORT using Transition = std::
+    variant<EntranceTransition, RepositionTransition, ContentTransition, AddRemoveTransition, PopupTransition, NavigationTransition>;
 
 /// An element's transitions, in the order they were given.
-using TransitionList = std::vector<Transition>;
+LIBWINUI_EXPORT using TransitionList = std::vector<Transition>;
 
 /// The first transition of type `T` in `transitions`, or nullptr.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 [[nodiscard]] const T* find_transition(const TransitionList& transitions)
 {
     for (const Transition& t : transitions)
@@ -718,7 +726,7 @@ template <typename T>
 /// The opacity, scale and offset a transition or a navigation transition animates. They
 /// apply on top of the element's own opacity, scale, rotation and translation, and reset when the
 /// transition ends. The scale is about `scale_origin`, relative to the element's size.
-struct TransitionTargetState
+LIBWINUI_EXPORT struct TransitionTargetState
 {
     float opacity = 1.0f;           ///< Multiplied into the element's own opacity, 0..1.
     Point translate{};              ///< Offset in DIPs, applied after the scale.
@@ -736,7 +744,7 @@ struct TransitionTargetState
 };
 
 /// Which transition-target value a storyboard track drives.
-enum class TransitionChannel : std::uint8_t
+LIBWINUI_EXPORT enum class TransitionChannel : std::uint8_t
 {
     Opacity,    ///< TransitionTargetState::opacity.
     TranslateX, ///< TransitionTargetState::translate.x.
@@ -746,7 +754,7 @@ enum class TransitionChannel : std::uint8_t
 };
 
 /// One key-framed track of a transition storyboard.
-struct TransitionTrack
+LIBWINUI_EXPORT struct TransitionTrack
 {
     TransitionChannel     channel = TransitionChannel::Opacity; ///< The value this track drives.
     std::vector<KeyFrame> key_frames{};                         ///< Frames sorted by time.
@@ -769,7 +777,7 @@ struct TransitionTrack
 /// // Or one of the stock ones:
 /// element->run_transition(ui::transition_storyboards::popup_in(ui::Point{0.0f, 40.0f}));
 /// @endcode
-struct TransitionStoryboard
+LIBWINUI_EXPORT struct TransitionStoryboard
 {
     std::vector<TransitionTrack> tracks{};                 ///< The key-framed tracks.
     Duration                     delay{};                  ///< Start delay (a stagger).
@@ -787,38 +795,38 @@ struct TransitionStoryboard
 /// The transition target `storyboard` gives `elapsed` after it started. During its delay the
 /// tracks hold their first values. The target is set to the start values before a staggered
 /// storyboard begins, so a staggered entrance stays invisible while it waits.
-[[nodiscard]] TransitionTargetState sample_transition(const TransitionStoryboard& storyboard, Duration elapsed);
+LIBWINUI_EXPORT [[nodiscard]] TransitionTargetState sample_transition(const TransitionStoryboard& storyboard, Duration elapsed);
 
 /// The transform a transition target draws an element at `bounds` (window coordinates) through:
 /// its scale about `scale_origin` (relative to the size), then its translation. Identity when the
 /// target is at rest.
-[[nodiscard]] Matrix transition_transform(const TransitionTargetState& target, const Rect& bounds);
+LIBWINUI_EXPORT [[nodiscard]] Matrix transition_transform(const TransitionTargetState& target, const Rect& bounds);
 
 /// The storyboards of the transitions, with the system's own animation timings. `offset` is
 /// where the element starts relative to where it ends up.
 namespace transition_storyboards
 {
 /// Entrance: from `offset` and transparent to rest, 667 ms.
-[[nodiscard]] TransitionStoryboard entrance(Point offset);
+LIBWINUI_EXPORT [[nodiscard]] TransitionStoryboard entrance(Point offset);
 /// Reposition: from `offset` to rest, 367 ms.
-[[nodiscard]] TransitionStoryboard reposition(Point offset);
+LIBWINUI_EXPORT [[nodiscard]] TransitionStoryboard reposition(Point offset);
 /// Incoming content: from `offset` over 500 ms, fading in from 50 to 220 ms.
-[[nodiscard]] TransitionStoryboard content_in(Point offset);
+LIBWINUI_EXPORT [[nodiscard]] TransitionStoryboard content_in(Point offset);
 /// Outgoing content: fade out over 50 ms.
-[[nodiscard]] TransitionStoryboard content_out();
+LIBWINUI_EXPORT [[nodiscard]] TransitionStoryboard content_out();
 /// An added item, after `delay`: grow from 90 % and fade in over 333 ms, starting at 166 ms.
-[[nodiscard]] TransitionStoryboard add(Duration delay);
+LIBWINUI_EXPORT [[nodiscard]] TransitionStoryboard add(Duration delay);
 /// An item moved by an add or a delete: glide from `offset` over `duration`, after `delay`.
-[[nodiscard]] TransitionStoryboard make_room(Point offset, Duration duration, Duration delay);
+LIBWINUI_EXPORT [[nodiscard]] TransitionStoryboard make_room(Point offset, Duration duration, Duration delay);
 /// A deleted item: shrink to 90 % and fade out, 100 ms.
-[[nodiscard]] TransitionStoryboard remove();
+LIBWINUI_EXPORT [[nodiscard]] TransitionStoryboard remove();
 /// An opening popup: from `offset` over 367 ms, fading in from 83 to 166 ms.
-[[nodiscard]] TransitionStoryboard popup_in(Point offset);
+LIBWINUI_EXPORT [[nodiscard]] TransitionStoryboard popup_in(Point offset);
 /// A closing popup: fade out over 83 ms.
-[[nodiscard]] TransitionStoryboard popup_out();
+LIBWINUI_EXPORT [[nodiscard]] TransitionStoryboard popup_out();
 
 /// Which side of a navigation a storyboard is for.
-enum class NavigationTrigger
+LIBWINUI_EXPORT enum class NavigationTrigger
 {
     NavigatingTo,       ///< The new page arriving on a forward navigation.
     NavigatingAway,     ///< The old page leaving on a forward navigation.
@@ -827,14 +835,16 @@ enum class NavigationTrigger
 };
 /// A page transition's storyboard for one side of a navigation. Empty for
 /// NoPageTransition.
-[[nodiscard]] TransitionStoryboard navigation(const PageTransition& transition, NavigationTrigger trigger);
+LIBWINUI_EXPORT [[nodiscard]] TransitionStoryboard navigation(const PageTransition& transition, NavigationTrigger trigger);
 } // namespace transition_storyboards
 
 /// The start delay of the element at `index` (from 0) among those started together. It waits
 /// (index + 1) times `delay`, so the first one already waits one.
-[[nodiscard]] constexpr Duration stagger_delay(std::size_t index, Duration delay)
+LIBWINUI_EXPORT [[nodiscard]] constexpr Duration stagger_delay(std::size_t index, Duration delay)
 {
     return static_cast<double>(index + 1) * delay;
 }
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

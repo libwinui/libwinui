@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -21,6 +25,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <concepts>
 #include <memory>
 #include <optional>
@@ -30,13 +35,14 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// One section: a header and the content shown while it is selected.
 /// Passed to `SectionsControl::add_item()`, which takes ownership of the content.
-struct SectionsControlItem
+LIBWINUI_EXPORT struct SectionsControlItem
 {
     std::string              header{};  ///< The header text in the header row.
     std::unique_ptr<Element> content{}; ///< Shown below the headers while the item is selected.
@@ -74,7 +80,7 @@ struct SectionsControlItem
 /// sections->on_selection_changed([](std::size_t index) { /* ... */ });
 /// sections->set_selected_index(1);
 /// @endcode
-class SectionsControl final : public Element, private ValueProvider
+LIBWINUI_EXPORT class SectionsControl final : public Element, private ValueProvider
 {
 public:
     /// An empty Sections: no title, no items, carousel enabled.
@@ -336,7 +342,7 @@ private:
 
 /// One section: a header and the content shown while it is selected. Written inside
 /// the `.items` of a ui::Sections.
-struct Section
+LIBWINUI_EXPORT struct Section
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The item's header text in the header row.
@@ -347,7 +353,7 @@ struct Section
 
 /// A built, owned list of Sections items. Callers never name it, since a braced list of
 /// `ui::Section{...}` converts to it.
-class SectionList
+LIBWINUI_EXPORT class SectionList
 {
 public:
     /// One item with its content already built.
@@ -398,7 +404,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct Sections
+LIBWINUI_EXPORT struct Sections
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Sections>` points at.
@@ -463,3 +469,5 @@ struct Sections
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

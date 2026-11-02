@@ -7,6 +7,7 @@
 #include "winui/render/Renderer.hpp"
 #include "winui/render/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <optional>
 #include <string_view>
@@ -16,6 +17,7 @@
 
 #include <cmath>
 #include <cstddef>
+#endif
 
 namespace ui
 {

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 
 
@@ -8,7 +12,7 @@ namespace ui
 {
 
 /// How much of the frame the OS draws (WindowStyle::frame).
-enum class Frame
+LIBWINUI_EXPORT enum class Frame
 {
     /// The OS caption and border. The default.
     Standard,
@@ -50,7 +54,7 @@ enum class Frame
 ///     return ui::run(window);
 /// }
 /// @endcode
-enum class Backdrop
+LIBWINUI_EXPORT enum class Backdrop
 {
     /// No material: the window's opaque background. The default.
     None,
@@ -81,7 +85,7 @@ enum class Backdrop
 /// style.title_bar_height              = 48;
 /// window.set_style(style);
 /// @endcode
-struct WindowStyle
+LIBWINUI_EXPORT struct WindowStyle
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// A sizing border, and with it drag-to-snap. On `Frame::None` it has no effect: a popup
@@ -145,3 +149,5 @@ struct WindowStyle
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

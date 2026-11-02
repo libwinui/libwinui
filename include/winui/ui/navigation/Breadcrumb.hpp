@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -16,6 +20,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -23,6 +28,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -69,7 +75,7 @@ class BreadcrumbFlyoutList; // Breadcrumb.cpp: the ellipsis flyout's rows
 ///     },
 /// });
 /// @endcode
-class BreadcrumbControl final : public Element, private ValueProvider
+LIBWINUI_EXPORT class BreadcrumbControl final : public Element, private ValueProvider
 {
 public:
     /// An empty trail; it draws nothing and is not focusable.
@@ -275,7 +281,7 @@ private:
 ///     .control = trail,
 /// });
 /// @endcode
-struct Breadcrumb
+LIBWINUI_EXPORT struct Breadcrumb
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Breadcrumb>` points at.
@@ -329,3 +335,5 @@ struct Breadcrumb
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

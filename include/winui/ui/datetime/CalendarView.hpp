@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Input.hpp"
@@ -10,6 +14,7 @@
 #include "winui/ui/spec/Common.hpp"
 #include "winui/ui/spec/Control.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <chrono>
 #include <memory>
@@ -18,14 +23,15 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-struct Theme;
+LIBWINUI_EXPORT struct Theme;
 
-class MenuFlyoutControl;
-class ComboBoxControl;
+LIBWINUI_EXPORT class MenuFlyoutControl;
+LIBWINUI_EXPORT class ComboBoxControl;
 
 namespace detail
 {
@@ -36,7 +42,7 @@ class PickerEngine;
 } // namespace detail
 
 /// How many dates a CalendarView lets the user select.
-enum class CalendarViewSelectionMode
+LIBWINUI_EXPORT enum class CalendarViewSelectionMode
 {
     None,     ///< Days can't be selected; the calendar only shows dates.
     Single,   ///< One date at a time: a click replaces the selection (the default).
@@ -44,7 +50,7 @@ enum class CalendarViewSelectionMode
 };
 
 /// What a CalendarView shows.
-enum class CalendarViewDisplayMode
+LIBWINUI_EXPORT enum class CalendarViewDisplayMode
 {
     Month,  ///< The days of one month, six weeks at a time (the default).
     Year,   ///< The months of one year.
@@ -76,7 +82,7 @@ enum class CalendarViewDisplayMode
 /// calendar.on_selected_dates_changed([](const std::vector<std::chrono::year_month_day>& dates)
 ///                                    { std::printf("%zu days picked\n", dates.size()); });
 /// @endcode
-class CalendarViewControl final :
+LIBWINUI_EXPORT class CalendarViewControl final :
     public Element,
     private GridProvider,
     private TableProvider,
@@ -380,7 +386,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct CalendarView
+LIBWINUI_EXPORT struct CalendarView
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<CalendarView>` points at.
@@ -456,3 +462,5 @@ struct CalendarView
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -19,20 +23,22 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
 
-class FlyoutBase; // ui/dialogs/Flyout.hpp
+LIBWINUI_EXPORT class FlyoutBase; // ui/dialogs/Flyout.hpp
 
 /// The visual state a SplitButton draws in. A checked ToggleSplitButton draws the same states in
 /// the accent colors.
-enum class SplitButtonState
+LIBWINUI_EXPORT enum class SplitButtonState
 {
     Normal,               ///< At rest.
     Disabled,             ///< is_enabled() is false.
@@ -72,7 +78,7 @@ enum class SplitButtonState
 /// flyout->set_content(std::make_unique<ui::TextControl>("Pick a color"));
 /// split->on_click([&] { ink = current.get(); });
 /// @endcode
-class SplitButtonControl : public Element, protected InvokeProvider, protected ExpandCollapseProvider
+LIBWINUI_EXPORT class SplitButtonControl : public Element, protected InvokeProvider, protected ExpandCollapseProvider
 {
 public:
     /// An empty split button: no text or content, no flyout.
@@ -305,7 +311,7 @@ private:
 ///     }},
 /// });
 /// @endcode
-class ToggleSplitButtonControl final : public SplitButtonControl, private ToggleProvider
+LIBWINUI_EXPORT class ToggleSplitButtonControl final : public SplitButtonControl, private ToggleProvider
 {
 public:
     /// Unchecked, with no text.
@@ -372,7 +378,7 @@ private:
 ///     }},
 /// });
 /// @endcode
-struct SplitButton
+LIBWINUI_EXPORT struct SplitButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<SplitButton>` points at.
@@ -454,7 +460,7 @@ struct SplitButton
 ///     },
 /// });
 /// @endcode
-struct ToggleSplitButton
+LIBWINUI_EXPORT struct ToggleSplitButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ToggleSplitButton>` points at.
@@ -525,3 +531,5 @@ struct ToggleSplitButton
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

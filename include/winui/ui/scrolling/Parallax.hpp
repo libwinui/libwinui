@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -16,18 +20,20 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
 
 /// Whether a Parallax source start or end offset is added to the automatic value (Relative, the
 /// default) or used as it is (Absolute).
-enum class ParallaxSourceOffsetKind
+LIBWINUI_EXPORT enum class ParallaxSourceOffsetKind
 {
     Absolute, ///< The offset is the scroll position itself, in unzoomed DIPs.
     Relative, ///< The offset is added to the automatically computed start/end.
@@ -59,7 +65,7 @@ enum class ParallaxSourceOffsetKind
 /// parallax->set_source(scroll); // non-owning; both already live in the same tree
 /// window.set_content(std::move(row));
 /// @endcode
-class ParallaxControl final : public Element
+LIBWINUI_EXPORT class ParallaxControl final : public Element
 {
 public:
     /// An empty view with no child, no source and zero shift on both axes.
@@ -321,7 +327,7 @@ private:
 /// });
 /// parallax->set_source(list); // follow the list's scrolling
 /// @endcode
-struct Parallax
+LIBWINUI_EXPORT struct Parallax
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Parallax>` points at.
@@ -398,3 +404,5 @@ struct Parallax
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

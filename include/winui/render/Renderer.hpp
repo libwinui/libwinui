@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Bitmap.hpp"
@@ -9,11 +13,13 @@
 #include "winui/render/SvgImage.hpp"
 #include "winui/render/Text.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <string>
 #include <string_view>
 #include <variant>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -23,7 +29,7 @@ namespace ui
 /// Flat and Rounded draw no separate border; the control's fill is the whole look. Raised and
 /// Sunken add the Windows 95/98/2000 light/dark bevel around the fill, drawn by
 /// draw_bevel_border().
-enum class BorderStyle
+LIBWINUI_EXPORT enum class BorderStyle
 {
     Flat,    ///< Square-cornered fill, no border draw.
     Rounded, ///< Theme-rounded fill, no border draw; the Fluent default.
@@ -47,7 +53,7 @@ enum class BorderStyle
 ///     }
 /// };
 /// @endcode
-struct FillRoundedRect
+LIBWINUI_EXPORT struct FillRoundedRect
 {
     Rect  bounds;        ///< The rect to fill, in DIPs.
     float radius = 0.0f; ///< Corner radius in DIPs; 0 is a plain rect.
@@ -58,7 +64,7 @@ struct FillRoundedRect
 
 /// Recorded form of Renderer::stroke_rounded_rect(): a solid outline of a rounded rect,
 /// centered on `bounds`' edge (so half of `stroke_width` falls outside it).
-struct StrokeRoundedRect
+LIBWINUI_EXPORT struct StrokeRoundedRect
 {
     Rect  bounds;              ///< The rect the stroke is centered on, in DIPs.
     float radius = 0.0f;       ///< Corner radius in DIPs; 0 is a plain rect.
@@ -74,7 +80,7 @@ struct StrokeRoundedRect
 /// A gradient fill of a rounded rect (radius 0 == a plain rect), along the brush's
 /// GradientAxis: the XP/Vista counterpart to FillRoundedRect's flat color. Recorded form of
 /// Renderer::fill_rounded_rect_gradient().
-struct FillRoundedRectGradient
+LIBWINUI_EXPORT struct FillRoundedRectGradient
 {
     Rect                bounds;        ///< The rect to fill, in DIPs.
     float               radius = 0.0f; ///< Corner radius in DIPs.
@@ -88,7 +94,7 @@ struct FillRoundedRectGradient
 /// whatever the height of `bounds` (Fluent uses 3). A positive span starts at `bounds.top()`
 /// and `brush`'s stops read top to bottom. A negative span starts at `bounds.bottom()` and the
 /// stops read bottom to top, which is how an accent control's flipped border is drawn.
-struct StrokeRoundedRectGradient
+LIBWINUI_EXPORT struct StrokeRoundedRectGradient
 {
     Rect                bounds;              ///< The rect the stroke is centered on, in DIPs.
     float               radius = 0.0f;       ///< Corner radius in DIPs.
@@ -102,7 +108,7 @@ struct StrokeRoundedRectGradient
 /// A single straight stroked line segment. The classic raised and sunken bevels (a light edge
 /// and a dark edge around a flat fill) are built from these: draw_bevel_border() draws four per
 /// bevel ring.
-struct StrokeLine
+LIBWINUI_EXPORT struct StrokeLine
 {
     Point from;                ///< Start point, in DIPs.
     Point to;                  ///< End point, in DIPs.
@@ -117,7 +123,7 @@ struct StrokeLine
 /// line segments, and each backend draws its own curve.
 /// The wave swings `amplitude` DIPs to either side of the from→to axis, one full period
 /// every `wavelength` DIPs, starting on the axis.
-struct StrokeWavyLine
+LIBWINUI_EXPORT struct StrokeWavyLine
 {
     Point from;                ///< Start of the axis, in DIPs.
     Point to;                  ///< End of the axis, in DIPs.
@@ -139,7 +145,7 @@ struct StrokeWavyLine
 ///     .fill   = ui::colors::White,
 /// });
 /// @endcode
-struct FillPolygon
+LIBWINUI_EXPORT struct FillPolygon
 {
     std::vector<Point> points; ///< Vertices in DIPs, in drawing order.
     Color              fill;   ///< Interior color; transparent paints nothing.
@@ -162,7 +168,7 @@ struct FillPolygon
 ///     .closed       = false, // the two slanted sides only
 /// });
 /// @endcode
-struct StrokePolyline
+LIBWINUI_EXPORT struct StrokePolyline
 {
     std::vector<Point> points;               ///< Vertices in DIPs, in drawing order.
     Color              color;                ///< Line color; transparent draws nothing.
@@ -173,7 +179,7 @@ struct StrokePolyline
 };
 
 /// How an open end (or each dash end) of a stroke is finished.
-enum class PenLineCap
+LIBWINUI_EXPORT enum class PenLineCap
 {
     Flat,     ///< Ends exactly at the end point (the default).
     Square,   ///< Extends half the thickness past the end point, square.
@@ -182,7 +188,7 @@ enum class PenLineCap
 };
 
 /// How a stroke turns a corner.
-enum class PenLineJoin
+LIBWINUI_EXPORT enum class PenLineJoin
 {
     Miter, ///< Sharp point, cut back to a bevel past StrokeStyle::miter_limit (the default).
     Bevel, ///< The corner cut off flat.
@@ -203,7 +209,7 @@ enum class PenLineJoin
 /// });
 /// line->set_stroke_thickness(4.0f); // thickness is owned by this setter
 /// @endcode
-struct StrokeStyle
+LIBWINUI_EXPORT struct StrokeStyle
 {
     float              thickness   = 1.0f;               ///< Pen width in DIPs.
     PenLineCap         start_cap   = PenLineCap::Flat;   ///< Cap at a figure's first point.
@@ -236,7 +242,7 @@ struct StrokeStyle
 ///     .stroke_style = {.thickness = 2.0f},
 /// });
 /// @endcode
-struct DrawGeometry
+LIBWINUI_EXPORT struct DrawGeometry
 {
     PathGeometry         geometry{};     ///< The figures to paint, in DIPs.
     std::optional<Brush> fill{};         ///< Interior paint; nullopt skips the fill.
@@ -261,7 +267,7 @@ struct DrawGeometry
 ///     }
 /// };
 /// @endcode
-struct DrawTextRun
+LIBWINUI_EXPORT struct DrawTextRun
 {
     std::string text;   ///< The UTF-8 text.
     Rect        bounds; ///< Layout box the text is aligned within, in DIPs.
@@ -288,7 +294,7 @@ struct DrawTextRun
 ///     renderer.pop_clip();
 /// }
 /// @endcode
-struct PushClip
+LIBWINUI_EXPORT struct PushClip
 {
     Rect bounds; ///< The clip rect, in DIPs (transformed by any enclosing PushTransform).
 
@@ -296,7 +302,7 @@ struct PushClip
 };
 
 /// Ends the innermost PushClip, PushClipEllipse or PushClipRoundedRect.
-struct PopClip
+LIBWINUI_EXPORT struct PopClip
 {
     friend bool operator==(const PopClip&, const PopClip&) = default;
 };
@@ -319,7 +325,7 @@ struct PopClip
 ///     renderer.pop_opacity_layer();
 /// }
 /// @endcode
-struct PushOpacityLayer
+LIBWINUI_EXPORT struct PushOpacityLayer
 {
     float opacity = 1.0f; ///< Layer opacity, 0..1; 1 is a no-op.
 
@@ -327,7 +333,7 @@ struct PushOpacityLayer
 };
 
 /// Ends the innermost PushOpacityLayer.
-struct PopOpacityLayer
+LIBWINUI_EXPORT struct PopOpacityLayer
 {
     friend bool operator==(const PopOpacityLayer&, const PopOpacityLayer&) = default;
 };
@@ -350,7 +356,7 @@ struct PopOpacityLayer
 ///     renderer.pop_transform();
 /// }
 /// @endcode
-struct PushTransform
+LIBWINUI_EXPORT struct PushTransform
 {
     float scale = 1.0f;   ///< Horizontal scale (Matrix::m11); also the vertical one when uniform.
     Point offset{};       ///< Translation applied after scaling, in DIPs.
@@ -368,7 +374,7 @@ struct PushTransform
 };
 
 /// Ends the innermost PushTransform.
-struct PopTransform
+LIBWINUI_EXPORT struct PopTransform
 {
     friend bool operator==(const PopTransform&, const PopTransform&) = default;
 };
@@ -383,7 +389,7 @@ struct PopTransform
 /// renderer.draw_image(photo, ui::Rect{0, 0, 48, 48}, ui::Stretch::UniformToFill);
 /// renderer.pop_clip();
 /// @endcode
-struct PushClipEllipse
+LIBWINUI_EXPORT struct PushClipEllipse
 {
     Point center;          ///< Center of the ellipse, in DIPs.
     float radius_x = 0.0f; ///< Horizontal radius, in DIPs.
@@ -402,7 +408,7 @@ struct PushClipEllipse
 /// renderer.draw_image(photo, ui::Rect{0, 0, 240, 160}, ui::Stretch::UniformToFill);
 /// renderer.pop_clip();
 /// @endcode
-struct PushClipRoundedRect
+LIBWINUI_EXPORT struct PushClipRoundedRect
 {
     Rect  bounds;        ///< The rectangle, in DIPs.
     float radius = 0.0f; ///< The corner radius, in DIPs; 0 is a plain rect clip.
@@ -413,7 +419,7 @@ struct PushClipRoundedRect
 /// A two-color stipple fill: the classic 50 % dither of a disabled glyph, a drag rubber band or
 /// a scrollbar trough. Only one pattern exists. The enum leaves room for others, such as
 /// hatches, without a breaking change.
-enum class Pattern
+LIBWINUI_EXPORT enum class Pattern
 {
     Checkerboard50, ///< Alternating fg/bg device pixels, the 50 % dither.
 };
@@ -428,7 +434,7 @@ enum class Pattern
 /// renderer.fill_rect_pattern(trough, ui::Pattern::Checkerboard50, ui::colors::White,
 ///                            ui::Color::from_rgba(192, 192, 192));
 /// @endcode
-struct FillRectPattern
+LIBWINUI_EXPORT struct FillRectPattern
 {
     Rect    bounds;                            ///< The rect to fill, in DIPs.
     Pattern pattern = Pattern::Checkerboard50; ///< Which stipple.
@@ -449,7 +455,7 @@ struct FillRectPattern
 /// renderer.draw_image_nine_slice("button.normal", ui::Rect{0, 0, 75, 23},
 ///                                ui::Thickness{3});
 /// @endcode
-struct DrawImageNineSlice
+LIBWINUI_EXPORT struct DrawImageNineSlice
 {
     std::string image_name;    ///< Key into the backend's ImageThemePack.
     Rect        bounds;        ///< Destination rect, in DIPs.
@@ -468,7 +474,7 @@ struct DrawImageNineSlice
 /// const ui::Bitmap photo = ui::Bitmap::read("avatar.jpg", {.max_width = 96, .max_height = 96});
 /// renderer.draw_image(photo, ui::Rect{0, 0, 48, 48}, ui::Stretch::UniformToFill);
 /// @endcode
-struct DrawImage
+LIBWINUI_EXPORT struct DrawImage
 {
     Size    image_size;                 ///< Source pixel dimensions, for Stretch's aspect-ratio math.
     Rect    bounds;                     ///< Destination rect, in DIPs.
@@ -489,7 +495,7 @@ struct DrawImage
 /// const ui::Bitmap sheet = ui::Bitmap::read_png("sprites.png");
 /// renderer.draw_image_rect(sheet, ui::Rect{0, 0, 16, 16}, ui::Rect{0, 0, 32, 32});
 /// @endcode
-struct DrawImageRect
+LIBWINUI_EXPORT struct DrawImageRect
 {
     Size image_size; ///< Source pixel dimensions.
     Rect source;     ///< The part of the image drawn, in image pixels.
@@ -507,7 +513,7 @@ struct DrawImageRect
 /// const ui::SvgImage logo = ui::SvgImage::read("logo.svg"); // throws if unreadable
 /// renderer.draw_svg(logo, ui::Rect{0, 0, 64, 64});
 /// @endcode
-struct DrawSvg
+LIBWINUI_EXPORT struct DrawSvg
 {
     Size natural_size; ///< The document's own size in DIPs; empty when it declares none.
     Rect bounds;       ///< Destination rect, in DIPs.
@@ -524,7 +530,7 @@ struct DrawSvg
 /// renderer.fill_ellipse(ui::Point{10, 10}, 6, 6, ui::colors::White);
 /// renderer.stroke_ellipse(ui::Point{10, 10}, 6, 6, ui::colors::Black, 1.0f);
 /// @endcode
-struct FillEllipse
+LIBWINUI_EXPORT struct FillEllipse
 {
     Point center;          ///< Center, in DIPs.
     float radius_x = 0.0f; ///< Horizontal radius, in DIPs.
@@ -535,7 +541,7 @@ struct FillEllipse
 };
 
 /// Recorded form of Renderer::stroke_ellipse(): an ellipse outline centered on its edge.
-struct StrokeEllipse
+LIBWINUI_EXPORT struct StrokeEllipse
 {
     Point center;              ///< Center, in DIPs.
     float radius_x = 0.0f;     ///< Horizontal radius, in DIPs.
@@ -549,14 +555,14 @@ struct StrokeEllipse
 /// Whether shapes are drawn with hard pixel edges or antialiased. The classic themes, Windows 95
 /// through Vista/7, use hard edges to match the original look. The Modern and high-contrast
 /// themes antialias.
-enum class GeometryAA
+LIBWINUI_EXPORT enum class GeometryAA
 {
     Aliased,     ///< Hard pixel edges.
     Antialiased, ///< Coverage-based edges (the default).
 };
 
 /// How text is antialiased, by era.
-enum class TextAA
+LIBWINUI_EXPORT enum class TextAA
 {
     Aliased,   ///< No smoothing (95/98/2000, the bitmap-font era).
     Grayscale, ///< Grayscale smoothing (XP, and the default).
@@ -589,7 +595,7 @@ enum class TextAA
 ///     bool       snap_to_pixels_   = false;
 /// };
 /// @endcode
-struct SetRasterization
+LIBWINUI_EXPORT struct SetRasterization
 {
     GeometryAA geometry              = GeometryAA::Antialiased; ///< Edge policy for shapes and lines.
     TextAA     text                  = TextAA::Grayscale;       ///< Text smoothing policy.
@@ -600,7 +606,7 @@ struct SetRasterization
 
 /// One recorded draw call: the data form of every Renderer method. TestRenderer::commands is a
 /// vector of these, and describe() prints one line per command.
-using RenderCommand = std::variant<
+LIBWINUI_EXPORT using RenderCommand = std::variant<
     FillRoundedRect,
     StrokeRoundedRect,
     DrawTextRun,
@@ -658,7 +664,7 @@ using RenderCommand = std::variant<
 ///     }
 /// };
 /// @endcode
-class Renderer
+LIBWINUI_EXPORT class Renderer
 {
 public:
     virtual ~Renderer() = default;
@@ -804,7 +810,7 @@ public:
 ///     }
 /// };
 /// @endcode
-class [[nodiscard]] ClipScope
+LIBWINUI_EXPORT class [[nodiscard]] ClipScope
 {
 public:
     /// Clips to `bounds` (Renderer::push_clip()).
@@ -849,7 +855,7 @@ private:
 ///     }
 /// };
 /// @endcode
-class [[nodiscard]] OpacityLayerScope
+LIBWINUI_EXPORT class [[nodiscard]] OpacityLayerScope
 {
 public:
     /// Draws everything in the scope as one layer at `opacity` (Renderer::push_opacity_layer()).
@@ -884,7 +890,7 @@ private:
 ///     }
 /// };
 /// @endcode
-class [[nodiscard]] TransformScope
+LIBWINUI_EXPORT class [[nodiscard]] TransformScope
 {
 public:
     /// Transforms by `transform` (Renderer::push_transform()).
@@ -915,3 +921,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

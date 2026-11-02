@@ -8,7 +8,9 @@
 #include "winui/ui/themes/EarlyPalette.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
+#endif
 
 namespace ui
 {

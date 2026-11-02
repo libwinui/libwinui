@@ -6,8 +6,10 @@
 #include "winui/render/IconGlyph.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <optional>
+#endif
 
 namespace ui::detail
 {

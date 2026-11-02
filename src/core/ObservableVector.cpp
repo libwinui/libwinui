@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: MIT
 #include "winui/core/ObservableVector.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <functional>
 #include <span>
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui::detail
 {

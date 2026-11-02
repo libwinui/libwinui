@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Input.hpp"
@@ -11,10 +15,12 @@
 #include "winui/ui/spec/Common.hpp"
 #include "winui/ui/spec/Control.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <chrono>
 #include <memory>
 #include <optional>
 #include <string>
+#endif
 
 namespace ui
 {
@@ -43,7 +49,7 @@ class PickerEngine;
 /// picker.on_selected_date_changed([](std::optional<std::chrono::year_month_day> date)
 ///                                 { std::printf("%s\n", date ? "set" : "cleared"); });
 /// @endcode
-class DatePickerControl final : public Element, private InvokeProvider, private ValueProvider
+LIBWINUI_EXPORT class DatePickerControl final : public Element, private InvokeProvider, private ValueProvider
 {
 public:
     /// A picker with no date, its years 100 back and ahead of today.
@@ -168,7 +174,7 @@ private:
 ///     .min_year      = 1900,
 /// });
 /// @endcode
-struct DatePicker
+LIBWINUI_EXPORT struct DatePicker
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<DatePicker>` points at.
@@ -231,3 +237,5 @@ struct DatePicker
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

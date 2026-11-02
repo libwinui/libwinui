@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -21,6 +25,7 @@
 #include "winui/ui/text/TextBox.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -29,6 +34,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -40,7 +46,7 @@ class DrawnListAutomation; // src/ui/collections/DrawnListAutomation.hpp
 class ComboBoxPopup; // defined in ComboBox.cpp
 
 /// What a ComboBox's `on_text_submitted` gets: the typed text.
-struct ComboBoxTextSubmittedArgs
+LIBWINUI_EXPORT struct ComboBoxTextSubmittedArgs
 {
     std::string text; ///< The committed text, which matches no item.
 };
@@ -91,7 +97,7 @@ struct ComboBoxTextSubmittedArgs
 /// });
 /// window.set_content(std::move(combo));
 /// @endcode
-class ComboBoxControl final : public Element, private ExpandCollapseProvider, private ValueProvider
+LIBWINUI_EXPORT class ComboBoxControl final : public Element, private ExpandCollapseProvider, private ValueProvider
 {
 public:
     /// An empty, read-only combo box (not focusable until it has items).
@@ -525,7 +531,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct ComboBox
+LIBWINUI_EXPORT struct ComboBox
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<ComboBox>` points at.
@@ -610,3 +616,5 @@ struct ComboBox
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

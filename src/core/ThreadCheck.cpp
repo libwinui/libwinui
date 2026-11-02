@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 #include "winui/core/ThreadCheck.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <atomic>
 #include <sstream>
 #include <string>
@@ -8,6 +9,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#endif
 
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN

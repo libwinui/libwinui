@@ -29,6 +29,7 @@
 #include "winui/ui/text/Text.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <format>
 #include <memory>
@@ -41,6 +42,7 @@
 
 #include <cmath>
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -60,7 +62,7 @@ constexpr float ItemMaxWidth     = 240.0f;
 constexpr float TabsHeaderFontSize = 12.0f;
 // A tab's border, its padding (8,3,4,3 with the close button, 8,3,8,3 without), its icon, and
 // the close button with its 0xE711 glyph.
-constexpr float Border          = 1.0f;
+constexpr float TabBorder       = 1.0f;
 constexpr float PadLeft         = 8.0f;
 constexpr float PadRightClose   = 4.0f;
 constexpr float PadRightNoClose = 8.0f;
@@ -686,10 +688,10 @@ float TabsControl::natural_width(std::size_t index) const
     if (compact_tab(index))
     {
         // Compact: the icon alone, no gap, no header.
-        return 2.0f * Border + PadLeft + TabsIconSize + trail;
+        return 2.0f * TabBorder + PadLeft + TabsIconSize + trail;
     }
     const float text = index == selected_index_ ? tab.text_width_selected : tab.text_width;
-    return 2.0f * Border + PadLeft + (has_icon ? TabsIconSize + TabsIconGap : 0.0f) + text + trail;
+    return 2.0f * TabBorder + PadLeft + (has_icon ? TabsIconSize + TabsIconGap : 0.0f) + text + trail;
 }
 
 Size TabsControl::measure_override(Size available, const MeasureContext& context) const
@@ -703,7 +705,8 @@ Size TabsControl::measure_override(Size available, const MeasureContext& context
         tab.text_width_selected = std::ceil(bold.width);
         line_height             = std::max(line_height, bold.height);
     }
-    item_height_ = std::max({ItemMinHeight, line_height + 2.0f * (PadV + Border), CloseHeight + 2.0f * (PadV + Border)});
+    item_height_ = std::max(
+        {ItemMinHeight, line_height + 2.0f * (PadV + TabBorder), CloseHeight + 2.0f * (PadV + TabBorder)});
     strip_height_ = HeaderTopPadding + item_height_;
 
     (void)add_tip_->measure(Size{AddButtonWidth, AddButtonHeight}, context);
@@ -722,7 +725,7 @@ Size TabsControl::measure_override(Size available, const MeasureContext& context
                               (is_add_tab_button_visible() ? AddPadLeft + AddButtonWidth : 0.0f) + footer_desired_.width;
 
     const auto& era = detail::controls(context.theme).era_tabs;
-    page_inset_     = era ? Border + era->page_padding : 0.0f;
+    page_inset_     = era ? TabBorder + era->page_padding : 0.0f;
     const Size content_available{std::isfinite(available.width) ? std::max(0.0f, available.width - 2.0f * page_inset_) : 0.0f,
                                  std::max(0.0f, available.height - strip_height_ - 2.0f * page_inset_)};
     Size content_desired{};
@@ -870,7 +873,7 @@ std::optional<Rect> TabsControl::close_button_bounds(std::size_t index) const
     {
         return std::nullopt;
     }
-    return Rect{slot->right() - Border - PadRightClose - CloseWidth,
+    return Rect{slot->right() - TabBorder - PadRightClose - CloseWidth,
                 slot->y + (slot->height - CloseHeight) * 0.5f,
                 CloseWidth,
                 CloseHeight};
@@ -1023,9 +1026,9 @@ void TabsControl::render_tab(Renderer& renderer, const Theme& theme, std::size_t
         text_color = theme.colors().text_disabled;
     }
 
-    float       x         = slot.x + Border + PadLeft;
+    float       x         = slot.x + TabBorder + PadLeft;
     const float close_col = tab.closable ? CloseGap + CloseWidth + PadRightClose : PadRightNoClose;
-    const float right     = slot.right() - Border - close_col;
+    const float right     = slot.right() - TabBorder - close_col;
     const bool  has_icon  = !tab.icon.empty();
     if (has_icon)
     {
@@ -1098,7 +1101,7 @@ void TabsControl::render_override(Renderer& renderer, const RenderContext& conte
         // The page the selected tab merges into, framed, its top edge the strip's bottom row.
         const Rect page{bounds().x, strip.bottom(), bounds().width, std::max(0.0f, bounds().bottom() - strip.bottom())};
         renderer.fill_rounded_rect(page, 0.0f, era->page);
-        stroke_rounded_rect_inside(renderer, page, 0.0f, era->border, Border);
+        stroke_rounded_rect_inside(renderer, page, 0.0f, era->border, TabBorder);
     }
     if (detail::controls(theme).tab_layer_surfaces)
     {

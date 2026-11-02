@@ -1,22 +1,28 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/Index.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <optional>
 #include <string>
 #include <vector>
+#endif
 
 namespace ui
 {
 
-class Window;
+LIBWINUI_EXPORT class Window;
 
 /// The known folder a picker opens in when no `folder` is given, the first time or every time
 /// as `remember_last` says. Unspecified leaves it to the dialog.
-enum class PickerLocation
+LIBWINUI_EXPORT enum class PickerLocation
 {
     Unspecified, ///< No preference: the dialog's own default.
     Documents,   ///< The Documents folder.
@@ -36,7 +42,7 @@ enum class PickerLocation
 /// @code
 /// const ui::FileType images{.name = "Images", .extensions = {".png", ".jpg", ".jpeg"}};
 /// @endcode
-struct FileType
+LIBWINUI_EXPORT struct FileType
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     std::string                                       name; ///< The type box label, UTF-8.
@@ -54,7 +60,7 @@ struct FileType
 ///     file_name = ui::path_to_utf8(path->filename());
 /// }
 /// @endcode
-struct PickFileOptions
+LIBWINUI_EXPORT struct PickFileOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     std::string                                       title{}; ///< The dialog caption; empty keeps the default.
@@ -83,7 +89,7 @@ struct PickFileOptions
 /// auto path = ui::pick_save_file(window, {.file_types     = {{.name = "Text", .extensions = {".txt"}}},
 ///                                         .suggested_name = "Notes"});
 /// @endcode
-struct PickSaveFileOptions
+LIBWINUI_EXPORT struct PickSaveFileOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     std::string                                       title{}; ///< The dialog caption; empty keeps the default.
@@ -120,7 +126,7 @@ struct PickSaveFileOptions
 ///     window.set_title(ui::path_to_utf8(folder->filename()));
 /// }
 /// @endcode
-struct PickFolderOptions
+LIBWINUI_EXPORT struct PickFolderOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     std::string                                       title{}; ///< The dialog caption; empty keeps the default.
@@ -149,21 +155,27 @@ struct PickFolderOptions
 ///     }
 /// }});
 /// @endcode
-[[nodiscard]] std::optional<std::filesystem::path> pick_file(const Window& owner, const PickFileOptions& options = {});
+LIBWINUI_EXPORT [[nodiscard]] std::optional<std::filesystem::path> pick_file(const Window&          owner,
+                                                                             const PickFileOptions& options = {});
 
 /// As pick_file(), letting the user choose several files. Empty if the user canceled.
-[[nodiscard]] std::vector<std::filesystem::path> pick_files(const Window& owner, const PickFileOptions& options = {});
+LIBWINUI_EXPORT [[nodiscard]] std::vector<std::filesystem::path> pick_files(const Window&          owner,
+                                                                            const PickFileOptions& options = {});
 
 /// The system's "save file" dialog, modal to `owner`. Returns the path to write, or nothing if
 /// the user canceled. It creates no file.
-[[nodiscard]] std::optional<std::filesystem::path> pick_save_file(const Window&              owner,
-                                                                  const PickSaveFileOptions& options = {});
+LIBWINUI_EXPORT [[nodiscard]] std::optional<std::filesystem::path> pick_save_file(const Window& owner,
+                                                                                  const PickSaveFileOptions& options = {});
 
 /// The system's folder dialog, modal to `owner`. Returns the chosen folder, or nothing if the
 /// user canceled.
-[[nodiscard]] std::optional<std::filesystem::path> pick_folder(const Window& owner, const PickFolderOptions& options = {});
+LIBWINUI_EXPORT [[nodiscard]] std::optional<std::filesystem::path> pick_folder(const Window&            owner,
+                                                                               const PickFolderOptions& options = {});
 
 /// As pick_folder(), letting the user choose several folders. Empty if the user canceled.
-[[nodiscard]] std::vector<std::filesystem::path> pick_folders(const Window& owner, const PickFolderOptions& options = {});
+LIBWINUI_EXPORT [[nodiscard]] std::vector<std::filesystem::path> pick_folders(const Window&            owner,
+                                                                              const PickFolderOptions& options = {});
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

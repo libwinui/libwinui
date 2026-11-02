@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -19,9 +23,11 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
+#endif
 
 namespace ui
 {
@@ -52,7 +58,7 @@ namespace ui
 /// menu->set_placement_alignment(ui::PopupPlacementAlignment::Leading);
 /// ui::DropdownButtonControl* email = menu->set_anchor(std::make_unique<ui::DropdownButtonControl>("Email"));
 /// @endcode
-class DropdownButtonControl : public ButtonControl, protected ExpandCollapseProvider
+LIBWINUI_EXPORT class DropdownButtonControl : public ButtonControl, protected ExpandCollapseProvider
 {
 public:
     /// A button with no text; give it content through Button's setters.
@@ -141,7 +147,7 @@ private:
 ///     .anchor              = ui::DropdownButton{.text = "Email"},
 /// });
 /// @endcode
-struct DropdownButton
+LIBWINUI_EXPORT struct DropdownButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<DropdownButton>` points at.
@@ -207,3 +213,5 @@ struct DropdownButton
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

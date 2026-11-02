@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
+#ifndef LIBWINUI_MODULE
 #include <cstdint>
+#endif
 
 namespace ui::detail
 {
@@ -10,7 +16,7 @@ namespace ui::detail
 // (winui/testing/PerfCounters.hpp). Every counter is process-wide and only ever grows; a test
 // takes the difference between two snapshots. Counting is a relaxed atomic add, so layout
 // workers count their measures too.
-enum class PerfCounter : std::uint8_t
+LIBWINUI_EXPORT enum class PerfCounter : std::uint8_t
 {
     LayoutPasses,       // Window::layout() calls that measured and arranged the tree
     FocusOrderBuilds,   // Window rebuilt its tab ring
@@ -33,10 +39,10 @@ enum class PerfCounter : std::uint8_t
 };
 
 // Adds `n` to `counter`.
-void count(PerfCounter counter, std::uint64_t n = 1) noexcept;
+LIBWINUI_EXPORT void count(PerfCounter counter, std::uint64_t n = 1) noexcept;
 
 // The current value of `counter`.
-[[nodiscard]] std::uint64_t counter_value(PerfCounter counter) noexcept;
+LIBWINUI_EXPORT [[nodiscard]] std::uint64_t counter_value(PerfCounter counter) noexcept;
 
 // Points on the way to an app's first frame, each noted once, the first time it is reached.
 enum class Milestone : std::uint8_t
@@ -54,3 +60,5 @@ void note_milestone(Milestone milestone) noexcept;
 [[nodiscard]] std::int64_t milestone_time(Milestone milestone) noexcept;
 
 } // namespace ui::detail
+
+#endif // LIBWINUI_IMPORTED

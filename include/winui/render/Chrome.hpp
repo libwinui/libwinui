@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/render/Bevel.hpp"
@@ -9,8 +13,10 @@
 #include "winui/render/Renderer.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <optional>
+#endif
 
 namespace ui
 {
@@ -32,7 +38,12 @@ namespace ui
 /// const ui::Rect bounds{0, 0, 120, 32};
 /// ui::stroke_rounded_rect_inside(renderer, bounds, 4.0f, theme.colors().text, 2.0f);
 /// @endcode
-inline void stroke_rounded_rect_inside(Renderer& renderer, const Rect& bounds, float corner_radius, const Color& color, float width)
+LIBWINUI_EXPORT inline void stroke_rounded_rect_inside(
+    Renderer&    renderer,
+    const Rect&  bounds,
+    float        corner_radius,
+    const Color& color,
+    float        width)
 {
     const float half = width * 0.5f;
     renderer.stroke_rounded_rect(bounds.inset(Thickness{half}), (std::max)(0.0f, corner_radius - half), color, width);
@@ -41,7 +52,7 @@ inline void stroke_rounded_rect_inside(Renderer& renderer, const Rect& bounds, f
 /// The gradient counterpart of stroke_rounded_rect_inside(), for Fluent's elevation border.
 /// `extent_px` keeps its meaning, because the renderer anchors it at the edge of the path it
 /// strokes, which moves in with it. See StrokeRoundedRectGradient for its sign.
-inline void stroke_rounded_rect_gradient_inside(
+LIBWINUI_EXPORT inline void stroke_rounded_rect_gradient_inside(
     Renderer&                  renderer,
     const Rect&                bounds,
     float                      corner_radius,
@@ -105,13 +116,14 @@ inline void stroke_rounded_rect_gradient_inside(
 ///     }
 /// };
 /// @endcode
-void draw_control_chrome(Renderer&           renderer,
-                         const Rect&         bounds,
-                         float               corner_radius,
-                         const ButtonVisual& visual,
-                         float               border_width,
-                         bool                draw_flat_border_fallback = false,
-                         bool                use_border_gradient       = true);
+LIBWINUI_EXPORT void draw_control_chrome(
+    Renderer&           renderer,
+    const Rect&         bounds,
+    float               corner_radius,
+    const ButtonVisual& visual,
+    float               border_width,
+    bool                draw_flat_border_fallback = false,
+    bool                use_border_gradient       = true);
 
 /// An expand, collapse or drop-down mark in `area`: the icon font's `glyph` at `glyph_size` (0
 /// for the glyph's own size) in `theme.icon_font_family`, or, under a theme whose
@@ -128,13 +140,14 @@ void draw_control_chrome(Renderer&           renderer,
 ///                     expanded ? ui::ArrowDirection::Up : ui::ArrowDirection::Down, chevron_rect,
 ///                     theme.colors().text, 12.0f);
 /// @endcode
-void draw_disclosure(Renderer&        renderer,
-                     const Theme&     theme,
-                     const IconGlyph& glyph,
-                     ArrowDirection   classic,
-                     const Rect&      area,
-                     const Color&     color,
-                     float            glyph_size = 0.0f);
+LIBWINUI_EXPORT void draw_disclosure(
+    Renderer&        renderer,
+    const Theme&     theme,
+    const IconGlyph& glyph,
+    ArrowDirection   classic,
+    const Rect&      area,
+    const Color&     color,
+    float            glyph_size = 0.0f);
 
 /// A popup's surface: `theme.overlay_material` (in-app acrylic) when the theme has one, drawn
 /// through Renderer::draw_geometry() with `fallback` as the color a renderer that cannot blur
@@ -148,7 +161,11 @@ void draw_disclosure(Renderer&        renderer,
 /// const ui::Rect bounds{0, 0, 240, 160};
 /// ui::fill_overlay_surface(renderer, theme, bounds, theme.overlay_corner_radius, theme.surfaces.menu);
 /// @endcode
-void fill_overlay_surface(Renderer& renderer, const Theme& theme, const Rect& bounds, float corner_radius, const Color& fallback);
+LIBWINUI_EXPORT void fill_overlay_surface(Renderer&    renderer,
+                                          const Theme& theme,
+                                          const Rect&  bounds,
+                                          float        corner_radius,
+                                          const Color& fallback);
 
 /// A bordered box's background and border, as a Border or a panel draws them: the
 /// background fills the rect inside the border, at the corner radius less the border, and the
@@ -165,11 +182,13 @@ void fill_overlay_surface(Renderer& renderer, const Theme& theme, const Rect& bo
 /// ui::draw_border(renderer, bounds, ui::Color::from_rgba(243, 243, 243),
 ///                    ui::Color::from_rgba(0, 0, 0, 40), ui::Thickness{1}, 8.0f);
 /// @endcode
-void draw_border(Renderer&                   renderer,
-                 const Rect&                 bounds,
-                 const std::optional<Color>& background,
-                 const std::optional<Color>& border_brush,
-                 const Thickness&            thickness,
-                 float                       corner_radius);
+LIBWINUI_EXPORT void draw_border(Renderer&                   renderer,
+                                 const Rect&                 bounds,
+                                 const std::optional<Color>& background,
+                                 const std::optional<Color>& border_brush,
+                                 const Thickness&            thickness,
+                                 float                       corner_radius);
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -20,6 +24,7 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <functional>
 #include <memory>
@@ -29,17 +34,18 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class FlyoutControl;
-class InkToolbarControl;
-class SliderControl;
-class StackControl;
+LIBWINUI_EXPORT class FlyoutControl;
+LIBWINUI_EXPORT class InkToolbarControl;
+LIBWINUI_EXPORT class SliderControl;
+LIBWINUI_EXPORT class StackControl;
 
 /// A tool on a ui::InkToolbarControl.
-enum class InkToolbarTool
+LIBWINUI_EXPORT enum class InkToolbarTool
 {
     BallpointPen, ///< A round, solid pen.
     Pencil,       ///< Pencil ink.
@@ -68,7 +74,7 @@ enum class InkToolbarTool
 ///                                                              .pen_tip = ui::InkPenTip::Rectangle};
 ///                          }});
 /// @endcode
-struct InkToolbarCustomButton
+LIBWINUI_EXPORT struct InkToolbarCustomButton
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// Its tool tip and accessible name. Every kind.
@@ -87,7 +93,7 @@ struct InkToolbarCustomButton
 };
 
 /// Which stencil the stencil button shows on the canvas.
-enum class InkToolbarStencilKind
+LIBWINUI_EXPORT enum class InkToolbarStencilKind
 {
     Ruler,      ///< The ruler (InkCanvasControl::set_ruler()).
     Protractor, ///< The protractor (InkCanvasControl::set_protractor()).
@@ -95,14 +101,14 @@ enum class InkToolbarStencilKind
 
 /// What an InkToolbar's `on_stencil_button_checked_changed` gets: whether the stencil button is
 /// on, and the stencil it shows.
-struct InkToolbarStencilChangedArgs
+LIBWINUI_EXPORT struct InkToolbarStencilChangedArgs
 {
     bool                  checked = false;                        ///< The button is on and the stencil shows.
     InkToolbarStencilKind kind    = InkToolbarStencilKind::Ruler; ///< The stencil the button selects.
 };
 
 /// Which side of its button a tool's flyout opens on.
-enum class InkToolbarButtonFlyoutPlacement
+LIBWINUI_EXPORT enum class InkToolbarButtonFlyoutPlacement
 {
     Auto,   ///< Below the button, the same as Bottom.
     Top,    ///< Above the button, left edges lined up.
@@ -126,7 +132,7 @@ enum class InkToolbarButtonFlyoutPlacement
 /// pen->set_selected_brush_index(7);       // red, in the default palette
 /// pen->set_selected_stroke_width(6.0f);   // within min_stroke_width()..max_stroke_width()
 /// @endcode
-class InkToolbarToolButtonControl final : public Element, private SelectionItemProvider, private ExpandCollapseProvider
+LIBWINUI_EXPORT class InkToolbarToolButtonControl final : public Element, private SelectionItemProvider, private ExpandCollapseProvider
 {
 public:
     /// The button for `tool`, with that tool's palette, width range and defaults.
@@ -303,7 +309,7 @@ private:
 ///                                    : ui::PointerDeviceTypes::Pen | ui::PointerDeviceTypes::Mouse);
 /// });
 /// @endcode
-class InkToolbarToggleButtonControl final : public Element, private ToggleProvider
+LIBWINUI_EXPORT class InkToolbarToggleButtonControl final : public Element, private ToggleProvider
 {
 public:
     /// A toggle looking as `look` says, off.
@@ -399,7 +405,7 @@ private:
 /// stencils->set_selected_stencil(ui::InkToolbarStencilKind::Protractor);
 /// toolbar->set_stencil_button_checked(true); // the protractor shows on the canvas
 /// @endcode
-class InkToolbarStencilButtonControl final : public Element, private ToggleProvider, private ExpandCollapseProvider
+LIBWINUI_EXPORT class InkToolbarStencilButtonControl final : public Element, private ToggleProvider, private ExpandCollapseProvider
 {
 public:
     InkToolbarStencilButtonControl();
@@ -532,7 +538,7 @@ private:
 /// stack->add(std::move(canvas));
 /// window.set_content(std::move(stack));
 /// @endcode
-class InkToolbarControl final : public Element
+LIBWINUI_EXPORT class InkToolbarControl final : public Element
 {
 public:
     /// Every built-in tool, in the default order.
@@ -810,7 +816,7 @@ protected:
 ///                .content    = ui::InkCanvas{.control = canvas}},
 /// }});
 /// @endcode
-struct InkToolbar
+LIBWINUI_EXPORT struct InkToolbar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<InkToolbar>` points at.
@@ -885,3 +891,5 @@ struct InkToolbar
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

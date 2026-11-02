@@ -28,7 +28,7 @@ add_library(
     pages_windowing.cpp
     pages_native.cpp
     pages_system.cpp)
-target_link_libraries(gallery_pages PUBLIC winui::winui example_native_controls)
+target_link_libraries(gallery_pages PUBLIC winui::headers example_native_controls)
 target_include_directories(gallery_pages PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 if(MSVC)
     # /bigobj: an optimized build of a page file outgrows the default section limit.
@@ -41,7 +41,7 @@ configure_file(gallery.rc.in "${CMAKE_CURRENT_BINARY_DIR}/gallery.rc" @ONLY)
 add_executable(gallery WIN32 main.cpp "${CMAKE_CURRENT_BINARY_DIR}/gallery.rc")
 # The resource compiler doesn't tell which files it read
 set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/gallery.rc" PROPERTIES OBJECT_DEPENDS "${GALLERY_ICON}")
-target_link_libraries(gallery PRIVATE winui::main gallery_pages)
+target_link_libraries(gallery PRIVATE winui::headers_main gallery_pages)
 if(MSVC)
     target_compile_options(gallery PRIVATE /utf-8)
 endif()

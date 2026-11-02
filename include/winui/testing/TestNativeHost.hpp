@@ -6,10 +6,12 @@
 #include "winui/render/NativeHost.hpp"
 #include "winui/ui/hosting/NativeControl.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
 #include <unordered_map>
 
 #include <cstddef>
+#endif
 
 namespace ui::testing
 {

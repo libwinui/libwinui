@@ -23,24 +23,28 @@
 
 #include <windows.h>
 // After windows.h, which they need.
-#include <algorithm>
-#include <array>
 #include <d2d1_1.h>
 #include <d3d11.h>
 #include <documenttarget.h>
 #include <dwrite.h>
 #include <dxgi.h>
-#include <optional>
 #include <prntvpt.h>
 #include <shlwapi.h>
-#include <string>
-#include <vector>
 #include <wincodec.h>
 #include <winspool.h>
 #include <wrl/client.h>
 
 #include <commdlg.h>
+
+#ifndef LIBWINUI_MODULE
+#include <algorithm>
+#include <array>
+#include <optional>
+#include <string>
+#include <vector>
+
 #include <cstddef>
+#endif
 
 namespace ui::detail
 {

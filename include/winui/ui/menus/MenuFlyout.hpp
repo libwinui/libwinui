@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Input.hpp"
 #include "winui/core/Property.hpp"
@@ -15,10 +19,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/spec/Spec.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <functional>
 #include <memory>
 #include <string>
 #include <vector>
+#endif
 
 namespace ui
 {
@@ -64,7 +70,7 @@ struct MenuChecks;
 ///     .anchor  = ui::Button{.text = "Options"},
 /// }.build());
 /// @endcode
-class MenuFlyoutControl final : public FlyoutBase
+LIBWINUI_EXPORT class MenuFlyoutControl final : public FlyoutBase
 {
 public:
     /// An empty menu with no anchor.
@@ -130,7 +136,7 @@ private:
 ///     .anchor    = ui::Button{ .text = "Options" },
 /// });
 /// @endcode
-struct MenuFlyout
+LIBWINUI_EXPORT struct MenuFlyout
 {
     /// The control this spec builds; what `ui::Control<MenuFlyout>` points at.
     using control_type = MenuFlyoutControl;
@@ -201,3 +207,5 @@ struct MenuFlyout
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

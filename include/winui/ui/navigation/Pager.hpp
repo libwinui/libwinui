@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -17,6 +21,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <concepts>
 #include <limits>
@@ -28,19 +33,20 @@
 
 #include <cassert>
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class ButtonControl;
-class ComboBoxControl;
-class IconControl;
-class NumberBoxControl;
-class TextControl;
-class ToolTipControl;
+LIBWINUI_EXPORT class ButtonControl;
+LIBWINUI_EXPORT class ComboBoxControl;
+LIBWINUI_EXPORT class IconControl;
+LIBWINUI_EXPORT class NumberBoxControl;
+LIBWINUI_EXPORT class TextControl;
+LIBWINUI_EXPORT class ToolTipControl;
 
 /// Which page selector a Pager shows.
-enum class PagerDisplayMode
+LIBWINUI_EXPORT enum class PagerDisplayMode
 {
     /// ComboBox under ten pages; NumberBox from ten, or with an unknown count.
     Auto,
@@ -53,7 +59,7 @@ enum class PagerDisplayMode
 };
 
 /// How a Pager shows one of its First/Previous/Next/Last buttons.
-enum class PagerButtonVisibility
+LIBWINUI_EXPORT enum class PagerButtonVisibility
 {
     /// Always shown; still disabled on its own edge.
     Visible,
@@ -89,7 +95,7 @@ enum class PagerButtonVisibility
 ///     .on_selection_changed = [&](std::size_t index) { std::println("page {}", index); },
 /// }.build());
 /// @endcode
-class PagerControl final : public Element
+LIBWINUI_EXPORT class PagerControl final : public Element
 {
 public:
     /// Zero pages, on page 0, in Auto mode, with every navigation button Visible and the default
@@ -392,7 +398,7 @@ protected:
 ///     .on_selection_changed = [](std::size_t now) { std::println("page {}", now); },
 /// });
 /// @endcode
-struct Pager
+LIBWINUI_EXPORT struct Pager
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Pager>` points at.
@@ -463,3 +469,5 @@ struct Pager
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

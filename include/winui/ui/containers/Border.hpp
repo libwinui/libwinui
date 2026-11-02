@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -19,9 +23,11 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
+#endif
 
 namespace ui
 {
@@ -55,7 +61,7 @@ namespace ui
 ///     .content          = ui::Text{.text = "Inside a border"},
 /// });
 /// @endcode
-class BorderControl final : public ContentHost
+LIBWINUI_EXPORT class BorderControl final : public ContentHost
 {
 public:
     /// Returns false, so the border is hit anywhere in its bounds, even where it draws nothing.
@@ -261,7 +267,7 @@ private:
 ///     .content              = ui::Text{.text = "Text inside a border"},
 /// });
 /// @endcode
-struct Border
+LIBWINUI_EXPORT struct Border
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Border>` points at.
@@ -331,3 +337,5 @@ struct Border
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

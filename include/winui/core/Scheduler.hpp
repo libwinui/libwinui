@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <condition_variable>
 #include <functional>
 #include <future>
@@ -13,11 +18,12 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
-class Scheduler;
+LIBWINUI_EXPORT class Scheduler;
 
 namespace detail
 {
@@ -76,7 +82,7 @@ private:
 ///     status = std::format("{} files", files);
 /// }
 /// @endcode
-class Scheduler
+LIBWINUI_EXPORT class Scheduler
 {
 public:
     /// Tag selecting the deterministic mode for tests: work runs synchronously, in the order it
@@ -124,3 +130,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Input.hpp"
 #include "winui/render/Renderer.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
+#endif
 
 namespace ui
 {
@@ -63,7 +69,7 @@ namespace ui
 ///     float                   content_height_ = 1000.0f;
 /// };
 /// @endcode
-class ScrollBarOverlay
+LIBWINUI_EXPORT class ScrollBarOverlay
 {
 public:
     /// A bar for one axis, collapsed and idle.
@@ -245,3 +251,5 @@ private:
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

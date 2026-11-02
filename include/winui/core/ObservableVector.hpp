@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Index.hpp"
 #include "winui/core/Property.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <concepts>
 #include <functional>
@@ -22,12 +27,13 @@
 
 #include <cassert>
 #include <cstddef>
+#endif
 
 namespace ui
 {
 
 /// What happened to a collection, as reported by ui::ObservableVector.
-enum class CollectionChangeKind
+LIBWINUI_EXPORT enum class CollectionChangeKind
 {
     Inserted, ///< `count` items were inserted at `index`.
     Removed,  ///< `count` items were removed, starting at `index`.
@@ -38,7 +44,7 @@ enum class CollectionChangeKind
 
 /// One change of a ui::ObservableVector, delivered to its observers after the collection has
 /// already changed.
-struct CollectionChange
+LIBWINUI_EXPORT struct CollectionChange
 {
     CollectionChangeKind kind  = CollectionChangeKind::Reset; ///< What happened.
     std::size_t          index = 0;                           ///< Where it happened; unused for a Reset.
@@ -88,7 +94,7 @@ struct CollectionChange
 ///     },
 /// }});
 /// @endcode
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 class ObservableVector final : public PropertyBase
 {
     using Storage = std::vector<std::unique_ptr<T>>;
@@ -607,7 +613,7 @@ private:
 /// A field that reads the collection in place (ui::ForEach, the views) never copies it. On a field
 /// that only takes a whole vector (a shape's `.points`), the binding delivers a copy of the
 /// collection when the field is built and on every change, which needs a copyable item type.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 [[nodiscard]] Binding<std::vector<T>> bind(ObservableVector<T>& source)
 {
     using Items = std::vector<T>;
@@ -634,7 +640,7 @@ template <typename T>
 /// Binding of a collection the caller may only read. The field gets a copy of the whole
 /// collection when it is built and again after every change, as from a `Property<std::vector<T>>`;
 /// it never writes to the collection, so a view built from it does not reorder it by drag.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
     requires std::copy_constructible<T>
 [[nodiscard]] Binding<std::vector<T>> bind(const ObservableVector<T>& source)
 {
@@ -652,10 +658,10 @@ template <typename T>
                           }};
 }
 /// Deleted: a binding keeps a reference to its source, so a temporary collection cannot be bound.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 Binding<std::vector<T>> bind(ObservableVector<T>&& source) = delete;
 /// Deleted: a binding keeps a reference to its source, so a temporary collection cannot be bound.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 Binding<std::vector<T>> bind(const ObservableVector<T>&& source) = delete;
 
 /// One-way binding of a list made from one Property of each item: the values of `member` in
@@ -675,7 +681,7 @@ Binding<std::vector<T>> bind(const ObservableVector<T>&& source) = delete;
 /// choices.emplace_back().text = "Large"; // the drop-down lists both
 /// choices[0].text             = "Tiny";  // and follows the edit
 /// @endcode
-template <typename T, typename U>
+LIBWINUI_EXPORT template <typename T, typename U>
     requires std::copy_constructible<U>
 [[nodiscard]] Binding<std::vector<U>> bind_each(const ObservableVector<T>& items, Property<U> T::* member)
 {
@@ -729,7 +735,7 @@ template <typename T, typename U>
                            }};
 }
 /// Deleted: the binding keeps a reference to the collection, so a temporary cannot be bound.
-template <typename T, typename U>
+LIBWINUI_EXPORT template <typename T, typename U>
 Binding<std::vector<U>> bind_each(const ObservableVector<T>&& items, Property<U> T::* member) = delete;
 
 /// How many items an index-based control shows, and the changes that lead from one count to the
@@ -752,7 +758,7 @@ Binding<std::vector<U>> bind_each(const ObservableVector<T>&& items, Property<U>
 ///
 /// names.push_back("Edsger"); // the list shows a third row
 /// @endcode
-class ItemCount
+LIBWINUI_EXPORT class ItemCount
 {
 public:
     /// Subscribes a sink to the collection's changes.
@@ -798,14 +804,14 @@ private:
 
 /// The size of `source`, kept current: what an index-based collection spec's `.item_count` takes
 /// to follow a ui::ObservableVector. See ui::ItemCount.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 [[nodiscard]] ItemCount item_count(const ObservableVector<T>& source)
 {
     return ItemCount{source.size(),
                      [&source](Callback<void(const CollectionChange&)> sink) { return source.observe(std::move(sink)); }};
 }
 /// Deleted: the count keeps a reference to its source, so a temporary collection cannot be used.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 ItemCount item_count(const ObservableVector<T>&& source) = delete;
 
 /// What makes two items of a collection "the same item" when the collection is assigned as a
@@ -814,7 +820,7 @@ ItemCount item_count(const ObservableVector<T>&& source) = delete;
 /// Made from a pointer to a data member (`.key = &Photo::id`) or from any callable returning the
 /// key (`.key = [](const Photo& p) { return p.path; }`). The key type needs `==` and `std::hash`.
 /// Keys must be unique within the collection.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 class ItemKey
 {
 public:
@@ -1037,7 +1043,7 @@ template <typename T, typename MakeKey>
 /// std::ranges::sort(sorted, {}, &Contact::name);
 /// contacts = std::move(sorted); // reported as moves
 /// @endcode
-template <typename T, typename K>
+LIBWINUI_EXPORT template <typename T, typename K>
     requires std::constructible_from<ItemKey<T>, K> && std::copy_constructible<K>
 [[nodiscard]] ItemCount item_count(const Property<std::vector<T>>& source, K key)
 {
@@ -1046,13 +1052,15 @@ template <typename T, typename K>
 /// As above without a key: the items before and after an edit are kept and those in between are
 /// reported as removed, inserted or replaced. That covers appending and removing; a reorder
 /// replaces nearly everything.
-template <typename T>
+LIBWINUI_EXPORT template <typename T>
 [[nodiscard]] ItemCount item_count(const Property<std::vector<T>>& source)
 {
     return detail::count_of_vector(source, [] { return ItemKey<T>{}; });
 }
 /// Deleted: the count keeps a reference to its source, so a temporary property cannot be used.
-template <typename T, typename... K>
+LIBWINUI_EXPORT template <typename T, typename... K>
 ItemCount item_count(const Property<std::vector<T>>&& source, K... key) = delete;
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

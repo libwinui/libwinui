@@ -22,9 +22,9 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows MSVC,      os: windows-2025, compiler: cl,       package: true,  flags: -DLIBWINUI_BUILD_MODULES=ON }
-        - { name: Windows clang-cl,  os: windows-2025, compiler: clang-cl, package: true,  flags: -DLIBWINUI_BUILD_MODULES=ON }
-        - { name: Windows MSVC ASan, os: windows-2025, compiler: cl,       package: false, flags: -DLIBWINUI_ENABLE_ASAN=ON -DLIBWINUI_BUILD_EXAMPLES=OFF }
+        - { name: Windows MSVC,      os: windows-2025, compiler: cl,       package: true }
+        - { name: Windows clang-cl,  os: windows-2025, compiler: clang-cl, package: true }
+        - { name: Windows MSVC ASan, os: windows-2025, compiler: cl,       package: false, flags: -DLIBWINUI_ENABLE_ASAN=ON -DLIBWINUI_BUILD_EXAMPLES=OFF -DLIBWINUI_BUILD_MODULES=OFF }
 
     steps:
     - name: Checkout Code

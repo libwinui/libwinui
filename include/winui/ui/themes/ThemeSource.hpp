@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/ui/themes/ClassicPalette.hpp"
 #include "winui/ui/themes/EarlyPalette.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
+#endif
 
 namespace ui
 {
@@ -16,7 +22,7 @@ namespace ui
 ///
 /// Only the variants for which theme_variant_supports_dark_mode() is true tell Light and Dark
 /// apart. HighContrast applies to every variant.
-enum class ThemeMode
+LIBWINUI_EXPORT enum class ThemeMode
 {
     System, ///< Follow the system's light or dark setting as it changes (the default).
     Light,  ///< Always light, whatever the system setting.
@@ -45,7 +51,7 @@ enum class ThemeMode
 ///     window.set_theme(request);
 /// }
 /// @endcode
-enum class AnimationPreference
+LIBWINUI_EXPORT enum class AnimationPreference
 {
     System, ///< Follow OsThemeSnapshot::animations_enabled as it changes (the default).
     On,     ///< Always animate, whatever the system setting.
@@ -66,7 +72,7 @@ enum class AnimationPreference
 /// // A contrast theme is on: the window draws with the palette the user picked.
 /// window.pin_theme(ui::resolve_theme(ui::ThemeRequest{}, os));
 /// @endcode
-struct HighContrastPalette
+LIBWINUI_EXPORT struct HighContrastPalette
 {
     Color window_background  = colors::White;                ///< The page and text field background.
     Color window_text        = colors::Black;                ///< Text on `window_background`.
@@ -138,7 +144,7 @@ struct HighContrastPalette
 /// light_preview.pin_theme(light);
 /// dark_preview.pin_theme(dark);
 /// @endcode
-struct OsThemeSnapshot
+LIBWINUI_EXPORT struct OsThemeSnapshot
 {
     /// The system's app mode: true when "Choose your app mode" is set to Dark.
     bool dark = false;
@@ -197,7 +203,7 @@ struct OsThemeSnapshot
 ///     return ui::run(app);
 /// }
 /// @endcode
-struct ThemeRequest
+LIBWINUI_EXPORT struct ThemeRequest
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// Light, Dark, HighContrast, or System (the default) to follow the system as it changes.
@@ -250,7 +256,7 @@ struct ThemeRequest
 /// const ui::Theme theme = ui::resolve_theme(ui::ThemeRequest{.mode = ui::ThemeMode::Light}, os);
 /// window.pin_theme(theme);
 /// @endcode
-[[nodiscard]] Theme resolve_theme(const ThemeRequest& request, const OsThemeSnapshot& os);
+LIBWINUI_EXPORT [[nodiscard]] Theme resolve_theme(const ThemeRequest& request, const OsThemeSnapshot& os);
 
 /// Links the era themes into the app, ThemeVariant::Mdl2 to ThemeVariant::Windows1x, with their
 /// window frames. Until it is called they are left out of the executable, and a ThemeRequest
@@ -266,17 +272,17 @@ struct ThemeRequest
 ///     return ui::run(window);
 /// }
 /// @endcode
-void enable_era_themes();
+LIBWINUI_EXPORT void enable_era_themes();
 
 /// Whether enable_era_themes() was called, so the era variants draw as themselves.
-[[nodiscard]] bool era_themes_enabled();
+LIBWINUI_EXPORT [[nodiscard]] bool era_themes_enabled();
 
 /// Whether `variant` tells ThemeRequest::mode's Dark and Light apart: true for System, Fluent2,
 /// Fluent, Metro and Mdl2. Every other variant has one fixed, light palette and looks the same
 /// whatever `mode` says, except ThemeMode::HighContrast, which still replaces its colors. A UI
 /// with a variant picker and a dark/light switch uses it to disable the switch when it would
 /// have no effect.
-[[nodiscard]] bool theme_variant_supports_dark_mode(ThemeVariant variant);
+LIBWINUI_EXPORT [[nodiscard]] bool theme_variant_supports_dark_mode(ThemeVariant variant);
 
 /// What the operating system's theme is right now: light or dark, the accent color, high
 /// contrast. A window that follows the system already tracks this by itself; ask for it to
@@ -287,6 +293,8 @@ void enable_era_themes();
 /// @code
 /// ui::Property<bool> dark{ui::os_theme().dark};
 /// @endcode
-[[nodiscard]] OsThemeSnapshot os_theme();
+LIBWINUI_EXPORT [[nodiscard]] OsThemeSnapshot os_theme();
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

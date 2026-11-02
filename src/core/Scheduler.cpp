@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 #include "winui/core/Scheduler.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <functional>
 #include <future>
@@ -10,6 +11,7 @@
 #include <utility>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {

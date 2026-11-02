@@ -1,23 +1,29 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/Property.hpp"
 #include "winui/render/Bitmap.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <optional>
 #include <string>
 #include <vector>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
 /// What the source of a clipboard or drag payload wants done with it.
 /// The values are bit flags, so a combination such as Copy | Link is representable.
-enum class DataPackageOperation : unsigned
+LIBWINUI_EXPORT enum class DataPackageOperation : unsigned
 {
     None = 0, ///< Nothing requested (or nothing to do).
     Copy = 1, ///< Copy the items (the default for a copy).
@@ -26,7 +32,7 @@ enum class DataPackageOperation : unsigned
 };
 
 /// The three formats Clipboard::contains() answers for.
-enum class StandardDataFormat
+LIBWINUI_EXPORT enum class StandardDataFormat
 {
     Text,         ///< UTF-8 text.
     Bitmap,       ///< A picture, read back as an Image.
@@ -35,7 +41,7 @@ enum class StandardDataFormat
 
 /// Whether content may be kept in the clipboard history (Win+V) and synced to the user's other
 /// devices. Both default to allowed. Each only matters while the user has that feature turned on.
-struct ClipboardContentOptions
+LIBWINUI_EXPORT struct ClipboardContentOptions
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     bool is_allowed_in_history = true; ///< May appear in the Win+V clipboard history.
@@ -53,7 +59,7 @@ struct ClipboardContentOptions
 /// content.requested_operation = ui::DataPackageOperation::Move; // a cut
 /// ui::clipboard().set_content(content, {.is_allowed_in_history = false});
 /// @endcode
-struct ClipboardContent
+LIBWINUI_EXPORT struct ClipboardContent
 {
     /// UTF-8 text, or nullopt to put no text on the clipboard.
     std::optional<std::string> text;
@@ -87,7 +93,7 @@ struct ClipboardContent
 ///     paste_button.set_enabled(clipboard.contains(ui::StandardDataFormat::Text));
 /// });
 /// @endcode
-class Clipboard
+LIBWINUI_EXPORT class Clipboard
 {
 public:
     Clipboard()                            = default;
@@ -177,14 +183,16 @@ private:
 /// ui::ButtonControl         copy_button{"Copy report"};
 /// copy_button.on_click([&] { ui::clipboard().set_text(report.get()); });
 /// @endcode
-[[nodiscard]] Clipboard& clipboard();
+LIBWINUI_EXPORT [[nodiscard]] Clipboard& clipboard();
 
 namespace detail
 {
 // The clipboard ui::clipboard() returns in place of the platform's, or nullptr for the platform's
 // own. ui::testing::set_clipboard() is the public way to set it.
-void                     install_clipboard(Clipboard* clipboard);
-[[nodiscard]] Clipboard* installed_clipboard();
+LIBWINUI_EXPORT void                     install_clipboard(Clipboard* clipboard);
+LIBWINUI_EXPORT [[nodiscard]] Clipboard* installed_clipboard();
 } // namespace detail
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

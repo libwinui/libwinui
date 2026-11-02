@@ -17,6 +17,7 @@
 #include "winui/ui/themes/Palette.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <atomic>
 #include <initializer_list>
@@ -25,6 +26,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Designated.hpp"
@@ -16,6 +20,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -25,6 +30,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#endif
 
 namespace ui
 {
@@ -37,7 +43,7 @@ namespace ui
 /// ui::InkStroke line;
 /// line.points = {{.position = {10, 10}}, {.position = {90, 40}, .pressure = 0.9f}};
 /// @endcode
-struct InkPoint
+LIBWINUI_EXPORT struct InkPoint
 {
     Point position{};      ///< Canvas DIPs.
     float pressure = 0.5f; ///< 0 to 1, the pen's PointerEvent::pressure. A mouse always reports 0.5.
@@ -46,14 +52,14 @@ struct InkPoint
 };
 
 /// The shape of the nib a stroke is drawn with.
-enum class InkPenTip
+LIBWINUI_EXPORT enum class InkPenTip
 {
     Circle,    ///< A round nib, elliptical when its width and height differ. Draws smooth, even lines.
     Rectangle, ///< A flat, axis-aligned nib, like a highlighter's chisel tip.
 };
 
 /// Which family of ink a stroke's attributes describe.
-enum class InkDrawingAttributesKind
+LIBWINUI_EXPORT enum class InkDrawingAttributesKind
 {
     Default, ///< Pen and highlighter ink.
     Pencil,  ///< Pencil ink: lighter, with a grain of specks, at `pencil_opacity`.
@@ -77,7 +83,7 @@ enum class InkDrawingAttributesKind
 /// };
 /// canvas->set_drawing_attributes(marker);
 /// @endcode
-struct InkDrawingAttributes
+LIBWINUI_EXPORT struct InkDrawingAttributes
 {
     Color                    color               = colors::Black;     ///< The ink's color.
     Size                     size                = {2.0f, 2.0f};      ///< The nib's width and height, DIPs.
@@ -108,7 +114,7 @@ struct InkDrawingAttributes
 /// tick.attributes.color = ui::Color::from_rgba(0, 128, 85);
 /// canvas->strokes().add_stroke(std::move(tick));
 /// @endcode
-struct InkStroke
+LIBWINUI_EXPORT struct InkStroke
 {
     std::vector<InkPoint> points{};     ///< The sampled points, in canvas DIPs.
     InkDrawingAttributes  attributes{}; ///< Color, size, nib and the rest.
@@ -124,7 +130,7 @@ struct InkStroke
     friend bool operator==(const InkStroke&, const InkStroke&) = default;
 };
 
-class InkCanvasControl;
+LIBWINUI_EXPORT class InkCanvasControl;
 
 /// The strokes on a ui::InkCanvasControl. Read them, add, remove, clear or replace them all, and
 /// select, move and delete some of them.
@@ -146,7 +152,7 @@ class InkCanvasControl;
 /// canvas->strokes().clear();
 /// canvas->strokes().replace(std::move(saved));
 /// @endcode
-class InkStrokeContainer
+LIBWINUI_EXPORT class InkStrokeContainer
 {
 public:
     InkStrokeContainer()                                     = default;
@@ -222,7 +228,7 @@ private:
 };
 
 /// What pointer input on a ui::InkCanvasControl does.
-enum class InkCanvasInputMode
+LIBWINUI_EXPORT enum class InkCanvasInputMode
 {
     None,    ///< Draws and erases nothing. Pointer input goes to on_unprocessed_input().
     Inking,  ///< The default. A drag draws a stroke with drawing_attributes(), and a pen's eraser erases.
@@ -231,7 +237,7 @@ enum class InkCanvasInputMode
 
 /// What a right-button drag on a ui::InkCanvasControl does. A pen pressed with its barrel button
 /// held counts as the right button.
-enum class InkCanvasRightDragAction
+LIBWINUI_EXPORT enum class InkCanvasRightDragAction
 {
     LeaveUnprocessed, ///< The default. The drag isn't inked and goes to on_unprocessed_input().
     AllowProcessing,  ///< Inks or erases as a left-button drag does.
@@ -248,7 +254,7 @@ enum class InkCanvasRightDragAction
 /// auto canvas = std::make_unique<ui::InkCanvasControl>();
 /// canvas->set_ruler({.visible = true, .angle = 30.0f}); // centered on the canvas, turned 30 degrees
 /// @endcode
-struct InkRuler
+LIBWINUI_EXPORT struct InkRuler
 {
     bool                 visible = false;     ///< Shown on the canvas.
     std::optional<Point> center{};            ///< Its middle, canvas DIPs. nullopt is the canvas's center.
@@ -270,7 +276,7 @@ struct InkRuler
 /// auto canvas = std::make_unique<ui::InkCanvasControl>();
 /// canvas->set_protractor({.visible = true, .center = ui::Point{200, 150}, .radius = 120.0f});
 /// @endcode
-struct InkProtractor
+LIBWINUI_EXPORT struct InkProtractor
 {
     bool                 visible = false;        ///< Shown on the canvas.
     std::optional<Point> center{};               ///< Its center, canvas DIPs. nullopt is the canvas's center.
@@ -284,7 +290,7 @@ struct InkProtractor
 };
 
 /// What the eraser removes.
-enum class InkCanvasEraseMode
+LIBWINUI_EXPORT enum class InkCanvasEraseMode
 {
     Stroke, ///< The default. Every whole stroke the eraser touches.
     Point,  ///< Only the ink under the eraser. A stroke it crosses splits in two.
@@ -324,7 +330,7 @@ enum class InkCanvasEraseMode
 /// canvas->set_input_mode(ui::InkCanvasInputMode::Erasing); // the next drag erases
 /// canvas->strokes().clear();                                // or wipe it all
 /// @endcode
-class InkCanvasControl final : public Element
+LIBWINUI_EXPORT class InkCanvasControl final : public Element
 {
 public:
     /// An empty canvas in Inking mode with the default drawing attributes.
@@ -581,7 +587,7 @@ protected:
 ///     ui::Button{.text = "Clear", .on_click = [&] { canvas->strokes().clear(); }},
 /// }});
 /// @endcode
-struct InkCanvas
+LIBWINUI_EXPORT struct InkCanvas
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<InkCanvas>` points at.
@@ -658,3 +664,5 @@ struct InkCanvas
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

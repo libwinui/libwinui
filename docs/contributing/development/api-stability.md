@@ -29,4 +29,4 @@ There is no ABI promise. A shared build of libwinui only works with the headers 
 
 `api/surface.txt` lists every public declaration, one per line, and `api/surface-testing.txt` the testing tier. Both are generated from the headers (see [Documentation](docs.md#the-api-surface)), and `api-check` fails when they are stale. A commit that changes the public API changes one of these files, so the change shows up in review.
 
-`LIBWINUI_VERSION_MAJOR`, `LIBWINUI_VERSION_MINOR` and `LIBWINUI_VERSION_PATCH` in `<winui/core/Version.hpp>` let code test the version with the preprocessor.
+`LIBWINUI_VERSION_MAJOR`, `LIBWINUI_VERSION_MINOR` and `LIBWINUI_VERSION_PATCH` in `<winui/Macros.hpp>` let code test the version with the preprocessor.

@@ -1,21 +1,27 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Designated.hpp"
 #include "winui/core/Input.hpp"
 #include "winui/core/Property.hpp"
 #include "winui/render/IconSource.hpp"
 #include "winui/ui/Command.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <functional>
 #include <string>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// Which kind of menu item a MenuItem stands for.
-enum class MenuItemKind
+LIBWINUI_EXPORT enum class MenuItemKind
 {
     Item,      ///< a plain command
     Toggle,    ///< a check item
@@ -63,7 +69,7 @@ enum class MenuItemKind
 /// auto flyout = std::make_unique<ui::MenuFlyoutControl>();
 /// flyout->set_items(std::move(items)); // or a ui::MenuBarItem's items
 /// @endcode
-struct MenuItem
+LIBWINUI_EXPORT struct MenuItem
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The text. Falls back to the command's text.
@@ -161,3 +167,5 @@ struct MenuItem
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

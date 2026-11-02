@@ -1,9 +1,15 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <optional>
+#endif
 
 namespace ui
 {
@@ -29,7 +35,7 @@ namespace ui
 ///     }
 /// };
 /// @endcode
-struct ClassicBevelRamp
+LIBWINUI_EXPORT struct ClassicBevelRamp
 {
     Color light;       ///< The outer top/left ring, a step lighter than the face.
     Color highlight;   ///< The inner top/left ring, the brightest edge (white on the standard grays).
@@ -56,7 +62,7 @@ struct ClassicBevelRamp
 ///     .content    = ui::Text{.text = "Display Properties", .foreground = caption.text},
 /// });
 /// @endcode
-struct ClassicCaption
+LIBWINUI_EXPORT struct ClassicCaption
 {
     Color active;            ///< The active window's caption, at its left end.
     Color gradient_active;   ///< The active caption's right end.
@@ -85,11 +91,11 @@ struct ClassicCaption
 /// const ui::Color light = ui::classic_lighter(face, 0.5f);    // the bevel's outer light ring
 /// const ui::Color dark  = ui::classic_darker(face, 1.0f);     // the bevel's outer dark ring
 /// @endcode
-[[nodiscard]] Color classic_lighter(const Color& c, float percent = 1.0f);
+LIBWINUI_EXPORT [[nodiscard]] Color classic_lighter(const Color& c, float percent = 1.0f);
 /// Darkens `c` the same way classic_lighter() lightens it. The luminosity moves toward black by
 /// up to a third, scaled by `percent`, which is clamped to [0,1]. Hue, saturation and alpha are
 /// kept.
-[[nodiscard]] Color classic_darker(const Color& c, float percent = 1.0f);
+LIBWINUI_EXPORT [[nodiscard]] Color classic_darker(const Color& c, float percent = 1.0f);
 
 /// Derives the whole classic 3-D ramp from one face color. `light` is
 /// `classic_lighter(face, 0.5)`, `highlight` is `classic_lighter(face, 1.0)`, `shadow` is
@@ -125,7 +131,7 @@ struct ClassicCaption
 /// // `#808080` and `#404040`.
 /// const ui::ClassicBevelRamp win2000 = ui::classic_bevel_ramp_from_face(ui::Color::from_argb(0xFFD4D0C8));
 /// @endcode
-[[nodiscard]] ClassicBevelRamp classic_bevel_ramp_from_face(const Color& face);
+LIBWINUI_EXPORT [[nodiscard]] ClassicBevelRamp classic_bevel_ramp_from_face(const Color& face);
 
 /// The classic era's color scheme: the colors a classic 3-D look is drawn with. Palette is the
 /// Fluent counterpart.
@@ -147,7 +153,7 @@ struct ClassicCaption
 /// scheme.selection = ui::Color::from_rgba(128, 0, 128);
 /// window.pin_theme(ui::Theme::classic(scheme, /*hot_track=*/true, "Microsoft Sans Serif"));
 /// @endcode
-struct ClassicPalette
+LIBWINUI_EXPORT struct ClassicPalette
 {
     Color face;      ///< Control and dialog surfaces, and the color the bevel ramp is derived from.
     Color face_text; ///< Text on `face`.
@@ -216,3 +222,5 @@ struct ClassicPalette
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Geometry.hpp"
 #include "winui/ui/layouts/Layout.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <array>
 #include <memory>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -49,7 +55,7 @@ class FlowLayoutAlgorithm;
 /// // Later: switch to columns that scroll horizontally.
 /// layout->set_orientation(ui::Orientation::Vertical);
 /// @endcode
-class WrapLayoutEngine final : public VirtualizingLayout
+LIBWINUI_EXPORT class WrapLayoutEngine final : public VirtualizingLayout
 {
 public:
     /// Horizontal rows, no spacing, Start alignment.
@@ -141,7 +147,7 @@ private:
 ///     .item   = [](const std::string& tag) -> ui::Spec { return ui::Button{.text = tag}; },
 /// });
 /// @endcode
-struct WrapLayout
+LIBWINUI_EXPORT struct WrapLayout
 {
     Orientation orientation      = Orientation::Horizontal; ///< The direction of a line.
     float       min_item_spacing = 0.0f;                    ///< Least gap between items on a line, DIPs.
@@ -162,3 +168,5 @@ struct WrapLayout
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

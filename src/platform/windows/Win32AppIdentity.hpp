@@ -2,8 +2,10 @@
 #pragma once
 #ifdef _WIN32
 
+#ifndef LIBWINUI_MODULE
 #include <filesystem>
 #include <string>
+#endif
 
 namespace ui::win32
 {

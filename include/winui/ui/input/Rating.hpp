@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/Geometry.hpp"
@@ -16,10 +20,12 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -52,7 +58,7 @@ namespace ui
 /// average->set_read_only(true);
 /// average->set_caption("4.5 average");
 /// @endcode
-class RatingControl final : public Element, private RangeValueProvider
+LIBWINUI_EXPORT class RatingControl final : public Element, private RangeValueProvider
 {
 public:
     /// A row of `max_rating` stars (at least 1) holding `value`, coerced like `set_value()`.
@@ -292,7 +298,7 @@ private:
 ///     .horizontal_alignment = ui::Alignment::Leading,
 /// });
 /// @endcode
-struct Rating
+LIBWINUI_EXPORT struct Rating
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<Rating>` points at.
@@ -361,3 +367,5 @@ struct Rating
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

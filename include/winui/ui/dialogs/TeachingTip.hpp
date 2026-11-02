@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
@@ -19,11 +23,13 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
+#endif
 
 namespace ui
 {
@@ -35,7 +41,7 @@ enum class TeachingTipSpot : unsigned char;
 } // namespace detail
 
 /// Which edge of the card the hero content sits at: Auto puts it at the edge away from the tail.
-enum class TeachingTipHeroPlacement
+LIBWINUI_EXPORT enum class TeachingTipHeroPlacement
 {
     Auto,   ///< The edge away from the tail; the top when there is no tail at the top.
     Top,    ///< Always across the top of the card.
@@ -87,7 +93,7 @@ class TeachingTipSurface; // defined in TeachingTip.cpp
 ///     t->set_open(true);
 /// });
 /// @endcode
-class TeachingTipControl final : public Element
+LIBWINUI_EXPORT class TeachingTipControl final : public Element
 {
 public:
     /// A closed, untargeted tip with no text, no content and no buttons (only the corner "X"). Not
@@ -412,7 +418,7 @@ protected:
 /// tip->set_target(save_button);
 /// tip->set_open(true);
 /// @endcode
-struct TeachingTip
+LIBWINUI_EXPORT struct TeachingTip
 {
     /// The control this spec builds; what `ui::Control<TeachingTip>` points at.
     using control_type = TeachingTipControl;
@@ -508,3 +514,5 @@ struct TeachingTip
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

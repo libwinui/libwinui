@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -18,17 +22,19 @@
 #include "winui/ui/spec/Spec.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
+#endif
 
 namespace ui
 {
 
 /// How serious an InfoBar's message is; picks the bar's background color and its status icon.
-enum class InfoBarSeverity
+LIBWINUI_EXPORT enum class InfoBarSeverity
 {
     Informational, ///< neutral background, info icon (the default)
     Success,       ///< success background, check-mark icon
@@ -71,7 +77,7 @@ enum class InfoBarSeverity
 /// });
 /// bar->set_action_button_content(std::make_unique<ui::ButtonControl>("Retry"))->on_click([] { save(); });
 /// @endcode
-class InfoBarControl final : public Element
+LIBWINUI_EXPORT class InfoBarControl final : public Element
 {
 public:
     /// A closed bar, which takes no room and draws nothing until opened.
@@ -367,7 +373,7 @@ protected:
 ///     .action_button_content = ui::Button{.text = "Restart", .on_click = [&] { restart_app(); }},
 /// });
 /// @endcode
-struct InfoBar
+LIBWINUI_EXPORT struct InfoBar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<InfoBar>` points at.
@@ -443,3 +449,5 @@ struct InfoBar
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

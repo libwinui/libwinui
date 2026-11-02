@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Callback.hpp"
 #include "winui/core/Designated.hpp"
 #include "winui/core/DirtyFlags.hpp"
@@ -19,6 +23,7 @@
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <memory>
 #include <optional>
 #include <string>
@@ -26,6 +31,7 @@
 #include <vector>
 
 #include <cstddef>
+#endif
 
 namespace ui
 {
@@ -35,7 +41,7 @@ namespace ui
 /// Converts from a string, so a list of plain strings needs no item type spelled out:
 /// `.items = {"Recent", "Shared"}`, or with icons
 /// `.items = {{"Recent", ui::Symbol::Clock}, {"Shared", ui::Symbol::Share}}`.
-struct SelectorBarItem
+LIBWINUI_EXPORT struct SelectorBarItem
 {
     /// A segment showing `item_text`, with `icon` before it (empty: none).
     SelectorBarItem(std::string item_text, IconSource icon = {}) :
@@ -71,7 +77,7 @@ struct SelectorBarItem
 /// bar->on_selection_changed([bar, shown](std::size_t) { shown->set_text(bar->selected_text() + " files"); });
 /// window.set_content(std::move(panel));
 /// @endcode
-class SelectorBarControl final : public Element, private ValueProvider
+LIBWINUI_EXPORT class SelectorBarControl final : public Element, private ValueProvider
 {
 public:
     /// An empty strip: nothing drawn, not focusable.
@@ -234,7 +240,7 @@ private:
 ///     },
 /// });
 /// @endcode
-struct SelectorBar
+LIBWINUI_EXPORT struct SelectorBar
 {
     LIBWINUI_NO_UNIQUE_ADDRESS detail::DesignatedOnly designated_only_{};
     /// The control this spec builds; what `ui::Control<SelectorBar>` points at.
@@ -290,3 +296,5 @@ struct SelectorBar
 };
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED

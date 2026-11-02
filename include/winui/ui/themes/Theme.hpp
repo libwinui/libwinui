@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include "winui/Macros.hpp"
+
+#ifndef LIBWINUI_IMPORTED
+
 #include "winui/core/Color.hpp"
 #include "winui/core/Duration.hpp"
 #include "winui/core/Geometry.hpp"
@@ -13,24 +17,26 @@
 #include "winui/ui/Paint.hpp"
 #include "winui/ui/themes/Palette.hpp"
 
+#ifndef LIBWINUI_MODULE
 #include <functional>
 #include <memory>
 #include <optional>
 
 #include <cstdint>
+#endif
 
 namespace ui
 {
 
-struct ClassicPalette;
-struct EarlyPalette;
-struct Mdl2Palette;
-struct MetroPalette;
+LIBWINUI_EXPORT struct ClassicPalette;
+LIBWINUI_EXPORT struct EarlyPalette;
+LIBWINUI_EXPORT struct Mdl2Palette;
+LIBWINUI_EXPORT struct MetroPalette;
 
 /// The interaction state a control derives from its input flags. Focus is not one of them. The
 /// focus visual is a separate ring a control draws on top of whichever of these four states it
 /// is in, so a focused and hovered control keeps its hover look.
-enum class ButtonState
+LIBWINUI_EXPORT enum class ButtonState
 {
     Normal,   ///< At rest.
     Hover,    ///< The pointer is over the control.
@@ -45,7 +51,7 @@ enum class ButtonState
 /// `(2.5, 2.5, w-5, h-5)` and the fill `(3, 3, w-6, h-6)`. Both layers are filled, since their
 /// gradients run diagonally and only fills follow `GradientAxis`. `draw_control_chrome` draws the
 /// well square, for the check box, and RadioButton draws the same two layers round.
-struct InsetWell
+LIBWINUI_EXPORT struct InsetWell
 {
     /// The outer layer, filling the shape `inset` in from the indicator's edge.
     LinearGradientBrush rim;
@@ -76,7 +82,7 @@ struct InsetWell
 /// theme.button_hover.border_width = 2.0f; // this state only; the rest keep Theme::border_width
 /// window.pin_theme(std::move(theme));
 /// @endcode
-struct ButtonVisual
+LIBWINUI_EXPORT struct ButtonVisual
 {
     /// The flat fill. Also set as the fallback color when `background_gradient` is set.
     Color background;
@@ -217,7 +223,7 @@ struct ButtonVisual
 ///     bool        hot_ = false;
 /// };
 /// @endcode
-struct Surfaces
+LIBWINUI_EXPORT struct Surfaces
 {
     Color field_border;        ///< A text field's border or bevel color, a sunken well or a 1px stroke.
     Color menu;                ///< The menu, menu bar, toolbar and tab strip background.
@@ -306,7 +312,7 @@ struct Surfaces
 ///     std::string label_;
 /// };
 /// @endcode
-struct ThemeColors
+LIBWINUI_EXPORT struct ThemeColors
 {
     // ---- text ----
     /// Body text on `background`, `card` and `overlay`. TextControl's default color.
@@ -381,7 +387,7 @@ struct ThemeColors
 
 /// How the corners of the system-drawn window frame are rounded. An era theme sets this so the
 /// frame matches the content, so a Windows 95 theme asks for square corners. Windows 11 only.
-enum class CornerPreference
+LIBWINUI_EXPORT enum class CornerPreference
 {
     Default,    ///< The system decides: round on Windows 11.
     DoNotRound, ///< Square corners.
@@ -390,7 +396,7 @@ enum class CornerPreference
 };
 
 /// Which of the four answers a FrameColor holds.
-enum class FrameColorKind
+LIBWINUI_EXPORT enum class FrameColorKind
 {
     Follow,        ///< No opinion; the next layer decides (see follow()).
     SystemDefault, ///< The system's own color.
@@ -417,7 +423,7 @@ enum class FrameColorKind
 /// chrome.border_color       = ui::FrameColor::none();           // no border line (Windows 11)
 /// window.set_chrome(chrome);
 /// @endcode
-class FrameColor
+LIBWINUI_EXPORT class FrameColor
 {
 public:
     /// follow(): no opinion.
@@ -491,7 +497,7 @@ private:
 /// theme.chrome.inactive_caption_color = ui::Color::from_argb(0xFF808080);
 /// window.pin_theme(std::move(theme)); // the host re-applies the frame attributes
 /// @endcode
-struct ChromeHints
+LIBWINUI_EXPORT struct ChromeHints
 {
     /// How the frame's corners are rounded. Windows 11 only.
     CornerPreference corner_preference = CornerPreference::Default;
@@ -539,7 +545,7 @@ struct ChromeHints
 /// window.set_chrome({.corner_preference = ui::CornerPreference::DoNotRound,
 ///                     .border_color      = ui::FrameColor::none()});
 /// @endcode
-struct ChromeOverrides
+LIBWINUI_EXPORT struct ChromeOverrides
 {
     /// Overrides ChromeHints::corner_preference when set.
     std::optional<CornerPreference> corner_preference{};
@@ -557,7 +563,7 @@ struct ChromeOverrides
 };
 
 /// The frame settings a window applies: `overrides` layered over `theme`.
-[[nodiscard]] inline ChromeHints merge_chrome(const ChromeHints& theme, const ChromeOverrides& overrides)
+LIBWINUI_EXPORT [[nodiscard]] inline ChromeHints merge_chrome(const ChromeHints& theme, const ChromeOverrides& overrides)
 {
     ChromeHints merged = theme;
     if (overrides.corner_preference)
@@ -585,7 +591,7 @@ struct ChromeOverrides
 /// The defaults are the shades of Windows' default accent, so a default-constructed
 /// OsThemeSnapshot resolves to the colors Windows 11 shows with it: light fills with `dark1`
 /// `#005A9E`, dark with `light2` `#76B9ED`.
-struct AccentRamp
+LIBWINUI_EXPORT struct AccentRamp
 {
     /// The accent color itself, which the other fields are tints and shades of.
     Color base   = Color::from_argb(0xFF0078D4);
@@ -603,7 +609,7 @@ struct AccentRamp
 /// etched groove from `surfaces.separator_light` and `separator_dark`, the default, or Fluent's
 /// flat single line in `colors.divider`. Only `Theme::fluent()` picks the flat line. Every other
 /// theme keeps the groove.
-enum class ThemeDividerVisual
+LIBWINUI_EXPORT enum class ThemeDividerVisual
 {
     EtchedGroove, ///< Two 1px lines, `surfaces.separator_light` / `separator_dark`.
     FlatStroke,   ///< One 1px line in `colors.divider`.
@@ -613,7 +619,7 @@ enum class ThemeDividerVisual
 /// NavigationShell, Breadcrumb, DropdownButton, SplitButton, NumberBox's spin buttons and a
 /// menu's submenu arrow. Fluent and every theme after Windows 2000 draw the icon font's chevrons.
 /// The classic themes draw solid arrows and plus/minus boxes.
-enum class ThemeDisclosureVisual
+LIBWINUI_EXPORT enum class ThemeDisclosureVisual
 {
     /// The icon font's line chevrons (`glyphs::ChevronDown` and the rest).
     IconChevron,
@@ -626,7 +632,7 @@ enum class ThemeDisclosureVisual
 /// follows from an elevation scale, where every kind of surface has a height. Aero casts no
 /// shadow under a button, card or panel. Its only shadow is an offset block with a 5 px fall-off
 /// under a menu, tooltip or drop-down. Defaults to the Fluent shadow.
-enum class ThemePopupShadow
+LIBWINUI_EXPORT enum class ThemePopupShadow
 {
     FluentTwoLight, ///< Fluent's soft two-light elevation shadow.
     AeroDropShadow, ///< An offset block with a 5 px fall-off, as Luna and Aero draw it.
@@ -644,7 +650,7 @@ enum class ThemePopupShadow
 ///     drop-down list slides open when list box animation is on. Both run 200 ms, and a menu
 ///     closes at once. resolve_theme() reads the settings from OsThemeSnapshot.
 ///   - Windows 9x, 3.x and 1.x/2.x: no animation.
-enum class ThemePopupAnimation
+LIBWINUI_EXPORT enum class ThemePopupAnimation
 {
     Slide, ///< Slides out from its own edge.
     Fade,  ///< Fades in.
@@ -681,7 +687,7 @@ enum class ThemePopupAnimation
 ///     return ui::run(retro);
 /// }
 /// @endcode
-enum class ThemeVariant
+LIBWINUI_EXPORT enum class ThemeVariant
 {
     /// The look of the running Windows: Fluent2 on Windows 11 and Fluent on Windows 10 and
     /// earlier (OsThemeSnapshot::system_variant). The default. A resolved Theme never reports it.
@@ -804,7 +810,7 @@ private:
 /// theme.focus_ring_outer_width = 3.0f;
 /// window.pin_theme(std::move(theme));
 /// @endcode
-struct Theme
+LIBWINUI_EXPORT struct Theme
 {
     /// The design language the theme draws in, the one its factory built it for. Under high
     /// contrast it is the variant whose contrast look this is, so check `high_contrast` too. A
@@ -1331,63 +1337,69 @@ private:
 namespace theme_colors
 {
 /// ThemeColors::text.
-inline constexpr ThemeColor Text = [](const Theme& t) { return t.colors().text; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Text = [](const Theme& t) { return t.colors().text; };
 /// ThemeColors::text_secondary.
-inline constexpr ThemeColor TextSecondary = [](const Theme& t) { return t.colors().text_secondary; };
+LIBWINUI_EXPORT inline constexpr ThemeColor TextSecondary = [](const Theme& t) { return t.colors().text_secondary; };
 /// ThemeColors::text_disabled.
-inline constexpr ThemeColor TextDisabled = [](const Theme& t) { return t.colors().text_disabled; };
+LIBWINUI_EXPORT inline constexpr ThemeColor TextDisabled = [](const Theme& t) { return t.colors().text_disabled; };
 /// ThemeColors::text_on_accent.
-inline constexpr ThemeColor TextOnAccent = [](const Theme& t) { return t.colors().text_on_accent; };
+LIBWINUI_EXPORT inline constexpr ThemeColor TextOnAccent = [](const Theme& t) { return t.colors().text_on_accent; };
 /// ThemeColors::link.
-inline constexpr ThemeColor Link = [](const Theme& t) { return t.colors().link; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Link = [](const Theme& t) { return t.colors().link; };
 /// ThemeColors::background.
-inline constexpr ThemeColor Background = [](const Theme& t) { return t.colors().background; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Background = [](const Theme& t) { return t.colors().background; };
 /// ThemeColors::card.
-inline constexpr ThemeColor Card = [](const Theme& t) { return t.colors().card; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Card = [](const Theme& t) { return t.colors().card; };
 /// ThemeColors::overlay.
-inline constexpr ThemeColor Overlay = [](const Theme& t) { return t.colors().overlay; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Overlay = [](const Theme& t) { return t.colors().overlay; };
 /// ThemeColors::field.
-inline constexpr ThemeColor Field = [](const Theme& t) { return t.colors().field; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Field = [](const Theme& t) { return t.colors().field; };
 /// ThemeColors::field_text.
-inline constexpr ThemeColor FieldText = [](const Theme& t) { return t.colors().field_text; };
+LIBWINUI_EXPORT inline constexpr ThemeColor FieldText = [](const Theme& t) { return t.colors().field_text; };
 /// ThemeColors::scrim.
-inline constexpr ThemeColor Scrim = [](const Theme& t) { return t.colors().scrim; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Scrim = [](const Theme& t) { return t.colors().scrim; };
 /// ThemeColors::accent.
-inline constexpr ThemeColor Accent = [](const Theme& t) { return t.colors().accent; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Accent = [](const Theme& t) { return t.colors().accent; };
 /// ThemeColors::accent_hover.
-inline constexpr ThemeColor AccentHover = [](const Theme& t) { return t.colors().accent_hover; };
+LIBWINUI_EXPORT inline constexpr ThemeColor AccentHover = [](const Theme& t) { return t.colors().accent_hover; };
 /// ThemeColors::accent_pressed.
-inline constexpr ThemeColor AccentPressed = [](const Theme& t) { return t.colors().accent_pressed; };
+LIBWINUI_EXPORT inline constexpr ThemeColor AccentPressed = [](const Theme& t) { return t.colors().accent_pressed; };
 /// ThemeColors::control_fill.
-inline constexpr ThemeColor ControlFill = [](const Theme& t) { return t.colors().control_fill; };
+LIBWINUI_EXPORT inline constexpr ThemeColor ControlFill = [](const Theme& t) { return t.colors().control_fill; };
 /// ThemeColors::control_fill_hover.
-inline constexpr ThemeColor ControlFillHover = [](const Theme& t) { return t.colors().control_fill_hover; };
+LIBWINUI_EXPORT inline constexpr ThemeColor ControlFillHover = [](const Theme& t)
+{ return t.colors().control_fill_hover; };
 /// ThemeColors::control_fill_pressed.
-inline constexpr ThemeColor ControlFillPressed = [](const Theme& t) { return t.colors().control_fill_pressed; };
+LIBWINUI_EXPORT inline constexpr ThemeColor ControlFillPressed = [](const Theme& t)
+{ return t.colors().control_fill_pressed; };
 /// ThemeColors::control_fill_disabled.
-inline constexpr ThemeColor ControlFillDisabled = [](const Theme& t) { return t.colors().control_fill_disabled; };
+LIBWINUI_EXPORT inline constexpr ThemeColor ControlFillDisabled = [](const Theme& t)
+{ return t.colors().control_fill_disabled; };
 /// ThemeColors::control_stroke.
-inline constexpr ThemeColor ControlStroke = [](const Theme& t) { return t.colors().control_stroke; };
+LIBWINUI_EXPORT inline constexpr ThemeColor ControlStroke = [](const Theme& t) { return t.colors().control_stroke; };
 /// ThemeColors::control_stroke_strong.
-inline constexpr ThemeColor ControlStrokeStrong = [](const Theme& t) { return t.colors().control_stroke_strong; };
+LIBWINUI_EXPORT inline constexpr ThemeColor ControlStrokeStrong = [](const Theme& t)
+{ return t.colors().control_stroke_strong; };
 /// ThemeColors::divider.
-inline constexpr ThemeColor Divider = [](const Theme& t) { return t.colors().divider; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Divider = [](const Theme& t) { return t.colors().divider; };
 /// ThemeColors::selection.
-inline constexpr ThemeColor Selection = [](const Theme& t) { return t.colors().selection; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Selection = [](const Theme& t) { return t.colors().selection; };
 /// ThemeColors::selection_text.
-inline constexpr ThemeColor SelectionText = [](const Theme& t) { return t.colors().selection_text; };
+LIBWINUI_EXPORT inline constexpr ThemeColor SelectionText = [](const Theme& t) { return t.colors().selection_text; };
 /// ThemeColors::focus.
-inline constexpr ThemeColor Focus = [](const Theme& t) { return t.colors().focus; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Focus = [](const Theme& t) { return t.colors().focus; };
 /// ThemeColors::focus_inner.
-inline constexpr ThemeColor FocusInner = [](const Theme& t) { return t.colors().focus_inner; };
+LIBWINUI_EXPORT inline constexpr ThemeColor FocusInner = [](const Theme& t) { return t.colors().focus_inner; };
 /// ThemeColors::critical.
-inline constexpr ThemeColor Critical = [](const Theme& t) { return t.colors().critical; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Critical = [](const Theme& t) { return t.colors().critical; };
 /// ThemeColors::caution.
-inline constexpr ThemeColor Caution = [](const Theme& t) { return t.colors().caution; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Caution = [](const Theme& t) { return t.colors().caution; };
 /// ThemeColors::success.
-inline constexpr ThemeColor Success = [](const Theme& t) { return t.colors().success; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Success = [](const Theme& t) { return t.colors().success; };
 /// ThemeColors::informational.
-inline constexpr ThemeColor Informational = [](const Theme& t) { return t.colors().informational; };
+LIBWINUI_EXPORT inline constexpr ThemeColor Informational = [](const Theme& t) { return t.colors().informational; };
 } // namespace theme_colors
 
 } // namespace ui
+
+#endif // LIBWINUI_IMPORTED
