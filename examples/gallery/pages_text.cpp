@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
-#include "gallery.hpp"
-
 #include <algorithm>
 #include <array>
+#include <concepts>
 #include <fstream>
+#include <functional>
 #include <iterator>
 #include <memory>
 #include <optional>
+#include <span>
 #include <sstream>
 #include <string>
 #include <string_view>
@@ -24,6 +25,10 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
+
+import winui;
+
+#include "gallery.hpp"
 
 using ui::operator""_fr;
 

@@ -3,12 +3,22 @@
 // pages_motion_connected_cards.cpp (the card page, split off for compile time).
 #pragma once
 
-#include "pages_motion.hpp"
-
+#include <algorithm>
+#include <concepts>
+#include <functional>
 #include <memory>
+#include <optional>
+#include <span>
+#include <string>
+#include <string_view>
 #include <vector>
 
+#include <cmath>
 #include <cstddef>
+
+import winui;
+
+#include "pages_motion.hpp"
 
 namespace gallery
 {

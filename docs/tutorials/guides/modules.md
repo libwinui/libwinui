@@ -89,4 +89,4 @@ Either way your files can use the standard headers or `import std;`. Both name t
 
 ## Compilers
 
-CI builds the modules with MSVC and clang-cl, imports them in every tutorial but the one that hosts native controls, and imports the installed package once more from a project outside the tree. GCC is not tested. The module library is static; with `LIBWINUI_BUILD_SHARED` the shared library is for the headers only.
+CI builds the modules with MSVC and clang-cl, imports them in every example and tutorial, and imports the installed package once more from a project outside the tree. GCC is not tested. The module library is static; with `LIBWINUI_BUILD_SHARED` the shared library is for the headers only.

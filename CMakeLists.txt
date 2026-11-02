@@ -12,8 +12,8 @@ project(libwinui
     DESCRIPTION "A native, data-oriented, testable Windows UI framework (vertical slice 1)"
     LANGUAGES CXX)
 
-# No source of the library, its tests or examples imports a module, so they skip the scan CMake
-# 3.28 runs for C++20 targets; the module targets of cmake/Modules.cmake turn it back on.
+# The library and its tests import no module, so they skip the scan CMake 3.28 runs for C++20
+# targets; the module targets of cmake/Modules.cmake and the examples turn it back on.
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 # ---------------------------------------------------------------------------
@@ -530,8 +530,12 @@ endif()
 # ---------------------------------------------------------------------------
 # Examples
 # ---------------------------------------------------------------------------
-# Only where a backend exists: an example has no platform guards of its own.
-if(LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32)
+# Only where a backend exists: an example has no platform guards of its own. The examples import
+# the module, so they need it.
+if(LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32 AND NOT LIBWINUI_BUILD_MODULES)
+    message(STATUS "libwinui: the examples import the module, so they are skipped with LIBWINUI_BUILD_MODULES off")
+endif()
+if(LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32 AND LIBWINUI_BUILD_MODULES)
     add_subdirectory(examples/hello)
     add_subdirectory(examples/virtual_list_demo)
     add_subdirectory(examples/tile_view_demo)
@@ -555,33 +559,26 @@ if(LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32)
     add_subdirectory(examples/tutorials/14_todo_list)
     add_subdirectory(examples/tutorials/15_background_work)
     add_subdirectory(examples/tutorials/16_form_from_data)
-    # Each tutorial once more through `import winui;`, so the module exports what the docs use.
-    # 12 stays out: its native controls include the headers again, after the import.
-    if(LIBWINUI_BUILD_MODULES)
-        file(GLOB winui_tutorial_dirs LIST_DIRECTORIES true ${PROJECT_SOURCE_DIR}/examples/tutorials/*)
-        foreach(winui_tutorial_dir IN LISTS winui_tutorial_dirs)
-            get_filename_component(winui_tutorial ${winui_tutorial_dir} NAME)
-            if(EXISTS ${winui_tutorial_dir}/main.cpp AND NOT winui_tutorial STREQUAL "12_hosting_native_controls")
-                winui_add_module_tutorial(tutorial_${winui_tutorial} ${winui_tutorial_dir}/main.cpp)
-            endif()
-        endforeach()
-    endif()
 endif()
 
 # ---------------------------------------------------------------------------
 # Benchmarks (benchmarks/): timings and startup milestones, never run by ctest. They build the
 # gallery's pages, so they need the examples.
 # ---------------------------------------------------------------------------
-if(LIBWINUI_BUILD_TESTS AND LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32)
+if(LIBWINUI_BUILD_TESTS AND LIBWINUI_BUILD_EXAMPLES AND LIBWINUI_STANDALONE AND WIN32 AND LIBWINUI_BUILD_MODULES)
     add_subdirectory(benchmarks)
 endif()
 
-# Every example target gets the library's warning set too.
+# Every example target gets the library's warning set too, and every example and benchmark
+# target what importing the module needs.
 if(LIBWINUI_STANDALONE AND WIN32 AND (LIBWINUI_BUILD_TESTS OR LIBWINUI_BUILD_EXAMPLES))
     get_property(winui_subdirs DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY SUBDIRECTORIES)
     foreach(winui_subdir IN LISTS winui_subdirs)
         if(winui_subdir MATCHES "/examples/")
             winui_configure_directory_targets(${winui_subdir})
+        endif()
+        if(LIBWINUI_BUILD_MODULES AND winui_subdir MATCHES "/(examples/|benchmarks$)")
+            winui_import_module_targets(${winui_subdir})
         endif()
     endforeach()
 endif()

@@ -7,18 +7,25 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#include "edit_box.hpp"
-#include "rich_edit_box.hpp"
-
-#include <winui/winui.hpp>
 
 #include <format>
+#include <functional>
 #include <memory>
+#include <optional>
 #include <sstream>
 #include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 #include <windows.h>
 
 #include <cstddef>
+#include <cstdint>
+
+import winui;
+
+#include "edit_box.hpp"
+#include "rich_edit_box.hpp"
 // --8<-- [end:includes]
 
 // --8<-- [start:manifest]

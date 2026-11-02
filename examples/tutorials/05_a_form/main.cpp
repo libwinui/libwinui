@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 // libwinui tutorial: a form.
-#include <winui/winui.hpp>
 
 #include <format>
 #include <optional>
@@ -8,6 +7,8 @@
 #include <vector>
 
 #include <cstddef>
+
+import winui;
 
 int main()
 {

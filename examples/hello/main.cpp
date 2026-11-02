@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-#include <winui/winui.hpp>
-
 #include <format>
 #include <string>
+
+import winui;
 
 int main()
 {

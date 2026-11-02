@@ -1,18 +1,24 @@
 // SPDX-License-Identifier: MIT
-#include "gallery.hpp"
-#include "winui/core/Utf8Path.hpp"
-
 #include <array>
+#include <concepts>
 #include <filesystem>
 #include <format>
 #include <fstream>
+#include <functional>
 #include <memory>
+#include <span>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
+#include <cstddef>
 #include <cstdint>
+
+import winui;
+
+#include "gallery.hpp"
 
 using ui::operator""_fr;
 

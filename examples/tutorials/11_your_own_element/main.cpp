@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 // libwinui tutorial: your own element.
 // --8<-- [start:includes]
-#include <winui/winui.hpp>
-
 #include <format>
 #include <memory>
 #include <optional>
@@ -12,6 +10,8 @@
 
 #include <cmath>
 #include <cstddef>
+
+import winui;
 // --8<-- [end:includes]
 
 namespace app

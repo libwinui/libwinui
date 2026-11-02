@@ -1,19 +1,27 @@
 // SPDX-License-Identifier: MIT
 // libwinui ships no media, so every picture on these pages is drawn in code, sized like the
 // asset it replaces so the samples lay out the same.
-#include "gallery.hpp"
 
 #include <algorithm>
 #include <array>
+#include <concepts>
 #include <format>
+#include <functional>
+#include <memory>
 #include <numbers>
 #include <optional>
+#include <span>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+
+import winui;
+
+#include "gallery.hpp"
 
 using ui::operator""_fr;
 

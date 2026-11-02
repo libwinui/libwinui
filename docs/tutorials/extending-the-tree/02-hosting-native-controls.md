@@ -61,6 +61,8 @@ The repository has two hosted controls as example code, in `examples/native_cont
 --8<-- "examples/tutorials/12_hosting_native_controls/main.cpp:includes"
 ```
 
+The two headers import the module themselves, so the standard headers they use come before the `import` here as well.
+
 ### EditBox
 
 `native_controls::EditBox` is the stock Win32 `EDIT` class, with the `TextBox` and `PasswordBox` features the class can do: a header, placeholder text, read-only, max length, casing, font and colors, selection, and a password mode.

@@ -104,36 +104,17 @@ winui_add_module(winui_testing_module testing winui.testing.cppm)
 winui_add_module_units(winui_testing_module 1 ${LIBWINUI_TESTING_SOURCES})
 target_link_libraries(winui_testing_module PUBLIC winui_module)
 
-# winui_add_module_tutorial(<tutorial target> <main.cpp>): the same tutorial again as
-# <target>_module, built from a copy of main.cpp that imports winui instead of including it. The
-# import goes after the last #include, as the standard headers have to come first.
-function(winui_add_module_tutorial tutorial source)
-    file(READ ${source} code)
-    string(REPLACE "#include <winui/winui.hpp>\n" "" code "${code}")
-    string(REGEX MATCHALL "#include [<\"][^\n]*\n" includes "${code}")
-    if(includes)
-        list(GET includes -1 last)
-        string(FIND "${code}" "${last}" at REVERSE)
-        string(LENGTH "${last}" length)
-        math(EXPR at "${at} + ${length}")
-        string(SUBSTRING "${code}" 0 ${at} head)
-        string(SUBSTRING "${code}" ${at} -1 tail)
-        set(code "${head}import winui;\n${tail}")
-    else()
-        set(code "import winui;\n${code}")
-    endif()
-    # Rewritten only when it changed, so a configure doesn't rebuild every copy.
-    set(copy ${CMAKE_CURRENT_BINARY_DIR}/module_tutorials/${tutorial}.cpp)
-    file(WRITE ${copy}.new "${code}")
-    file(COPY_FILE ${copy}.new ${copy} ONLY_IF_DIFFERENT)
-    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${source})
-    add_executable(${tutorial}_module WIN32 ${copy})
-    target_link_libraries(${tutorial}_module PRIVATE winui::main)
-    set_target_properties(${tutorial}_module PROPERTIES
-        CXX_SCAN_FOR_MODULES ON
-        CXX_MODULE_STD ${winui_import_std}
-        CXX_EXTENSIONS OFF)
-    if(COMMAND winui_set_warnings)
-        winui_set_warnings(${tutorial}_module)
-    endif()
+# winui_import_module_targets(<dir>): the targets of <dir> import the module, so they need the
+# module scan, and CXX_MODULE_STD when winui uses `import std;`. A target named *_headers is the
+# header build of the same sources (examples/native_controls) and gets neither.
+function(winui_import_module_targets dir)
+    get_property(targets DIRECTORY ${dir} PROPERTY BUILDSYSTEM_TARGETS)
+    foreach(target IN LISTS targets)
+        get_target_property(type ${target} TYPE)
+        if(type MATCHES "^(EXECUTABLE|STATIC_LIBRARY)$" AND NOT target MATCHES "_headers$")
+            set_target_properties(${target} PROPERTIES
+                CXX_SCAN_FOR_MODULES ON
+                CXX_MODULE_STD ${winui_import_std})
+        endif()
+    endforeach()
 endfunction()

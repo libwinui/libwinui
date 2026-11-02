@@ -1,6 +1,4 @@
 // SPDX-License-Identifier: MIT
-#include <winui/winui.hpp>
-
 #include <format>
 #include <memory>
 #include <numeric>
@@ -8,6 +6,8 @@
 #include <vector>
 
 #include <cstddef>
+
+import winui;
 
 int main()
 {

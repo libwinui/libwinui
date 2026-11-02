@@ -3,7 +3,6 @@
 // together, carry them with Ctrl and the arrow keys, size the tiles with Ctrl and the wheel,
 // and drop image files from Explorer where the gap opens. The pictures start out painted in
 // code, so the demo needs no files.
-#include <winui/winui.hpp>
 
 #include <algorithm>
 #include <array>
@@ -20,6 +19,8 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+
+import winui;
 
 namespace
 {

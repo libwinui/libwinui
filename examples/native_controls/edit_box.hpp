@@ -1,12 +1,5 @@
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "winui/core/Callback.hpp"
-#include "winui/core/Color.hpp"
-#include "winui/render/ContextMenuHost.hpp"
-#include "winui/render/Text.hpp"
-#include "winui/render/TextLayout.hpp"
-#include "winui/ui/ControlHeader.hpp"
-#include "winui/ui/hosting/NativeControl.hpp"
 
 #include <optional>
 #include <string>
@@ -14,6 +7,8 @@
 
 #include <cstddef>
 #include <cstdint>
+
+import winui;
 
 namespace native_controls
 {

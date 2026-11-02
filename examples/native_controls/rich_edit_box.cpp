@@ -6,22 +6,26 @@
 #define NOMINMAX
 #endif
 
-#include "rich_edit_box.hpp"
-
-#include "strings.hpp"
-#include "winui/core/Utf8.hpp"
-
 #include <algorithm>
+#include <functional>
+#include <optional>
 #include <richedit.h>
 #include <richole.h> // IRichEditOle: EM_GETOLEINTERFACE, on the way to ITextDocument
 #include <string>
 #include <string_view>
 #include <tom.h> // ITextDocument::Undo(tomSuspend), keeps squiggles off the undo stack
+#include <utility>
 #include <vector>
 #include <windows.h>
 
 #include <cmath>
+#include <cstdint>
 #include <cstring>
+
+import winui;
+
+#include "rich_edit_box.hpp"
+#include "strings.hpp"
 
 namespace native_controls
 {

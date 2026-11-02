@@ -11,17 +11,17 @@ add_executable(winui_bench
     Gallery.cpp
     Memory.cpp
     ${PROJECT_SOURCE_DIR}/tests/support/AllocationCounter.cpp)
-target_link_libraries(winui_bench PRIVATE winui::testing_headers gallery_pages)
+target_link_libraries(winui_bench PRIVATE winui::testing gallery_pages)
 target_compile_definitions(winui_bench PRIVATE LIBWINUI_BENCH_CONFIG="$<CONFIG>")
 
 add_executable(winui_startup Startup.cpp)
-target_link_libraries(winui_startup PRIVATE winui::testing_headers gallery_pages)
+target_link_libraries(winui_startup PRIVATE winui::testing gallery_pages)
 
 add_executable(winui_timers Timers.cpp)
-target_link_libraries(winui_timers PRIVATE winui::testing_headers)
+target_link_libraries(winui_timers PRIVATE winui::testing)
 
 add_executable(winui_idle Idle.cpp)
-target_link_libraries(winui_idle PRIVATE winui::testing_headers gallery_pages)
+target_link_libraries(winui_idle PRIVATE winui::testing gallery_pages)
 
 foreach(target IN ITEMS winui_bench winui_startup winui_timers winui_idle)
     set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)

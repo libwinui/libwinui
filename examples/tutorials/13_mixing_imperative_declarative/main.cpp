@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 // libwinui tutorial: mixing imperative and declarative.
 // --8<-- [start:includes]
-#include <winui/winui.hpp>
-
 #include <format>
 #include <memory>
 #include <string>
 #include <vector>
+
+import winui;
 // --8<-- [end:includes]
 
 

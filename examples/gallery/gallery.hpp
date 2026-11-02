@@ -1,11 +1,6 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
-#include "winui/ui/scrolling/PullToRefresh.hpp"
-#include "winui/ui/themes/ThemeSource.hpp"
-
-#include <winui/winui.hpp>
-
 #include <concepts>
 #include <functional>
 #include <memory>
@@ -15,6 +10,8 @@
 #include <vector>
 
 #include <cstddef>
+
+import winui;
 
 namespace gallery
 {

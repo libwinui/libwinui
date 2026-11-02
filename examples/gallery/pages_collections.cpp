@@ -1,21 +1,27 @@
 // SPDX-License-Identifier: MIT
-#include "gallery.hpp"
-
 #include <algorithm>
+#include <any>
 #include <array>
 #include <chrono>
+#include <concepts>
 #include <format>
 #include <functional>
 #include <limits>
 #include <memory>
 #include <numeric>
 #include <optional>
+#include <span>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+
+import winui;
+
+#include "gallery.hpp"
 
 
 using ui::operator""_dip;

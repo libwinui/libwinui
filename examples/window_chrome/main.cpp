@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: MIT
 // Window states, frame styles, chrome colors and taskbar integration: the real DWM and taskbar
 // calls a headless test cannot see, one control each.
-#include <winui/winui.hpp>
 
 #include <format>
 #include <functional>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include <cstddef>
+
+import winui;
 
 using ui::operator""_fr;
 

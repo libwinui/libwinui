@@ -1,15 +1,22 @@
 // SPDX-License-Identifier: MIT
 // Scenarios over ordinary controls: a wall of buttons, thousands of bound labels, a popup, typing.
-#include "Bench.hpp"
-#include "Fixture.hpp"
 
-#include <winui/testing.hpp>
-#include <winui/winui.hpp>
-
+#include <chrono>
 #include <format>
+#include <functional>
 #include <memory>
 #include <string>
+#include <string_view>
+#include <utility>
 #include <vector>
+
+#include <cstddef>
+#include <cstdint>
+
+import winui.testing;
+
+#include "Bench.hpp"
+#include "Fixture.hpp"
 
 namespace bench
 {

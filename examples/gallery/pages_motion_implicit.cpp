@@ -1,11 +1,22 @@
 // SPDX-License-Identifier: MIT
-#include "pages_motion.hpp"
-
+#include <algorithm>
 #include <array>
+#include <concepts>
+#include <format>
+#include <functional>
 #include <memory>
 #include <optional>
+#include <span>
+#include <string>
+#include <string_view>
+#include <vector>
 
+#include <cmath>
 #include <cstddef>
+
+import winui;
+
+#include "pages_motion.hpp"
 
 namespace gallery
 {
