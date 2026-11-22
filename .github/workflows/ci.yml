@@ -37,6 +37,19 @@ jobs:
       with:
         arch: x64
 
+    # The runner's own LLVM lags behind its MSVC standard library, which wants the latest clang.
+    - name: Install LLVM
+      if: matrix.platform.compiler == 'clang-cl'
+      env:
+        LLVM_URL: https://github.com/llvm/llvm-project/releases/download/llvmorg-22.1.8/LLVM-22.1.8-win64.exe
+        LLVM_SHA256: 16e5709785fef73c854646241c4a92c5cd574318d1b33c63330dd7721903e55c
+      run: |
+        curl -sSfL -o "$RUNNER_TEMP/llvm.exe" "$LLVM_URL"
+        echo "$LLVM_SHA256  $RUNNER_TEMP/llvm.exe" | sha256sum -c -
+        7z x -y -bd "-o$RUNNER_TEMP/llvm" "$RUNNER_TEMP/llvm.exe" > /dev/null
+        "$RUNNER_TEMP/llvm/bin/clang-cl.exe" --version
+        echo "$(cygpath -w "$RUNNER_TEMP/llvm/bin")" >> "$GITHUB_PATH"
+
     - name: Configure CMake
       env:
         CXX_COMPILER: ${{ matrix.platform.compiler }}
