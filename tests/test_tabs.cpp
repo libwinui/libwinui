@@ -619,6 +619,34 @@ TEST_CASE("A tab strip with nothing to scroll leaves the wheel to the page aroun
     CHECK(view.scroll_offset() == 0.0f);
 }
 
+TEST_CASE("A close handler that removes the tab keeps the key it was handed", "[tabs][input]")
+{
+    HeadlessTextMeasurer m;
+    Window               window;
+    auto                 tabs = std::make_unique<TabsControl>();
+    TabsControl*         view = tabs.get();
+    view->add_tab("One", std::make_unique<TextControl>("a"));
+    view->add_tab("Two", std::make_unique<TextControl>("b"));
+    view->add_tab("Three", std::make_unique<TextControl>("c"));
+    std::vector<std::string> closed;
+    std::vector<std::string> selected;
+    view->on_tab_close_requested(
+        [&](const std::string& key)
+        {
+            view->remove_tab(key);
+            closed.push_back(key);
+        });
+    view->on_selection_changed([&](const std::string& key) { selected.push_back(key); });
+    window.set_content(std::move(tabs));
+    window.layout({600.0f, 300.0f}, m);
+    view->set_selected_index(1);
+    window.focus_element(view);
+
+    ui::testing::seams(window).handle_key({Key::F4, KeyAction::Down, {.ctrl = true}});
+    CHECK(closed == std::vector<std::string>{"Two"});
+    CHECK(selected.back() == "Three");
+}
+
 TEST_CASE("Ctrl+Tab and Ctrl+Shift+Tab cycle the selection and Ctrl+F4 asks to close, from anywhere inside",
           "[tabs][input][shortcut]")
 {

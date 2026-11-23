@@ -178,7 +178,8 @@ private:
             element_ = effective_root();
             return element_ != nullptr;
         }
-        return window_->content_generation() == generation_;
+        // A client can hold on to a provider after its element left the tree, e.g. a removed list row
+        return window_->content_generation() == generation_ && watch_.get() != nullptr;
     }
     // Recomputed on every call, since a modal can open or close during a provider's life.
     [[nodiscard]] ui::Element* effective_root() const;
@@ -201,6 +202,7 @@ private:
     std::shared_ptr<AutomationLifetime> lifetime_;
     std::uint64_t                       generation_; // window_->content_generation() as of construction
     bool                                is_root_;
+    ui::ElementWatch                    watch_;    // element_, for any provider but the root
     LONG                                refs_ = 1; // LONG for InterlockedIncrement/Decrement
 };
 

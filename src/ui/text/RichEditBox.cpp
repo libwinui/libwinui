@@ -1858,9 +1858,12 @@ bool RichEditBoxControl::handle_context_menu(std::optional<Point> position, Cont
             move_caret(text_.size(), true);
             break;
         case Command::Extra:
-            if (extra_menu_items_[payload].on_click)
+            // Held outside the list while it runs: the handler may add a menu item, which moves the
+            // list. Items are only ever appended, so its slot is still its own afterwards.
+            if (Action on_click = std::move(extra_menu_items_[payload].on_click))
             {
-                extra_menu_items_[payload].on_click();
+                on_click();
+                extra_menu_items_[payload].on_click = std::move(on_click);
             }
             break;
         case Command::None:

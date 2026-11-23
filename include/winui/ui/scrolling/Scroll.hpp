@@ -284,7 +284,8 @@ public:
         {
             set_parent_of(*observer, this);
         }
-        child_ = std::move(child);
+        // Not destroyed here: the old child may be the one whose handler replaced it.
+        detail::retire(std::exchange(child_, std::move(child)));
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
         return observer;
     }

@@ -2352,8 +2352,10 @@ void Window::handle_pointer(const PointerEvent& e)
                 // Only the light-dismissable ones close (PopupRequest::light_dismiss). With
                 // nothing dismissed, the click is an ordinary click on whatever lies below.
                 bool dismissed = false;
-                for (const OpenPopup& popup : open_popups_)
+                // By index: a handler may open, close or clear popups, which moves the list.
+                for (std::size_t i = 0; i < open_popups_.size(); ++i)
                 {
+                    const OpenPopup& popup = open_popups_[i];
                     if (popup.alive() && light_dismiss(popup))
                     {
                         popup.owner->dismiss_popup(PopupCloseReason::LightDismiss);
@@ -2373,9 +2375,10 @@ void Window::handle_pointer(const PointerEvent& e)
     }
     else if (!wheel_over_popup)
     {
-        for (const OpenPopup& popup : open_popups_)
+        // By index: a handler may open, close or clear popups, which moves the list.
+        for (std::size_t i = 0; i < open_popups_.size(); ++i)
         {
-            if (popup.alive()) // an earlier popup's handler may have destroyed this one
+            if (const OpenPopup& popup = open_popups_[i]; popup.alive()) // an earlier handler may have destroyed it
             {
                 popup.content->handle_pointer(e);
             }
@@ -2847,8 +2850,10 @@ bool Window::handle_key(const KeyEvent& e)
                 return true;
             }
             bool dismissed = false;
-            for (const OpenPopup& popup : open_popups_)
+            // By index: a handler may open, close or clear popups, which moves the list.
+            for (std::size_t i = 0; i < open_popups_.size(); ++i)
             {
+                const OpenPopup& popup = open_popups_[i];
                 if (popup.alive() && light_dismiss(popup))
                 {
                     popup.owner->dismiss_popup(PopupCloseReason::LightDismiss);

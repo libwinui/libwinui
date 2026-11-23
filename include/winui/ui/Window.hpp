@@ -160,6 +160,8 @@ public:
         set_focused_element(nullptr, false); // the old tree is going away: no focus events for it
         focus_after_.reset(nullptr);
         focus_before_.reset(nullptr);
+        hide_tool_tip(); // a tip waiting to open over the old tree would open over the new one
+        tool_tip_suppressed_ = nullptr;
         open_popups_.clear();              // last frame's popups pointed into the tree we just replaced
         detail::retire(std::move(modal_)); // same for a modal: it cannot outlive the tree it interrupted
         modal_.reset();
@@ -253,7 +255,8 @@ public:
             pre_modal_focus_.reset(focus_watch_.get());
         }
         modal_close_pending_ = false; // a close asked for earlier in this dispatch meant the old one
-        modal_               = std::move(dialog);
+        hide_tool_tip();              // the dialog covers what the tip was for
+        modal_ = std::move(dialog);
         attach_modal(*observer);
         focus_scope_stack_.clear(); // a scope entered in the interrupted tree is not the modal's
         focus_popup_ = nullptr;     // a popup in the interrupted tree gives focus up to the modal

@@ -693,14 +693,31 @@ std::unique_ptr<ui::Element> Grid::build() &&
                                            cell.column.initial(),
                                            cell.row_span,
                                            cell.column_span);
-            // A bound cell moves with its state; the subscription lives on the child it moves.
+            // A bound cell moves with its state; the subscription lives on the child it moves. A
+            // child taken out with orphan() keeps it, and the grid may be gone by then.
             if (cell.row.reactive())
             {
-                apply(cell.row, *child, [raw, child](const std::size_t& v) { raw->set_row(child, v); });
+                apply(cell.row,
+                      *child,
+                      [raw, child](const std::size_t& v)
+                      {
+                          if (child->parent() == raw)
+                          {
+                              raw->set_row(child, v);
+                          }
+                      });
             }
             if (cell.column.reactive())
             {
-                apply(cell.column, *child, [raw, child](const std::size_t& v) { raw->set_column(child, v); });
+                apply(cell.column,
+                      *child,
+                      [raw, child](const std::size_t& v)
+                      {
+                          if (child->parent() == raw)
+                          {
+                              raw->set_column(child, v);
+                          }
+                      });
             }
         }
     }

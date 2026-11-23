@@ -1159,7 +1159,7 @@ void TableViewControl::focus_changed(bool focused)
 
 void TableViewControl::set_empty_content(std::unique_ptr<Element> content)
 {
-    empty_content_ = std::move(content);
+    detail::retire(std::exchange(empty_content_, std::move(content))); // its own handler may replace it
     if (empty_content_)
     {
         set_parent_of(*empty_content_, this);

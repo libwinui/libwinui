@@ -248,6 +248,12 @@ public:
         out.insert(out.end(), items.begin(), items.end());
     }
 
+    // The bar's commands changed: measure the list again.
+    void items_changed()
+    {
+        mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
+    }
+
 protected:
     [[nodiscard]] Size measure_override(Size available, const MeasureContext& context) const override
     {
@@ -271,12 +277,16 @@ protected:
 
     void arrange_override(const Rect& final_rect, const ArrangeContext&) override
     {
-        float y = final_rect.y + border_ + OverflowItemsPad;
+        const std::vector<Element*> live = owner_.overflow_items();
+        float                       y    = final_rect.y + border_ + OverflowItemsPad;
         for (std::size_t i = 0; i < items_.size(); ++i)
         {
             Element* const item = items_[i];
             const float    h    = heights_[i];
-            item->arrange(Rect{final_rect.x + border_, y, std::max(0.0f, final_rect.width - 2.0f * border_), h});
+            if (std::ranges::find(live, item) != live.end())
+            {
+                item->arrange(Rect{final_rect.x + border_, y, std::max(0.0f, final_rect.width - 2.0f * border_), h});
+            }
             y += h;
         }
     }
@@ -296,9 +306,15 @@ protected:
         const float radius = theme.overlay_corner_radius;
         fill_overlay_surface(renderer, theme, bounds(), radius, theme.colors().overlay);
         renderer.push_clip(bounds().inset(Thickness{border_}));
+        // Only what the bar still holds: one removed since the last measure may be destroyed,
+        // while the overflow plays its closing animation.
+        const std::vector<Element*> live = owner_.overflow_items();
         for (Element* item : items_)
         {
-            item->render(renderer, context);
+            if (std::ranges::find(live, item) != live.end())
+            {
+                item->render(renderer, context);
+            }
         }
         renderer.pop_clip();
         stroke_rounded_rect_inside(renderer,
@@ -328,6 +344,18 @@ private:
 
 // ---- CommandBar ----
 
+namespace
+{
+// The open overflow lists what it measured: a command added or removed is measured in again.
+void overflow_changed(const std::unique_ptr<Element>& overflow)
+{
+    if (overflow)
+    {
+        static_cast<CommandBarOverflow&>(*overflow).items_changed();
+    }
+}
+} // namespace
+
 CommandBarControl::CommandBarControl()
 {
     set_vertical_alignment(Alignment::Leading); // a bar sits at the top of its slot
@@ -352,6 +380,7 @@ void CommandBarControl::insert_primary_element(std::size_t index, std::unique_pt
     index = std::min(index, primary_.size());
     primary_.insert(primary_.begin() + static_cast<std::ptrdiff_t>(index), std::move(command));
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
+    overflow_changed(overflow_);
 }
 
 void CommandBarControl::insert_secondary_element(std::size_t index, std::unique_ptr<Element> command)
@@ -364,14 +393,18 @@ void CommandBarControl::insert_secondary_element(std::size_t index, std::unique_
     index = std::min(index, secondary_.size());
     secondary_.insert(secondary_.begin() + static_cast<std::ptrdiff_t>(index), std::move(command));
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
+    overflow_changed(overflow_);
 }
 
 void CommandBarControl::remove_primary(std::size_t index)
 {
     if (index < primary_.size())
     {
+        // Not destroyed here: the button may be the one whose click removed it.
+        detail::retire(std::move(primary_[index]));
         primary_.erase(primary_.begin() + static_cast<std::ptrdiff_t>(index));
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
+        overflow_changed(overflow_);
     }
 }
 
@@ -379,8 +412,10 @@ void CommandBarControl::remove_secondary(std::size_t index)
 {
     if (index < secondary_.size())
     {
+        detail::retire(std::move(secondary_[index])); // as in remove_primary()
         secondary_.erase(secondary_.begin() + static_cast<std::ptrdiff_t>(index));
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
+        overflow_changed(overflow_);
     }
 }
 
@@ -390,7 +425,7 @@ void CommandBarControl::set_content_element(std::unique_ptr<Element> content)
     {
         set_parent_of(*content, this);
     }
-    content_ = std::move(content);
+    detail::retire(std::exchange(content_, std::move(content))); // as in remove_primary()
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
 }
 
