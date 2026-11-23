@@ -376,7 +376,9 @@ bool SliderControl::pointer_override(const PointerEvent& e)
             break;
 
         case PointerAction::Leave:
-            hovered_ = false;
+            // A Leave that reaches a pressed control means the press was cancelled (the capture was lost)
+            hovered_  = false;
+            dragging_ = false;
             break;
 
         case PointerAction::Wheel:

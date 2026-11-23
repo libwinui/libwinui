@@ -245,7 +245,9 @@ bool CheckBoxControl::pointer_override(const PointerEvent& e)
             break;
 
         case PointerAction::Leave:
-            hovered_ = false;
+            // A Leave that reaches a pressed control means the press was cancelled (the capture was lost)
+            hovered_      = false;
+            pointer_down_ = false;
             break;
         case PointerAction::Wheel:
             break;

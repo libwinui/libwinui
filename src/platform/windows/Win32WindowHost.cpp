@@ -37,6 +37,7 @@
 #include "winui/render/NativeHost.hpp"
 #include "winui/testing/WindowSeams.hpp"
 #include "winui/ui/App.hpp"
+#include "winui/ui/DragDrop.hpp"
 #include "winui/ui/Element.hpp"
 #include "winui/ui/WindowOptions.hpp"
 #include "winui/ui/WindowStyle.hpp"
@@ -343,6 +344,8 @@ struct HostState
     POINT last_click_pt_px{};
     DWORD last_click_time_ms = 0;
     int   click_streak       = 0;
+    // WM_LBUTTONUP is letting go of the capture itself; any other loss of it cancels the press.
+    bool releasing_capture = false;
     // The pointer is over a drawn maximize button, which answers HTMAXBUTTON, and its WM_NC* mouse
     // messages are being forwarded as pointer events.
     bool over_maximize_button = false;
@@ -1606,10 +1609,13 @@ void exit_fullscreen(HWND hwnd, HostState& s, std::optional<UINT> show_command)
     report_state(hwnd, s);
 }
 
+void block_owner(HostState& s);
+
 void request_os_state(HWND hwnd, HostState& s, WindowState state)
 {
     // Style bits gate the user, not the API: SW_MAXIMIZE maximizes a window with no maximize
     // button just the same, and `resizable = false` doesn't stand in the way of full screen.
+    const bool was_visible = IsWindowVisible(hwnd) != FALSE;
     switch (state)
     {
         case WindowState::Minimized:
@@ -1638,6 +1644,11 @@ void request_os_state(HWND hwnd, HostState& s, WindowState state)
         case WindowState::Fullscreen:
             enter_fullscreen(hwnd, s);
             break;
+    }
+    // Showing a hidden modal window this way blocks its owner, as show() does.
+    if (!was_visible && IsWindowVisible(hwnd))
+    {
+        block_owner(s);
     }
     // A request that changed nothing sends no WM_SIZE; the equality gate absorbs the repeat.
     report_state(hwnd, s);
@@ -1727,8 +1738,101 @@ void sync_caret(HWND hwnd, HostState& s)
     }
 }
 
-// Normal bounds are converted at the DPI of their own monitor, not the window's current one,
-// so apply_placement() can invert it without knowing where the window was.
+// A placement's DIPs keep its monitor's top-left corner where it is in pixels and scale only the
+// offset from it, at that monitor's DPI. Scaling the whole coordinate would move a window on a 150%
+// monitor right of a 100% one back onto the 100% one. The monitor is the one under the top-left
+// corner, which placement_to_px() finds again from the converted corner.
+Rect placement_to_dips(const RECT& px)
+{
+    HMONITOR    monitor = MonitorFromPoint(POINT{px.left, px.top}, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO info{};
+    info.cbSize = sizeof(info);
+    UINT x      = 96;
+    UINT y      = 96;
+    if (!GetMonitorInfoW(monitor, &info) || FAILED(GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &x, &y)))
+    {
+        return rect_to_dips(px, GetDpiForSystem());
+    }
+    const float scale = 96.0f / static_cast<float>(x);
+    const auto  left  = static_cast<float>(info.rcMonitor.left);
+    const auto  top   = static_cast<float>(info.rcMonitor.top);
+    return Rect{left + (static_cast<float>(px.left) - left) * scale,
+                top + (static_cast<float>(px.top) - top) * scale,
+                static_cast<float>(px.right - px.left) * scale,
+                static_cast<float>(px.bottom - px.top) * scale};
+}
+
+RECT anchored_to_px(const Rect& dips, const RECT& monitor, UINT dpi)
+{
+    const float scale = static_cast<float>(dpi) / 96.0f;
+    const auto  px    = [](float v) { return static_cast<LONG>(std::lround(v)); };
+    const float left  = static_cast<float>(monitor.left) + (dips.left() - static_cast<float>(monitor.left)) * scale;
+    const float top   = static_cast<float>(monitor.top) + (dips.top() - static_cast<float>(monitor.top)) * scale;
+    return RECT{px(left), px(top), px(left + dips.width * scale), px(top + dips.height * scale)};
+}
+
+RECT placement_to_px(const Rect& dips)
+{
+    struct Search
+    {
+        Rect                dips;
+        std::optional<RECT> found;
+    } search{dips, std::nullopt};
+    EnumDisplayMonitors(
+        nullptr,
+        nullptr,
+        [](HMONITOR monitor, HDC, LPRECT area, LPARAM param) -> BOOL
+        {
+            auto& s = *reinterpret_cast<Search*>(param);
+            UINT  x = 96;
+            UINT  y = 96;
+            if (FAILED(GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &x, &y)))
+            {
+                return TRUE;
+            }
+            const RECT  rect = anchored_to_px(s.dips, *area, x);
+            const POINT corner{rect.left, rect.top};
+            if (PtInRect(area, corner) && MonitorFromPoint(corner, MONITOR_DEFAULTTONULL) == monitor)
+            {
+                s.found = rect;
+                return FALSE;
+            }
+            return TRUE;
+        },
+        reinterpret_cast<LPARAM>(&search));
+    if (search.found)
+    {
+        return *search.found;
+    }
+    // Off every monitor: placement_to_dips() anchored it to the nearest monitor, so invert with
+    // that one, found from a first guess at system DPI.
+    const RECT  guess   = rect_to_px(dips, GetDpiForSystem());
+    HMONITOR    nearest = MonitorFromPoint(POINT{guess.left, guess.top}, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO info{};
+    info.cbSize = sizeof(info);
+    UINT x      = 96;
+    UINT y      = 96;
+    if (!GetMonitorInfoW(nearest, &info) || FAILED(GetDpiForMonitor(nearest, MDT_EFFECTIVE_DPI, &x, &y)))
+    {
+        return rect_to_px(dips, dpi_for_rect(guess));
+    }
+    return anchored_to_px(dips, info.rcMonitor, x);
+}
+
+// WINDOWPLACEMENT is in workspace coordinates, which leave out a taskbar along the top or left of
+// the monitor; a tool window's are screen coordinates. Adding this turns them into screen ones.
+POINT workspace_offset(HWND hwnd, const RECT& rect)
+{
+    MONITORINFO info{};
+    info.cbSize = sizeof(info);
+    if ((GetWindowLongPtrW(hwnd, GWL_EXSTYLE) & WS_EX_TOOLWINDOW) != 0 ||
+        !GetMonitorInfoW(MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST), &info))
+    {
+        return POINT{0, 0};
+    }
+    return POINT{info.rcWork.left - info.rcMonitor.left, info.rcWork.top - info.rcMonitor.top};
+}
+
 std::optional<WindowPlacement> read_placement(HWND hwnd, const HostState& s)
 {
     WINDOWPLACEMENT native = sized_win32_struct(&WINDOWPLACEMENT::length);
@@ -1741,7 +1845,10 @@ std::optional<WindowPlacement> read_placement(HWND hwnd, const HostState& s)
         return std::nullopt;
     }
     WindowPlacement placement{};
-    placement.normal_bounds        = rect_to_dips(native.rcNormalPosition, dpi_for_rect(native.rcNormalPosition));
+    RECT            screen = native.rcNormalPosition;
+    const POINT     offset = workspace_offset(hwnd, screen);
+    OffsetRect(&screen, offset.x, offset.y);
+    placement.normal_bounds        = placement_to_dips(screen);
     placement.state                = os_state(hwnd, s);
     placement.restore_to_maximized = s.fullscreen ? native.showCmd == SW_SHOWMAXIMIZED
                                                   : (IsIconic(hwnd) && (native.flags & WPF_RESTORETOMAXIMIZED) != 0);
@@ -1752,10 +1859,10 @@ void apply_placement(HWND hwnd, HostState& s, const WindowPlacement& placement)
 {
     WINDOWPLACEMENT native = sized_win32_struct(&WINDOWPLACEMENT::length);
     GetWindowPlacement(hwnd, &native);
-    // Twice: the first guess (system DPI) finds the monitor, whose own DPI gives the real size.
-    RECT px                 = rect_to_px(placement.normal_bounds, GetDpiForSystem());
-    px                      = rect_to_px(placement.normal_bounds, dpi_for_rect(px));
-    native.rcNormalPosition = px;
+    RECT        workspace = placement_to_px(placement.normal_bounds);
+    const POINT offset    = workspace_offset(hwnd, workspace);
+    OffsetRect(&workspace, -offset.x, -offset.y);
+    native.rcNormalPosition = workspace;
     native.flags            = placement.restore_to_maximized ? WPF_RESTORETOMAXIMIZED : 0;
     switch (placement.state)
     {
@@ -1885,6 +1992,17 @@ void release_owner(HostState& s)
         EnableWindow(s.owner, TRUE);
     }
     s.owner_released = true;
+}
+
+// A modal window blocks its owner while it shows: a hidden one (close_hides, hide(), created
+// hidden) would leave the app with a disabled window and nothing to dismiss.
+void block_owner(HostState& s)
+{
+    if (s.modal && s.owner != nullptr && IsWindow(s.owner))
+    {
+        EnableWindow(s.owner, FALSE);
+        s.owner_released = false;
+    }
 }
 
 // ---- the WindowHost ----
@@ -2043,6 +2161,14 @@ public:
     }
     void set_visible(bool visible, bool activate) override
     {
+        if (visible)
+        {
+            block_owner(s_);
+        }
+        else
+        {
+            release_owner(s_);
+        }
         ShowWindow(hwnd_, !visible ? SW_HIDE : (activate ? SW_SHOW : SW_SHOWNA));
         if (visible && activate)
         {
@@ -2054,6 +2180,7 @@ public:
     {
         if (!IsWindowVisible(hwnd_))
         {
+            block_owner(s_);
             ShowWindow(hwnd_, SW_SHOW);
             ui::testing::seams(*s_.window).report_visible(true);
         }
@@ -3109,6 +3236,17 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
             request_frame(hwnd);
             return 0;
 
+        case WM_CAPTURECHANGED:
+            // Alt+Tab, a message box or another window took the mouse mid-press: the release will go
+            // elsewhere, so the press is cancelled the way leaving the window cancels it. A drag
+            // keeps the pointer to itself.
+            if (reinterpret_cast<HWND>(lp) != hwnd && !s->releasing_capture && !DragDrop::active())
+            {
+                ui::testing::seams(*s->window).handle_pointer({{}, PointerButton::None, PointerAction::Leave});
+                request_frame(hwnd);
+            }
+            return 0;
+
         case WM_LBUTTONDOWN:
         {
             SetCapture(hwnd);
@@ -3126,7 +3264,9 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
         case WM_LBUTTONUP:
         {
+            s->releasing_capture = true;
             ReleaseCapture();
+            s->releasing_capture = false;
             PointerEvent ev{s->pointer_dips(lp), PointerButton::Left, PointerAction::Up};
             ev.modifiers = mouse_modifiers(wp);
             apply_pointer_source(ev);
@@ -3492,6 +3632,7 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
             }
             if (s->close_hides)
             {
+                release_owner(*s); // first, so the owner takes the activation
                 ShowWindow(hwnd, SW_HIDE);
                 ui::testing::seams(*s->window).report_visible(false);
                 return 0;
@@ -3734,9 +3875,9 @@ HostState* create_host(Window& window, bool visible, bool activate = true)
 
     // At the DPI the window actually got, with the frame it actually has.
     resize_client_px(hwnd, dips_to_px(options.size.width, state), dips_to_px(options.size.height, state));
-    if (state.modal)
+    if (visible)
     {
-        EnableWindow(state.owner, FALSE);
+        block_owner(state);
     }
 
     if (!visible)

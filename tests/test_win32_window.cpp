@@ -105,6 +105,53 @@ TEST_CASE("a mouse click posted to the OS window reaches the button under it", "
     CHECK(clicks == 1);
 }
 
+TEST_CASE("a modal window blocks its owner only while it shows", "[win32][modal]")
+{
+    Window owner{{.title = "owner", .size = {300, 200}, .visible = false}};
+    Window modal{
+        {.title = "modal", .size = {200, 100}, .owner = &owner, .modal = true, .visible = false, .close_hides = true}};
+    std::vector<bool> enabled; // the owner's, at each step
+    owner.post(
+        [&]
+        {
+            const HWND owner_hwnd = hwnd_of(owner);
+            REQUIRE(owner_hwnd != nullptr);
+            enabled.push_back(IsWindowEnabled(owner_hwnd) != FALSE); // created hidden: nothing to dismiss
+            modal.show();
+            enabled.push_back(IsWindowEnabled(owner_hwnd) != FALSE);
+            modal.hide();
+            enabled.push_back(IsWindowEnabled(owner_hwnd) != FALSE);
+            modal.show();
+            SendMessageW(hwnd_of(modal), WM_CLOSE, 0, 0); // close_hides: hidden, not destroyed
+            enabled.push_back(IsWindowEnabled(owner_hwnd) != FALSE);
+            ui::quit(0);
+        });
+    REQUIRE(ui::run(owner) == 0);
+    CHECK(enabled == std::vector<bool>{true, false, true, true});
+}
+TEST_CASE("a press whose capture another window took does not click", "[win32]")
+{
+    Window window{{.title = "capture", .size = {300, 200}, .visible = false}};
+    int    clicks = 0;
+    window.set_content(ui::Button{.text                 = "Press",
+                                  .horizontal_alignment = Alignment::Stretch,
+                                  .vertical_alignment   = Alignment::Stretch,
+                                  .on_click             = [&] { ++clicks; }});
+    window.post(
+        [&]
+        {
+            const HWND   hwnd = hwnd_of(window);
+            const LPARAM at   = client_center(hwnd);
+            PostMessageW(hwnd, WM_MOUSEMOVE, 0, at);
+            PostMessageW(hwnd, WM_LBUTTONDOWN, MK_LBUTTON, at);
+            PostMessageW(hwnd, WM_CAPTURECHANGED, 0, 0); // e.g. Alt+Tab mid-press
+            PostMessageW(hwnd, WM_LBUTTONUP, 0, at);
+            window.post([] { ui::quit(0); });
+        });
+    REQUIRE(ui::run(window) == 0);
+    CHECK(clicks == 0);
+}
+
 TEST_CASE("windows keep ticking while a modal loop that is not libwinui's runs", "[win32][tick]")
 {
     Window window{{.title = "modal", .size = {300, 200}, .visible = false}};

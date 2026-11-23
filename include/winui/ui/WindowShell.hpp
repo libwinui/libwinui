@@ -76,7 +76,9 @@ LIBWINUI_EXPORT enum class WindowState
 LIBWINUI_EXPORT struct WindowPlacement
 {
     /// The restored bounds, in DIPs, screen coordinates. They are kept while the window is
-    /// minimized, maximized or full screen.
+    /// minimized, maximized or full screen. The position is measured from the top-left corner
+    /// of the window's monitor at that monitor's scale, so it can differ from Window::bounds()
+    /// on a scaled monitor away from the primary one. Store it and pass it back as it is.
     Rect normal_bounds{};
     /// The state the window was in when the placement was read; the next run shows in it.
     WindowState state = WindowState::Normal;
