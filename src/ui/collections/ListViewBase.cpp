@@ -1046,6 +1046,10 @@ void ListViewBase::notify_inserted(std::size_t index, std::size_t count)
     {
         *current_ += count;
     }
+    if (focus_index_ != detail::NoIndex && focus_index_ >= index)
+    {
+        focus_index_ += count;
+    }
     if (!grouped())
     {
         repeater_->notify_inserted(index, count);
@@ -1085,6 +1089,13 @@ void ListViewBase::notify_removed(std::size_t index, std::size_t count)
     count_ -= count;
     ids_.erase(ids_.begin() + static_cast<std::ptrdiff_t>(index),
                ids_.begin() + static_cast<std::ptrdiff_t>(index + count));
+    // remove_item()'s text goes once the ghost has it, before any handler sees the new indices.
+    if (erasing_items_)
+    {
+        erasing_items_ = false;
+        items_.erase(items_.begin() + static_cast<std::ptrdiff_t>(index),
+                     items_.begin() + static_cast<std::ptrdiff_t>(std::min(index + count, items_.size())));
+    }
     const bool changed = selection_->on_removed(index, count);
     if (current_)
     {
@@ -1097,9 +1108,16 @@ void ListViewBase::notify_removed(std::size_t index, std::size_t count)
             current_ = count_ == 0 ? std::nullopt : std::optional<std::size_t>{std::min(index, count_ - 1)};
         }
     }
-    if (focus_index_ != detail::NoIndex && focus_index_ >= count_)
+    if (focus_index_ != detail::NoIndex)
     {
-        focus_index_ = count_ == 0 ? detail::NoIndex : count_ - 1;
+        if (focus_index_ >= index + count)
+        {
+            focus_index_ -= count;
+        }
+        else if (focus_index_ >= index)
+        {
+            focus_index_ = count_ == 0 ? detail::NoIndex : std::min(index, count_ - 1);
+        }
     }
     if (!grouped())
     {
@@ -1126,9 +1144,10 @@ void ListViewBase::remove_item(std::size_t index)
     {
         return;
     }
-    // The ghost is recorded before the text goes.
+    // The ghost is recorded before the text goes; notify_removed() takes it out after that.
+    erasing_items_ = true;
     notify_removed(index, 1);
-    items_.erase(items_.begin() + static_cast<std::ptrdiff_t>(index));
+    erasing_items_ = false;
 }
 
 std::optional<std::size_t> ListViewBase::index_from_element(const Element& inside) const
@@ -1171,10 +1190,21 @@ void ListViewBase::notify_moved(std::size_t from, std::size_t to)
     const std::uint64_t              id           = ids_[from];
     ids_.erase(ids_.begin() + static_cast<std::ptrdiff_t>(from));
     ids_.insert(ids_.begin() + static_cast<std::ptrdiff_t>(to), id);
-    selection_->on_moved(from, to);
-    if (current_ && *current_ == from)
+    // An item's group key goes with it: a reorder made here isn't reported back as a new list of keys.
+    if (from < group_keys_.size() && to < group_keys_.size())
     {
-        current_ = to;
+        std::string key = std::move(group_keys_[from]);
+        group_keys_.erase(group_keys_.begin() + static_cast<std::ptrdiff_t>(from));
+        group_keys_.insert(group_keys_.begin() + static_cast<std::ptrdiff_t>(to), std::move(key));
+    }
+    selection_->on_moved(from, to);
+    if (current_)
+    {
+        current_ = detail::moved_index(*current_, from, to);
+    }
+    if (focus_index_ != detail::NoIndex)
+    {
+        focus_index_ = detail::moved_index(focus_index_, from, to);
     }
     if (!grouped())
     {
@@ -1721,6 +1751,7 @@ void ListViewBase::item_released(std::size_t item, bool ctrl, bool shift, int cl
             return;
         }
     }
+    const std::uint64_t id = item < ids_.size() ? ids_[item] : 0;
     if (ctrl)
     {
         secondary_gesture(item, shift);
@@ -1729,8 +1760,9 @@ void ListViewBase::item_released(std::size_t item, bool ctrl, bool shift, int cl
     {
         primary_gesture(item, shift);
     }
-    // on_item_invoked: a double-click, or any click when nothing can be selected.
-    if (click_count >= 2 || selection_mode_ == SelectionMode::None)
+    // on_item_invoked: a double-click, or any click when nothing can be selected. Not when the
+    // selection handler removed the item: the invoke is not for the one in its place now.
+    if ((click_count >= 2 || selection_mode_ == SelectionMode::None) && item < ids_.size() && ids_[item] == id)
     {
         invoke_item(item);
     }
@@ -1780,9 +1812,11 @@ std::optional<std::size_t> ListViewBase::neighbor(std::size_t from, Key key)
     {
         if (key == Key::PageUp || key == Key::PageDown)
         {
-            Element*    e    = repeater_->get_or_create_element(item_to_flat(from));
-            const float h    = e != nullptr && e->bounds().height > 0.0f ? e->bounds().height : ListItemMinHeight;
-            const auto  page = std::max<std::size_t>(1, static_cast<std::size_t>(scroll_->bounds().height / h) - 1);
+            Element*    e = repeater_->get_or_create_element(item_to_flat(from));
+            const float h = e != nullptr && e->bounds().height > 0.0f ? e->bounds().height : ListItemMinHeight;
+            // A page less one item, at least one: a view shorter than an item steps by one.
+            const auto fit  = static_cast<std::size_t>(scroll_->bounds().height / h);
+            const auto page = fit > 1 ? fit - 1 : std::size_t{1};
             return shown(forward ? std::min(count_ - 1, at + page) : (at > page ? at - page : 0));
         }
         if (kind_ == Kind::List && (key == Key::ArrowLeft || key == Key::ArrowRight))
@@ -2081,8 +2115,18 @@ void ListViewBase::start_item_drag(std::size_t item, Point pointer)
         return;
     }
     RenderRecording recording;
-    container->render(recording, last_theme_ != nullptr ? *last_theme_ : Theme::light());
+    // Both sides lvalues: a temporary Theme here would leave the container caching a dangling one.
+    container->render(recording, last_theme_ != nullptr ? *last_theme_ : Theme::default_light());
     dragging_ = std::move(args.items);
+    // By id as well: the collection may change while the drag runs, which moves the indices.
+    dragging_ids_.clear();
+    for (std::size_t i : dragging_)
+    {
+        if (i < ids_.size())
+        {
+            dragging_ids_.push_back(ids_[i]);
+        }
+    }
     // The dragged item stays where it was, faded: a placeholder while the list can reorder, at
     // 0.8 opacity otherwise.
     for (std::size_t i : dragging_)
@@ -2341,9 +2385,22 @@ void ListViewBase::drop(const DragEventArgs& e)
         Element::drop(e);
         return;
     }
-    const std::size_t insert = gap_before_ ? *gap_before_ : insertion_index_at(e.position);
+    const std::size_t insert = std::min(gap_before_ ? *gap_before_ : insertion_index_at(e.position), count_);
     clear_reorder();
-    std::vector<std::size_t> moving = payload->items;
+    // Where the dragged items are now, found by id; one removed meanwhile stays out.
+    std::vector<std::size_t> moving;
+    for (std::uint64_t id : dragging_ids_)
+    {
+        if (const auto at = std::find(ids_.begin(), ids_.end(), id); at != ids_.end())
+        {
+            moving.push_back(static_cast<std::size_t>(at - ids_.begin()));
+        }
+    }
+    if (moving.empty())
+    {
+        dragging_.clear();
+        return;
+    }
     std::sort(moving.begin(), moving.end());
     moving.erase(std::unique(moving.begin(), moving.end()), moving.end());
     const auto before = static_cast<std::size_t>(
@@ -2845,11 +2902,18 @@ bool ListViewBase::key_override(const KeyEvent& e)
     {
         case Key::Enter:
         case Key::Space:
+        {
             set_current(from);
             if (item_click_enabled_ && on_item_click_)
             {
+                const std::uint64_t id = ids_[from];
                 on_item_click_(from);
+                if (from >= ids_.size() || ids_[from] != id)
+                {
+                    return true; // the handler removed or moved the item: the rest was for it
+                }
             }
+            const std::uint64_t id = ids_[from];
             if (e.key == Key::Space && e.modifiers.ctrl)
             {
                 secondary_gesture(from, e.modifiers.shift);
@@ -2858,12 +2922,14 @@ bool ListViewBase::key_override(const KeyEvent& e)
             {
                 primary_gesture(from, e.modifiers.shift);
             }
-            // on_item_invoked: Enter always, Space only when nothing can be selected.
-            if (e.key == Key::Enter || selection_mode_ == SelectionMode::None)
+            // on_item_invoked: Enter always, Space only when nothing can be selected. Not for an
+            // item the selection handler removed.
+            if ((e.key == Key::Enter || selection_mode_ == SelectionMode::None) && from < ids_.size() && ids_[from] == id)
             {
                 invoke_item(from);
             }
             return handled;
+        }
         case Key::A:
             if (e.modifiers.ctrl &&
                 (selection_mode_ == SelectionMode::Multiple || selection_mode_ == SelectionMode::Extended))

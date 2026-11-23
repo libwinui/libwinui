@@ -305,11 +305,22 @@ private:
     Element&                    realize(std::size_t index, ElementRealizationOptions options);
     void                        clear_element(std::size_t index, bool leaving = false);
     void                        clear_all();
-    void                        shift_entries(std::size_t from, std::ptrdiff_t delta);
-    void                        notify_layout(const ItemsChange& change);
-    Size                        measure_element(Element& element, Size available);
-    [[nodiscard]] Entry*        entry_of(const Element& element);
-    void                        flush_graveyard();
+    struct IndexChange
+    {
+        Element*    element;
+        std::size_t old_index;
+        std::size_t new_index;
+    };
+    // Re-keys the realized items in [from, end) by `delta`, and returns what moved for
+    // raise_index_changes(), which runs once the map is whole again.
+    [[nodiscard]] std::vector<IndexChange> shift_entries(std::size_t    from,
+                                                         std::ptrdiff_t delta,
+                                                         std::size_t    end = static_cast<std::size_t>(-1));
+    void                                   raise_index_changes(const std::vector<IndexChange>& changes);
+    void                                   notify_layout(const ItemsChange& change);
+    Size                                   measure_element(Element& element, Size available);
+    [[nodiscard]] Entry*                   entry_of(const Element& element);
+    void                                   flush_graveyard();
 
     ItemTemplate            item_template_;
     std::size_t             item_count_ = 0;

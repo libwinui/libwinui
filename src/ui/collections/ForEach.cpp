@@ -234,26 +234,38 @@ void ForEachControl::notify_layout(const ItemsChange& change)
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
 }
 
-void ForEachControl::shift_entries(std::size_t from, std::ptrdiff_t delta)
+std::vector<ForEachControl::IndexChange> ForEachControl::shift_entries(std::size_t from, std::ptrdiff_t delta, std::size_t end)
 {
-    // Re-key every realized item at or after `from`, telling on_element_index_changed.
     std::vector<std::pair<std::size_t, Entry>> moved;
-    for (auto it = realized_.lower_bound(from); it != realized_.end();)
+    for (auto it = realized_.lower_bound(from); it != realized_.end() && it->first < end;)
     {
         moved.emplace_back(it->first, std::move(it->second));
         it = realized_.erase(it);
     }
+    std::vector<IndexChange> changes;
+    changes.reserve(moved.size());
     for (auto& [old_index, entry] : moved)
     {
         const std::size_t new_index    = static_cast<std::size_t>(static_cast<std::ptrdiff_t>(old_index) + delta);
         index_of_[entry.element.get()] = new_index;
-        Element& element               = *entry.element;
+        changes.push_back(IndexChange{entry.element.get(), old_index, new_index});
         realized_.emplace(new_index, std::move(entry));
-        if (on_element_index_changed_)
+    }
+    return changes;
+}
+
+void ForEachControl::raise_index_changes(const std::vector<IndexChange>& changes)
+{
+    for (const IndexChange& change : changes)
+    {
+        // A handler may have changed the items again, and taken a later element with them.
+        const auto it = index_of_.find(change.element);
+        if (!on_element_index_changed_ || it == index_of_.end() || it->second != change.new_index)
         {
-            on_element_index_changed_(
-                ElementIndexChangedArgs{.element = element, .old_index = old_index, .new_index = new_index});
+            continue;
         }
+        on_element_index_changed_(
+            ElementIndexChangedArgs{.element = *change.element, .old_index = change.old_index, .new_index = change.new_index});
     }
 }
 
@@ -269,7 +281,7 @@ void ForEachControl::notify_inserted(std::size_t index, std::size_t count)
     }
     index = std::min(index, item_count_);
     item_count_ += count;
-    shift_entries(index, static_cast<std::ptrdiff_t>(count));
+    raise_index_changes(shift_entries(index, static_cast<std::ptrdiff_t>(count)));
     notify_layout(ItemsChange{ItemsChangeAction::Add, 0, 0, index, count});
 }
 
@@ -298,7 +310,7 @@ void ForEachControl::notify_removed(std::size_t index, std::size_t count)
     {
         clear_element(i, leaving);
     }
-    shift_entries(index + count, -static_cast<std::ptrdiff_t>(count));
+    raise_index_changes(shift_entries(index + count, -static_cast<std::ptrdiff_t>(count)));
 }
 
 void ForEachControl::notify_replaced(std::size_t index, std::size_t count)
@@ -339,18 +351,16 @@ void ForEachControl::notify_moved(std::size_t from, std::size_t to)
         moved = std::move(it->second);
         realized_.erase(it);
     }
-    shift_entries(from + 1, -1);
-    shift_entries(to, 1);
+    // Only the items between the two places shift, each once.
+    std::vector<IndexChange> changes = from < to ? shift_entries(from + 1, -1, to + 1) : shift_entries(to, 1, from);
     if (moved.element)
     {
         Element& element    = *moved.element;
         index_of_[&element] = to;
         realized_.emplace(to, std::move(moved));
-        if (on_element_index_changed_)
-        {
-            on_element_index_changed_(ElementIndexChangedArgs{.element = element, .old_index = from, .new_index = to});
-        }
+        changes.push_back(IndexChange{&element, from, to});
     }
+    raise_index_changes(changes);
 }
 
 bool ForEachControl::defer_change(ChangeKind kind, std::size_t first, std::size_t second)

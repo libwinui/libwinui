@@ -12,6 +12,25 @@
 namespace ui::detail
 {
 
+// Where the item at `index` is after the one at `from` moved to `to`: the items in between
+// shift by one toward `from`.
+[[nodiscard]] inline std::size_t moved_index(std::size_t index, std::size_t from, std::size_t to)
+{
+    if (index == from)
+    {
+        return to;
+    }
+    if (from < to && index > from && index <= to)
+    {
+        return index - 1;
+    }
+    if (to < from && index >= to && index < from)
+    {
+        return index + 1;
+    }
+    return index;
+}
+
 class ItemSelection
 {
 public:
@@ -159,9 +178,9 @@ public:
         const bool selected = bits_[from];
         bits_.erase(bits_.begin() + static_cast<std::ptrdiff_t>(from));
         bits_.insert(bits_.begin() + static_cast<std::ptrdiff_t>(to), selected);
-        if (anchor_ && *anchor_ == from)
+        if (anchor_)
         {
-            anchor_ = to;
+            anchor_ = moved_index(*anchor_, from, to);
         }
     }
 

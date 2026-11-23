@@ -159,6 +159,24 @@ TEST_CASE("ForEach keeps realized elements through inserts and removes", "[for-e
     CHECK_THAT(third->bounds().y, WithinAbs(80.0, 1e-3));
 }
 
+TEST_CASE("A move reports each element whose index changed, once", "[for-each]")
+{
+    Fixture f(6);
+    f.layout();
+    std::vector<std::pair<std::size_t, std::size_t>> moves;
+    f.repeater->on_element_index_changed(
+        [&](const ElementIndexChangedArgs& args) { moves.emplace_back(args.old_index, args.new_index); });
+
+    f.repeater->notify_moved(1, 3);
+    std::ranges::sort(moves);
+    CHECK(moves == std::vector<std::pair<std::size_t, std::size_t>>{{1, 3}, {2, 1}, {3, 2}});
+
+    moves.clear();
+    f.repeater->notify_moved(4, 0);
+    std::ranges::sort(moves);
+    CHECK(moves == std::vector<std::pair<std::size_t, std::size_t>>{{0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 0}});
+}
+
 TEST_CASE("An item template that inserts into the collection leaves the index consistent", "[for-each]")
 {
     Fixture         f(20);

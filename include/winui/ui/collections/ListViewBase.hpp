@@ -719,12 +719,14 @@ private:
 
     Kind kind_;
 
-    std::vector<std::string> items_;
-    std::size_t              count_ = 0;
-    ItemTemplate             item_template_;
-    std::vector<std::string> group_keys_;
-    GroupHeaderTemplate      group_header_template_;
-    bool                     sticky_headers_ = true;
+    std::vector<std::string>   items_;
+    std::size_t                count_ = 0;
+    ItemTemplate               item_template_;
+    std::vector<std::string>   group_keys_;
+    std::vector<std::uint64_t> dragging_ids_;          // the dragged items' ids_, as the drag started
+    bool                       erasing_items_ = false; // remove_item() is under way: notify_removed() erases its text
+    GroupHeaderTemplate        group_header_template_;
+    bool                       sticky_headers_ = true;
     // Derived by regroup(): each group's key, size, first display position and header's flat
     // index; the items in display order, and each item's display position.
     std::vector<std::string> group_names_;
