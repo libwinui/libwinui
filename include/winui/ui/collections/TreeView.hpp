@@ -376,14 +376,16 @@ private:
         bool selected = false;
     };
 
-    void                                     flatten_into(std::vector<TreeNode>&    nodes,
-                                                          std::size_t               depth,
-                                                          std::vector<std::size_t>& path,
-                                                          std::vector<VisibleRow>&  out) const;
-    [[nodiscard]] std::vector<VisibleRow>    flatten() const;
-    [[nodiscard]] Rect                       row_rect(std::size_t visible_index) const;
-    [[nodiscard]] std::size_t                row_at(Point p) const;
-    [[nodiscard]] TreeNode*                  node_at(const std::vector<std::size_t>& path);
+    void                                  flatten_into(std::vector<TreeNode>&    nodes,
+                                                       std::size_t               depth,
+                                                       std::vector<std::size_t>& path,
+                                                       std::vector<VisibleRow>&  out) const;
+    [[nodiscard]] std::vector<VisibleRow> flatten() const;
+    [[nodiscard]] Rect                    row_rect(std::size_t visible_index) const;
+    [[nodiscard]] std::size_t             row_at(Point p) const;
+    [[nodiscard]] TreeNode*               node_at(const std::vector<std::size_t>& path);
+    // The path to `node` in the tree as it is now, or empty when it isn't in it.
+    [[nodiscard]] std::vector<std::size_t>   path_of(const TreeNode* node) const;
     [[nodiscard]] std::optional<std::size_t> row_of(const TreeNode* node) const;
     // The visible row the focus ring goes inside: the cursor in Multiple and None, the selection otherwise.
     [[nodiscard]] std::optional<std::size_t> ring_row() const;
@@ -436,10 +438,11 @@ private:
 
     // The drag this tree started, and where a drop over it would go.
     std::optional<std::vector<std::size_t>> dragging_;
-    std::optional<std::size_t>              drop_row_;
-    DropZone                                drop_zone_      = DropZone::Into;
-    std::size_t                             drag_hover_row_ = detail::NoIndex; // the row under a drag, for hover-expand
-    double                                  hover_expand_ms_ = 0.0;
+    std::string                drag_key_; // the dragged node's key: the tree may change while it is dragged
+    std::optional<std::size_t> drop_row_;
+    DropZone                   drop_zone_       = DropZone::Into;
+    std::size_t                drag_hover_row_  = detail::NoIndex; // the row under a drag, for hover-expand
+    double                     hover_expand_ms_ = 0.0;
 
     float                       indent_width_  = 16.0f;
     mutable float               row_height_    = 0.0f;

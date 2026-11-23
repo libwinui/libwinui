@@ -32,6 +32,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -413,9 +414,27 @@ void TreeViewControl::index_keys()
     {
         auto [level, prefix] = std::move(pending.back());
         pending.pop_back();
+        // Siblings with the same text are numbered, as tabs are: one path each, or two "Untitled"
+        // roots would share their selection and expansion. A number skips a sibling's real text,
+        // so "A", "A", "A (2)" gives "A", "A (3)", "A (2)".
+        std::unordered_set<std::string> used;
+        for (const TreeNode& node : *level)
+        {
+            used.insert(node.text);
+        }
+        std::unordered_map<std::string_view, int> seen;
         for (TreeNode& node : *level)
         {
-            std::string path       = prefix.empty() ? node.text : prefix + "/" + node.text;
+            std::string segment = node.text;
+            if (++seen[node.text] > 1)
+            {
+                for (int k = seen[node.text]; used.contains(segment); ++k)
+                {
+                    segment = node.text + " (" + std::to_string(k) + ")";
+                }
+                used.insert(segment);
+            }
+            std::string path       = prefix.empty() ? segment : prefix + "/" + segment;
             std::string key        = node.key.empty() ? path : node.key;
             const auto [it, added] = keys_.emplace(&node, std::move(key));
             by_key_.emplace(it->second, &node); // the first node with a key wins
@@ -611,6 +630,29 @@ std::size_t TreeViewControl::row_at(Point p) const
     }
     const auto index = static_cast<std::size_t>((p.y - bounds().top()) / row_height_);
     return index < visible_row_count() ? index : detail::NoIndex;
+}
+
+std::vector<std::size_t> TreeViewControl::path_of(const TreeNode* node) const
+{
+    std::vector<std::size_t> path;
+    const auto               walk = [&](const auto& self, const std::vector<TreeNode>& level) -> bool
+    {
+        for (std::size_t i = 0; i < level.size(); ++i)
+        {
+            path.push_back(i);
+            if (&level[i] == node || self(self, level[i].children))
+            {
+                return true;
+            }
+            path.pop_back();
+        }
+        return false;
+    };
+    if (node == nullptr || !walk(walk, roots_))
+    {
+        path.clear();
+    }
+    return path;
 }
 
 TreeNode* TreeViewControl::node_at(const std::vector<std::size_t>& path)
@@ -1232,14 +1274,23 @@ void TreeViewControl::start_drag(std::size_t row, Point pointer)
     {
         return;
     }
-    const VisibleRow& r = rows[row];
+    const VisibleRow& r     = rows[row];
+    const std::string text  = r.node->text;
+    const std::size_t depth = r.depth;
     DataPackage       data;
-    data.text                = r.node->text;
+    data.text                = text;
     data.requested_operation = DataPackageOperation::Move;
     data.data                = TreeDragPayload{this, r.path};
+    drag_key_                = key_of(*r.node);
 
-    // A single node drags collapsed.
+    // A single node drags collapsed. An on_collapsed handler may set a new tree, which takes the
+    // node and the path to it away: then there is nothing to drag.
+    const std::uint64_t version = tree_version_;
     set_node_expanded(r.node, false);
+    if (tree_version_ != version)
+    {
+        return;
+    }
     RenderRecording recording;
     const Rect      rect = row_rect(row);
     if (theme_ != nullptr)
@@ -1250,11 +1301,8 @@ void TreeViewControl::start_drag(std::size_t row, Point pointer)
                                     detail::subtle_row_background(*theme_, ButtonState::Hover, false));
         TextStyle style  = theme_->text_style;
         style.horizontal = TextAlign::Leading;
-        const float x    = content_left(r.depth);
-        recording.draw_text(r.node->text,
-                            Rect{x, rect.y, std::max(0.0f, rect.right() - x), rect.height},
-                            theme_->colors().text,
-                            style);
+        const float x    = content_left(depth);
+        recording.draw_text(text, Rect{x, rect.y, std::max(0.0f, rect.right() - x), rect.height}, theme_->colors().text, style);
     }
     dragging_ = r.path;
     DragDrop::start(*this, std::move(data), std::move(recording), rect, pointer);
@@ -1385,17 +1433,23 @@ void TreeViewControl::drop(const DragEventArgs& e)
         Element::drop(e);
         return;
     }
-    std::size_t                   row  = detail::NoIndex;
-    const std::optional<DropZone> zone = drop_zone(e.position, dragged_row(payload->path), row);
+    // Where the dragged node is now: the tree may have changed since the drag started.
+    std::vector<std::size_t> source = path_of(find(drag_key_));
     drop_row_.reset();
-    drag_hover_row_ = detail::NoIndex;
-    if (!zone || !can_drop(payload->path, row, *zone) || *zone == DropZone::Stay)
+    if (source.empty())
+    {
+        drag_hover_row_ = detail::NoIndex;
+        return; // it went while it was dragged
+    }
+    std::size_t                   row  = detail::NoIndex;
+    const std::optional<DropZone> zone = drop_zone(e.position, dragged_row(source), row);
+    drag_hover_row_                    = detail::NoIndex;
+    if (!zone || !can_drop(source, row, *zone) || *zone == DropZone::Stay)
     {
         return; // over its own row: dropped where it was
     }
     const auto               rows   = flatten();
     std::vector<std::size_t> target = rows[row].path;
-    std::vector<std::size_t> source = payload->path;
     // Read before the node is taken out: that moves its siblings, and the state is found by address.
     const bool target_open = is_expanded(*rows[row].node);
 
@@ -1405,6 +1459,49 @@ void TreeViewControl::drop(const DragEventArgs& e)
     {
         source_level = &(*source_level)[source[k]].children;
     }
+    // A node without a key is keyed by its path, which the move changes for the moved subtree
+    // and, through the numbering of same-text siblings, for others too. Each node's state moves
+    // with it: in pre-order the move only lifts the subtree's block out and puts it back elsewhere.
+    struct Walked
+    {
+        std::vector<std::string>     keys;
+        std::vector<const TreeNode*> nodes;
+    };
+    const auto walk_tree = [this]
+    {
+        Walked     out;
+        const auto walk = [&](const auto& self, const std::vector<TreeNode>& nodes) -> void
+        {
+            for (const TreeNode& node : nodes)
+            {
+                out.keys.push_back(key_of(node));
+                out.nodes.push_back(&node);
+                self(self, node.children);
+            }
+        };
+        walk(walk, roots_);
+        return out;
+    };
+    const auto position_of = [](const Walked& w, const TreeNode* node)
+    { return static_cast<std::size_t>(std::find(w.nodes.begin(), w.nodes.end(), node) - w.nodes.begin()); };
+    const auto subtree_size = [](const TreeNode& top)
+    {
+        std::size_t n    = 0;
+        const auto  walk = [&](const auto& self, const TreeNode& node) -> void
+        {
+            ++n;
+            for (const TreeNode& child : node.children)
+            {
+                self(self, child);
+            }
+        };
+        walk(walk, top);
+        return n;
+    };
+    Walked            before = walk_tree();
+    const std::size_t block  = subtree_size((*source_level)[source.back()]);
+    const std::size_t from   = position_of(before, &(*source_level)[source.back()]);
+
     TreeNode moved = std::move((*source_level)[source.back()]);
     source_level->erase(source_level->begin() + static_cast<std::ptrdiff_t>(source.back()));
     const std::size_t depth = source.size() - 1;
@@ -1441,26 +1538,37 @@ void TreeViewControl::drop(const DragEventArgs& e)
         level      = new_parent != nullptr ? &new_parent->children : &roots_;
         index      = target.back() + (*zone == DropZone::After ? 1 : 0);
     }
-    const std::vector<std::size_t> parent_path = [&]
-    {
-        // Find the parent again after the insert (its address may move with its siblings).
-        std::vector<std::size_t> p;
-        if (new_parent != nullptr)
-        {
-            const auto flat = flatten();
-            for (const VisibleRow& r : flat)
-            {
-                if (r.node == new_parent)
-                {
-                    p = r.path;
-                }
-            }
-        }
-        return p;
-    }();
-    index = std::min(index, level->size());
+    // The parent's path from `target`, which already accounts for the gap: expansion state is
+    // found by address, so walking the visible rows here would read it off the wrong nodes.
+    const std::vector<std::size_t> parent_path = new_parent == nullptr ? std::vector<std::size_t>{}
+                                                 : new_parent == target_node
+                                                     ? target
+                                                     : std::vector<std::size_t>(target.begin(), target.end() - 1);
+    index                                      = std::min(index, level->size());
     level->insert(level->begin() + static_cast<std::ptrdiff_t>(index), std::move(moved));
     structure_changed();
+    const Walked             after    = walk_tree();
+    const std::size_t        to       = position_of(after, &(*level)[index]);
+    std::vector<std::string> old_keys = std::move(before.keys);
+    {
+        std::vector<std::string> moved_keys(std::make_move_iterator(old_keys.begin() + static_cast<std::ptrdiff_t>(from)),
+                                            std::make_move_iterator(
+                                                old_keys.begin() + static_cast<std::ptrdiff_t>(from + block)));
+        old_keys.erase(old_keys.begin() + static_cast<std::ptrdiff_t>(from),
+                       old_keys.begin() + static_cast<std::ptrdiff_t>(from + block));
+        old_keys.insert(old_keys.begin() + static_cast<std::ptrdiff_t>(to),
+                        std::make_move_iterator(moved_keys.begin()),
+                        std::make_move_iterator(moved_keys.end()));
+    }
+    std::unordered_map<std::string, NodeState> moved_states;
+    for (std::size_t i = 0; i < old_keys.size() && i < after.keys.size(); ++i)
+    {
+        if (const auto it = states_.find(old_keys[i]); it != states_.end())
+        {
+            moved_states.emplace(after.keys[i], it->second);
+        }
+    }
+    states_ = std::move(moved_states);
     if (selection_mode_ == TreeViewSelectionMode::Multiple)
     {
         sync_parents(roots_);
