@@ -825,8 +825,11 @@ private:
     void select_row(std::size_t index); // set_selected_row(), NoIndex clearing
     // set_rows() with `selected` (rows of the new list) as the selection afterwards; raises
     // on_selection_changed() once, when the selection differs from the one before. The spec uses
-    // it to keep the selection on the same items through a collection change.
-    void replace_rows(std::vector<std::vector<std::string>> rows, std::vector<std::size_t> selected);
+    // it to keep the selection on the same items through a collection change. With `change`, the
+    // keyboard cursor, the range anchor and an open cell editor stay on their items too.
+    void replace_rows(std::vector<std::vector<std::string>> rows,
+                      std::vector<std::size_t>              selected,
+                      const CollectionChange*               change = nullptr);
 
     Callback<std::vector<MenuItem>(std::size_t)> item_context_menu_;
     std::unique_ptr<MenuFlyoutControl>           item_menu_; // made on the first row menu
@@ -1560,7 +1563,7 @@ struct TableView
                 selected = raw->selected_rows();
                 detail::carry_selection(selected, *change);
             }
-            raw->replace_rows(std::move(rows), std::move(selected));
+            raw->replace_rows(std::move(rows), std::move(selected), change);
         };
         fill(nullptr);
         if (model.count.reactive())

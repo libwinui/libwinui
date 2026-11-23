@@ -1088,9 +1088,34 @@ void TableViewControl::set_rows(std::vector<std::vector<std::string>> rows)
     replace_rows(std::move(rows), {});
 }
 
-void TableViewControl::replace_rows(std::vector<std::vector<std::string>> rows, std::vector<std::size_t> selected)
+void TableViewControl::replace_rows(std::vector<std::vector<std::string>> rows,
+                                    std::vector<std::size_t>              selected,
+                                    const CollectionChange*               change)
 {
-    (void)close_edit(false);
+    // Where row `row` went in `change`, or NoIndex when it was removed (or there is no change to
+    // follow).
+    const bool follow  = change != nullptr && change->kind != CollectionChangeKind::Reset;
+    const auto carried = [&](std::size_t row)
+    {
+        if (!follow || row == detail::NoIndex)
+        {
+            return detail::NoIndex;
+        }
+        std::vector<std::size_t> one{row};
+        detail::carry_selection(one, *change);
+        return one.empty() ? detail::NoIndex : one.front();
+    };
+    // A row added or removed elsewhere (a live log, search results) keeps a half-typed edit open.
+    if (const std::size_t edit_row = carried(edit_row_); editor_ != nullptr && edit_row != detail::NoIndex)
+    {
+        edit_row_ = edit_row;
+    }
+    else
+    {
+        (void)close_edit(false);
+    }
+    const std::size_t cursor = carried(cursor_);
+    const std::size_t anchor = carried(anchor_);
     clear_cells();
     rows_ = std::move(rows);
     apply_sort();
@@ -1107,8 +1132,8 @@ void TableViewControl::replace_rows(std::vector<std::vector<std::string>> rows, 
     }
     const bool changed = selected != selection_;
     selection_         = std::move(selected);
-    cursor_            = selection_.empty() ? detail::NoIndex : selection_.front();
-    anchor_            = cursor_;
+    cursor_            = cursor != detail::NoIndex ? cursor : selection_.empty() ? detail::NoIndex : selection_.front();
+    anchor_            = anchor != detail::NoIndex ? anchor : cursor_;
     cursor_header_     = detail::NoIndex;
     list_->set_item_count(order_.size());
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
@@ -1570,9 +1595,10 @@ bool TableViewControl::close_edit(bool commit)
     {
         return false;
     }
-    const std::size_t row    = edit_row_;
-    const std::size_t column = edit_column_;
-    std::string       text;
+    std::size_t    row     = edit_row_;
+    std::size_t    column  = edit_column_;
+    const Element* editing = editor_.get();
+    std::string    text;
     if (commit)
     {
         text = edit_box_ != nullptr ? edit_box_->text() : cell_text(row, column);
@@ -1581,10 +1607,13 @@ bool TableViewControl::close_edit(bool commit)
         {
             return false; // rejected: the editor stays open
         }
-        if (editor_ == nullptr || edit_row_ != row || edit_column_ != column)
+        if (editor_.get() != editing)
         {
-            return true; // the handler closed it itself (replaced the rows, say)
+            return true; // the handler closed it itself, or opened another
         }
+        // Rows the handler added or removed carried the edit along: it closes where it is now.
+        row    = edit_row_;
+        column = edit_column_;
     }
     // The table holds focus throughout, so the editor is never Window's focused element; a popup it
     // opened may still be listed, though, so it goes with the next layout.
@@ -2362,10 +2391,11 @@ void TableViewControl::select_row(std::size_t index)
         return;
     }
     index = std::min(index, rows_.size() - 1);
-    replace_selection({index});
+    // Cursor and scroll first: the selection handler may replace the rows.
     cursor_ = anchor_ = index;
     cursor_header_    = detail::NoIndex;
     scroll_into_view(positions_[index]);
+    replace_selection({index});
 }
 
 void TableViewControl::set_selected_rows(std::vector<std::size_t> rows)
@@ -2450,8 +2480,8 @@ void TableViewControl::row_clicked(std::size_t position, bool shift, bool ctrl)
         case SelectionMode::None:
             return;
         case SelectionMode::Single:
+            anchor_ = row; // before the event: its handler may replace the rows
             replace_selection({row});
-            anchor_ = row;
             return;
         case SelectionMode::Multiple:
             if (shift)
@@ -2485,6 +2515,7 @@ void TableViewControl::row_clicked(std::size_t position, bool shift, bool ctrl)
                 select_range(positions_[anchor_], position, !ctrl);
                 return;
             }
+            anchor_ = row; // before the event: its handler may replace the rows
             if (selection_mode_ == SelectionMode::Multiple || ctrl)
             {
                 std::vector<std::size_t> rows = selection_;
@@ -2502,7 +2533,6 @@ void TableViewControl::row_clicked(std::size_t position, bool shift, bool ctrl)
             {
                 replace_selection({row});
             }
-            anchor_ = row;
             return;
     }
 }
@@ -2512,6 +2542,7 @@ void TableViewControl::cursor_moved(std::size_t position, bool shift, bool ctrl)
     const std::size_t row = order_[position];
     cursor_               = row;
     mark_dirty(DirtyFlags::Visual);
+    scroll_into_view(position); // first: the selection handler below may replace the rows
     if (anchor_ != detail::NoIndex && row_position(anchor_) == detail::NoIndex)
     {
         anchor_ = detail::NoIndex; // hidden in a collapsed group
@@ -2521,8 +2552,8 @@ void TableViewControl::cursor_moved(std::size_t position, bool shift, bool ctrl)
         case SelectionMode::None:
             break;
         case SelectionMode::Single:
+            anchor_ = row; // before the event: its handler may replace the rows
             replace_selection({row});
-            anchor_ = row;
             break;
         case SelectionMode::Multiple:
             if (shift && anchor_ != detail::NoIndex)
@@ -2545,12 +2576,11 @@ void TableViewControl::cursor_moved(std::size_t position, bool shift, bool ctrl)
             }
             else if (!ctrl)
             {
+                anchor_ = row; // before the event: its handler may replace the rows
                 replace_selection({row});
-                anchor_ = row;
             }
             break;
     }
-    scroll_into_view(position);
 }
 
 // A group header takes the cursor but never the selection.
@@ -3202,7 +3232,8 @@ bool TableViewControl::key_override(const KeyEvent& e)
                 set_header_cursor(current_column_ != detail::NoIndex ? current_column_ : 0);
                 return handled;
             }
-            target = current == detail::NoIndex ? 0 : current - 1;
+            // With Shift or Ctrl, or no headers to go to, the first row is as far up as it goes.
+            target = current == detail::NoIndex || current == 0 ? 0 : current - 1;
             break;
         case Key::ArrowDown:
             target = current == detail::NoIndex ? 0 : std::min(current + 1, count - 1);
@@ -3261,13 +3292,14 @@ bool TableViewControl::key_override(const KeyEvent& e)
                 {
                     rows.push_back(row);
                 }
+                anchor_ = row; // before the event: its handler may replace the rows
                 replace_selection(std::move(rows));
             }
             else
             {
+                anchor_ = row;
                 replace_selection({row});
             }
-            anchor_ = row;
             mark_dirty(DirtyFlags::Visual);
             return handled;
         }
