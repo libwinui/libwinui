@@ -223,22 +223,36 @@ bool taskbar_uses_light_theme()
 HICON load_executable_icon(int size_px)
 {
     // The first RT_GROUP_ICON in resource order, the icon Explorer shows for the file.
+    struct Found
+    {
+        LPCWSTR      id = nullptr; // a numeric name, or `name` once found
+        std::wstring name;         // a string name, copied: its buffer is only valid in the callback
+    };
     HMODULE module = GetModuleHandleW(nullptr);
-    LPWSTR  first  = nullptr;
+    Found   first;
     EnumResourceNamesW(
         module,
         RT_GROUP_ICON,
-        [](HMODULE, LPCWSTR, LPWSTR name, LONG_PTR found) -> BOOL
+        [](HMODULE, LPCWSTR, LPWSTR name, LONG_PTR param) -> BOOL
         {
-            *reinterpret_cast<LPWSTR*>(found) = name; // valid while the module is loaded
-            return FALSE;                             // the first is enough
+            auto& found = *reinterpret_cast<Found*>(param);
+            if (IS_INTRESOURCE(name))
+            {
+                found.id = name;
+            }
+            else
+            {
+                found.name = name;
+                found.id   = found.name.c_str();
+            }
+            return FALSE; // the first is enough
         },
         reinterpret_cast<LONG_PTR>(&first));
-    if (first == nullptr || size_px <= 0)
+    if (first.id == nullptr || size_px <= 0)
     {
         return nullptr;
     }
-    return static_cast<HICON>(LoadImageW(module, first, IMAGE_ICON, size_px, size_px, LR_DEFAULTCOLOR));
+    return static_cast<HICON>(LoadImageW(module, first.id, IMAGE_ICON, size_px, size_px, LR_DEFAULTCOLOR));
 }
 
 HICON create_icon(const WindowIcon& icon, int size_px, ID2D1Factory* d2d, IDWriteFactory* dwrite)

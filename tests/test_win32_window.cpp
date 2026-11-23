@@ -5,6 +5,7 @@
 #ifdef _WIN32
 
 #include "platform/windows/Win32AutomationProvider.hpp"
+#include "platform/windows/Win32MessageWindow.hpp"
 #include "platform/windows/Win32Pointer.hpp"
 #include "winui/core/Color.hpp"
 #include "winui/core/Geometry.hpp"
@@ -103,6 +104,23 @@ TEST_CASE("a mouse click posted to the OS window reaches the button under it", "
         });
     REQUIRE(ui::run(window) == 0);
     CHECK(clicks == 1);
+}
+
+TEST_CASE("the message window runs only work posted through it, whatever else arrives", "[win32]")
+{
+    Window window{{.title = "posted", .size = {300, 200}, .visible = false}};
+    int    runs = 0;
+    window.post(
+        [&]
+        {
+            ui::win32::MessageWindow& messages = ui::win32::MessageWindow::get();
+            // What another process could post to the findable window: a wake with a made-up pointer.
+            PostMessageW(messages.hwnd(), WM_APP + 1, 0, static_cast<LPARAM>(0x1234));
+            messages.post([&] { ++runs; });
+            window.post([] { ui::quit(0); });
+        });
+    REQUIRE(ui::run(window) == 0);
+    CHECK(runs == 1);
 }
 
 TEST_CASE("a modal window blocks its owner only while it shows", "[win32][modal]")

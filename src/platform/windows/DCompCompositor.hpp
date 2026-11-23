@@ -108,7 +108,8 @@ private:
         return dips * static_cast<float>(dpi_) / 96.0f;
     }
 
-    void paint_overlay(Overlay& overlay, int width_px, int height_px, float radius_px, const Color& color);
+    // False when it couldn't be drawn, a lost device say; the overlay keeps its old surface then.
+    bool paint_overlay(Overlay& overlay, int width_px, int height_px, float radius_px, const Color& color);
 
     // Works out the layer's surface for its placement at the current DPI, moves its visuals there,
     // and draws it again when the surface changed. Returns whether it did.

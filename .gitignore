@@ -13,3 +13,6 @@ __pycache__/
 # Claude Code worktrees
 /.claude/
 tests/golden/*.actual.png
+
+# the hand-run [.print] test writes this into the working directory
+/printing-check.pdf

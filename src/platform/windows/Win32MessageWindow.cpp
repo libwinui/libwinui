@@ -4,7 +4,8 @@
 #include "Win32MessageWindow.hpp"
 
 #ifndef LIBWINUI_MODULE
-#include <memory>
+#include <deque>
+#include <mutex>
 #include <utility>
 #endif
 
@@ -52,10 +53,30 @@ void MessageWindow::post(Callback<void()> work) const
     {
         return;
     }
-    auto boxed = std::make_unique<Callback<void()>>(std::move(work));
-    if (PostMessageW(hwnd_, RunPosted, 0, reinterpret_cast<LPARAM>(boxed.get())))
+    // The work waits in the queue and the message only wakes the window: the window is findable
+    // by its class, and another process could post anything as a message's parameter.
     {
-        (void)boxed.release(); // the window's thread owns it now
+        const std::lock_guard lock{mutex_};
+        queue_.push_back(std::move(work));
+    }
+    PostMessageW(hwnd_, RunPosted, 0, 0); // if this fails, the next post's wake runs it
+}
+
+void MessageWindow::run_posted()
+{
+    for (;;)
+    {
+        Callback<void()> work;
+        {
+            const std::lock_guard lock{mutex_};
+            if (queue_.empty())
+            {
+                return;
+            }
+            work = std::move(queue_.front());
+            queue_.pop_front();
+        }
+        work();
     }
 }
 
@@ -70,11 +91,11 @@ LRESULT CALLBACK MessageWindow::proc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     switch (msg)
     {
         case RunPosted:
-        {
-            const std::unique_ptr<Callback<void()>> work{reinterpret_cast<Callback<void()>*>(lp)};
-            (*work)();
+            if (self != nullptr)
+            {
+                self->run_posted();
+            }
             return 0;
-        }
         case WM_COPYDATA:
             if (self != nullptr && self->copy_data_ && lp != 0)
             {
