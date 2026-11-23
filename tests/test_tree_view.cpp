@@ -663,6 +663,122 @@ TEST_CASE("TreeView reorder: one gap, two outcomes, by the way the node was drag
     }
 }
 
+TEST_CASE("A TreeView drop moves the dragged node even when the tree changed during the drag", "[tree_view][drag]")
+{
+    DragTree t{std::vector<TreeNode>{TreeNode{.text = "X"}, TreeNode{.text = "Y"}, TreeNode{.text = "Z"}}};
+    t.hover(2, t.at(0, 0.1f)); // Z, over the top of X
+    t.tv->set_roots(
+        std::vector<TreeNode>{TreeNode{.text = "W"}, TreeNode{.text = "X"}, TreeNode{.text = "Y"}, TreeNode{.text = "Z"}});
+    t.ui.layout({400.0f, 400.0f});
+    const Point to = t.at(0, 0.1f); // now over W
+    ui::testing::seams(t.ui.window()).handle_pointer(move(to));
+    ui::testing::seams(t.ui.window()).handle_pointer(up(to));
+    REQUIRE(t.tv->roots().size() == 4);
+    CHECK(t.tv->roots()[0].text == "Z"); // not Y, which took Z's old place
+    CHECK(t.tv->roots()[1].text == "W");
+
+    // A node that went while it was dragged moves nothing.
+    t.hover(1, t.at(3, 0.9f));
+    t.tv->set_roots(std::vector<TreeNode>{TreeNode{.text = "A"}, TreeNode{.text = "B"}});
+    t.ui.layout({400.0f, 400.0f});
+    ui::testing::seams(t.ui.window()).handle_pointer(up(t.at(0, 0.1f)));
+    CHECK(t.tv->roots().size() == 2);
+}
+
+TEST_CASE("A node dragged to a new parent stays selected", "[tree_view][drag]")
+{
+    std::vector<TreeNode> roots{
+        TreeNode{.text = "X", .children = {TreeNode{.text = "X1"}}},
+        TreeNode{.text = "P"},
+    };
+    DragTree    t{std::move(roots)};
+    const Point x = label_point(*t.tv, 0);
+    ui::testing::seams(t.ui.window()).handle_pointer(down(x));
+    ui::testing::seams(t.ui.window()).handle_pointer(up(x));
+    REQUIRE(t.tv->selected() != nullptr);
+    REQUIRE(t.tv->selected()->text == "X");
+
+    t.drag(0, t.at(1, 0.5f)); // into P
+    REQUIRE(t.tv->roots().size() == 1);
+    REQUIRE(t.tv->roots()[0].children.size() == 1);
+    REQUIRE(t.tv->selected() != nullptr);
+    CHECK(t.tv->selected()->text == "X");
+}
+TEST_CASE("Siblings with the same text keep their own state", "[tree_view]")
+{
+    TreeViewControl tv;
+    tv.set_roots(std::vector<TreeNode>{
+        TreeNode{.text = "Untitled", .children = {TreeNode{.text = "a"}}},
+        TreeNode{.text = "Untitled", .children = {TreeNode{.text = "b"}}, .expanded = true},
+    });
+    CHECK_FALSE(tv.is_expanded(tv.roots()[0]));
+    CHECK(tv.is_expanded(tv.roots()[1]));
+}
+
+TEST_CASE("Numbered same-text siblings skip a sibling's own text", "[tree_view]")
+{
+    TreeViewControl tv;
+    tv.set_roots(std::vector<TreeNode>{
+        TreeNode{.text = "A", .children = {TreeNode{.text = "first"}}},
+        TreeNode{.text = "A", .children = {TreeNode{.text = "second"}}},
+        TreeNode{.text = "A (2)", .children = {TreeNode{.text = "literal"}}},
+    });
+    REQUIRE(tv.find("A (2)") != nullptr);
+    CHECK(tv.find("A (2)")->children[0].text == "literal");
+    REQUIRE(tv.find("A (3)") != nullptr);
+    CHECK(tv.find("A (3)")->children[0].text == "second");
+}
+
+TEST_CASE("A drop that renumbers same-text siblings keeps each node's own state", "[tree_view][drag]")
+{
+    std::vector<TreeNode> roots{TreeNode{.text = "A", .children = {TreeNode{.text = "a"}}},
+                                TreeNode{.text = "A", .children = {TreeNode{.text = "b"}}},
+                                TreeNode{.text = "C"}};
+    DragTree              t{std::move(roots)};
+    t.tv->set_expanded("A (2)", true);
+    t.ui.layout({400.0f, 400.0f});
+    t.drag(0, t.at(3, 0.9f)); // the collapsed A below C
+    REQUIRE(t.tv->roots().size() == 3);
+    REQUIRE(t.tv->roots()[0].children[0].text == "b");
+    REQUIRE(t.tv->roots()[2].children[0].text == "a");
+    CHECK(t.tv->is_expanded(t.tv->roots()[0]));
+    CHECK_FALSE(t.tv->is_expanded(t.tv->roots()[2]));
+}
+
+TEST_CASE("A collapse handler that replaces the tree ends the drag before it starts", "[tree_view][drag]")
+{
+    std::vector<TreeNode> roots{TreeNode{.text = "A", .children = {TreeNode{.text = "A1"}}, .expanded = true},
+                                TreeNode{.text = "B"}};
+    DragTree              t{std::move(roots)};
+    t.tv->on_collapsed([&](const TreeNode&) { t.tv->set_roots(std::vector<TreeNode>{TreeNode{.text = "C"}}); });
+    const Point start = label_point(*t.tv, 0);
+    ui::testing::seams(t.ui.window()).handle_pointer(down(start));
+    ui::testing::seams(t.ui.window()).handle_pointer(move({start.x, start.y + 10.0f}));
+    CHECK_FALSE(DragDrop::active());
+    ui::testing::seams(t.ui.window()).handle_pointer(up(start));
+}
+
+TEST_CASE("TreeView reorder reports the new parent when the dragged row came from above it", "[tree_view][drag]")
+{
+    std::vector<TreeNode> roots{
+        TreeNode{.text = "X"},
+        TreeNode{.text = "P", .children = {TreeNode{.text = "P1"}}},
+        TreeNode{.text     = "Q",
+                 .children = {TreeNode{.text = "Q1", .children = {TreeNode{.text = "Q1a"}}, .expanded = true}},
+                 .expanded = true},
+    };
+    DragTree    t{std::move(roots)};
+    std::string completed;
+    t.tv->on_drag_items_completed(
+        [&](const TreeViewDragItemsCompletedArgs& args)
+        { completed = args.node.text + (args.new_parent != nullptr ? " in " + args.new_parent->text : ""); });
+    t.drag(0, t.at(4, 0.9f)); // X below Q1a
+    REQUIRE(t.tv->roots().size() == 2);
+    REQUIRE(t.tv->roots()[1].children[0].children.size() == 2);
+    CHECK(t.tv->roots()[1].children[0].children[1].text == "X");
+    CHECK(completed == "X in Q1");
+}
+
 TEST_CASE("TreeView reorder: after an expanded row is its first child; the gaps by the dragged row move nothing",
           "[tree_view][drag]")
 {
