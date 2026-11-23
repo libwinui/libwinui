@@ -378,6 +378,13 @@ TEST_CASE("RichEditBox: RTF written by save_rtf() loads back to the same documen
     CHECK(copy->spans() == document);
 }
 
+TEST_CASE("RichEditBox: load_rtf ends on a skipped group with an overflowing \\bin count", "[richeditbox][rtf]")
+{
+    auto box = make_box();
+    box->load_rtf("{\\rtf1 before{\\*\\foo \\bin4294967276 }after}");
+    CHECK(box->text().starts_with("before")); // and it returned at all
+}
+
 TEST_CASE("RichEditBox: load_rtf reads a WordPad-style file and skips what it does not know", "[richeditbox][rtf]")
 {
     const std::string rtf =

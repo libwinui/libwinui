@@ -7,6 +7,7 @@
 #include "winui/testing/TestRenderer.hpp"
 #include "winui/testing/VisualStates.hpp"
 #include "winui/testing/WindowSeams.hpp"
+#include "winui/ui/AutomationTree.hpp"
 #include "winui/ui/Window.hpp"
 #include "winui/ui/collections/ListView.hpp"
 #include "winui/ui/collections/VirtualListControl.hpp"
@@ -19,6 +20,7 @@
 #include "winui/ui/themes/Theme.hpp"
 
 #include <algorithm>
+#include <limits>
 #include <memory>
 #include <string>
 #include <utility>
@@ -1043,4 +1045,24 @@ TEST_CASE("A VirtualList factory returning nullptr ends the realized rows there"
     list.arrange({0, 0, 300, 200});
 
     CHECK(list.visible_count() == 3);
+}
+
+TEST_CASE("VirtualListControl ignores a NaN scroll percent and a non-finite offset", "[scroll][virtual]")
+{
+    HeadlessTextMeasurer m;
+    Theme                theme = Theme::light();
+    VirtualListControl   list;
+    list.set_item_count(1'000);
+    list.set_item_height(20.0f);
+    list.set_item_factory([](std::size_t i) { return std::make_unique<TextControl>("Item " + std::to_string(i)); });
+    (void)list.measure({300, 105}, m, theme);
+    list.arrange({0, 0, 300, 105});
+
+    list.set_scroll_offset(400.0f);
+    REQUIRE(ui::automation_providers(list).scroll != nullptr);
+    CHECK(ui::automation_providers(list).scroll->set_scroll_percent(0.0f, std::nanf(""))); // as a screen reader might
+    CHECK(list.scroll_offset() == 400.0f);
+    list.set_scroll_offset(std::numeric_limits<float>::infinity());
+    CHECK(list.scroll_offset() == 0.0f);
+    CHECK(list.visible_count() > 0);
 }

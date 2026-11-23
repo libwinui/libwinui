@@ -395,7 +395,7 @@ public:
     {
         return min_zoom_factor_;
     }
-    /// Clamps the current zoom factor into the new range.
+    /// Clamps the current zoom factor into the new range. At least 0.01.
     void set_min_zoom_factor(float value);
     /// The largest zoom factor. DefaultMaxZoomFactor (10) by default.
     [[nodiscard]] inline float max_zoom_factor() const

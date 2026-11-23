@@ -17,6 +17,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <cmath>
 
 using namespace ui;
 using namespace ui::testing;
@@ -403,4 +404,14 @@ TEST_CASE("A Rating's header sits above the stars and names it", "[rating][spec]
     label              = "";
     const Size without = node->measure({1000.0f, Unbounded}, m, theme);
     CHECK(without.height < with.height);
+}
+
+TEST_CASE("A NaN rating written two-way is no rating, and settles", "[rating][binding]")
+{
+    Property<std::optional<double>> value{3.0};
+    ui::Control<ui::Rating>         rating;
+    std::unique_ptr<Element>        node = ui::build(ui::Rating{.value = ui::bind(value), .control = rating});
+    value                                = std::optional<double>{std::nan("")};
+    CHECK_FALSE(rating->value().has_value());
+    CHECK_FALSE(value.get().has_value());
 }

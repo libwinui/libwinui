@@ -424,6 +424,10 @@ Color ColorPickerControl::color() const
 
 void ColorPickerControl::set_color(Color c)
 {
+    if (std::isnan(c.r) || std::isnan(c.g) || std::isnan(c.b) || std::isnan(c.a))
+    {
+        return; // not a color, and never equal to the one shown, so a two-way binding would never settle
+    }
     if (!alpha_enabled_)
     {
         c = c.with_alpha(1.0f);

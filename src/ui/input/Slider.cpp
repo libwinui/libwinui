@@ -107,7 +107,7 @@ SliderControl::SliderControl(Orientation orientation, double min, double max, do
     min_(min),
     max_(std::max(min, max))
 {
-    value_ = std::clamp(value, min_, max_);
+    value_ = std::isnan(value) ? min_ : std::clamp(value, min_, max_);
     // The track container's height, or width when vertical.
     if (orientation_ == Orientation::Horizontal)
     {
@@ -130,6 +130,10 @@ void SliderControl::set_range(double min, double max)
 
 void SliderControl::set_value(double value)
 {
+    if (std::isnan(value))
+    {
+        return; // no place on the track; and as NaN never equals itself, it would never settle
+    }
     const double clamped = max_ > min_ ? std::clamp(value, min_, max_) : min_;
     if (clamped == value_)
     {
@@ -554,8 +558,9 @@ void SliderControl::render_classic(Renderer& renderer, const Theme& theme) const
     if (ticks && tick_frequency_ > 0.0f && max_ > min_)
     {
         // Capped rather than trusted: a frequency far finer than the track is wide would
-        // otherwise emit one render command per value unit for a solid gray smear.
-        const int steps = std::min(static_cast<int>((max_ - min_) / tick_frequency_), 512);
+        // otherwise emit one render command per value unit for a solid gray smear. Capped as a double:
+        // a ratio past INT_MAX does not convert to int.
+        const int steps = static_cast<int>(std::min((max_ - min_) / tick_frequency_, 512.0));
         for (int i = 1; i < steps; ++i)
         {
             tick(static_cast<float>(i * tick_frequency_ / (max_ - min_)), g.tick_length);

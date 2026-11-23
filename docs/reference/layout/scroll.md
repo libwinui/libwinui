@@ -375,7 +375,7 @@ The smallest zoom factor. DefaultMinZoomFactor (0.1) by default.
 void set_min_zoom_factor(float value)
 ```
 
-Clamps the current zoom factor into the new range.
+Clamps the current zoom factor into the new range. At least 0.01.
 
 ### max_zoom_factor
 

@@ -37,10 +37,11 @@ constexpr float ItemSpacing = 8.0f;  // between stars
 constexpr float CaptionGap      = 4.0f;
 constexpr float CaptionFontSize = 12.0f;
 
-// A set value is clamped to [1, max_rating].
+// A set value is clamped to [1, max_rating]. NaN is no rating: kept, it would never equal itself,
+// and a two-way binding would hand it back and forth for good.
 std::optional<double> coerce_value(std::optional<double> raw, int max_rating)
 {
-    if (!raw)
+    if (!raw || std::isnan(*raw))
     {
         return std::nullopt;
     }
@@ -51,7 +52,7 @@ std::optional<double> coerce_value(std::optional<double> raw, int max_rating)
 // since a placeholder is a display hint, not a committed rating.
 std::optional<double> coerce_placeholder(std::optional<double> raw, int max_rating)
 {
-    if (!raw)
+    if (!raw || std::isnan(*raw))
     {
         return std::nullopt;
     }

@@ -27,6 +27,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <cmath>
 
 using namespace std::chrono_literals;
 
@@ -944,4 +945,15 @@ TEST_CASE("pan_on_drag moves the view by the pointer's travel when zoomed", "[sc
     drag(*v.view, {150, 100}, {100, 60});
     CHECK_THAT(v.view->horizontal_offset(), WithinAbs(h + 50.0f, 1e-3));
     CHECK_THAT(v.view->vertical_offset(), WithinAbs(y + 40.0f, 1e-3));
+}
+
+TEST_CASE("The zoom factor never reaches zero", "[scroll][zoom]")
+{
+    ScrollControl scroll;
+    scroll.set_min_zoom_factor(0.0f);
+    (void)scroll.zoom_to(0.0f, std::nullopt, ScrollZoomOptions{.animation_mode = ScrollAnimationMode::Disabled});
+    CHECK(scroll.zoom_factor() > 0.0f);
+    (void)scroll.zoom_to(1.0f, std::nullopt, ScrollZoomOptions{.animation_mode = ScrollAnimationMode::Disabled});
+    CHECK(scroll.zoom_factor() == 1.0f);
+    CHECK(std::isfinite(scroll.vertical_offset()));
 }

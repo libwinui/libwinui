@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iterator>
+#include <memory>
 #include <stdexcept>
 
 #include <cmath>
@@ -244,17 +245,29 @@ void Bitmap::write_png(const std::filesystem::path& path) const
 namespace
 {
 
-// Wrap decoded stb pixels (already forced to RGBA8) into an Image.
-Bitmap image_from_stb(std::uint8_t* pixels, int w, int h, const char* what)
+// What stb decoded, freed however the copy out of it ends: a frame that doesn't fit in memory
+// throws, and the decoded image may be huge.
+struct StbFree
 {
+    void operator()(void* buffer) const
+    {
+        stbi_image_free(buffer);
+    }
+};
+template <typename T>
+using StbBuffer = std::unique_ptr<T, StbFree>;
+
+// Wrap decoded stb pixels (already forced to RGBA8) into an Image.
+Bitmap image_from_stb(std::uint8_t* decoded, int w, int h, const char* what)
+{
+    const StbBuffer<std::uint8_t> pixels{decoded};
     if (!pixels)
     {
         const char* reason = stbi_failure_reason();
         throw std::runtime_error(std::string("png: ") + what + ": " + (reason ? reason : "decode failed"));
     }
     Bitmap img(w, h);
-    std::copy(pixels, pixels + static_cast<std::size_t>(w) * h * 4, img.bytes().begin());
-    stbi_image_free(pixels);
+    std::copy(pixels.get(), pixels.get() + static_cast<std::size_t>(w) * h * 4, img.bytes().begin());
     return img;
 }
 
@@ -301,16 +314,16 @@ namespace
 // same scaled_to_fit()/oriented() any caller can use make it small and upright.
 [[maybe_unused]] Bitmap decode_portable(std::span<const std::uint8_t> data, const ImageDecodeOptions& options)
 {
-    int           w = 0, h = 0, channels = 0;
-    std::uint8_t* pixels = stbi_load_from_memory(data.data(), static_cast<int>(data.size()), &w, &h, &channels, 4);
+    int                           w = 0, h = 0, channels = 0;
+    const StbBuffer<std::uint8_t> pixels{
+        stbi_load_from_memory(data.data(), static_cast<int>(data.size()), &w, &h, &channels, 4)};
     if (!pixels)
     {
         const char* reason = stbi_failure_reason();
         throw std::runtime_error(std::string("image: ") + (reason ? reason : "decode failed"));
     }
     Bitmap image(w, h);
-    std::copy(pixels, pixels + static_cast<std::size_t>(w) * h * 4, image.bytes().begin());
-    stbi_image_free(pixels);
+    std::copy(pixels.get(), pixels.get() + static_cast<std::size_t>(w) * h * 4, image.bytes().begin());
 
     const ImageOrientation orientation = options.apply_orientation ? Bitmap::read_orientation(data) : ImageOrientation::Normal;
     const bool swap = swaps_axes(orientation);
@@ -720,10 +733,11 @@ AnimatedImage AnimatedImage::decode(std::span<const std::uint8_t> data)
         return result;
     }
 
-    int  w = 0, h = 0, count = 0, channels = 0;
-    int* delays = nullptr;
-    std::uint8_t*
-        pixels = stbi_load_gif_from_memory(data.data(), static_cast<int>(data.size()), &delays, &w, &h, &count, &channels, 4);
+    int                           w = 0, h = 0, count = 0, channels = 0;
+    int*                          decoded_delays = nullptr;
+    const StbBuffer<std::uint8_t> pixels{
+        stbi_load_gif_from_memory(data.data(), static_cast<int>(data.size()), &decoded_delays, &w, &h, &count, &channels, 4)};
+    const StbBuffer<int> delays{decoded_delays};
     if (!pixels)
     {
         const char* reason = stbi_failure_reason();
@@ -733,15 +747,13 @@ AnimatedImage AnimatedImage::decode(std::span<const std::uint8_t> data)
     for (int i = 0; i < count; ++i)
     {
         Bitmap frame(w, h);
-        std::copy(pixels + frame_bytes * i, pixels + frame_bytes * (i + 1), frame.bytes().begin());
+        std::copy(pixels.get() + frame_bytes * i, pixels.get() + frame_bytes * (i + 1), frame.bytes().begin());
         result.frames.push_back(std::move(frame));
         // stb reports hundredths of a second times ten; a delay of 0 or 1 hundredths is shown
         // for ten.
-        const int delay = delays ? delays[i] : 0;
+        const int delay = delays ? delays.get()[i] : 0;
         result.delays.push_back(Duration{static_cast<double>(delay < 20 ? 100 : delay)});
     }
-    stbi_image_free(delays);
-    stbi_image_free(pixels);
     result.loop_count = gif_loop_count(data);
     return result;
 }

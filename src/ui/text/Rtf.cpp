@@ -152,17 +152,19 @@ private:
             {
                 if (in_.compare(pos_, 3, "bin") == 0)
                 {
+                    // Saturated at the input's size: a longer count only skips to the end, and an
+                    // overflowing one must not wrap around and send the parser back.
                     std::size_t p = pos_ + 3;
-                    long        n = 0;
+                    std::size_t n = 0;
                     while (p < in_.size() && in_[p] >= '0' && in_[p] <= '9')
                     {
-                        n = n * 10 + (in_[p++] - '0');
+                        n = std::min(n * 10 + static_cast<std::size_t>(in_[p++] - '0'), in_.size());
                     }
                     if (p < in_.size() && in_[p] == ' ')
                     {
                         ++p;
                     }
-                    pos_ = std::min(in_.size(), p + static_cast<std::size_t>(n));
+                    pos_ = std::min(in_.size(), p + n);
                 }
                 else if (pos_ < in_.size())
                 {
