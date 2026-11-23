@@ -140,6 +140,20 @@ TEST_CASE("TextLayout paragraph margins offset lines and add to the height", "[t
     REQUIRE_THAT(layout.size().height, WithinAbs(2 * Line + 4, 0.01));
 }
 
+TEST_CASE("TextLayout hit tests land between clusters, never inside one", "[text][layout]")
+{
+    const HeadlessTextMeasurer m;
+    TextLayout                 layout;
+    layout.set_content({{{run("e\xCC\x81x")}}}); // "e" + combining acute (U+0301), then "x"
+    layout.layout(width(0.0f), m);
+
+    for (float x = 0.0f; x < 3.0f * Advance; x += 0.1f * Advance)
+    {
+        const std::size_t at = layout.hit_test({x, 1.0f});
+        CHECK((at == 0 || at == 3 || at == 4));
+    }
+}
+
 TEST_CASE("TextLayout hit tests points to offsets and offsets to carets", "[text][layout]")
 {
     const HeadlessTextMeasurer m;

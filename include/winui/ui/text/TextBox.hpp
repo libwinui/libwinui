@@ -364,10 +364,11 @@ public:
         wrapping_ = wrapping;
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
-    /// Whether the text is laid out as lines, which accepts_return() or wrapping turns on.
+    /// Whether the text is laid out as lines, which accepts_return() or wrapping turns on. A box with
+    /// a password_char() stays on one line.
     [[nodiscard]] inline bool multiline() const
     {
-        return accepts_return_ || wrapping_ != TextWrapping::NoWrap;
+        return !password_char_ && (accepts_return_ || wrapping_ != TextWrapping::NoWrap);
     }
     /// Whether Tab inserts a tab character; false by default.
     [[nodiscard]] inline bool accepts_tab() const
@@ -692,6 +693,8 @@ private:
     // What the user may insert in place of the selection: `text` in CharacterCasing's case, cut
     // to MaxLength's room in code points (never inside a cluster).
     [[nodiscard]] std::string admit(std::string_view text) const;
+    // The same for `text` replacing [start, end) of the text.
+    [[nodiscard]] std::string admit(std::string_view text, std::size_t start, std::size_t end) const;
     void                      move_vertically(int lines, bool extend);
     void                      erase_selection();
     void                      changed(); // marks dirty + fires on_text_changed_
@@ -839,7 +842,9 @@ private:
     ScrollBarOverlay bar_{Orientation::Vertical};
     mutable float    bar_gutter_ = 0.0f;
     // A NoWrap multi-line box scrolls sideways too, with a bar along its bottom.
-    mutable float    scroll_x_ = 0.0f;
+    mutable float scroll_x_ = 0.0f;
+    // A single-line box's text width as of the last measure: past the text area, it scrolls.
+    mutable float    text_width_ = 0.0f;
     ScrollBarOverlay hbar_{Orientation::Horizontal};
     // The line-number column's width (0 without line numbers), set by measure.
     mutable float gutter_width_ = 0.0f;

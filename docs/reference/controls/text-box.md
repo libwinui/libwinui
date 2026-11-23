@@ -580,7 +580,7 @@ Anything but NoWrap breaks the text at the box's width and makes it multi-line.
 bool multiline() const
 ```
 
-Whether the text is laid out as lines, which [accepts_return()](#accepts_return) or wrapping turns on.
+Whether the text is laid out as lines, which [accepts_return()](#accepts_return) or wrapping turns on. A box with a [password_char()](#password_char) stays on one line.
 
 ### accepts_tab
 

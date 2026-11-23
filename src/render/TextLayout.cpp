@@ -6,6 +6,7 @@
 #include "winui/core/Utf8.hpp"
 #include "winui/render/Renderer.hpp"
 #include "winui/render/Text.hpp"
+#include "winui/render/TextAnalyzer.hpp"
 
 #ifndef LIBWINUI_MODULE
 #include <algorithm>
@@ -57,12 +58,14 @@ bool same_shape(const std::vector<TextLayoutParagraph>& a, const std::vector<Tex
     return true;
 }
 
-// The code-point boundaries in [begin, end) of `text` after `begin` itself, `end` included:
-// where a word may be split or a caret land.
+// The cluster boundaries in [begin, end) of `text` after `begin` itself, `end` included: where a
+// word may be split or a caret land. A cut between code points would put the caret between a
+// letter and its accent, or inside an emoji sequence.
 std::vector<std::size_t> boundaries(std::string_view text, std::size_t begin, std::size_t end)
 {
     std::vector<std::size_t> out;
-    for (std::size_t i = next_code_point(text, begin); i < end; i = next_code_point(text, i))
+    const TextAnalyzer&      analyzer = text_analyzer();
+    for (std::size_t i = analyzer.next_cluster(text, begin); i < end; i = analyzer.next_cluster(text, i))
     {
         out.push_back(i);
     }

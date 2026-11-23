@@ -108,6 +108,38 @@ TEST_CASE("Constructing with initial text seeds both text() and the Escape-rever
     REQUIRE(a->text() == "Seattle"); // reverts to the constructor's text, not a typed edit
 }
 
+TEST_CASE("A handler that refreshes the suggestions during a preview keeps the arrows going", "[auto_suggest_box]")
+{
+    auto a = make_box();
+    ui::testing::set_focused(*a, true);
+    a->handle_text("Se");
+    a->set_suggestions({"Seattle", "Seaside"});
+    std::vector<std::string> previewed;
+    a->on_text_changed(
+        [&](const AutoSuggestBoxTextChangedArgs& args)
+        {
+            a->set_suggestions({"Seaside", "Seattle", "Sedona"}); // frees the list the text came from
+            previewed.push_back(args.text);
+        });
+
+    a->handle_key({Key::ArrowDown, KeyAction::Down});
+    a->handle_key({Key::ArrowDown, KeyAction::Down});
+    CHECK(previewed == std::vector<std::string>{"Seattle", "Sedona"});
+}
+
+TEST_CASE("Text set by the app is what Escape reverts to", "[auto_suggest_box]")
+{
+    auto a = make_box("Seattle");
+    ui::testing::set_focused(*a, true);
+    a->set_text("Portland");
+    a->set_suggestions({"Portland, OR", "Portland, ME"});
+    a->handle_key({Key::ArrowDown, KeyAction::Down});
+    REQUIRE(a->text() == "Portland, OR");
+
+    a->handle_key({Key::Escape, KeyAction::Down});
+    CHECK(a->text() == "Portland");
+}
+
 TEST_CASE("Ctrl+V reaches the internal TextBox through AutoSuggestBox", "[auto_suggest_box][clipboard]")
 {
     auto a = make_box();

@@ -228,6 +228,28 @@ TEST_CASE("RichEditBox: typing coalesces into one undo step until the caret move
     CHECK(box->text() == "hellXo");
 }
 
+TEST_CASE("RichEditBox: a selection inside a character starts at the character", "[richeditbox]")
+{
+    auto box = make_box(
+        "\xC3\xA4"
+        "b");
+    box->select(1, 1);
+    CHECK(box->selection() == std::pair<std::size_t, std::size_t>{0, 0});
+    box->handle_text("x");
+    CHECK(box->text() ==
+          "x\xC3\xA4"
+          "b");
+}
+
+TEST_CASE("RichEditBox: range formatting from inside a character starts at the character", "[richeditbox]")
+{
+    auto box = make_box(
+        "\xC3\xA4"
+        "b");
+    box->set_range_format(1, 3, RichEditBoxControl::CharacterFormat{.bold = true});
+    CHECK(box->range_format(0, 3).bold == true);
+}
+
 TEST_CASE("RichEditBox: formatting the selection is an undo step", "[richeditbox]")
 {
     auto box = make_box("word");
@@ -692,4 +714,11 @@ TEST_CASE("A RichEditBox draws a scroll bar only while its text overflows, and t
     REQUIRE(paged.has_value());
     CHECK(paged->top() < top->top());
     CHECK(tall_box->selection().first == 0); // the bar never moved the caret
+}
+
+TEST_CASE("RichEditBox: the DEL character Ctrl+Backspace types is not inserted", "[richeditbox]")
+{
+    auto box = make_box("one two");
+    box->handle_text("\x7F");
+    CHECK(box->text() == "one two");
 }
