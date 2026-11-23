@@ -62,17 +62,27 @@ public:
     UiThread(const UiThread&)            = delete;
     UiThread& operator=(const UiThread&) = delete;
 
-    // Runs `work` on the UI thread and returns once it ran.
-    void run(const std::function<void()>& work)
+    // Runs `work` on the UI thread and returns once it ran. False, without running it, once
+    // close() was called: the job it would draw is gone.
+    [[nodiscard]] bool run(const std::function<void()>& work)
     {
         if (GetCurrentThreadId() == id_)
         {
+            if (const std::lock_guard lock{mutex_}; closed_)
+            {
+                return false;
+            }
             work();
-            return;
+            return true;
         }
         const HANDLE done = CreateEventW(nullptr, TRUE, FALSE, nullptr);
         {
             const std::lock_guard lock{mutex_};
+            if (closed_)
+            {
+                CloseHandle(done);
+                return false;
+            }
             queue_.emplace_back(
                 [&work, done]
                 {
@@ -83,6 +93,18 @@ public:
         SetEvent(wake_);
         WaitForSingleObject(done, INFINITE);
         CloseHandle(done);
+        return true;
+    }
+
+    // Runs what is still queued and refuses anything after, so no system thread waits for a
+    // pump() that already returned. On the UI thread, after pump().
+    void close()
+    {
+        {
+            const std::lock_guard lock{mutex_};
+            closed_ = true;
+        }
+        drain();
     }
 
     // Handles messages and queued work until `finished` turns true.
@@ -133,6 +155,7 @@ private:
     HANDLE                            wake_;
     std::mutex                        mutex_;
     std::deque<std::function<void()>> queue_;
+    bool                              closed_ = false; // guarded by mutex_
 };
 
 PrintPage page_of(const printing::PrintPageDescription& description)
@@ -149,11 +172,11 @@ PrintPage page_of(const printing::PrintPageDescription& description)
 struct DocumentSource :
     winrt::implements<DocumentSource, printing::IPrintDocumentSource, ::IPrintDocumentPageSource, ::IPrintPreviewPageCollection>
 {
-    DocumentSource(PrintJob& job, const PrintMeasuring& measuring, PrintDevice& device, UiThread& ui) :
+    DocumentSource(PrintJob& job, const PrintMeasuring& measuring, PrintDevice& device, std::shared_ptr<UiThread> ui) :
         job_(job),
         measuring_(measuring),
         device_(device),
-        ui_(ui)
+        ui_(std::move(ui))
     {
     }
 
@@ -204,7 +227,7 @@ struct DocumentSource :
             const float                          raster_dpi  = static_cast<float>(
                 std::max<std::uint32_t>(96, std::min(description.DpiX, description.DpiY)));
             PrintResult result = PrintResult::Failed;
-            ui_.run(
+            const bool  ran    = ui_->run(
                 [&]
                 {
                     const std::size_t        count = job_.page_count(page, measuring_.context());
@@ -229,6 +252,10 @@ struct DocumentSource :
                     }
                     result = draw_print_job(job_, measuring_, device_, target, page, pages, raster_dpi);
                 });
+            if (!ran)
+            {
+                return E_ABORT;
+            }
             return result == PrintResult::Printed ? S_OK : E_FAIL;
         } catch (...)
         {
@@ -253,9 +280,17 @@ struct DocumentSource :
             winrt::copy_from_abi(task, options);
             const PrintPage page  = page_of(task.GetPageDescription(current_job_page));
             std::size_t     count = 0;
-            ui_.run([&] { count = job_.page_count(page, measuring_.context()); });
-            page_      = page;
-            count_     = count;
+            // Kept on the UI thread, where MakePage() reads them.
+            if (!ui_->run(
+                    [&]
+                    {
+                        count  = job_.page_count(page, measuring_.context());
+                        page_  = page;
+                        count_ = count;
+                    }))
+            {
+                return E_ABORT;
+            }
             HRESULT hr = preview_->InvalidatePreview();
             if (SUCCEEDED(hr))
             {
@@ -275,7 +310,7 @@ struct DocumentSource :
         {
             return E_ABORT;
         }
-        if (width <= 0.0f || height <= 0.0f || preview_ == nullptr || page_.size.width <= 0.0f)
+        if (width <= 0.0f || height <= 0.0f || preview_ == nullptr)
         {
             return E_INVALIDARG;
         }
@@ -283,12 +318,23 @@ struct DocumentSource :
         {
             desired = 1;
         }
-        if (desired < 1 || desired > count_)
-        {
-            return S_OK;
-        }
+        // The page and its count are read on the UI thread, where Paginate() writes them.
         HRESULT hr = S_OK;
-        ui_.run([&] { hr = draw_preview(desired, width, height); });
+        if (!ui_->run(
+                [&]
+                {
+                    if (page_.size.width <= 0.0f)
+                    {
+                        hr = E_INVALIDARG;
+                    }
+                    else if (desired >= 1 && desired <= count_)
+                    {
+                        hr = draw_preview(desired, width, height);
+                    }
+                }))
+        {
+            return E_ABORT;
+        }
         return hr;
     }
 
@@ -351,7 +397,7 @@ private:
     PrintJob&                              job_;
     const PrintMeasuring&                  measuring_;
     PrintDevice&                           device_;
-    UiThread&                              ui_;
+    std::shared_ptr<UiThread>              ui_; // shared: a system thread may call in after print() returned
     ComPtr<IPrintPreviewDxgiPackageTarget> preview_;
     PrintPage                              page_{};
     std::atomic<std::size_t>               count_{0};
@@ -396,11 +442,14 @@ std::optional<PrintResult> print_with_preview(HWND owner, PrintJob& job, const P
         winrt::check_hresult(
             interop->GetForWindow(owner, winrt::guid_of<printing::PrintManager>(), winrt::put_abi(manager)));
 
-        UiThread                 ui;
-        const auto               state  = std::make_shared<PreviewState>();
-        const auto               source = winrt::make_self<DocumentSource>(job, measuring, device, ui);
-        const winrt::hstring     title{job.title.empty() ? std::wstring(L"Document") : win32::widen(job.title)};
-        const winrt::event_token token = manager.PrintTaskRequested(
+        const auto           ui     = std::make_shared<UiThread>();
+        const auto           state  = std::make_shared<PreviewState>();
+        const auto           source = winrt::make_self<DocumentSource>(job, measuring, device, ui);
+        const winrt::hstring title{job.title.empty() ? std::wstring(L"Document") : win32::widen(job.title)};
+        // Revoked however this ends: a handler left behind would answer the next preview's request
+        // with this one's job, gone by then.
+        const auto requested = manager.PrintTaskRequested(
+            winrt::auto_revoke,
             [state, source, title](const printing::PrintManager&, const printing::PrintTaskRequestedEventArgs& args)
             {
                 const printing::PrintTask
@@ -428,6 +477,17 @@ std::optional<PrintResult> print_with_preview(HWND owner, PrintJob& job, const P
                         state->finished.store(true);
                     });
             });
+        // Closed however this ends too, so no system thread waits on a bridge nobody pumps.
+        struct Closer
+        {
+            std::shared_ptr<UiThread>      ui;
+            winrt::com_ptr<DocumentSource> source;
+            ~Closer()
+            {
+                ui->close();
+                source->close();
+            }
+        } const closer{ui, source};
 
         winrt::Windows::Foundation::IAsyncOperation<bool> shown{nullptr};
         winrt::check_hresult(
@@ -444,9 +504,7 @@ std::optional<PrintResult> print_with_preview(HWND owner, PrintJob& job, const P
                     state->finished.store(true);
                 }
             });
-        ui.pump(state->finished);
-        manager.PrintTaskRequested(token);
-        source->close();
+        ui->pump(state->finished);
         return state->result.load();
     } catch (...)
     {

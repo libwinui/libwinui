@@ -106,7 +106,7 @@ std::unique_ptr<DCompCompositor> DCompCompositor::create(HWND hwnd, UINT dpi)
     return self;
 }
 
-void DCompCompositor::paint_overlay(Overlay& overlay, int width_px, int height_px, float radius_px, const Color& color)
+bool DCompCompositor::paint_overlay(Overlay& overlay, int width_px, int height_px, float radius_px, const Color& color)
 {
     ComPtr<IDCompositionSurface> surface;
     if (FAILED(device_->CreateSurface(static_cast<UINT>(width_px),
@@ -115,28 +115,36 @@ void DCompCompositor::paint_overlay(Overlay& overlay, int width_px, int height_p
                                       DXGI_ALPHA_MODE_PREMULTIPLIED,
                                       &surface)))
     {
-        return;
+        return false;
     }
 
     ComPtr<ID2D1DeviceContext> ctx;
     POINT                      offset{};
     if (FAILED(surface->BeginDraw(nullptr, IID_PPV_ARGS(&ctx), &offset)))
     {
-        return;
+        return false;
     }
 
     ctx->SetTransform(D2D1::Matrix3x2F::Translation(static_cast<float>(offset.x), static_cast<float>(offset.y)));
     ctx->Clear(D2D1::ColorF(0, 0, 0, 0));
 
     ComPtr<ID2D1SolidColorBrush> brush;
-    ctx->CreateSolidColorBrush(to_d2d(color), &brush);
+    if (FAILED(ctx->CreateSolidColorBrush(to_d2d(color), &brush)))
+    {
+        surface->EndDraw();
+        return false;
+    }
     const D2D1_ROUNDED_RECT rr{D2D1::RectF(0, 0, static_cast<float>(width_px), static_cast<float>(height_px)),
                                radius_px,
                                radius_px};
     ctx->FillRoundedRectangle(rr, brush.Get());
 
-    surface->EndDraw();
+    if (FAILED(surface->EndDraw()))
+    {
+        return false;
+    }
     overlay.surface = std::move(surface);
+    return true;
 }
 
 void DCompCompositor::sync_visual(VisualId id, const Rect& bounds, float corner_radius, const Color& color)
@@ -168,7 +176,15 @@ void DCompCompositor::sync_visual(VisualId id, const Rect& bounds, float corner_
     if (width_px != overlay.width_px || height_px != overlay.height_px || radius_px != overlay.radius_px ||
         !(color == overlay.color))
     {
-        paint_overlay(overlay, width_px, height_px, radius_px, color);
+        // Remembered only once drawn: a failed paint (a lost device) is tried again on the next sync.
+        // Until then the overlay shows nothing, not the old content at the old place.
+        if (!paint_overlay(overlay, width_px, height_px, radius_px, color))
+        {
+            overlay.visual->SetContent(nullptr);
+            overlay.width_px = 0;
+            device_->Commit();
+            return;
+        }
         overlay.visual->SetContent(overlay.surface.Get());
         overlay.width_px  = width_px;
         overlay.height_px = height_px;

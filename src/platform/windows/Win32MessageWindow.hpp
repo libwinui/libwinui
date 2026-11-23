@@ -4,6 +4,11 @@
 
 #include "winui/core/Callback.hpp"
 
+#ifndef LIBWINUI_MODULE
+#include <deque>
+#include <mutex>
+#endif
+
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -46,9 +51,12 @@ public:
 private:
     MessageWindow();
     static LRESULT CALLBACK proc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+    void                    run_posted(); // what post() queued, on the window's thread
 
     HWND                                  hwnd_ = nullptr;
     Callback<bool(const COPYDATASTRUCT&)> copy_data_{};
+    mutable std::mutex                    mutex_;
+    mutable std::deque<Callback<void()>>  queue_; // guarded by mutex_
 };
 
 } // namespace ui::win32

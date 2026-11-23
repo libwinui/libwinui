@@ -174,9 +174,8 @@ public:
 
             // The toast keeps a handle on the click handler until it is dismissed; the handler
             // forwards to the UI thread, which owns the callback.
-            MessageWindow& window = MessageWindow::get();
-            auto           entry  = std::make_shared<Callback<void()>>(std::move(notification.on_click));
-            pending_.push_back(entry);
+            MessageWindow& window                = MessageWindow::get();
+            auto           entry                 = std::make_shared<Callback<void()>>(std::move(notification.on_click));
             std::weak_ptr<Callback<void()>> weak = entry;
             toast.Activated(
                 [&window, weak, this](const notifications::ToastNotification&, const winrt::Windows::Foundation::IInspectable&)
@@ -208,6 +207,7 @@ public:
             toast.Dismissed([forget](const auto&, const auto&) { forget(); });
             toast.Failed([forget](const auto&, const auto&) { forget(); });
             notifier_.Show(toast);
+            pending_.push_back(entry); // only a toast that showed ever reports back
         } catch (const winrt::hresult_error&)
         {
             // Notifications are best effort: a system without them shows nothing.
