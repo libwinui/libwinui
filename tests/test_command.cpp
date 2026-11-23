@@ -289,6 +289,31 @@ TEST_CASE("IconSource draws as a Uniform ScaleToFit: its natural size scaled int
     REQUIRE(std::get<DrawTextRun>(g.commands.front()).style.font_size == 16.0f); // a 20px symbol icon, scaled to 16
 }
 
+TEST_CASE("A tooltip waiting to open goes with the content that replaced its element", "[tooltip]")
+{
+    HeadlessTextMeasurer measurer;
+    Window               window;
+    auto                 owned  = std::make_unique<ButtonControl>("Save");
+    ButtonControl*       button = owned.get();
+    button->set_tool_tip("Save (Ctrl+S)");
+    window.set_content(std::move(owned));
+    window.layout({400.0f, 300.0f}, measurer);
+
+    ui::testing::seams(window).handle_pointer(move(button->bounds().center()));
+    window.tick(700ms);
+    window.set_content(std::make_unique<TextControl>("Next page")); // a timer swapped the page
+    window.layout({400.0f, 300.0f}, measurer);
+    window.tick(300ms);
+    window.layout({400.0f, 300.0f}, measurer);
+    TestRenderer renderer;
+    window.render(renderer);
+    for (const auto& cmd : renderer.commands)
+    {
+        const auto* text = std::get_if<DrawTextRun>(&cmd);
+        CHECK((text == nullptr || text->text != "Save (Ctrl+S)"));
+    }
+}
+
 TEST_CASE("A tooltip set on an element opens after the pointer rests 800 ms, and a click closes it", "[tooltip]")
 {
     HeadlessTextMeasurer measurer;

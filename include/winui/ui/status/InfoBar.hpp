@@ -158,7 +158,7 @@ public:
         {
             set_parent_of(*observer, this);
         }
-        action_ = std::move(action);
+        detail::retire(std::exchange(action_, std::move(action))); // the old one's click may replace it
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
         return observer;
     }
@@ -185,7 +185,7 @@ public:
         {
             set_parent_of(*observer, this);
         }
-        content_      = std::move(content);
+        detail::retire(std::exchange(content_, std::move(content))); // its own handler may replace it
         content_rect_ = Rect{};
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
         return observer;

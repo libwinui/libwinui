@@ -811,7 +811,8 @@ private:
         {
             set_parent_of(*element, this);
         }
-        slot = std::move(element);
+        // Not destroyed here: the old child may be the one whose handler replaced it.
+        detail::retire(std::exchange(slot, std::move(element)));
         mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     }
 

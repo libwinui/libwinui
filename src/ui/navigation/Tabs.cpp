@@ -417,6 +417,8 @@ void TabsControl::remove_tab(std::size_t index)
         frozen_tab_width_ = tabs_[index].width;
     }
     const std::size_t count_before = tabs_.size();
+    // Not destroyed here: a button on the page may be what closed the tab.
+    detail::retire(std::move(tabs_[index].content));
     tabs_.erase(tabs_.begin() + static_cast<std::ptrdiff_t>(index));
     hovered_index_ = pressed_index_ = close_hovered_ = close_pressed_ = detail::NoIndex;
     dragging_                                                         = false;
@@ -451,7 +453,7 @@ void TabsControl::remove_tab(std::size_t index)
     }
     if (moved_selection && on_selection_changed_)
     {
-        on_selection_changed_(selected_key());
+        on_selection_changed_(std::string{selected_key()}); // a copy: the handler may remove the tab
     }
 }
 
@@ -599,7 +601,7 @@ void TabsControl::select(std::size_t index)
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     if (on_selection_changed_)
     {
-        on_selection_changed_(selected_key());
+        on_selection_changed_(std::string{selected_key()}); // a copy: the handler may remove the tab
     }
 }
 
@@ -611,7 +613,7 @@ void TabsControl::request_close(std::size_t index)
     }
     if (on_tab_close_requested_)
     {
-        on_tab_close_requested_(tabs_[index].key);
+        on_tab_close_requested_(std::string{tabs_[index].key}); // a copy: the handler removes the tab
         return;
     }
     remove_tab(index);

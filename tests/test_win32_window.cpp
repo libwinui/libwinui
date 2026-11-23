@@ -757,6 +757,27 @@ TEST_CASE("UI Automation calls the providers on the UI thread, and Invoke return
     CHECK(provider->Invoke() == static_cast<HRESULT>(UIA_E_ELEMENTNOTENABLED));
 }
 
+TEST_CASE("A provider whose element left the tree reports it gone", "[win32][automation]")
+{
+    Window         window;
+    StackControl*  stack  = window.set_content(std::make_unique<StackControl>(Orientation::Vertical));
+    ButtonControl* button = stack->add(std::make_unique<ButtonControl>("Save"));
+
+    Microsoft::WRL::ComPtr<ui::win32::Win32AutomationProvider> provider;
+    provider.Attach(new ui::win32::Win32AutomationProvider(nullptr,
+                                                           &window,
+                                                           button,
+                                                           std::make_shared<ui::win32::AutomationLifetime>(),
+                                                           /*is_root=*/false));
+    VARIANT value{};
+    REQUIRE(provider->GetPropertyValue(UIA_NamePropertyId, &value) == S_OK);
+    VariantClear(&value);
+
+    stack->orphan(button).reset();
+    CHECK(provider->GetPropertyValue(UIA_NamePropertyId, &value) == static_cast<HRESULT>(UIA_E_ELEMENTNOTAVAILABLE));
+    CHECK(provider->Invoke() == static_cast<HRESULT>(UIA_E_ELEMENTNOTAVAILABLE));
+}
+
 TEST_CASE("The window's automation root leaves its type and name to the window", "[win32][automation]")
 {
     Window        window;

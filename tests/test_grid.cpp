@@ -3,6 +3,7 @@
 #include "winui/core/DirtyFlags.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Input.hpp"
+#include "winui/core/Property.hpp"
 #include "winui/render/Renderer.hpp"
 #include "winui/render/Text.hpp"
 #include "winui/testing/HeadlessUI.hpp"
@@ -12,6 +13,7 @@
 #include "winui/ui/panels/Grid.hpp"
 #include "winui/ui/panels/Stack.hpp"
 #include "winui/ui/panels/WrapPanel.hpp"
+#include "winui/ui/spec/Control.hpp"
 #include "winui/ui/text/Text.hpp"
 #include "winui/ui/themes/Theme.hpp"
 
@@ -618,4 +620,19 @@ TEST_CASE("A Grid with a border brush draws the border around its background", "
     TestRenderer renderer;
     grid.render(renderer, Theme::light());
     REQUIRE(renderer.count() >= 2); // the background inside, then the border
+}
+
+TEST_CASE("A cell taken out of its grid stops following its bound row", "[grid][spec]")
+{
+    Property<std::size_t>    row{0};
+    ui::Control<ui::Text>    text;
+    std::unique_ptr<Element> grid  = ui::build(ui::Grid{
+        .rows    = {ui::AutoSize, ui::AutoSize},
+        .content = {ui::Cell{.row = ui::bind(row), .content = ui::Text{.text = "moving", .control = text}}},
+    });
+    std::unique_ptr<Element> taken = static_cast<GridControl*>(grid.get())->orphan(text);
+    REQUIRE(taken != nullptr);
+    grid.reset();
+    row = 1; // the grid it would move in is gone
+    CHECK(taken->parent() == nullptr);
 }

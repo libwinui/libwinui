@@ -164,7 +164,8 @@ Win32AutomationProvider::Win32AutomationProvider(
     element_(element),
     lifetime_(std::move(lifetime)),
     generation_(window_->content_generation()),
-    is_root_(is_root)
+    is_root_(is_root),
+    watch_(is_root ? nullptr : element)
 {
 }
 

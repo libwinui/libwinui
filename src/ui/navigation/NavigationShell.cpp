@@ -667,12 +667,25 @@ void adopt_entries(Element* owner, std::vector<NavEntry>& entries)
         adopt_entries(owner, e.children);
     }
 }
+
+// Not destroyed here: a page's own button may be what replaced the items.
+void retire_entries(std::vector<NavEntry>& entries)
+{
+    for (NavEntry& e : entries)
+    {
+        detail::retire(std::move(e.content));
+        detail::retire(std::move(e.info_badge));
+        detail::retire(std::move(e.animated_icon));
+        retire_entries(e.children);
+    }
+}
 } // namespace
 
 void NavigationShellControl::set_items(std::vector<NavEntry> items)
 {
     const bool keep_settings = selected_index_ == Settings;
     close_flyout();
+    retire_entries(entries_);
     entries_ = std::move(items);
     adopt_entries(this, entries_);
     rebuild_rows();
@@ -705,6 +718,7 @@ void NavigationShellControl::set_footer_items(std::vector<NavEntry> items)
     close_flyout();
     const std::size_t old_begin = footer_begin_;
     const bool was_footer = selected_index_ != Settings && selected_index_ != detail::NoIndex && selected_index_ >= old_begin;
+    retire_entries(footer_entries_);
     footer_entries_ = std::move(items);
     adopt_entries(this, footer_entries_);
     rebuild_rows();
@@ -814,7 +828,7 @@ void NavigationShellControl::select(std::size_t index)
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     if (on_selection_changed_)
     {
-        on_selection_changed_(key_at(selected_index_));
+        on_selection_changed_(std::string{key_at(selected_index_)}); // a copy: the handler may replace the items
     }
 }
 
@@ -885,7 +899,7 @@ void NavigationShellControl::invoke(std::size_t index, bool chevron_only, bool f
     cursor_index_ = from_flyout ? cursor_index_ : index;
     if (on_item_invoked_)
     {
-        on_item_invoked_(key_at(index));
+        on_item_invoked_(std::string{key_at(index)}); // a copy: the handler may replace the items
     }
     // Select first, then toggle the group or open its flyout.
     select(index);

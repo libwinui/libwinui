@@ -8,9 +8,14 @@
 #include "winui/testing/WindowSeams.hpp"
 #include "winui/ui/Element.hpp"
 #include "winui/ui/Window.hpp"
+#include "winui/ui/dialogs/Dialog.hpp"
 #include "winui/ui/hosting/ContentHost.hpp"
 #include "winui/ui/input/Button.hpp"
+#include "winui/ui/menus/CommandBar.hpp"
+#include "winui/ui/navigation/NavigationShell.hpp"
+#include "winui/ui/navigation/Tabs.hpp"
 #include "winui/ui/panels/Stack.hpp"
+#include "winui/ui/scrolling/Scroll.hpp"
 #include "winui/ui/spec/Control.hpp"
 #include "winui/ui/spec/Dynamic.hpp"
 #include "winui/ui/spec/Spec.hpp"
@@ -340,4 +345,79 @@ TEST_CASE("Tab after the focused button removed itself goes on from where it was
         seams(stage.window).handle_key({Key::Tab, KeyAction::Down, {.shift = true}});
         CHECK(stage.window.focused() == first);
     }
+}
+
+TEST_CASE("a button may replace the scroll content, shell page, tab or command bar slot it sits in",
+          "[window][lifetime]")
+{
+    Stage        stage;
+    ElementWatch button;
+    bool         alive_in_handler = false;
+    const auto   replacing        = [&](auto replace)
+    {
+        auto owned = std::make_unique<ButtonControl>("Replace");
+        owned->on_click(
+            [&, replace]
+            {
+                replace();
+                alive_in_handler = button.get() != nullptr;
+            });
+        button.reset(owned.get());
+        return owned;
+    };
+    const auto check = [&]
+    {
+        stage.layout();
+        alive_in_handler = false;
+        stage.click(button.get());
+        CHECK(alive_in_handler);
+        CHECK(button.get() == nullptr);
+    };
+
+    SECTION("scroll")
+    {
+        ScrollControl* scroll = stage.window.set_content(std::make_unique<ScrollControl>());
+        scroll->set_child(replacing([&] { scroll->set_child(std::make_unique<TextControl>("next")); }));
+        check();
+    }
+    SECTION("shell")
+    {
+        NavigationShellControl* shell = stage.window.set_content(std::make_unique<NavigationShellControl>());
+        shell->set_content(replacing([&] { shell->set_content(std::make_unique<TextControl>("next")); }));
+        check();
+    }
+    SECTION("tab")
+    {
+        TabsControl* tabs = stage.window.set_content(std::make_unique<TabsControl>());
+        tabs->add_tab("One", replacing([&] { tabs->remove_tab(std::size_t{0}); }));
+        tabs->add_tab("Two", std::make_unique<TextControl>("next"));
+        check();
+    }
+    SECTION("command bar")
+    {
+        CommandBarControl* bar = stage.window.set_content(std::make_unique<CommandBarControl>());
+        bar->add_primary(replacing([&] { bar->remove_primary(0); }));
+        check();
+    }
+}
+TEST_CASE("a dialog button may replace itself from its own click", "[window][lifetime]")
+{
+    Stage          stage;
+    ElementWatch   first;
+    bool           alive_in_handler = false;
+    DialogControl* dialog           = nullptr;
+    auto           owned            = std::make_unique<DialogControl>();
+    dialog                          = owned.get();
+    first.reset(dialog->set_primary_button("Next",
+                                           [&]
+                                           {
+                                               dialog->set_primary_button("Finish", {});
+                                               alive_in_handler = first.get() != nullptr;
+                                           }));
+    stage.window.set_content(std::make_unique<TextControl>("page"));
+    stage.window.show_modal(std::move(owned));
+    stage.layout();
+    stage.click(first.get());
+    CHECK(alive_in_handler);
+    CHECK(first.get() == nullptr);
 }

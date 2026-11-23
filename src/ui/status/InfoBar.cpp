@@ -265,7 +265,7 @@ void InfoBarControl::clear_action_button_content()
     {
         return;
     }
-    action_.reset();
+    detail::retire(std::move(action_)); // the button may be the one whose click cleared it
     action_rect_ = Rect{};
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
 }
@@ -276,7 +276,7 @@ void InfoBarControl::clear_content()
     {
         return;
     }
-    content_.reset();
+    detail::retire(std::move(content_)); // its own handler may have cleared it
     content_rect_ = Rect{};
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
 }

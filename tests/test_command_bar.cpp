@@ -371,6 +371,28 @@ TEST_CASE("CommandBar: the overflow opens under the bar, right-aligned; a comman
     REQUIRE_FALSE(w.bar->is_open());
 }
 
+TEST_CASE("CommandBar: a command that removes itself is gone from the closing overflow", "[command-bar][overflow]")
+{
+    BarWindow w;
+    w.bar->add_secondary(std::make_unique<AppBarButtonControl>("Keep"));
+    auto* gone = w.bar->add_secondary(std::make_unique<AppBarButtonControl>("Gone"));
+    gone->on_click([&] { w.bar->remove_secondary(1); });
+    w.bar->set_open(true);
+    w.relayout();
+    w.window.tick(300ms);
+    w.relayout();
+    w.click(gone->bounds().center());
+
+    // Drawn while the overflow slides shut, before the next layout.
+    TestRenderer renderer;
+    w.window.render(renderer);
+    for (const auto& command : renderer.commands)
+    {
+        const auto* text = std::get_if<DrawTextRun>(&command);
+        CHECK((text == nullptr || text->text != "Gone"));
+    }
+}
+
 TEST_CASE("CommandBar: is_sticky keeps it open through an outside click", "[command-bar][overflow]")
 {
     BarWindow w;

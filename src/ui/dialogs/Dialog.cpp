@@ -84,7 +84,8 @@ std::unique_ptr<ButtonControl> DialogControl::make_button(std::string text, Call
 
 ButtonControl* DialogControl::set_primary_button(std::string text, Callback<void()> on_click)
 {
-    primary_ = make_button(std::move(text), std::move(on_click), DialogResult::Primary);
+    // The old button is retired, not destroyed: it may be the one whose click replaced it.
+    detail::retire(std::exchange(primary_, make_button(std::move(text), std::move(on_click), DialogResult::Primary)));
     update_button_styles();
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     return primary_.get();
@@ -92,7 +93,7 @@ ButtonControl* DialogControl::set_primary_button(std::string text, Callback<void
 
 ButtonControl* DialogControl::set_secondary_button(std::string text, Callback<void()> on_click)
 {
-    secondary_ = make_button(std::move(text), std::move(on_click), DialogResult::Secondary);
+    detail::retire(std::exchange(secondary_, make_button(std::move(text), std::move(on_click), DialogResult::Secondary)));
     update_button_styles();
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     return secondary_.get();
@@ -100,7 +101,7 @@ ButtonControl* DialogControl::set_secondary_button(std::string text, Callback<vo
 
 ButtonControl* DialogControl::set_close_button(std::string text, Callback<void()> on_click)
 {
-    close_ = make_button(std::move(text), std::move(on_click), DialogResult::Close);
+    detail::retire(std::exchange(close_, make_button(std::move(text), std::move(on_click), DialogResult::Close)));
     update_button_styles();
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
     return close_.get();
