@@ -2399,6 +2399,105 @@ TEST_CASE("TableView keeps the selection on the same items across ObservableVect
     CHECK(table->selected_rows() == std::vector<std::size_t>{0});
 }
 
+TEST_CASE("A commit whose handler adds a row closes the edit, once", "[data-grid][spec][edit]")
+{
+    ObservableVector<std::string>           names{"a", "b"};
+    ui::Control<ui::TableView<std::string>> table;
+    std::unique_ptr<Element>                node = ui::build(ui::TableView<std::string>{
+        .items   = ui::bind(names),
+        .columns = {{.header = "Name", .width = 100.0f, .text = [](const std::string& s) { return s; }}},
+        .control = table,
+    });
+    table->set_read_only(false);
+    table->set_selected_row(1);
+    (void)lay_out(*table, 400.0f, 300.0f);
+    ui::testing::set_focused(*table, true);
+    int commits = 0;
+    table->on_cell_edited(
+        [&](const TableViewCellEditArgs& args)
+        {
+            ++commits;
+            (void)names.insert(0, "new"); // e.g. a log line arriving
+            names.replace(2, args.text);
+            return ui::Proceed;
+        });
+
+    table->handle_key(key_down(Key::F2));
+    table->handle_text("bee");
+    table->handle_key(key_down(Key::Enter));
+    CHECK_FALSE(table->is_editing());
+    CHECK(commits == 1);
+}
+
+TEST_CASE("A selection handler may replace the rows with fewer", "[data-grid]")
+{
+    TableViewControl grid;
+    grid.set_columns(make_columns());
+    grid.set_rows(make_rows(10));
+    (void)lay_out(grid, 400.0f, 300.0f);
+    grid.on_selection_changed(
+        [&](std::optional<std::size_t> row)
+        {
+            if (row == 8)
+            {
+                grid.set_rows(make_rows(2));
+            }
+        });
+    grid.set_selected_row(8);
+    CHECK(grid.rows().size() == 2);
+    CHECK_FALSE(grid.selected_row().has_value());
+}
+
+TEST_CASE("Shift+Up and Ctrl+Up on the first row stay on it", "[data-grid][input]")
+{
+    TableViewControl grid;
+    grid.set_columns(make_columns());
+    grid.set_rows(make_rows(3));
+    grid.set_selection_mode(SelectionMode::Extended);
+    grid.set_selected_row(0);
+    (void)lay_out(grid, 400.0f, 300.0f);
+    ui::testing::set_focused(grid, true);
+
+    KeyEvent shift_up        = key_down(Key::ArrowUp);
+    shift_up.modifiers.shift = true;
+    grid.handle_key(shift_up);
+    CHECK(grid.selected_rows() == std::vector<std::size_t>{0});
+    KeyEvent ctrl_up       = key_down(Key::ArrowUp);
+    ctrl_up.modifiers.ctrl = true;
+    grid.handle_key(ctrl_up);
+    CHECK(grid.selected_rows() == std::vector<std::size_t>{0});
+}
+
+TEST_CASE("An open edit stays on its item while other rows come and go", "[data-grid][spec][edit]")
+{
+    ObservableVector<std::string>           names{"a", "b", "c"};
+    ui::Control<ui::TableView<std::string>> table;
+    std::unique_ptr<Element>                node = ui::build(ui::TableView<std::string>{
+        .items   = ui::bind(names),
+        .columns = {{.header = "Name", .width = 100.0f, .text = [](const std::string& s) { return s; }}},
+        .control = table,
+    });
+    table->set_read_only(false);
+    table->set_selected_row(1); // "b"
+    (void)lay_out(*table, 400.0f, 300.0f);
+    ui::testing::set_focused(*table, true);
+    table->handle_key(key_down(Key::F2));
+    table->handle_text("half");
+
+    names.push_back("d"); // a live list growing at the end
+    REQUIRE(table->is_editing());
+    CHECK(table->editing_row() == 1);
+    (void)names.insert(0, "z");
+    CHECK(table->editing_row() == 2);
+    names.erase(1); // "a" goes
+    CHECK(table->editing_row() == 1);
+
+    CHECK(table->selected_row() == 1);
+
+    names.erase(1); // the edited "b" itself goes: the edit with it
+    CHECK_FALSE(table->is_editing());
+}
+
 TEST_CASE("Up from the first row reaches the column headers, which sort and resize from the keyboard",
           "[data-grid][sort][focus]")
 {
