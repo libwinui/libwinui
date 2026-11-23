@@ -2235,9 +2235,9 @@ void Window::handle_pointer(const PointerEvent& e)
     {
         pressed_cursor_ = resolve_cursor(e.position);
     }
-    else if (e.button == PointerButton::Left && e.action == PointerAction::Up)
+    else if ((e.button == PointerButton::Left && e.action == PointerAction::Up) || e.action == PointerAction::Leave)
     {
-        pressed_cursor_.reset();
+        pressed_cursor_.reset(); // released, or the press was cancelled
     }
     // A drag in progress has the pointer to itself (OLE's drag loop captures it): the tree sees
     // nothing until it is dropped.

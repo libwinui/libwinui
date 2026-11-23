@@ -401,7 +401,9 @@ bool SplitButtonControl::pointer_override(const PointerEvent& e)
         }
 
         case PointerAction::Leave:
+            // A Leave that reaches a pressed control means the press was cancelled (the capture was lost)
             primary_hovered_ = secondary_hovered_ = false;
+            primary_down_ = secondary_down_ = false;
             break;
 
         default:

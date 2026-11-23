@@ -20,6 +20,6 @@ if (auto p = editor.placement()) save_placement(*p); // where the window was whe
 
 | Field | Type | Default | |
 | --- | --- | --- | --- |
-| `normal_bounds` | `Rect` |  | The restored bounds, in DIPs, screen coordinates. They are kept while the window is minimized, maximized or full screen. |
+| `normal_bounds` | `Rect` |  | The restored bounds, in DIPs, screen coordinates. They are kept while the window is minimized, maximized or full screen. The position is measured from the top-left corner of the window's monitor at that monitor's scale, so it can differ from [Window::bounds()](window.md#bounds) on a scaled monitor away from the primary one. Store it and pass it back as it is. |
 | `state` | `WindowState` | `WindowState::Normal` | The state the window was in when the placement was read; the next run shows in it. |
 | `restore_to_maximized` | `bool` | `false` | Whether leaving Minimized or Fullscreen goes back to Maximized rather than Normal. |
