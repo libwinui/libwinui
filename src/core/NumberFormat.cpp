@@ -330,7 +330,7 @@ std::vector<Token> tokenize(std::string_view input, const DecimalFormatter& pars
     for (std::size_t i = 0; i < input.size(); ++i)
     {
         const char ch = input[i];
-        if (ch == ' ')
+        if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') // the whitespace that ends a number
         {
             continue;
         }
@@ -349,7 +349,9 @@ std::vector<Token> tokenize(std::string_view input, const DecimalFormatter& pars
                 ++j;
             }
             const std::size_t digits = j;
-            while (j < input.size() && !ends_number(input[j]))
+            // A sign right after an exponent's "e" belongs to the number, as in 1e-5.
+            while (j < input.size() && (!ends_number(input[j]) || ((input[j] == '-' || input[j] == '+') && j > digits &&
+                                                                   (input[j - 1] == 'e' || input[j - 1] == 'E'))))
             {
                 ++j;
             }
@@ -395,8 +397,10 @@ std::vector<Token> to_postfix(const std::vector<Token>& infix)
         }
         else if (token.type == TokenType::Operator)
         {
+            // ^ is right-associative, so 2^3^2 is 2^9.
             while (!operators.empty() && operators.top().type != TokenType::Parenthesis &&
-                   precedence(operators.top().ch) >= precedence(token.ch))
+                   (precedence(operators.top().ch) > precedence(token.ch) ||
+                    (precedence(operators.top().ch) == precedence(token.ch) && token.ch != '^')))
             {
                 postfix.push_back(operators.top());
                 operators.pop();

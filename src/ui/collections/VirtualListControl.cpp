@@ -203,7 +203,7 @@ void VirtualListControl::reflow_sized_to_content(const Rect& viewport)
 
 void VirtualListControl::set_scroll_offset(float offset)
 {
-    scroll_offset_ = offset; // reflow() clamps to the current content range
+    scroll_offset_ = std::isfinite(offset) ? offset : 0.0f; // reflow() clamps to the current content range
     reflow();
     mark_dirty(DirtyFlags::Visual);
 }

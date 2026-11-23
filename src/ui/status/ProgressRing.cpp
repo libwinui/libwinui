@@ -86,7 +86,7 @@ void stroke_arc(Renderer& renderer, Point center, float radius, float start_angl
 
 ProgressRingControl::ProgressRingControl(double value, double min, double max) : min_(min), max_(std::max(min, max))
 {
-    value_ = std::clamp(value, min_, max_);
+    value_ = std::isnan(value) ? min_ : std::clamp(value, min_, max_);
     // The ring's minimum width and height.
     set_min_width(16.0f);
     set_min_height(16.0f);
@@ -102,6 +102,10 @@ void ProgressRingControl::set_range(double min, double max)
 
 void ProgressRingControl::set_value(double value)
 {
+    if (std::isnan(value))
+    {
+        return; // no fill for it, and it never equals itself, so every set would report a change
+    }
     const double clamped = max_ > min_ ? std::clamp(value, min_, max_) : min_;
     if (clamped == value_)
     {

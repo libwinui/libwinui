@@ -409,11 +409,15 @@ TEST_CASE("accepts_expression evaluates what is typed, with precedence and paren
     REQUIRE(n.text() == "5");
     commit(n, "(1 + 2) * -3");
     REQUIRE(n.value() == -9.0);
-    commit(n, "2 ^ 3 ^ 2"); // left-associative
-    REQUIRE(n.value() == 64.0);
+    commit(n, "2 ^ 3 ^ 2"); // right-associative
+    REQUIRE(n.value() == 512.0);
+    commit(n, "2 * 3 ^ 2");
+    REQUIRE(n.value() == 18.0);
+    commit(n, "8 - 3 - 2"); // the others stay left-associative
+    REQUIRE(n.value() == 3.0);
     commit(n, "1 +");
-    REQUIRE(n.value() == 64.0); // invalid: the text goes back to the value
-    REQUIRE(n.text() == "64");
+    REQUIRE(n.value() == 3.0); // invalid: the text goes back to the value
+    REQUIRE(n.text() == "3");
 
     NumberBoxControl plain;
     commit(plain, "1 + 2");
@@ -428,6 +432,9 @@ TEST_CASE("evaluate_expression divides, rejects malformed input and handles sign
     REQUIRE_FALSE(evaluate_expression("(1 + 2", f).has_value());
     REQUIRE_FALSE(evaluate_expression("1 2", f).has_value());
     REQUIRE(evaluate_expression("-2 * -2", f) == 4.0);
+    REQUIRE(evaluate_expression("1e-3 + 1E+3", f) == 1000.001);
+    REQUIRE(evaluate_expression("2e3-1", f) == 1999.0);
+    REQUIRE(evaluate_expression("1\t+ 2", f) == 3.0); // pasted from a table
 }
 
 TEST_CASE("A DecimalFormatter pads digits and rounds by increment", "[number_box]")

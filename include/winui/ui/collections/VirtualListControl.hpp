@@ -299,11 +299,11 @@ private:
         const float max_offset = (std::max)(0.0f, content_height() - viewport_rect().height);
         return max_offset > 0.0f ? (scroll_offset_ / max_offset) * 100.0f : 0.0f;
     }
-    // Scrolls to `vertical` percent (0..100) of the range; a negative value leaves it alone.
-    // The horizontal value is ignored.
+    // Scrolls to `vertical` percent (0..100) of the range; a negative value, or NaN, leaves it
+    // alone. The horizontal value is ignored.
     inline bool set_scroll_percent(float /*horizontal*/, float vertical) override
     {
-        if (vertical < 0.0f)
+        if (!(vertical >= 0.0f))
         {
             return true;
         }

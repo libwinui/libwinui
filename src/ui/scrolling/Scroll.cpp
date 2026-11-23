@@ -194,15 +194,26 @@ bool ScrollControl::computed_vertical_scroll_bar_visible() const
     return user_can_scroll_vertically();
 }
 
+namespace
+{
+// The smallest zoom factor: a hundredth.
+constexpr float MinZoomFloor = 0.01f;
+} // namespace
+
 void ScrollControl::set_min_zoom_factor(float value)
 {
-    min_zoom_factor_ = std::max(0.0f, value);
+    // Above zero: the content's place and size are divided by the zoom factor.
+    min_zoom_factor_ = std::max(MinZoomFloor, value);
     max_zoom_factor_ = std::max(max_zoom_factor_, min_zoom_factor_);
     set_view(horizontal_offset_, vertical_offset_, zoom_factor_);
 }
 
 void ScrollControl::set_max_zoom_factor(float value)
 {
+    if (std::isnan(value))
+    {
+        return;
+    }
     max_zoom_factor_ = std::max(value, min_zoom_factor_);
     set_view(horizontal_offset_, vertical_offset_, zoom_factor_);
 }
@@ -454,12 +465,20 @@ void ScrollControl::set_view(float horizontal, float vertical, OptionalFloat zoo
     const float old_h = horizontal_offset_;
     const float old_v = vertical_offset_;
     const float old_z = zoom_factor_;
-    if (zoom)
+    // A NaN leaves that part of the view as it is: it would never equal itself, so a two-way
+    // binding would hand it back and forth for good.
+    if (zoom && !std::isnan(*zoom))
     {
         zoom_factor_ = std::clamp(*zoom, min_zoom_factor_, max_zoom_factor_);
     }
-    horizontal_offset_ = horizontal;
-    vertical_offset_   = vertical;
+    if (!std::isnan(horizontal))
+    {
+        horizontal_offset_ = horizontal;
+    }
+    if (!std::isnan(vertical))
+    {
+        vertical_offset_ = vertical;
+    }
 
     // reflow() reports a change it causes itself (a clamp); anything else is reported here.
     Callback<void()> handler = std::move(on_view_changed_);
@@ -502,6 +521,10 @@ void ScrollControl::jump_to_horizontal_offset(float offset)
 
 void ScrollControl::jump_to_zoom_factor(float zoom_factor)
 {
+    if (std::isnan(zoom_factor))
+    {
+        return; // see set_view()
+    }
     interrupt();
     const float target = std::clamp(zoom_factor, min_zoom_factor_, max_zoom_factor_);
     const Point pivot{viewport_width() * 0.5f, viewport_height() * 0.5f};

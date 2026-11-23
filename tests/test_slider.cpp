@@ -24,6 +24,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <cmath>
 #include <cstddef>
 
 using namespace ui;
@@ -618,6 +619,23 @@ TEST_CASE("A Windows9x Slider's thumb travels inside its channel", "[slider][ret
     slider.handle_pointer(up({141.0f + 5.5f, 16.0f}));
 }
 
+TEST_CASE("A tick frequency far finer than a huge range still draws the capped ticks", "[slider][retro]")
+{
+    const auto fills = [](double max)
+    {
+        SliderControl        slider{Orientation::Horizontal, 0.0, max, 0.0};
+        HeadlessTextMeasurer measurer;
+        slider.set_tick_frequency(1.0);
+        (void)slider.measure(Size{160.0f, 32.0f}, measurer, retro());
+        slider.arrange({0.0f, 0.0f, 160.0f, 32.0f});
+        TestRenderer renderer;
+        slider.render(renderer, retro());
+        return renderer.count_of<FillRoundedRect>();
+    };
+    // 3e9 steps don't fit in an int: as many ticks as the 512 cap, like any range past it.
+    CHECK(fills(3e9) == fills(1e6));
+}
+
 TEST_CASE("A stock trackbar draws two tick marks; TBM_SETTICFREQ draws the rest", "[slider][retro]")
 {
     // tick_frequency() == 0 still draws the two end ticks, a pixel longer than interior ones
@@ -1044,6 +1062,20 @@ TEST_CASE("An Aero slider is a glossy block on a groove, pointed toward one-side
     }
     CHECK(ticks == 6);
     CHECK(ticked.count_of<DrawGeometry>() == 3); // face, white ring, outline
+}
+
+TEST_CASE("A NaN written to a two-way bound slider is replaced by the slider's value", "[slider][spec][binding]")
+{
+    Property<double>        v{std::nan("")};
+    ui::Control<ui::Slider> slider;
+    std::unique_ptr<Element> node = ui::build(ui::Slider{.value = ui::bind(v), .min = 0.0, .max = 100.0, .control = slider});
+    CHECK(slider->value() == 0.0);
+    CHECK(v.get() == 0.0);
+
+    v = 40.0;
+    v = std::nan(""); // settles instead of bouncing between the property and the slider
+    CHECK(slider->value() == 40.0);
+    CHECK(v.get() == 40.0);
 }
 
 TEST_CASE("A two-way value the slider clamps is written back, at build and when already clamped",

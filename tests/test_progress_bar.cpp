@@ -19,6 +19,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <cmath>
 
 using namespace std::chrono_literals;
 
@@ -534,4 +535,15 @@ TEST_CASE("A progress spec without a value is indeterminate, and a bound value c
     std::unique_ptr<Element>     fixed_tree = ui::build(ui::ProgressBar{.value = plain, .control = fixed});
     CHECK_FALSE(fixed->is_indeterminate());
     CHECK(fixed->value() == 25.0);
+}
+
+TEST_CASE("A NaN progress value is ignored", "[progress-bar]")
+{
+    ProgressBarControl bar{40.0, 0.0, 100.0};
+    int                changes = 0;
+    bar.on_value_changed([&](double) { ++changes; });
+    bar.set_value(std::nan(""));
+    CHECK(bar.value() == 40.0);
+    CHECK(changes == 0);
+    CHECK(ProgressBarControl{std::nan(""), 0.0, 100.0}.value() == 0.0);
 }
