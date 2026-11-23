@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+#include "ui/collections/ItemSelection.hpp"
 #include "winui/core/Geometry.hpp"
 #include "winui/core/Index.hpp"
 #include "winui/core/Input.hpp"
@@ -193,6 +194,101 @@ TEST_CASE("set_current_item moves the focus cue and leaves the selection", "[lis
     ui::testing::set_focused(list, true);
     list.handle_key(KeyEvent{Key::ArrowDown, KeyAction::Down});
     CHECK(list.current_item() == 4); // the arrows go on from there
+}
+
+TEST_CASE("Enter on an item whose click handler removed it acts on no other item", "[list-view-base][selection]")
+{
+    ListViewControl list;
+    list.set_items(names(5));
+    layout(list, {300.0f, 400.0f});
+    list.set_item_click_enabled(true);
+    list.on_item_click([&](std::size_t index) { list.remove_item(index); });
+    std::vector<std::size_t> invoked;
+    list.on_item_invoked([&](std::size_t index) { invoked.push_back(index); });
+
+    ui::testing::set_focused(list, true);
+    list.set_current_item(2);
+    list.handle_key(KeyEvent{Key::Enter, KeyAction::Down});
+    CHECK(list.items().size() == 4);
+    CHECK(invoked.empty());
+    CHECK_FALSE(list.selected_index().has_value());
+}
+
+TEST_CASE("Enter invokes no item when the selection handler removed the one it selected", "[list-view-base][selection]")
+{
+    ListViewControl list;
+    list.set_items(names(4));
+    layout(list, {300.0f, 400.0f});
+    list.on_selection_changed(
+        [&](std::optional<std::size_t> index)
+        {
+            if (index == 1)
+            {
+                list.remove_item(1);
+            }
+        });
+    std::vector<std::size_t> invoked;
+    list.on_item_invoked([&](std::size_t index) { invoked.push_back(index); });
+    ui::testing::set_focused(list, true);
+    list.set_current_item(1);
+    list.handle_key(KeyEvent{Key::Enter, KeyAction::Down});
+    CHECK(list.items().size() == 3);
+    CHECK(invoked.empty());
+}
+
+TEST_CASE("remove_item's selection event sees the list without the item", "[list-view-base][selection]")
+{
+    ListViewControl list;
+    list.set_items({"A", "B", "C"});
+    list.set_selected_index(1);
+    std::vector<std::string> seen;
+    list.on_selection_changed([&](std::optional<std::size_t>) { seen = list.items(); });
+    list.remove_item(1);
+    CHECK(seen == std::vector<std::string>{"A", "C"});
+    CHECK(list.items() == std::vector<std::string>{"A", "C"});
+}
+
+TEST_CASE("PageDown in a view shorter than an item steps by one", "[list-view-base][selection]")
+{
+    ListViewControl list;
+    list.set_items(names(6));
+    list.set_item_height(40.0f);
+    layout(list, {300.0f, 20.0f});
+    ui::testing::set_focused(list, true);
+    list.set_current_item(0);
+    list.handle_key(KeyEvent{Key::PageDown, KeyAction::Down});
+    CHECK(list.current_item() == 1);
+    list.handle_key(KeyEvent{Key::PageUp, KeyAction::Down});
+    CHECK(list.current_item() == 0);
+}
+
+TEST_CASE("Moving an item takes its group key along", "[list-view-base][groups]")
+{
+    ListViewControl list;
+    list.set_items(names(4));
+    list.set_group_keys({"a", "a", "b", "b"});
+    list.move_item(0, 3);
+    CHECK(list.group_keys() == std::vector<std::string>{"a", "b", "b", "a"});
+}
+
+TEST_CASE("Moving an item keeps the focus cue and the range anchor on their items", "[list-view-base][selection]")
+{
+    ListViewControl list;
+    list.set_items(names(6));
+    layout(list, {300.0f, 400.0f});
+    list.set_current_item(3);
+    list.move_item(0, 5); // item 3 shifts up to 2
+    CHECK(list.current_item() == 2);
+    list.move_item(4, 1); // and back down to 3
+    CHECK(list.current_item() == 3);
+
+    detail::ItemSelection selection;
+    selection.reset(6);
+    selection.set_anchor(3);
+    selection.on_moved(0, 5);
+    CHECK(selection.anchor() == 2);
+    selection.on_moved(5, 0);
+    CHECK(selection.anchor() == 3);
 }
 
 TEST_CASE("Automation invokes an item a click acts on", "[list-view-base][automation]")
@@ -792,6 +888,32 @@ TEST_CASE("A drag between two lists reaches the target's drop handler", "[list-v
     CHECK(right->items() == std::vector<std::string>{"Two", "Three"});
     REQUIRE(completed.has_value());
     CHECK(*completed == DataPackageOperation::Move);
+}
+
+TEST_CASE("A reorder moves the dragged item even when others went while it was dragged", "[list-view-base][drag]")
+{
+    HeadlessUI       ui   = create_headless();
+    auto             own  = std::make_unique<ListViewControl>();
+    ListViewControl* list = own.get();
+    list->set_items({"A", "B", "C", "D"});
+    list->set_item_height(40.0f);
+    list->set_height(200.0f);
+    list->set_can_drag_items(true);
+    list->set_can_reorder_items(true);
+    list->set_allow_drop(true);
+    ui.window().set_content(std::move(own));
+    ui.layout({400.0f, 300.0f});
+
+    Window&     w    = ui.window();
+    const Point from = item_rect(*list, 2).center(); // C
+    ui::testing::seams(w).handle_pointer({from, PointerButton::Left, PointerAction::Down});
+    ui::testing::seams(w).handle_pointer({{from.x, from.y + 10.0f}, PointerButton::None, PointerAction::Move});
+    list->remove_item(0); // A goes while C is dragged
+    ui.layout({400.0f, 300.0f});
+    const Point to{item_rect(*list, 0).center().x, item_rect(*list, 0).y + 2.0f}; // before B
+    ui::testing::seams(w).handle_pointer({to, PointerButton::None, PointerAction::Move});
+    ui::testing::seams(w).handle_pointer({to, PointerButton::Left, PointerAction::Up});
+    CHECK(list->items() == std::vector<std::string>{"C", "B", "D"});
 }
 
 TEST_CASE("Escape cancels a drag, and the source hears it ended with nothing done", "[list-view-base][drag]")
