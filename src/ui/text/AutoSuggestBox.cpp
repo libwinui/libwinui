@@ -101,15 +101,32 @@ const std::string& AutoSuggestBoxControl::text() const
 
 void AutoSuggestBoxControl::set_text(std::string text)
 {
+    if (text == text_box_->text())
+    {
+        return; // a bound property echoing a previewed suggestion back
+    }
+    // What the arrow keys come back to, as if it had been typed.
+    user_typed_text_ = text;
+    active_index_    = detail::NoIndex;
     text_box_->set_text(std::move(text));
 }
 
 void AutoSuggestBoxControl::set_suggestions(std::vector<std::string> suggestions)
 {
-    suggestions_  = std::move(suggestions);
-    active_index_ = detail::NoIndex;
-    hover_index_  = detail::NoIndex;
-    list_offset_  = 0.0f;
+    // A list refreshed while a suggestion is previewed keeps the preview where it still is, so the
+    // arrow keys go on from it.
+    const bool previewing = active_index_ != detail::NoIndex;
+    suggestions_          = std::move(suggestions);
+    active_index_         = detail::NoIndex;
+    if (previewing)
+    {
+        if (const auto at = std::ranges::find(suggestions_, text_box_->text()); at != suggestions_.end())
+        {
+            active_index_ = static_cast<std::size_t>(at - suggestions_.begin());
+        }
+    }
+    hover_index_ = detail::NoIndex;
+    list_offset_ = 0.0f;
     if (is_focused())
     {
         is_open_ = !suggestions_.empty();
@@ -167,12 +184,13 @@ void AutoSuggestBoxControl::preview_suggestion(std::size_t index)
     }
     active_index_ = index;
     scroll_list_to(index);
-    text_box_->set_text(suggestions_[index]);
+    // A copy: a handler, or a property bound two-way, may replace the suggestions it came from.
+    const std::string text = suggestions_[index];
+    text_box_->set_text(text);
     mark_dirty(DirtyFlags::Visual);
     if (on_text_changed_)
     {
-        on_text_changed_(AutoSuggestBoxTextChangedArgs{.text   = suggestions_[index],
-                                                       .reason = AutoSuggestBoxTextChangeReason::Suggestion});
+        on_text_changed_(AutoSuggestBoxTextChangedArgs{.text = text, .reason = AutoSuggestBoxTextChangeReason::Suggestion});
     }
 }
 

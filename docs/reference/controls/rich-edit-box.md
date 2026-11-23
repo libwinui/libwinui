@@ -295,7 +295,7 @@ What [start, end) shares.
 void set_range_format(std::size_t start, std::size_t end, const CharacterFormat& format)
 ```
 
-Applies `format` to [start, end), leaving the selection where it is. Not an undo step: it is for markup the app keeps over the document, such as highlighting search hits.
+Applies `format` to [start, end), leaving the selection where it is. Not an undo step: it is for markup the app keeps over the document, such as highlighting search hits. Undoing an edit made before it brings back the formatting of that time, so reapply the markup after [on_text_changed()](#on_text_changed). Offsets inside a character move to its start.
 
 ### toggle_bold
 

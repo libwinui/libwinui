@@ -66,7 +66,7 @@ std::string strip_controls(std::string_view text, bool keep_breaks)
     out.reserve(text.size());
     for (const char c : text)
     {
-        if (static_cast<unsigned char>(c) >= 0x20 || c == '\t' || (c == '\n' && keep_breaks))
+        if ((static_cast<unsigned char>(c) >= 0x20 && c != 0x7F) || c == '\t' || (c == '\n' && keep_breaks))
         {
             out += c;
         }
@@ -465,8 +465,9 @@ std::pair<std::size_t, std::size_t> RichEditBoxControl::selection() const
 
 void RichEditBoxControl::select(std::size_t start, std::size_t end)
 {
-    anchor_ = std::min(start, text_.size());
-    caret_  = std::min(end, text_.size());
+    // An offset inside a character would split it on the next edit.
+    anchor_ = floor_code_point(text_, start);
+    caret_  = floor_code_point(text_, end);
     pending_format_.reset();
     preferred_x_.reset();
     last_edit_ = EditKind::Other;
@@ -547,7 +548,8 @@ void RichEditBoxControl::set_selection_format(const CharacterFormat& format)
 
 void RichEditBoxControl::set_range_format(std::size_t start, std::size_t end, const CharacterFormat& format)
 {
-    apply_format(start, end, format);
+    // A run boundary inside a character would hand the layout half of it.
+    apply_format(floor_code_point(text_, start), floor_code_point(text_, end), format);
 }
 
 void RichEditBoxControl::toggle(std::optional<bool> CharacterFormat::* field)

@@ -226,7 +226,7 @@ std::optional<Rect> TextBoxControl::caret_bounds() const
     }
     // As render_override() draws it: a line tall, centered in the text area.
     const float line_height = line_height_ > 0.0f ? std::min(line_height_, area.height) : area.height;
-    return Rect{area.left() + prefix_width(caret_, cached_style_),
+    return Rect{area.left() + prefix_width(caret_, cached_style_) - scroll_x_,
                 area.top() + (area.height - line_height) * 0.5f,
                 1.0f,
                 line_height};
@@ -268,6 +268,10 @@ Rect TextBoxControl::hbar_viewport() const
 
 float TextBoxControl::max_scroll_x() const
 {
+    if (!multiline())
+    {
+        return std::max(0.0f, text_width_ + 1.0f - text_area().width);
+    }
     return wrapping_ == TextWrapping::NoWrap ? std::max(0.0f, layout_.size().width + 1.0f - text_area().width) : 0.0f;
 }
 
@@ -323,10 +327,16 @@ std::size_t TextBoxControl::hit_at(Point window_point) const
         sync_layout();
         return layout_.hit_test(Point{window_point.x - area.x + scroll_x_, window_point.y - area.y + scroll_y_});
     }
-    return hit_test(window_point.x - area.x);
+    return hit_test(window_point.x - area.x + scroll_x_);
 }
 
 std::string TextBoxControl::admit(std::string_view text) const
+{
+    const auto [start, end] = selection_range();
+    return admit(text, start, end);
+}
+
+std::string TextBoxControl::admit(std::string_view text, std::size_t start, std::size_t end) const
 {
     const TextAnalyzer& analyzer = text_analyzer();
     std::string         out      = casing_ == CharacterCasing::Upper   ? analyzer.to_upper(text)
@@ -334,7 +344,6 @@ std::string TextBoxControl::admit(std::string_view text) const
                                                                        : std::string{text};
     if (max_length_ > 0)
     {
-        const auto [start, end] = selection_range();
         const std::size_t kept  = code_point_count(text_) -
                                   code_point_count(std::string_view{text_}.substr(start, end - start));
         const std::size_t limit = max_length_;
@@ -689,7 +698,8 @@ Size TextBoxControl::measure_override(Size available, const MeasureContext& cont
     }
     else
     {
-        text_w = context.measurer.measure(display_text(), cached_style_).width;
+        text_w      = context.measurer.measure(display_text(), cached_style_).width;
+        text_width_ = text_w;
     }
     float width = std::max(text_w, hint) + chrome + 1.0f; // and the caret's pixel after the last character
     width       = std::min(width, available.width);
@@ -845,11 +855,11 @@ void TextBoxControl::paste()
     for (std::size_t i = 0; i < clip->size(); ++i)
     {
         const char c = (*clip)[i];
-        if (static_cast<unsigned char>(c) >= 0x20)
+        if (static_cast<unsigned char>(c) >= 0x20 && c != 0x7F) // not DEL either, which Ctrl+Backspace types
         {
             sanitized += c;
         }
-        else if (accepts_return_ && (c == '\n' || c == '\r'))
+        else if (accepts_return_ && !password_char_ && (c == '\n' || c == '\r'))
         {
             if (c == '\r' && i + 1 < clip->size() && (*clip)[i + 1] == '\n')
             {
@@ -1031,8 +1041,12 @@ void TextBoxControl::commit_word_before(std::size_t end)
         if (error.action == SpellingAction::Replace && autocorrect && !error.replacement.empty())
         {
             std::string original = text_.substr(error.start, error.length);
-            if (std::find(rejected_autocorrections_.begin(), rejected_autocorrections_.end(), original) ==
-                rejected_autocorrections_.end())
+            // In the box's casing, and only when the length limit lets it through whole.
+            std::string admitted = admit(error.replacement, error.start, error.start + error.length);
+            const bool  whole    = code_point_count(admitted) >= code_point_count(error.replacement);
+            error.replacement    = std::move(admitted);
+            if (whole && std::find(rejected_autocorrections_.begin(), rejected_autocorrections_.end(), original) ==
+                             rejected_autocorrections_.end())
             {
                 edit(error.start, error.length, error.replacement);
                 // The caret sits after the boundary character, i.e. after the replaced word.
@@ -1274,7 +1288,7 @@ bool TextBoxControl::key_override(const KeyEvent& e)
         return true;
     }
     // A box that accepts returns takes Enter as a line break, and never submits.
-    if (e.key == Key::Enter && accepts_return_)
+    if (e.key == Key::Enter && accepts_return_ && !password_char_) // a password is one line
     {
         if (e.action == KeyAction::Down && editable() && !admit("\n").empty())
         {
@@ -1568,7 +1582,7 @@ bool TextBoxControl::text_override(const TextInputEvent& text_event)
     std::string typed;
     for (const char c : text)
     {
-        if (static_cast<unsigned char>(c) >= 0x20)
+        if (static_cast<unsigned char>(c) >= 0x20 && c != 0x7F) // not DEL either, which Ctrl+Backspace types
         {
             typed += c;
         }
@@ -1754,7 +1768,8 @@ bool TextBoxControl::handle_context_menu(std::optional<Point> position, ContextM
     {
         case Command::Suggestion:
         {
-            const std::string& replacement = suggestions[payload];
+            // Cased and cut to the length limit, as typing it would be.
+            const std::string replacement = admit(suggestions[payload], error->start, error->start + error->length);
             edit(error->start, error->length, replacement);
             caret_            = error->start + replacement.size();
             selection_anchor_ = caret_;
@@ -2054,12 +2069,41 @@ void TextBoxControl::render_override(Renderer& renderer, const RenderContext& co
         return;
     }
 
+    // Text wider than the box scrolls sideways to keep the caret in view, with a little of the
+    // text past it.
+    const bool overflows = text_width_ + 1.0f > text_rect.width;
+    if (!overflows)
+    {
+        scroll_x_ = 0.0f;
+    }
+    else if (follow_caret_)
+    {
+        follow_caret_     = false;
+        const float caret = prefix_width(caret_, style);
+        const float lead  = std::min(text_rect.width / 4.0f, font_em_ * 4.0f);
+        if (caret + 1.0f > scroll_x_ + text_rect.width)
+        {
+            scroll_x_ = caret + 1.0f - text_rect.width + lead;
+        }
+        if (caret < scroll_x_)
+        {
+            scroll_x_ = caret - lead;
+        }
+    }
+    scroll_x_              = std::clamp(scroll_x_, 0.0f, std::max(0.0f, text_width_ + 1.0f - text_rect.width));
+    const float left       = text_rect.left() - scroll_x_;
+    const Rect  shown_rect = overflows ? Rect{left, text_rect.top(), text_width_ + 1.0f, text_rect.height} : text_rect;
+    if (overflows)
+    {
+        renderer.push_clip(text_rect);
+    }
+
     Rect selection_rect{};
     if (show_selection)
     {
         const auto [start, end] = selection_range();
-        const float x0          = text_rect.left() + prefix_width(start, style);
-        const float x1          = text_rect.left() + prefix_width(end, style);
+        const float x0          = left + prefix_width(start, style);
+        const float x1          = left + prefix_width(end, style);
         selection_rect          = Rect{x0, text_rect.top(), x1 - x0, text_rect.height};
         renderer.fill_rounded_rect(selection_rect, 0.0f, selection_fill);
     }
@@ -2071,11 +2115,11 @@ void TextBoxControl::render_override(Renderer& renderer, const RenderContext& co
     else
     {
         const std::string shown = display_text();
-        renderer.draw_text(shown, text_rect, text_color, style);
+        renderer.draw_text(shown, shown_rect, text_color, style);
         if (show_selection && selection_rect.width > 0.0f)
         {
             renderer.push_clip(selection_rect);
-            renderer.draw_text(shown, text_rect, selected_text, style);
+            renderer.draw_text(shown, shown_rect, selected_text, style);
             renderer.pop_clip();
         }
     }
@@ -2092,8 +2136,8 @@ void TextBoxControl::render_override(Renderer& renderer, const RenderContext& co
             {
                 continue;
             }
-            const float x0 = text_rect.left() + prefix_width(error.start, style);
-            const float x1 = std::min(text_rect.right(), text_rect.left() + prefix_width(error.start + error.length, style));
+            const float x0 = std::max(text_rect.left(), left + prefix_width(error.start, style));
+            const float x1 = std::min(text_rect.right(), left + prefix_width(error.start + error.length, style));
             if (x1 <= x0)
             {
                 continue;
@@ -2111,10 +2155,14 @@ void TextBoxControl::render_override(Renderer& renderer, const RenderContext& co
     {
         // One line tall, centered like the text: a box stretched taller than its text keeps a
         // caret the size of the font.
-        const float caret_x     = text_rect.left() + prefix_width(caret_, style);
+        const float caret_x     = left + prefix_width(caret_, style);
         const float line_height = line_height_ > 0.0f ? std::min(line_height_, text_rect.height) : text_rect.height;
         const float caret_top   = text_rect.top() + (text_rect.height - line_height) * 0.5f;
         renderer.stroke_line(Point{caret_x, caret_top}, Point{caret_x, caret_top + line_height}, text_color, 1.0f);
+    }
+    if (overflows)
+    {
+        renderer.pop_clip();
     }
 
     if (delete_button_visible())

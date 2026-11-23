@@ -962,6 +962,55 @@ TEST_CASE("A TextBox taller than its text draws a caret one line tall, centered"
     CHECK_THAT((caret->from.y + caret->to.y) * 0.5f, Catch::Matchers::WithinAbs(60.0f, 2.0));
 }
 
+TEST_CASE("A masked box stays on one line, even set to accept returns", "[textbox]")
+{
+    ui::testing::HeadlessUI ui    = ui::testing::create_headless();
+    auto                    owned = std::make_unique<TextBoxControl>("ab");
+    TextBoxControl*         box   = owned.get();
+    box->set_accepts_return(true);
+    box->set_password_char(U'●');
+    CHECK_FALSE(box->multiline());
+    ui.window().set_content(std::move(owned));
+    ui.layout({300, 100});
+    ui.window().focus_content();
+
+    // A click past the text puts the caret at its end, in the text's own offsets.
+    const Point at{box->bounds().right() - 60.0f, box->bounds().center().y};
+    ui::testing::seams(ui.window()).handle_pointer({at, PointerButton::Left, PointerAction::Down});
+    ui::testing::seams(ui.window()).handle_pointer({at, PointerButton::Left, PointerAction::Up});
+    CHECK(box->caret() == 2);
+    ui::testing::seams(ui.window()).handle_key({Key::Enter, KeyAction::Down});
+    ui::testing::seams(ui.window()).handle_text("c");
+    CHECK(box->text() == "abc");
+}
+
+TEST_CASE("A single-line box scrolls sideways to keep the caret of a long text in view", "[textbox]")
+{
+    ui::testing::HeadlessUI ui    = ui::testing::create_headless();
+    auto                    owned = std::make_unique<TextBoxControl>();
+    TextBoxControl*         box   = owned.get();
+    ui.window().set_content(std::move(owned));
+    ui.layout({120, 100});
+    ui.window().focus_content();
+    ui::testing::seams(ui.window()).handle_text(std::string(60, 'x'));
+    ui.layout({120, 100});
+    ui::testing::TestRenderer renderer;
+    box->render(renderer, Theme::light());
+
+    const std::optional<Rect> caret = ui.window().caret_bounds();
+    REQUIRE(caret.has_value());
+    CHECK(box->bounds().contains(caret->center())); // at the end of the text, which is far wider
+    // The text is drawn from left of the box, clipped to it.
+    CHECK(renderer.count_of<ui::PushClip>() >= 1);
+
+    // A click in the middle lands in the scrolled text, far past its first few characters.
+    const Point at = box->bounds().center();
+    ui::testing::seams(ui.window()).handle_pointer({at, PointerButton::Left, PointerAction::Down});
+    ui::testing::seams(ui.window()).handle_pointer({at, PointerButton::Left, PointerAction::Up});
+    CHECK(box->text().size() == 60);
+    CHECK(box->caret() > 30);
+}
+
 TEST_CASE("The window reports the focused text box's caret for the input method", "[textbox][ime]")
 {
     ui::testing::HeadlessUI ui    = ui::testing::create_headless();
@@ -1551,4 +1600,12 @@ TEST_CASE("Page Down moves the caret a view's height and the view with it", "[te
     CHECK(caret->y < 40.0f); // still near the top of the view, which scrolled down with it
     tb.handle_key(key_down(Key::PageUp));
     CHECK(tb.caret() == 0);
+}
+
+TEST_CASE("The DEL character Ctrl+Backspace types is not inserted", "[textbox]")
+{
+    TextBoxControl box{"one two"};
+    ui::testing::set_focused(box, true);
+    box.handle_text("\x7F");
+    CHECK(box.text() == "one two");
 }

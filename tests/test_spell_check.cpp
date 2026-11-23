@@ -320,6 +320,25 @@ TEST_CASE("A pending check still runs after focus moves on", "[textbox][spellche
 
 // ---- TextBox: autocorrect -------------------------------------------------------------
 
+TEST_CASE("Autocorrect follows the box's casing and leaves a correction its length limit would cut",
+          "[textbox][spellcheck]")
+{
+    TestSpellChecker checker;
+    checker.add_autocorrection("teh", "the");
+    checker.add_autocorrection("alot", "a lot");
+    TextBoxControl tb = make_box();
+    tb.set_character_casing(CharacterCasing::Lower);
+    sync_and_check(tb, checker);
+    type(tb, "teh ");
+    CHECK(tb.text() == "the ");
+
+    TextBoxControl limited = make_box();
+    limited.set_max_length(5);
+    sync_and_check(limited, checker);
+    type(limited, "alot ");
+    CHECK(limited.text() == "alot "); // "a lot " is six: left as typed
+}
+
 TEST_CASE("Autocorrect replaces a registered word as it's finished; Ctrl+Z puts it back for good",
           "[textbox][spellcheck]")
 {
