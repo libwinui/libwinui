@@ -37,6 +37,7 @@
 
 #ifndef LIBWINUI_MODULE
 #include <algorithm>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <string>
@@ -683,8 +684,10 @@ void retire_entries(std::vector<NavEntry>& entries)
 
 void NavigationShellControl::set_items(std::vector<NavEntry> items)
 {
-    const bool keep_settings = selected_index_ == Settings;
+    const bool        keep_settings = selected_index_ == Settings;
+    const std::string was_selected  = selected_key();
     close_flyout();
+    ++items_generation_;
     retire_entries(entries_);
     entries_ = std::move(items);
     adopt_entries(this, entries_);
@@ -711,13 +714,16 @@ void NavigationShellControl::set_items(std::vector<NavEntry> items)
         }
     }
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
+    report_selection_change(was_selected);
 }
 
 void NavigationShellControl::set_footer_items(std::vector<NavEntry> items)
 {
+    const std::string was_selected = selected_key();
     close_flyout();
     const std::size_t old_begin = footer_begin_;
     const bool was_footer = selected_index_ != Settings && selected_index_ != detail::NoIndex && selected_index_ >= old_begin;
+    ++items_generation_;
     retire_entries(footer_entries_);
     footer_entries_ = std::move(items);
     adopt_entries(this, footer_entries_);
@@ -735,6 +741,16 @@ void NavigationShellControl::set_footer_items(std::vector<NavEntry> items)
     indicator_from_       = std::nullopt;
     footer_scroll_offset_ = 0.0f;
     mark_dirty(DirtyFlags::Layout | DirtyFlags::Visual);
+    report_selection_change(was_selected);
+}
+
+// New items can take the selection somewhere else, or nowhere: a bound key follows.
+void NavigationShellControl::report_selection_change(const std::string& was_selected)
+{
+    if (on_selection_changed_ && selected_key() != was_selected)
+    {
+        on_selection_changed_(std::string{selected_key()});
+    }
 }
 
 // ---- selection ----
@@ -897,12 +913,23 @@ void NavigationShellControl::invoke(std::size_t index, bool chevron_only, bool f
     }
 
     cursor_index_ = from_flyout ? cursor_index_ : index;
+    // The handlers below may replace the items, which frees `e` and gives `index` to another item.
+    const bool          expanded   = e != nullptr && e->expanded;
+    const std::uint64_t generation = items_generation_;
     if (on_item_invoked_)
     {
         on_item_invoked_(std::string{key_at(index)}); // a copy: the handler may replace the items
+        if (items_generation_ != generation)
+        {
+            return;
+        }
     }
     // Select first, then toggle the group or open its flyout.
     select(index);
+    if (items_generation_ != generation)
+    {
+        return;
+    }
     if (group)
     {
         const bool flyout_parent = !from_flyout && (top_mode() || (closed_compact() && depth_of(index) == 0));
@@ -919,7 +946,7 @@ void NavigationShellControl::invoke(std::size_t index, bool chevron_only, bool f
         }
         else
         {
-            set_expanded(index, !e->expanded);
+            set_expanded(index, !expanded);
         }
     }
     else
@@ -2375,11 +2402,13 @@ void NavigationShellControl::move_cursor(int delta)
         {
             return;
         }
-        next = static_cast<std::size_t>(pos + (delta < 0 ? -1 : 1));
+        // `delta` stops that way, as far as there are: Home and End go all the way in one step.
+        next = static_cast<std::size_t>(
+            std::clamp<std::ptrdiff_t>(pos + delta, 0, static_cast<std::ptrdiff_t>(stops.size()) - 1));
     }
-    else if (delta < 0)
+    else if (delta == -1 || delta > 1)
     {
-        next = stops.size() - 1;
+        next = stops.size() - 1; // Up from nowhere starts at the end, as End does
     }
     cursor_index_ = stops[next];
     if (cursor_index_ != OverflowStop)
@@ -2525,17 +2554,9 @@ bool NavigationShellControl::key_override(const KeyEvent& e)
         case Key::Home:
         case Key::End:
         {
-            // Home and End move the cursor to the first and last item.
-            const int step = e.key == Key::Home ? -1 : +1;
-            for (int guard = 0; guard < 1 << 16; ++guard)
-            {
-                const std::size_t before = cursor_index_;
-                move_cursor(step);
-                if (cursor_index_ == before)
-                {
-                    break;
-                }
-            }
+            // Home and End move the cursor to the first and last item, selecting only that one
+            // when selection follows focus.
+            move_cursor(e.key == Key::Home ? std::numeric_limits<int>::min() / 2 : std::numeric_limits<int>::max() / 2);
             break;
         }
         case Key::Enter:

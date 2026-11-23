@@ -520,6 +520,23 @@ TEST_CASE("set_items selects the first selectable item, skipping headings", "[na
     REQUIRE(view.selected_index() == 1);
 }
 
+TEST_CASE("New items that move the selection report it", "[navigation-view]")
+{
+    NavigationShellControl view;
+    view.set_items(grouped_items());
+    std::vector<std::string> reported;
+    view.on_selection_changed([&](const std::string& key) { reported.push_back(key); });
+
+    std::vector<NavEntry> other;
+    other.push_back(NavEntry{.text = "Home"});
+    view.set_items(std::move(other));
+    CHECK(reported == std::vector<std::string>{"Home"});
+
+    view.set_items(grouped_items()); // back to A1 first
+    CHECK(reported.back() == view.selected_key());
+    CHECK(reported.size() == 2);
+}
+
 TEST_CASE("Clicking a group row toggles it without selecting it; clicking a page selects it", "[navigation-view][input]")
 {
     HeadlessTextMeasurer m;
@@ -1312,6 +1329,35 @@ TEST_CASE("Header and separator items are drawn but never selected or given the 
     CHECK(view.selected_index() == 4);
     view.set_selected_index(1);
     CHECK(view.selected_index() == 4);
+}
+
+TEST_CASE("An invoke handler that replaces the items ends the invoke", "[navigation-view][input]")
+{
+    NavigationShellControl view;
+    plain(view);
+    view.set_items(icon_items({"One", "Two", "Three"}));
+    view.on_item_invoked([&](const std::string&) { view.set_items(icon_items({"A", "B", "C"})); });
+    ui::testing::set_focused(view, true);
+
+    view.handle_key(key_down(Key::ArrowDown));
+    view.handle_key(key_down(Key::ArrowDown));
+    view.handle_key(key_down(Key::Enter)); // on "Three"
+    CHECK(view.selected_key() == "A");     // the new items' own first, not whatever is third now
+}
+TEST_CASE("With selection_follows_focus, Home and End select only the item they land on", "[navigation-view][input]")
+{
+    NavigationShellControl view;
+    plain(view);
+    view.set_selection_follows_focus(NavigationShellSelectionFollowsFocus::Enabled);
+    view.set_items(icon_items({"One", "Two", "Three", "Four"}));
+    std::vector<std::string> selected;
+    view.on_selection_changed([&](const std::string& key) { selected.push_back(key); });
+    ui::testing::set_focused(view, true);
+
+    view.handle_key(key_down(Key::End));
+    CHECK(selected == std::vector<std::string>{"Four"});
+    view.handle_key(key_down(Key::Home));
+    CHECK(selected == std::vector<std::string>{"Four", "One"});
 }
 
 TEST_CASE("Without selection_follows_focus the cursor moves and Enter or Space invokes", "[navigation-view][input]")

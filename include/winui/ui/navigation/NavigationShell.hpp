@@ -45,6 +45,7 @@
 #include <vector>
 
 #include <cstddef>
+#include <cstdint>
 #endif
 
 namespace ui
@@ -868,6 +869,7 @@ private:
     void open_children_flyout(std::size_t group);
     void open_overflow_flyout();
     void close_flyout();
+    void report_selection_change(const std::string& was_selected); // after set_items()/set_footer_items()
     void rebuild_flyout_rows();
     void request_pane_open(bool open, bool light_dismiss);
     void update_focus_trap();
@@ -916,7 +918,8 @@ private:
     // ---- model ----
     std::vector<NavEntry>    entries_;
     std::vector<NavEntry>    footer_entries_;
-    std::unique_ptr<Element> content_; // the shared content region; see set_content()
+    std::unique_ptr<Element> content_;              // the shared content region; see set_content()
+    std::uint64_t            items_generation_ = 0; // bumped by set_items()/set_footer_items()
     std::unique_ptr<Element> auto_suggest_box_;
     std::unique_ptr<Element> pane_header_;
     std::unique_ptr<Element> pane_custom_content_;

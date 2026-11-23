@@ -521,12 +521,17 @@ public:
             Column& column = *columns_[i];
             if (column.part.items != parts[i].items)
             {
-                const float offset   = column.target - static_cast<float>(column.part.selected);
-                column.part.items    = std::move(parts[i].items);
-                column.part.selected = std::min(parts[i].selected,
-                                                column.part.items.empty() ? 0 : column.part.items.size() - 1);
-                column.target        = static_cast<float>(column.part.selected) + offset;
-                column.position      = column.target;
+                // A looping column is some whole turns past its selection: as many turns of the new
+                // list, or 31 turned past the wrap would land on day 4 of a 28-day February.
+                const float offset    = column.target - static_cast<float>(column.part.selected);
+                const float old_count = static_cast<float>(column.part.items.size());
+                const float turns     = old_count > 0.0f ? std::round(offset / old_count) : 0.0f;
+                column.part.items     = std::move(parts[i].items);
+                column.part.selected  = std::min(parts[i].selected,
+                                                 column.part.items.empty() ? 0 : column.part.items.size() - 1);
+                column.target         = static_cast<float>(column.part.selected) + (offset - turns * old_count) +
+                                        turns * static_cast<float>(column.part.items.size());
+                column.position       = column.target;
             }
         }
         mark_dirty(DirtyFlags::Visual);
