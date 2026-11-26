@@ -370,7 +370,7 @@ True: the button can be measured in parallel with other elements, since measurin
 std::string tool_tip() const override
 ```
 
-An explicit tooltip, else the command's description, else "Text (Ctrl+S)" outside the overflow (empty inside it).
+An explicit tooltip, else the command's description, else "Text (Ctrl+S)", or the text alone while the bar doesn't show it. Empty in the overflow.
 
 ### handle_global_shortcut
 

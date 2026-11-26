@@ -293,8 +293,8 @@ public:
     {
         return true;
     }
-    /// An explicit tooltip, else the command's description, else "Text (Ctrl+S)" outside the
-    /// overflow (empty inside it).
+    /// An explicit tooltip, else the command's description, else "Text (Ctrl+S)", or the text alone
+    /// while the bar doesn't show it. Empty in the overflow.
     [[nodiscard]] std::string tool_tip() const override;
     /// Clicks the button when `e` matches shortcut() and the button is enabled; true if handled.
     bool handle_global_shortcut(const KeyEvent& e) override;
@@ -536,7 +536,8 @@ LIBWINUI_EXPORT struct AppBarButton
     Binding<std::optional<Alignment>> horizontal_alignment{}; ///< Horizontal alignment in its slot.
     Binding<std::optional<Alignment>> vertical_alignment{};   ///< Vertical alignment in its slot.
     Binding<bool>                     visible{true};          ///< Shown; false collapses it (no room, no input).
-    /// Shown when the pointer rests on it. Unset: the command's description, or "Text (Ctrl+S)".
+    /// Shown when the pointer rests on it. Unset: the command's description, or "Text (Ctrl+S)",
+    /// or the text alone while the bar doesn't show it.
     Binding<std::string> tool_tip{};
     Binding<bool>        enabled{true};   ///< False grays it out and takes no input.
     Accessibility        accessibility{}; ///< Screen reader name and description, and a test id.
@@ -629,7 +630,8 @@ LIBWINUI_EXPORT struct AppBarToggleButton
     Binding<std::optional<Alignment>> horizontal_alignment{}; ///< Horizontal alignment in its slot.
     Binding<std::optional<Alignment>> vertical_alignment{};   ///< Vertical alignment in its slot.
     Binding<bool>                     visible{true};          ///< Shown; false collapses it (no room, no input).
-    /// Shown when the pointer rests on it. Unset: the command's description, or "Text (Ctrl+B)".
+    /// Shown when the pointer rests on it. Unset: the command's description, or "Text (Ctrl+B)",
+    /// or the text alone while the bar doesn't show it.
     Binding<std::string> tool_tip{};
     Binding<bool>        enabled{true};   ///< False grays it out and takes no input.
     Accessibility        accessibility{}; ///< Screen reader name and description, and a test id.

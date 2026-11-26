@@ -204,14 +204,14 @@ AppBarButtonControl::Mode AppBarButtonControl::mode() const
     {
         return Mode::FlyoutPrimary;
     }
-    const CommandBarDefaultTextPosition position = text_position_ == CommandBarTextPosition::Collapsed
-                                                       ? CommandBarDefaultTextPosition::Collapsed
-                                                       : look_.text_position;
-    if (position == CommandBarDefaultTextPosition::Right)
+    // With its text collapsed in a bar that puts text on the right, a button keeps that layout
+    // without the text, so it's only as wide as its icon.
+    if (look_.text_position == CommandBarDefaultTextPosition::Right)
     {
         return Mode::LabelOnRight;
     }
-    if (position == CommandBarDefaultTextPosition::Collapsed)
+    if (text_position_ == CommandBarTextPosition::Collapsed ||
+        look_.text_position == CommandBarDefaultTextPosition::Collapsed)
     {
         return Mode::LabelCollapsed;
     }
@@ -222,8 +222,12 @@ Size AppBarButtonControl::measure_override(Size available, const MeasureContext&
 {
     (void)available;
     (void)icon().measure(context.measurer);
-    const std::string text = this->text();
-    switch (mode())
+    const Mode m = mode();
+    // Collapsed text stays off the bar, not off the overflow menu
+    const std::string text = m != Mode::Overflow && text_position_ == CommandBarTextPosition::Collapsed
+                                 ? std::string{}
+                                 : this->text();
+    switch (m)
     {
         case Mode::FullSize:
         {
@@ -332,7 +336,9 @@ void AppBarButtonControl::render_override(Renderer& renderer, const RenderContex
     draw_control_chrome(renderer, plate, theme.corner_radius, visual, theme.border_width);
 
     const IconSource& icon_source = icon();
-    const std::string text        = this->text();
+    const std::string text        = m != Mode::Overflow && text_position_ == CommandBarTextPosition::Collapsed
+                                        ? std::string{}
+                                        : this->text();
     const Color       foreground  = visual.text;
     const Color       secondary   = is_enabled() ? theme.surfaces.menu_secondary_text.value_or(foreground) : foreground;
 
@@ -504,12 +510,20 @@ std::string AppBarButtonControl::tool_tip() const
         return command()->current().description;
     }
     // "Text (Ctrl+S)" outside the overflow.
+    const Mode m = mode();
+    if (m == Mode::Overflow)
+    {
+        return {};
+    }
     const std::string shortcut = shortcut_text();
-    if (!look_.overflow && !shortcut.empty())
+    if (!shortcut.empty())
     {
         return detail::fill(strings().common.with_shortcut, {text(), shortcut});
     }
-    return {};
+    // Without a shortcut only the text the bar doesn't show
+    const bool text_shown = m == Mode::FullSize ||
+                            (m == Mode::LabelOnRight && text_position_ != CommandBarTextPosition::Collapsed);
+    return text_shown ? std::string{} : text();
 }
 
 bool AppBarButtonControl::handle_global_shortcut(const KeyEvent& e)

@@ -114,6 +114,39 @@ TEST_CASE("AppBarButton with the label on the right: 12 + icon + 8 + label + 12,
     REQUIRE(measure(button).height == 48.0f);
 }
 
+TEST_CASE("AppBarButton with its text collapsed beside others with the label on the right is 40 wide",
+          "[app-bar-button][layout]")
+{
+    AppBarLook look;
+    look.text_position = CommandBarDefaultTextPosition::Right;
+    AppBarButtonControl button{"Undo", Symbol::Undo};
+    button.set_text_position(CommandBarTextPosition::Collapsed);
+    button.set_app_bar_look(look);
+    REQUIRE(measure(button) == Size{40.0f, 48.0f});
+
+    // A menu adds its chevron's column
+    FlyoutControl flyout;
+    button.set_flyout(&flyout);
+    REQUIRE_THAT(measure(button).width, WithinAbs(40.0f + 13.0f, 0.01));
+
+    // Only the icon and the chevron are drawn, the text stays in the tooltip
+    button.arrange(Rect{Point{}, measure(button)});
+    TestRenderer renderer;
+    button.render(renderer, Theme::light());
+    for (const auto& command : renderer.commands)
+    {
+        const auto* text = std::get_if<DrawTextRun>(&command);
+        CHECK((text == nullptr || text->text != "Undo"));
+    }
+    CHECK(button.tool_tip() == "Undo");
+
+    // The overflow still shows it
+    look.overflow = true;
+    button.set_app_bar_look(look);
+    HeadlessTextMeasurer measurer;
+    CHECK(measure(button).width > measurer.measure("Undo", Theme::light().text_style).width);
+}
+
 TEST_CASE("AppBarButton with the label on the right makes room for its flyout chevron", "[app-bar-button][layout]")
 {
     // The chevron is a column after the label: -7 into its 12 right margin, the 8 glyph, then 12.
@@ -197,6 +230,45 @@ TEST_CASE("AppBarButton's tooltip is \"Label (Accel)\" unless a tooltip or descr
 
     button.set_tool_tip("Keep it");
     REQUIRE(button.tool_tip() == "Keep it");
+}
+
+TEST_CASE("AppBarButton without a shortcut shows its text as tooltip wherever the bar hides it",
+          "[app-bar-button][tooltip]")
+{
+    const auto tip = [](AppBarLook look, CommandBarTextPosition position, bool shortcut)
+    {
+        AppBarButtonControl button{"Save", Symbol::Save};
+        button.set_app_bar_look(look);
+        button.set_text_position(position);
+        if (shortcut)
+        {
+            button.set_shortcut(Ctrl + Key::S);
+        }
+        return button.tool_tip();
+    };
+    AppBarLook full;
+    AppBarLook compact;
+    compact.compact = true;
+    AppBarLook collapsed;
+    collapsed.text_position = CommandBarDefaultTextPosition::Collapsed;
+    AppBarLook right;
+    right.text_position = CommandBarDefaultTextPosition::Right;
+    AppBarLook flyout_primary;
+    flyout_primary.flyout_primary = true;
+
+    // Shown text: no tooltip of its own
+    CHECK(tip(full, CommandBarTextPosition::Default, false).empty());
+    CHECK(tip(right, CommandBarTextPosition::Default, false).empty());
+    // Hidden text: the text alone
+    CHECK(tip(compact, CommandBarTextPosition::Default, false) == "Save");
+    CHECK(tip(collapsed, CommandBarTextPosition::Default, false) == "Save");
+    CHECK(tip(full, CommandBarTextPosition::Collapsed, false) == "Save");
+    CHECK(tip(right, CommandBarTextPosition::Collapsed, false) == "Save");
+    CHECK(tip(flyout_primary, CommandBarTextPosition::Default, false) == "Save");
+    // A shortcut adds itself either way
+    CHECK(tip(compact, CommandBarTextPosition::Default, true) == "Save (Ctrl+S)");
+    CHECK(tip(flyout_primary, CommandBarTextPosition::Default, true) == "Save (Ctrl+S)");
+    CHECK(tip(right, CommandBarTextPosition::Default, true) == "Save (Ctrl+S)");
 }
 
 TEST_CASE("A command fills the label, icon, shortcut and tooltip, runs after Click, and disables",
